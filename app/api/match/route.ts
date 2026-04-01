@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import type { AIMatchResult, TradieProfile } from '@/types'
 
 export const maxDuration = 30
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const { job_id } = await request.json()
     if (!job_id) return NextResponse.json({ error: 'job_id required' }, { status: 400 })
 
-    const supabase = createServiceClient()
+    const supabase = createClient()
 
     // Fetch the job
     const { data: job, error: jobError } = await supabase
