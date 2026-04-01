@@ -33,7 +33,7 @@ export default function LoginPage() {
         <a href="/signup" style={{ background:'#1C2B32', color:'white', padding:'9px 20px', borderRadius:'6px', fontSize:'13px', fontWeight:'500', textDecoration:'none' }}>Create account</a>
       </nav>
 
-      <div style={{ flex:1, display:'grid', gridTemplateColumns:'1fr 1fr' }}>
+     <div style={{ flex:1, display:'grid', gridTemplateColumns:'1fr 1fr' }} className="login-grid">
         <div style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'60px 48px' }}>
           <div style={{ width:'100%', maxWidth:'380px' }}>
             <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#D4522A', letterSpacing:'2px', marginBottom:'6px' }}>STEADYHAND</h1>
@@ -73,7 +73,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div style={{ background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', padding:'60px 64px', position:'relative', overflow:'hidden' }}>
+       <div className="login-right" style={{ background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', padding:'60px 64px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 60%, rgba(212,82,42,0.15), transparent 55%)' }} />
           <blockquote style={{ position:'relative', zIndex:1, maxWidth:'360px' }}>
             <p style={{ fontFamily:'sans-serif', fontSize:'18px', fontStyle:'italic', fontWeight:'300', lineHeight:'1.7', color:'rgba(216,228,225,0.85)', marginBottom:'20px' }}>
