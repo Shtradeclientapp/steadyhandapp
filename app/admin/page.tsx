@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const ADMIN_EMAIL = 'test@test.com'
+const ADMIN_EMAIL = 'anthony.coxeter@gmail.com'
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
@@ -16,8 +16,7 @@ export default function AdminPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      // TEMP: skip admin check for debugging
-      // if (session.user.email !== ADMIN_EMAIL) { window.location.href = '/dashboard'; return }
+      if (session.user.email !== ADMIN_EMAIL) { window.location.href = '/dashboard'; return }
       setUser(session.user)
 
       const { data: tradieData } = await supabase
