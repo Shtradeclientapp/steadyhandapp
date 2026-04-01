@@ -189,3 +189,62 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   /* Request form rows */
   .form-row { grid-template-columns: 1fr !important; }
 }
+
+/* ── Stage navigation bar ──────────────────────── */
+.stage-nav {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.stage-nav::-webkit-scrollbar { display: none; }
+.stage-nav-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-right: 1px solid rgba(28,43,50,0.1);
+  text-decoration: none;
+  transition: background 0.15s;
+  position: relative;
+}
+.stage-nav-item:last-child { border-right: none; }
+.stage-nav-item:hover { background: rgba(28,43,50,0.05); }
+.stage-nav-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1.5px solid rgba(28,43,50,0.2);
+  color: #7A9098;
+  background: #C8D5D2;
+  transition: all 0.2s;
+}
+.stage-nav-label {
+  font-size: 10px;
+  color: #7A9098;
+  text-align: center;
+  line-height: 1.2;
+}
+.stage-nav-item.done .stage-nav-num {
+  background: #2E7D60;
+  border-color: #2E7D60;
+  color: white;
+}
+.stage-nav-item.done .stage-nav-label { color: #2E7D60; }
+.stage-nav-item.active .stage-nav-label { font-weight: 600; color: #1C2B32; }
+.stage-nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+}

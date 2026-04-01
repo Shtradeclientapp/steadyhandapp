@@ -69,10 +69,30 @@ export default function DeliveryPage() {
   }
 
   const nav = (
-    <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
-      <a href="/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-      <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Back to dashboard</a>
-    </nav>
+    <div>
+      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
+        <a href="/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
+        <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Back to dashboard</a>
+      </nav>
+      <div style={{ position:'sticky', top:'64px', zIndex:90, background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' }}>
+        {[
+          { num:1, label:'Request', path:'/request', color:'#2E7D60' },
+          { num:2, label:'Shortlist', path:'/shortlist', color:'#2E6A8F' },
+          { num:3, label:'Agreement', path:'/agreement', color:'#6B4FA8' },
+          { num:4, label:'Delivery', path:'/delivery', color:'#C07830' },
+          { num:5, label:'Sign-off', path:'/signoff', color:'#D4522A' },
+          { num:6, label:'Warranty', path:'/warranty', color:'#1A6B5A' },
+        ].map(s => (
+          <a key={s.num} href={s.path} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
+            {s.path === '/delivery' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.color }} />}
+            <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (s.num < 4 ? s.color : s.path === '/delivery' ? s.color : 'rgba(28,43,50,0.2)'), background: s.num < 4 ? s.color : '#C8D5D2', color: s.num < 4 ? 'white' : s.path === '/delivery' ? s.color : '#7A9098' }}>
+              {s.num < 4 ? '✓' : s.num}
+            </div>
+            <div style={{ fontSize:'10px', color: s.path === '/delivery' ? '#1C2B32' : s.num < 4 ? s.color : '#7A9098', fontWeight: s.path === '/delivery' ? 600 : 400 }}>{s.label}</div>
+          </a>
+        ))}
+      </div>
+    </div>
   )
 
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
