@@ -44,19 +44,27 @@ export default function ShortlistPage() {
   const runMatching = async () => {
     if (!selectedJob) return
     setMatching(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('/api/match', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session?.access_token}`,
-      },
-      body: JSON.stringify({ job_id: selectedJob.id }),
-    })
-    const data = await res.json()
-    if (data.shortlist) {
-      await loadShortlist(selectedJob.id, session?.access_token || '')
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ job_id: selectedJob.id }),
+      })
+      const data = await res.json()
+      if (data.error) {
+        alert('Matching error: ' + data.error)
+      } else if (data.shortlist) {
+        await loadShortlist(selectedJob.id, session?.access_token || '')
+      } else {
+        alert('No shortlist returned: ' + JSON.stringify(data))
+      }
+    } catch (err: any) {
+      alert('Exception: ' + err.message)
     }
     setMatching(false)
   }
