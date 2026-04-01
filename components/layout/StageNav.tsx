@@ -17,7 +17,7 @@ export function StageNav({ completedStage = 0 }: { completedStage?: number }) {
   return (
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
       <div className="stage-nav">
-        {STAGES.map(stage => {
+        {STAGES.map(stage => (
           const isDone = stage.num < currentStage || stage.num <= completedStage
           const isActive = stage.num === currentStage
           const isLocked = stage.num > Math.max(currentStage, completedStage + 1)
