@@ -32,8 +32,13 @@ export async function POST(request: NextRequest) {
 
     const message = await anthropic.messages.create({ model: 'claude-sonnet-4-6', max_tokens: 1024, messages: [{ role: 'user', content: promptText }] })
     const raw = message.content[0].type === 'text' ? message.content[0].text : ''
-    let parsed: any
-    try { parsed = JSON.parse(raw) } catch (e) { return NextResponse.json({ error: 'Bad AI response: ' + raw.slice(0, 200) }, { status: 500 }) }
+   let parsed: any
+    try {
+      const cleaned = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      parsed = JSON.parse(cleaned)
+    } catch (e) {
+      return NextResponse.json({ error: 'Bad AI response: ' + raw.slice(0, 200) }, { status: 500 })
+    }
 
     const rows = parsed.results.map((r: any) => ({ job_id, tradie_id: r.tradie_id, ai_score: r.score, ai_reasoning: r.reasoning, rank: r.rank, status: 'pending' }))
     await supabase.from('shortlist').upsert(rows, { onConflict: 'job_id,tradie_id' })
