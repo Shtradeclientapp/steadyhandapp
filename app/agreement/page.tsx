@@ -84,11 +84,11 @@ export default function AgreementPage() {
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' }}>
       {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Shortlist',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Agreement',p:'/agreement',c:'#6B4FA8'},{n:4,l:'Delivery',p:'/delivery',c:'#C07830'},{n:5,l:'Sign-off',p:'/signoff',c:'#D4522A'},{n:6,l:'Warranty',p:'/warranty',c:'#1A6B5A'}].map(s => (
         <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
-          {s.p === '/shortlist' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
-          <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 2 ? '#2E7D60' : s.p === '/shortlist' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 2 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 2 ? 'white' : s.p === '/shortlist' ? s.c : '#7A9098' }}>
+          {s.p === '/agreement' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
+          <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 3 ? '#2E7D60' : s.p === '/agreement' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 3 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 3 ? 'white' : s.p === '/agreement' ? s.c : '#7A9098' }}>
             {s.n < 2 ? '✓' : s.n}
           </div>
-          <div style={{ fontSize:'10px', color: s.p === '/shortlist' ? '#1C2B32' : s.n < 2 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/shortlist' ? 600 : 400 }}>{s.l}</div>
+          <div style={{ fontSize:'10px', color: s.p === '/agreement' ? '#1C2B32' : s.n < 3 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/agreement' ? 600 : 400 }}>{s.l}</div>
         </a>
       ))}
     </div>
