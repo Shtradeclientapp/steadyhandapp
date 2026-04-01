@@ -183,26 +183,70 @@ export default function AgreementPage() {
 
           {scope && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-              {scope.inclusions?.length > 0 && (
-                <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>What is included</p>
-                  {scope.inclusions.map((item: string, i: number) => (
-                    <div key={i} style={{ display:'flex', gap:'10px', padding:'6px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', fontSize:'13px', color:'#1C2B32' }}>
-                      <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>{item}
-                    </div>
-                  ))}
-                </div>
-              )}
+             {scope.inclusions?.length > 0 && (
+  <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+      <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is included</p>
+      <span style={{ fontSize:'10px', color:'#2E7D60' }}>Click to edit</span>
+    </div>
+    {scope.inclusions.map((item: string, i: number) => (
+      <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
+        <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>
+        <input
+          type="text"
+          defaultValue={item}
+          onBlur={e => {
+            const updated = [...scope.inclusions]
+            updated[i] = e.target.value
+            saveEdit({ inclusions: updated })
+          }}
+          style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
+          onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }}
+        />
+        <button type="button" onClick={() => {
+          const updated = scope.inclusions.filter((_: string, idx: number) => idx !== i)
+          saveEdit({ inclusions: updated })
+        }} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
+      </div>
+    ))}
+    <button type="button" onClick={() => saveEdit({ inclusions: [...scope.inclusions, 'New inclusion'] })}
+      style={{ marginTop:'8px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+      + Add inclusion
+    </button>
+  </div>
+)}
               {scope.exclusions?.length > 0 && (
-                <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>What is excluded</p>
-                  {scope.exclusions.map((item: string, i: number) => (
-                    <div key={i} style={{ display:'flex', gap:'10px', padding:'6px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', fontSize:'13px', color:'#1C2B32' }}>
-                      <span style={{ color:'#D4522A', flexShrink:0 }}>×</span>{item}
-                    </div>
-                  ))}
-                </div>
-              )}
+  <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+      <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is excluded</p>
+      <span style={{ fontSize:'10px', color:'#D4522A' }}>Click to edit</span>
+    </div>
+    {scope.exclusions.map((item: string, i: number) => (
+      <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
+        <span style={{ color:'#D4522A', flexShrink:0 }}>×</span>
+        <input
+          type="text"
+          defaultValue={item}
+          onBlur={e => {
+            const updated = [...scope.exclusions]
+            updated[i] = e.target.value
+            saveEdit({ exclusions: updated })
+          }}
+          style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
+          onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }}
+        />
+        <button type="button" onClick={() => {
+          const updated = scope.exclusions.filter((_: string, idx: number) => idx !== i)
+          saveEdit({ exclusions: updated })
+        }} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
+      </div>
+    ))}
+    <button type="button" onClick={() => saveEdit({ exclusions: [...scope.exclusions, 'New exclusion'] })}
+      style={{ marginTop:'8px', fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+      + Add exclusion
+    </button>
+  </div>
+)}
               {scope.milestones?.length > 0 && (
                 <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>Payment milestones</p>

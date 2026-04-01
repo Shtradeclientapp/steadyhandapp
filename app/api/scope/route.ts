@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     const { data: saved, error } = await supabase
       .from('scope_agreements')
       .upsert({
+       .upsert({
         job_id,
         drafted_by_ai: true,
         inclusions: scope.inclusions,
@@ -40,6 +41,8 @@ export async function POST(request: NextRequest) {
         response_sla_days: 5,
         remediation_days: 14,
         total_price: scope.total_price_estimate || 0,
+        last_edited_at: new Date().toISOString(),
+        version: supabase.rpc ? undefined : undefined,
       }, { onConflict: 'job_id' })
       .select()
       .single()
