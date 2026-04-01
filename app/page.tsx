@@ -13,7 +13,7 @@ export default function Home() {
             <span style={{ fontSize:'13px', color:'#4A5E64' }}>For tradies</span>
             <span style={{ fontSize:'13px', color:'#4A5E64' }}>About</span>
           </div>
-          <div style={{ display:'flex', gap:'10px' }}>
+          <div className="nav-buttons" style={{ display:'flex', gap:'10px' }}>
             <Link href="/login">
               <button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#1C2B32', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer' }}>
                 Log in
