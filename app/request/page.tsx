@@ -61,9 +61,7 @@ const submitJob = async () => {
 
     const { job, error } = await res.json()
     if (error) { alert(error); setSubmitting(false); return }
-    setJobId(job.id)
-    setStep(3)
-    setSubmitting(false)
+window.location.href = '/shortlist'
   }
 
   const nav = (
@@ -96,44 +94,6 @@ const submitJob = async () => {
       fontWeight:'500', cursor: disabled ? 'not-allowed' : 'pointer',
       opacity: disabled ? 0.5 : 1, fontFamily:'sans-serif'
     }}>{label}</button>
-  )
-
-  if (step === 3) return (
-    <>
-      {nav}
-      <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', padding:'40px 24px' }}>
-        <div style={{ maxWidth:'520px', width:'100%', textAlign:'center' }}>
-          <div style={{ fontSize:'56px', marginBottom:'16px' }}>✅</div>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST SUBMITTED</h2>
-          <p style={{ fontSize:'15px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'32px', fontFamily:'sans-serif' }}>
-            Our AI is matching your job to verified local tradies right now. You'll be notified when your shortlist is ready — usually within a few minutes.
-          </p>
-          <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'20px', marginBottom:'28px', position:'relative', overflow:'hidden' }}>
-            <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.2), transparent 50%)' }} />
-            <div style={{ position:'relative', zIndex:1 }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(216,228,225,0.1)', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'100px', padding:'3px 10px', marginBottom:'10px' }}>
-                <div style={{ width:'6px', height:'6px', background:'#D4522A', borderRadius:'50%' }} />
-                <span style={{ fontSize:'10px', color:'rgba(216,228,225,0.7)', letterSpacing:'0.8px', textTransform:'uppercase' }}>AI matching in progress</span>
-              </div>
-              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.65)', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-                Claude is reviewing your request and ranking verified tradies by category fit, location, track record, and verification status.
-              </p>
-            </div>
-          </div>
-          <div style={{ display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }}>
-            <a href="/dashboard">
-              <button style={{ background:'#1C2B32', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', fontFamily:'sans-serif' }}>
-                Go to dashboard →
-              </button>
-            </a>
-            <button onClick={() => { setStep(0); setForm({ trade_category:'', title:'', description:'', suburb:'', property_type:'Residential house', urgency:'Within 2 weeks', budget_range:'', warranty_period:'90', preferred_start:'' }) }}
-              style={{ background:'transparent', color:'#1C2B32', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer', fontFamily:'sans-serif' }}>
-              Post another job
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
   )
 
   return (
