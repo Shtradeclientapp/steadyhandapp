@@ -149,12 +149,13 @@ export default function ShortlistPage() {
               <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', fontFamily:'sans-serif', lineHeight:'1.6' }}>
                 No shortlist yet. Click below to run AI matching for this job.
               </p>
-              <button
-                onClick={runMatching}
-                disabled={matching}
-                style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', fontFamily:'sans-serif', opacity: matching ? 0.7 : 1 }}>
-                {matching ? 'Matching in progress...' : 'Run AI matching →'}
-              </button>
+           <button
+  type="button"
+  onClick={runMatching}
+  disabled={matching}
+  style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', fontFamily:'sans-serif', opacity: matching ? 0.7 : 1 }}>
+  {matching ? 'Matching in progress...' : 'Run AI matching →'}
+</button>
             </div>
           )}
 
