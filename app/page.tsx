@@ -1,55 +1,8 @@
-Yes — it's called responsive design. The landing page currently uses fixed pixel values for the grid and padding which don't adapt to smaller screens.
-The quickest way to fix it is to add a <style> tag with media queries. Open the landing page:
-bashopen -a TextEdit ~/Downloads/steadyhand-app/app/page.tsx
-```
-
-Select all, delete, paste this, save:
-```
 import Link from 'next/link'
 
 export default function Home() {
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <style>{`
-        .nav-links { display: flex; }
-        .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .stats-bar { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
-        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
-        .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
-        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 64px; }
-        .hero-inner { padding: 100px 48px; }
-        .section-inner { max-width: 900px; margin: 0 auto; padding: 80px 48px; }
-        .stats-inner { padding: 24px 48px; }
-        .testimonial-inner { max-width: 700px; margin: 0 auto; padding: 72px 48px; text-align: center; }
-        .cta-inner { padding: 80px 48px; text-align: center; }
-        .footer-pad { padding: 32px 48px; }
-        .stat-item { text-align: center; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-
-        @media (max-width: 768px) {
-          .nav-links { display: none; }
-          .nav-inner { padding: 0 20px; }
-          .hero-inner { padding: 60px 24px; }
-          .hero-title { font-size: 36px !important; }
-          .hero-sub { font-size: 15px !important; }
-          .stats-bar { gap: 24px; }
-          .stats-inner { padding: 24px 20px; }
-          .steps-grid { grid-template-columns: 1fr; gap: 16px; }
-          .section-inner { padding: 48px 24px; }
-          .testimonial-inner { padding: 48px 24px; }
-          .testimonial-quote { font-size: 16px !important; }
-          .cta-inner { padding: 48px 24px; }
-          .cta-title { font-size: 22px !important; }
-          .footer-pad { padding: 24px 20px; }
-          .footer-links { gap: 16px; }
-          .dashboard-grid { grid-template-columns: 1fr; }
-          .login-grid { grid-template-columns: 1fr !important; }
-          .login-right { display: none !important; }
-          .login-left { padding: 40px 24px !important; }
-        }
-      `}</style>
 
       {/* NAV */}
       <nav style={{ background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>

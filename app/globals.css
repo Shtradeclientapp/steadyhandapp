@@ -79,3 +79,24 @@ h1, h2, h3, h4, .font-display {
 
 /* ── Toast ─────────────────────────────────── */
 .toast-enter { animation: slide-up 0.3s ease both; }
+/* ── Mobile responsive ─────────────────────────── */
+* { box-sizing: border-box; }
+
+html, body { overflow-x: hidden; max-width: 100vw; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none !important; }
+  .nav-inner { padding: 0 20px !important; }
+  .hero-inner { padding: 60px 24px !important; }
+  .stats-inner { padding: 20px !important; }
+  .stats-bar { gap: 20px !important; }
+  .steps-grid { grid-template-columns: 1fr !important; }
+  .section-inner { padding: 48px 24px !important; }
+  .testimonial-inner { padding: 48px 24px !important; }
+  .cta-inner { padding: 48px 24px !important; }
+  .footer-pad { padding: 24px 20px !important; }
+  .footer-links { gap: 12px !important; }
+  .login-right { display: none !important; }
+  .login-left { padding: 40px 24px !important; }
+  .dashboard-grid { grid-template-columns: 1fr !important; }
+}
