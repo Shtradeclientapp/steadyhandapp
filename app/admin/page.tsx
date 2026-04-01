@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const ADMIN_EMAIL = 'anthony.coxeter@gmail.com'
+const ADMIN_EMAIL = 'test@test.com'
 
 export default function AdminPage() {
   const [user, setUser] = useState<any>(null)
