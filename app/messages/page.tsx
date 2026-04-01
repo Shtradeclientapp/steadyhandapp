@@ -1,4 +1,3 @@
-cat > ~/Downloads/steadyhand-app/app/messages/page.tsx << 'ENDOFFILE'
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
