@@ -13,43 +13,21 @@ const STAGES = [
 export function StageNav({ completedStage = 0 }: { completedStage?: number }) {
   const pathname = usePathname()
   const currentStage = STAGES.findIndex(s => s.path === pathname) + 1
-
   return (
-    <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
-      <div className="stage-nav">
-        {STAGES.map(stage => (
-          const isDone = stage.num < currentStage || stage.num <= completedStage
-          const isActive = stage.num === currentStage
-          const isLocked = stage.num > Math.max(currentStage, completedStage + 1)
-
-          return (
-            
-              key={stage.num}
-              href={isLocked ? undefined : stage.path}
-              className={'stage-nav-item' + (isDone ? ' done' : '') + (isActive ? ' active' : '')}
-              style={{
-                pointerEvents: isLocked ? 'none' : 'auto',
-                opacity: isLocked ? 0.4 : 1,
-              }}
-            >
-              {isActive && (
-                <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background: stage.color }} />
-              )}
-              <div
-                className="stage-nav-num"
-                style={
-                  isDone ? undefined :
-                  isActive ? { borderColor: stage.color, color: stage.color } :
-                  undefined
-                }
-              >
-                {isDone ? '✓' : stage.num}
-              </div>
-              <div className="stage-nav-label">{stage.label}</div>
-            </a>
-          )
-        })}
-      </div>
+    <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
+      {STAGES.map(stage => {
+        const isDone = stage.num < currentStage || stage.num <= completedStage
+        const isActive = stage.num === currentStage
+        return (
+          <a key={stage.num} href={stage.path} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
+            {isActive && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:stage.color }} />}
+            <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (isDone ? '#2E7D60' : isActive ? stage.color : 'rgba(28,43,50,0.2)'), background: isDone ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: isDone ? 'white' : isActive ? stage.color : '#7A9098' }}>
+              {isDone ? '✓' : stage.num}
+            </div>
+            <div style={{ fontSize:'10px', color: isActive ? '#1C2B32' : isDone ? '#2E7D60' : '#7A9098', fontWeight: isActive ? 600 : 400 }}>{stage.label}</div>
+          </a>
+        )
+      })}
     </div>
   )
 }
