@@ -118,3 +118,74 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   .login-left { padding: 40px 24px !important; }
   .dashboard-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ── Global mobile fixes ───────────────────────── */
+@media (max-width: 768px) {
+
+  /* Hide right panels on auth pages */
+  .sg { grid-template-columns: 1fr !important; }
+  .sr { display: none !important; }
+
+  /* Nav padding */
+  nav { padding: 0 16px !important; }
+
+  /* Page padding */
+  .main { padding: 100px 0 40px !important; }
+
+  /* All containers */
+  .container, .container-sm, .container-lg {
+    padding: 0 16px !important;
+  }
+
+  /* Stage headers */
+  h1, h2.stage-title {
+    font-size: 24px !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  /* Two column form rows become single column */
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="gridTemplateColumns:'1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tradie cards stack on mobile */
+  .tradie-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Delivery sidebar hides on mobile */
+  div[style*="grid-template-columns:1fr 320px"],
+  div[style*="gridTemplateColumns:'1fr 320px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Agreement page */
+  div[style*="grid-template-columns:1fr 360px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Sign boxes stack */
+  .sign-row { flex-direction: column !important; }
+
+  /* Warranty banner */
+  .wb-inner { flex-direction: column !important; }
+
+  /* Panel grids */
+  .panel-grid { grid-template-columns: 1fr !important; }
+
+  /* Buttons full width on mobile */
+  .btn-xl { width: 100% !important; }
+
+  /* Footer stacks */
+  .footer-inner { flex-direction: column !important; align-items: flex-start !important; }
+
+  /* Stats stack */
+  .stats-bar { flex-direction: column !important; align-items: center !important; gap: 16px !important; }
+
+  /* Steps grid single column */
+  .steps-grid { grid-template-columns: 1fr !important; }
+
+  /* Request form rows */
+  .form-row { grid-template-columns: 1fr !important; }
+}
