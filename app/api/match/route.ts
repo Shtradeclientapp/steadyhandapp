@@ -1,51 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { createClient } from '@/lib/supabase/server'
-import type { AIMatchResult, TradieProfile } from '@/types'
+import { createClient } from '@supabase/supabase-js'
 
 export const maxDuration = 30
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
 export async function POST(request: NextRequest) {
   try {
-    const { job_id } = await request.json()
-    if (!job_id) return NextResponse.json({ error: 'job_id required' }, { status: 400 })
+    const body = await request.json()
+    const { job_id } = body
 
-    const supabase = createClient()
+    if (!job_id) {
+      return NextResponse.json({ error: 'job_id required' }, { status: 400 })
+    }
 
-    // Fetch the job
     const { data: job, error: jobError } = await supabase
       .from('jobs')
       .select('*')
       .eq('id', job_id)
       .single()
-    if (jobError || !job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
-    // Fetch candidate tradies — match on trade category and service area
-    const { data: tradies, error: tradieError } = await supabase
+    if (jobError) {
+      return NextResponse.json({ error: 'DB error: ' + jobError.message }, { status: 500 })
+    }
+
+    if (!job) {
+      return NextResponse.json({ error: 'Job not found for id: ' + job_id }, { status: 404 })
+    }
+
+    const { data: tradies } = await supabase
       .from('tradie_profiles')
       .select('*, profile:profiles(*)')
       .eq('subscription_active', true)
       .contains('trade_categories', [job.trade_category])
 
-    if (tradieError || !tradies?.length) {
-      return NextResponse.json({ error: 'No eligible tradies found' }, { status: 404 })
+    if (!tradies || tradies.length === 0) {
+      return NextResponse.json({ error: 'No eligible tradies found for category: ' + job.trade_category }, { status: 404 })
     }
 
-    // Filter by service area proximity (suburb match or 'Perth Metro' catch-all)
-    const eligible = tradies.filter((t: TradieProfile) =>
-      t.service_areas.some(area =>
-        area.toLowerCase().includes(job.suburb.toLowerCase()) ||
-        area.toLowerCase().includes('perth metro') ||
-        job.suburb.toLowerCase().includes(area.toLowerCase())
-      )
-    )
+    const candidates = tradies.slice(0, 10)
 
-    const candidates = eligible.length >= 3 ? eligible : tradies // fallback if too few
-
-    // Build the prompt for Claude
-    const tradieDescriptions = candidates.slice(0, 10).map((t: TradieProfile, i: number) => `
+    const tradieDescriptions = candidates.map((t: any, i: number) => `
 Tradie ${i + 1}:
 - ID: ${t.id}
 - Business: ${t.business_name}
@@ -54,7 +55,6 @@ Tradie ${i + 1}:
 - Rating: ${t.rating_avg}/5 (${t.jobs_completed} jobs completed)
 - Licence verified: ${t.licence_verified}
 - Insurance verified: ${t.insurance_verified}
-- Response time avg: ${t.response_time_hrs ? t.response_time_hrs + ' hrs' : 'unknown'}
 - Bio: ${t.bio || 'not provided'}
     `.trim()).join('\n\n')
 
@@ -66,9 +66,8 @@ A client has posted the following job request:
 - Location: ${job.suburb}, WA
 - Description: ${job.description}
 - Property type: ${job.property_type || 'not specified'}
-- Urgency: ${job.urgency || 'not specified'}
 - Budget: ${job.budget_range || 'not specified'}
-- Warranty period requested: ${job.warranty_period} days
+- Warranty period: ${job.warranty_period} days
 
 Here are the eligible tradies:
 
@@ -81,7 +80,7 @@ Score each tradie from 0-100 based on:
 4. Verification status (licence + insurance) (10%)
 5. Response time and engagement signals (10%)
 
-Return ONLY valid JSON in this exact format — no markdown, no commentary:
+Return ONLY valid JSON with no markdown or commentary:
 {
   "results": [
     {
@@ -93,42 +92,7 @@ Return ONLY valid JSON in this exact format — no markdown, no commentary:
   ]
 }
 
-Return the top 4 tradies only, sorted by score descending. Rank 1 is the top recommendation.`
+Return the top 4 tradies only sorted by score descending.`
 
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const raw = message.content[0].type === 'text' ? message.content[0].text : ''
-    const parsed = JSON.parse(raw) as { results: AIMatchResult[] }
-
-    // Store shortlist in database
-    const shortlistRows = parsed.results.map(r => ({
-      job_id,
-      tradie_id: r.tradie_id,
-      ai_score: r.score,
-      ai_reasoning: r.reasoning,
-      rank: r.rank,
-      status: 'pending',
-    }))
-
-    await supabase.from('shortlist').upsert(shortlistRows, { onConflict: 'job_id,tradie_id' })
-
-    // Update job status
-    await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', job_id)
-
-    // Enrich results with tradie data for the response
-    const enriched = parsed.results.map(r => ({
-      ...r,
-      tradie: candidates.find((t: TradieProfile) => t.id === r.tradie_id),
-    }))
-
-    return NextResponse.json({ shortlist: enriched })
-
-  } catch (err) {
-    console.error('AI match error:', err)
-    return NextResponse.json({ error: 'Matching failed' }, { status: 500 })
-  }
-}
+      model: 'claude-sonne
