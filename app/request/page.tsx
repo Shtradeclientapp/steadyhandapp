@@ -44,7 +44,7 @@ export default function RequestPage() {
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
 
-  const submitJob = async () => {
+const submitJob = async () => {
     setSubmitting(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
@@ -52,9 +52,13 @@ export default function RequestPage() {
 
     const res = await fetch('/api/jobs', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
       body: JSON.stringify({ ...form, warranty_period: Number(form.warranty_period) }),
     })
+
     const { job, error } = await res.json()
     if (error) { alert(error); setSubmitting(false); return }
     setJobId(job.id)
