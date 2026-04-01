@@ -16,7 +16,7 @@ export default function AdminPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      if (session.user.email !== ADMIN_EMAIL) { window.location.href = '/dashboard'; return }
+      if (session.user.email !== ADMIN_EMAIL) { alert('Not admin. Your email: ' + session.user.email + ' Expected: ' + ADMIN_EMAIL); window.location.href = '/dashboard'; return }
       setUser(session.user)
 
       const { data: tradieData } = await supabase
