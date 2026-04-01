@@ -11,6 +11,10 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+export async function GET() {
+  return NextResponse.json({ status: 'match route working' })
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -26,12 +30,8 @@ export async function POST(request: NextRequest) {
       .eq('id', job_id)
       .single()
 
-    if (jobError) {
-      return NextResponse.json({ error: 'DB error: ' + jobError.message }, { status: 500 })
-    }
-
-    if (!job) {
-      return NextResponse.json({ error: 'Job not found for id: ' + job_id }, { status: 404 })
+    if (jobError || !job) {
+      return NextResponse.json({ error: 'Job not found: ' + jobError?.message }, { status: 404 })
     }
 
     const { data: tradies } = await supabase
@@ -41,58 +41,30 @@ export async function POST(request: NextRequest) {
       .contains('trade_categories', [job.trade_category])
 
     if (!tradies || tradies.length === 0) {
-      return NextResponse.json({ error: 'No eligible tradies found for category: ' + job.trade_category }, { status: 404 })
+      return NextResponse.json({ error: 'No eligible tradies found' }, { status: 404 })
     }
 
     const candidates = tradies.slice(0, 10)
 
-    const tradieDescriptions = candidates.map((t: any, i: number) => `
-Tradie ${i + 1}:
-- ID: ${t.id}
-- Business: ${t.business_name}
-- Categories: ${t.trade_categories.join(', ')}
-- Service areas: ${t.service_areas.join(', ')}
-- Rating: ${t.rating_avg}/5 (${t.jobs_completed} jobs completed)
-- Licence verified: ${t.licence_verified}
-- Insurance verified: ${t.insurance_verified}
-- Bio: ${t.bio || 'not provided'}
-    `.trim()).join('\n\n')
+    const descriptions = candidates.map((t: any, i: number) =>
+      `Tradie ${i + 1}: ID: ${t.id}, Business: ${t.business_name}, Categories: ${t.trade_categories.join(', ')}, Areas: ${t.service_areas.join(', ')}, Rating: ${t.rating_avg}/5, Jobs: ${t.jobs_completed}, Licence: ${t.licence_verified}, Insurance: ${t.insurance_verified}, Bio: ${t.bio || 'none'}`
+    ).join('\n')
 
     const prompt = `You are the AI matching engine for Steadyhand, a trades platform in Western Australia.
 
-A client has posted the following job request:
-- Title: ${job.title}
-- Trade category: ${job.trade_category}
-- Location: ${job.suburb}, WA
-- Description: ${job.description}
-- Property type: ${job.property_type || 'not specified'}
-- Budget: ${job.budget_range || 'not specified'}
-- Warranty period: ${job.warranty_period} days
+Job: ${job.title}
+Category: ${job.trade_category}
+Location: ${job.suburb}, WA
+Description: ${job.description}
+Budget: ${job.budget_range || 'not specified'}
+Warranty: ${job.warranty_period} days
 
-Here are the eligible tradies:
+Tradies:
+${descriptions}
 
-${tradieDescriptions}
+Score each tradie 0-100 on: category match (40%), location fit (20%), track record (20%), verification (10%), engagement (10%).
 
-Score each tradie from 0-100 based on:
-1. Category match and specialisation relevance (40%)
-2. Location proximity and service area fit (20%)
-3. Rating and completed jobs track record (20%)
-4. Verification status (licence + insurance) (10%)
-5. Response time and engagement signals (10%)
+Return ONLY this JSON format, no markdown:
+{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2-3 sentences>","rank":<number>}]}
 
-Return ONLY valid JSON with no markdown or commentary:
-{
-  "results": [
-    {
-      "tradie_id": "<uuid>",
-      "score": <0-100>,
-      "reasoning": "<2-3 sentence explanation for the client>",
-      "rank": <1-5>
-    }
-  ]
-}
-
-Return the top 4 tradies only sorted by score descending.`
-
-    const message = await anthropic.messages.create({
-      model: 'claude-sonne
+Return top 4 tradies sort
