@@ -2,7 +2,25 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 const TRADES = ['Plumbing & Gas','Electrical','Carpentry & Joinery','Tiling','Painting & Decorating','Roofing','Landscaping','Air Conditioning','General Handyman']
-const SUBURBS = ['Perth Metro','Fremantle','Subiaco','Cottesloe','Leederville','Mandurah','Bunbury','Geraldton','Albany','Broome','Kalgoorlie','Margaret River']
+const SUBURBS = [
+  'Perth CBD', 'Subiaco', 'Leederville', 'Mount Lawley', 'Northbridge',
+  'Fremantle', 'Cottesloe', 'Claremont', 'Nedlands', 'Crawley',
+  'Victoria Park', 'South Perth', 'Como', 'Applecross', 'Melville',
+  'Canning Vale', 'Willetton', 'Booragoon', 'Karrinyup', 'Scarborough',
+  'Innaloo', 'Stirling', 'Balga', 'Mirrabooka', 'Morley',
+  'Bayswater', 'Maylands', 'Bassendean', 'Guildford', 'Midland',
+  'Armadale', 'Gosnells', 'Maddington', 'Kenwick', 'Bentley',
+  'Joondalup', 'Wanneroo', 'Kingsley', 'Duncraig', 'Hillarys',
+  'Rockingham', 'Baldivis', 'Secret Harbour', 'Mandurah', 'Pinjarra',
+  'Murray', 'Serpentine', 'Mundijong',
+  'Bunbury', 'Busselton', 'Dunsborough', 'Margaret River', 'Augusta',
+  'Collie', 'Harvey', 'Donnybrook', 'Bridgetown', 'Manjimup',
+  'Geraldton', 'Carnarvon', 'Exmouth', 'Karratha', 'Port Hedland',
+  'Broome', 'Kununurra', 'Derby',
+  'Albany', 'Denmark', 'Mount Barker', 'Esperance',
+  'Kalgoorlie', 'Boulder', 'Merredin', 'Northam', 'York',
+  'Narrogin', 'Katanning', 'Wagin',
+]
 const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', display:'block' }
 const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }
 export default function SignupPage() {

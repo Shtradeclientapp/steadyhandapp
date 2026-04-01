@@ -10,9 +10,23 @@ const TRADES = [
 ]
 
 const SUBURBS = [
-  'Perth CBD', 'Fremantle', 'Subiaco', 'Cottesloe', 'Leederville',
-  'Northbridge', 'Mount Lawley', 'Mandurah', 'Bunbury', 'Geraldton',
-  'Albany', 'Broome', 'Kalgoorlie', 'Margaret River'
+  'Perth CBD', 'Subiaco', 'Leederville', 'Mount Lawley', 'Northbridge',
+  'Fremantle', 'Cottesloe', 'Claremont', 'Nedlands', 'Crawley',
+  'Victoria Park', 'South Perth', 'Como', 'Applecross', 'Melville',
+  'Canning Vale', 'Willetton', 'Booragoon', 'Karrinyup', 'Scarborough',
+  'Innaloo', 'Stirling', 'Balga', 'Mirrabooka', 'Morley',
+  'Bayswater', 'Maylands', 'Bassendean', 'Guildford', 'Midland',
+  'Armadale', 'Gosnells', 'Maddington', 'Kenwick', 'Bentley',
+  'Joondalup', 'Wanneroo', 'Kingsley', 'Duncraig', 'Hillarys',
+  'Rockingham', 'Baldivis', 'Secret Harbour', 'Mandurah', 'Pinjarra',
+  'Murray', 'Serpentine', 'Mundijong',
+  'Bunbury', 'Busselton', 'Dunsborough', 'Margaret River', 'Augusta',
+  'Collie', 'Harvey', 'Donnybrook', 'Bridgetown', 'Manjimup',
+  'Geraldton', 'Carnarvon', 'Exmouth', 'Karratha', 'Port Hedland',
+  'Broome', 'Kununurra', 'Derby',
+  'Albany', 'Denmark', 'Mount Barker', 'Esperance',
+  'Kalgoorlie', 'Boulder', 'Merredin', 'Northam', 'York',
+  'Narrogin', 'Katanning', 'Wagin',
 ]
 
 const inputStyle = {
