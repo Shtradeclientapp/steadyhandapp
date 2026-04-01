@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink:       #1C2B32;
+  --bark:      #111C22;
+  --mist:      #C8D5D2;
+  --mist-d:    #B0C0BC;
+  --mist-l:    #D8E4E1;
+  --mist-xl:   #E8F0EE;
+  --off:       #F4F8F7;
+  --terra:     #D4522A;
+  --terra-l:   #E06840;
+  --terra-d:   #B8401C;
+  --muted:     #4A5E64;
+  --muted-l:   #7A9098;
+  --s1:        #2E7D60;
+  --s2:        #2E6A8F;
+  --s3:        #6B4FA8;
+  --s4:        #C07830;
+  --s5:        #D4522A;
+  --s6:        #1A6B5A;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-barlow), 'Barlow', sans-serif;
+  background: var(--mist);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ── Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--mist-d); border-radius: 3px; }
+
+/* ── Selection ─────────────────────────────── */
+::selection { background: rgba(212, 82, 42, 0.2); }
+
+/* ── Focus rings ───────────────────────────── */
+:focus-visible { outline: 2px solid var(--terra); outline-offset: 2px; }
+
+/* ── Animations ────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in  { animation: fadeIn 0.3s ease both; }
+.animate-slide-up { animation: slide-up 0.4s ease both; }
+.animate-pulse-dot { animation: pulse-dot 2s infinite; }
+
+/* ── Stagger children ──────────────────────── */
+.stagger > * { animation: fadeIn 0.3s ease both; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+
+/* ── Toast ─────────────────────────────────── */
+.toast-enter { animation: slide-up 0.3s ease both; }
