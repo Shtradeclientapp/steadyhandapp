@@ -24,8 +24,8 @@ const aboreto = Aboreto({
 })
 
 export const metadata: Metadata = {
-  title: 'Steadyhand — Request to Warranty',
-  description: 'Client-first trades platform for Western Australia',
+  title: 'Steadyhand',
+  description: 'Request to warranty platform for Western Australia',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

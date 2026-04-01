@@ -25,14 +25,14 @@ export default function LoginPage() {
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', flexDirection:'column' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
-        <div style={{ fontFamily:'Aboreto, cursive', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
         <a href="/signup" style={{ background:'#1C2B32', color:'white', padding:'9px 20px', borderRadius:'6px', fontSize:'13px', fontWeight:'500', textDecoration:'none' }}>Create account</a>
       </nav>
 
       <div style={{ flex:1, display:'grid', gridTemplateColumns:'1fr 1fr' }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'60px 48px' }}>
           <div style={{ width:'100%', maxWidth:'380px' }}>
-            <h1 style={{ fontFamily:'Aboreto, cursive', fontSize:'28px', color:'#D4522A', letterSpacing:'2px', marginBottom:'6px' }}>STEADYHAND</h1>
+            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#D4522A', letterSpacing:'2px', marginBottom:'6px' }}>STEADYHAND</h1>
             <p style={{ fontSize:'22px', fontWeight:'600', color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }}>Welcome back</p>
             <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'32px', fontFamily:'sans-serif' }}>Sign in to your Steadyhand account</p>
 
