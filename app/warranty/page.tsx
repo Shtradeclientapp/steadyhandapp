@@ -51,7 +51,14 @@ export default function WarrantyPage() {
     setForm({ title: '', description: '', severity: 'moderate' })
     setShowForm(false)
     setSubmitting(false)
-  }
+  if (issue) {
+      setIssues(prev => [issue, ...prev])
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
+      })
+    }}
 
   const warrantyEnd = job?.warranty_ends_at ? new Date(job.warranty_ends_at) : null
   const daysLeft = warrantyEnd ? Math.max(0, Math.ceil((warrantyEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0

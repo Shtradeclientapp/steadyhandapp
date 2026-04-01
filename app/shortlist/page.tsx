@@ -69,14 +69,19 @@ export default function ShortlistPage() {
     setMatching(false)
   }
 
-  const selectTradie = async (tradieId: string) => {
+ const selectTradie = async (tradieId: string) => {
     setSelected(tradieId)
     const supabase = createClient()
     await supabase
       .from('jobs')
       .update({ tradie_id: tradieId, status: 'agreement' })
       .eq('id', selectedJob.id)
-    setTimeout(() => { window.location.href = '/dashboard' }, 1000)
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
+    })
+    setTimeout(() => { window.location.href = '/agreement' }, 1000)
   }
 
   const nav = (
