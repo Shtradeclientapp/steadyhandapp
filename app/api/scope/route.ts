@@ -10,13 +10,13 @@ export async function POST(request: NextRequest) {
     )
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-    const { job_id } = await request.json()
+  const { job_id, suggestion } = await request.json()
     if (!job_id) return NextResponse.json({ error: 'job_id required' }, { status: 400 })
 
     const { data: job } = await supabase.from('jobs').select('*').eq('id', job_id).single()
     if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
-    const promptText = 'You are a trades contract specialist for Steadyhand in Western Australia.\n\nDraft a scope of work for:\nTitle: ' + job.title + '\nTrade: ' + job.trade_category + '\nSuburb: ' + job.suburb + '\nDescription: ' + job.description + '\nProperty: ' + (job.property_type || 'residential') + '\nBudget: ' + (job.budget_range || 'to be agreed') + '\nWarranty: ' + job.warranty_period + ' days\n\nReturn ONLY valid JSON, no markdown:\n{"inclusions":["item1","item2"],"exclusions":["item1"],"milestones":[{"label":"label","percent":25,"amount":0,"description":"desc"}],"warranty_days":' + job.warranty_period + ',"total_price_estimate":0,"notes":"brief note"}\n\nRules: 3-4 milestones summing to 100%, realistic exclusions for this trade type.'
+    const promptText = 'You are a trades contract specialist for Steadyhand in Western Australia.\n\nDraft a scope of work for:\nTitle: ' + job.title + '\nTrade: ' + job.trade_category + '\nSuburb: ' + job.suburb + '\nDescription: ' + job.description + '\nProperty: ' + (job.property_type || 'residential') + '\nBudget: ' + (job.budget_range || 'to be agreed') + '\nWarranty: ' + job.warranty_period + ' days\n\nReturn ONLY valid JSON, no markdown:\n{"inclusions":["item1","item2"],"exclusions":["item1"],"milestones":[{"label":"label","percent":25,"amount":0,"description":"desc"}],"warranty_days":' + job.warranty_period + ',"total_price_estimate":0,"notes":"brief note"}\'\nRules: 3-4 milestones summing to 100%, realistic exclusions for this trade type.' + (suggestion ? '\n\nIMPORTANT: Incorporate this change request into the scope: ' + suggestion : '')
 
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
