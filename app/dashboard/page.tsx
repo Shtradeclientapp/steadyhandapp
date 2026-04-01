@@ -1,4 +1,3 @@
-cat > ~/Downloads/steadyhand-app/app/dashboard/page.tsx << 'EOF'
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
