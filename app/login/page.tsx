@@ -18,8 +18,9 @@ export default function LoginPage() {
       setStatus('Error: ' + error.message)
       setLoading(false)
     } else {
-     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
-window.location.replace(profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard')
+     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user?.id).single()
+    const dest = profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
+    window.location.replace(dest)
     }
   }
 
