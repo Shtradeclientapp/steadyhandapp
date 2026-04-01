@@ -13,12 +13,12 @@ export default function LoginPage() {
     setLoading(true)
     setStatus('Signing in...')
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setStatus('Error: ' + error.message)
       setLoading(false)
     } else {
-     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user?.id).single()
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user?.id).single()
     const dest = profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
     window.location.replace(dest)
     }
