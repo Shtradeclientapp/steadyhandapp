@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
     const { data: saved, error } = await supabase
       .from('scope_agreements')
       .upsert({
-       .upsert({
         job_id,
         drafted_by_ai: true,
         inclusions: scope.inclusions,
