@@ -95,7 +95,28 @@ export default function AgreementPage() {
     setPushingMsg(null)
   }
 
-  const signScope = async () => {
+  const [saving, setSaving] = useState(false)
+  const [savedAt, setSavedAt] = useState<string|null>(null)
+
+  const saveEdit = async (updates: any) => {
+    if (!scope) return
+    setSaving(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const newScope = { ...scope, ...updates }
+    setScope(newScope)
+    await supabase.from('scope_agreements').update({
+      ...updates,
+      last_edited_by: session?.user.id,
+      last_edited_at: new Date().toISOString(),
+      client_signed_at: null,
+      tradie_signed_at: null,
+    }).eq('id', scope.id)
+    setSaving(false)
+    setSavedAt(new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' }))
+  }
+
+    const signScope = async () => {
     if (!job || !scope) return
     const supabase = createClient()
     const field = profile?.role === 'tradie' ? 'tradie_signed_at' : 'client_signed_at'
