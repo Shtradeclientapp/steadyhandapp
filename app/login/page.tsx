@@ -18,7 +18,8 @@ export default function LoginPage() {
       setStatus('Error: ' + error.message)
       setLoading(false)
     } else {
-      window.location.replace('/dashboard')
+     const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single()
+window.location.replace(profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard')
     }
   }
 
