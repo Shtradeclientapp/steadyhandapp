@@ -4,19 +4,18 @@ import { createClient } from '@supabase/supabase-js'
 
 export const maxDuration = 30
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 export async function GET() {
   return NextResponse.json({ status: 'match route working' })
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
     const body = await request.json()
     const { job_id } = body
 
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (jobError || !job) {
-      return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Job not found: ' + (jobError?.message || 'null result') }, { status: 404 })
     }
 
     const { data: tradies } = await supabase
@@ -41,9 +40,86 @@ export async function POST(request: NextRequest) {
       .contains('trade_categories', [job.trade_category])
 
     if (!tradies || tradies.length === 0) {
-      return NextResponse.json({ error: 'No eligible tradies found' }, { status: 404 })
+      return NextResponse.json({ error: 'No eligible tradies found for: ' + job.trade_category }, { status: 404 })
     }
 
+    const candidates = tradies.slice(0, 10)
+
+    const descriptions = candidates.map((t: any, i: number) =>
+      'Tradie ' + (i+1) + ': ID: ' + t.id + ', Business: ' + t.business_name + ', Categories: ' + t.trade_categories.join(', ') + ', Areas: ' + t.service_areas.join(', ') + ', Rating: ' + t.rating_avg + '/5, Jobs: ' + t.jobs_completed + ', Licence: ' + t.licence_verified + ', Insurance: ' + t.insurance_verified + ', Bio: ' + (t.bio || 'none')
+    ).join('\n')
+
+    const jobSummary = 'Job: ' + job.title + '\nCategory: ' + job.trade_category + '\nLocation: ' + job.suburb + ', WA\nDescription: ' + job.description + '\nBudget: ' + (job.budget_range || 'not specified') + '\nWarranty: ' + job.warranty_period + ' days'
+
+    const promptText = 'You are the AI matching engine for Steadyhand, a trades platform in Western Australia.\n\n' + jobSummary + '\n\nTradies:\n' + descriptions + '\n\nScore each tradie 0-100 on: category match (40%), location fit (20%), track record (20%), verification (10%), engagement (10%).\n\nReturn ONLY this JSON, no markdown:\n{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2-3 sentences>","rank":<number>}]}\n\nReturn top 4 tradies sorted by score descending.'
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: promptText }],
+    })
+
+    const raw = message.content[0].type === 'text'
+git add .
+git commit -m "move supabase client inside function"
+git push
+cd ~/Downloads/steadyhand-app
+cat > app/api/match/route.ts << 'ENDOFFILE'
+import { NextRequest, NextResponse } from 'next/server'
+import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@supabase/supabase-js'
+
+export const maxDuration = 30
+
+export async function GET() {
+  return NextResponse.json({ status: 'match route working' })
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    const body = await request.json()
+    const { job_id } = body
+
+    if (!job_id) {
+      return NextResponse.json({ error: 'job_id required' }, { status: 400 })
+    }
+
+    const { data: allJobs } = await supabase
+      .from('jobs')
+      .select('id, title')
+      .limit(5)
+
+    const { data: job, error: jobError } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('id', job_id)
+      .single()
+
+    if (jobError || !job) {
+      return NextResponse.json({
+        error: 'Job not found',
+        job_id_received: job_id,
+        db_error: jobError?.message,
+        all_jobs_in_db: allJobs
+      }, { status: 404 })
+    }
+
+    const { data: tradies } = await supabase
+      .from('tradie_profiles')
+      .select('*, profile:profiles(*)')
+      .eq('subscription_active', true)
+      .contains('trade_categories', [job.trade_category])
+
+    if (!tradies || tradies.length === 0) {
+      return NextResponse.json({ error: 'No eligible tradies found for: ' + job.trade_category }, { status: 404 })
+    }
+
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
     const candidates = tradies.slice(0, 10)
 
     const descriptions = candidates.map((t: any, i: number) =>
