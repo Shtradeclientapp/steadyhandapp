@@ -10,6 +10,10 @@ export default function ShortlistPage() {
   const [matching, setMatching] = useState(false)
   const [selected, setSelected] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
+ const [showInvite, setShowInvite] = useState(false)
+  const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
+  const [inviteSending, setInviteSending] = useState(false)
+  const [inviteSent, setInviteSent] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
