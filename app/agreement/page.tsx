@@ -1,9 +1,9 @@
 'use client'
+import { useEffect, useState, useRef } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { HintPanel } from '@/components/ui/HintPanel'
 import { DialogueScore } from '@/components/ui/DialogueScore'
 import { DialogueGuide } from '@/components/ui/DialogueGuide'
-import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 export default function AgreementPage() {
   const [user, setUser] = useState<any>(null)
@@ -19,8 +19,13 @@ export default function AgreementPage() {
   const [scopeVersion, setScopeVersion] = useState(1)
   const [currentQuote, setCurrentQuote] = useState<any>(null)
   const [quoteHistory, setQuoteHistory] = useState<any[]>([])
+  const [allQuotes, setAllQuotes] = useState<any[]>([])
+  const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [dialogueScore, setDialogueScore] = useState<any>(null)
   const [scoringDialogue, setScoringDialogue] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [savedAt, setSavedAt] = useState<string|null>(null)
+  const [acceptingQuote, setAcceptingQuote] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -28,10 +33,8 @@ export default function AgreementPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       setUser(session.user)
-
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-
       const isTradie = prof?.role === 'tradie'
       const { data: jobs } = await supabase
         .from('jobs')
@@ -40,25 +43,33 @@ export default function AgreementPage() {
         .in('status', ['agreement', 'shortlisted', 'delivery'])
         .order('updated_at', { ascending: false })
         .limit(1)
-
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
         const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobs[0].id).single()
-        if (scopeData) { setScope(scopeData); setScopeVersion(scopeData.version || 1) }
+        if (scopeData) {
+          setScope(scopeData)
+          setScopeVersion(scopeData.version || 1)
+          if (scopeData.dialogue_score) {
+            setDialogueScore({
+              overall: scopeData.dialogue_score,
+              dimensions: scopeData.dialogue_breakdown,
+              suggestions: scopeData.dialogue_suggestions,
+              band: scopeData.dialogue_score >= 85 ? 'Excellent' : scopeData.dialogue_score >= 70 ? 'Good' : scopeData.dialogue_score >= 55 ? 'Fair' : 'Low',
+              band_message: scopeData.dialogue_score >= 85 ? 'Both parties have had a thorough, transparent conversation.' : scopeData.dialogue_score >= 70 ? 'Most key areas covered. Review suggestions before signing.' : 'Important areas not discussed. Review suggestions before signing.',
+            })
+          }
+        }
         const { data: msgs } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', jobs[0].id).order('created_at', { ascending: true })
         setMessages(msgs || [])
-const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
-        if (qs && qs.length > 0) { setCurrentQuote(qs[0]); setQuoteHistory(qs) }
-  if (scopeData?.dialogue_score) {
-          setDialogueScore({
-            overall: scopeData.dialogue_score,
-            dimensions: scopeData.dialogue_breakdown,
-            suggestions: scopeData.dialogue_suggestions,
-            band: scopeData.dialogue_score >= 85 ? 'Excellent' : scopeData.dialogue_score >= 70 ? 'Good' : scopeData.dialogue_score >= 55 ? 'Fair' : 'Low',
-            band_message: scopeData.dialogue_score >= 85 ? 'Both parties have had a thorough, transparent conversation.' : scopeData.dialogue_score >= 70 ? 'Most key areas covered. Review suggestions before signing.' : 'Important areas not discussed. Review suggestions before signing.',
-          })
-        }     
- }
+        const { data: qs } = await supabase.from('quotes').select('*, tradie:tradie_profiles(business_name)').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
+        if (qs && qs.length > 0) {
+          setCurrentQuote(qs[0])
+          setQuoteHistory(qs)
+          setAllQuotes(qs)
+        }
+        const { data: qrs } = await supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)').eq('job_id', jobs[0].id)
+        setQuoteRequests(qrs || [])
+      }
       setLoading(false)
     })
   }, [])
@@ -76,6 +87,23 @@ const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs
   }, [job])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  const acceptQuote = async (quote: any) => {
+    if (!job) return
+    setAcceptingQuote(true)
+    const supabase = createClient()
+    await supabase.from('jobs').update({ tradie_id: quote.tradie_id, status: 'agreement' }).eq('id', job.id)
+    await supabase.from('quote_requests').update({ status: 'accepted' }).eq('job_id', job.id).eq('tradie_id', quote.tradie_id)
+    await supabase.from('quote_requests').update({ status: 'declined' }).eq('job_id', job.id).neq('tradie_id', quote.tradie_id)
+    setJob({ ...job, tradie_id: quote.tradie_id })
+    setCurrentQuote(quote)
+    setAcceptingQuote(false)
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: user.id,
+      body: 'Quote from ' + (quote.tradie?.business_name || 'tradie') + ' accepted — $' + Number(quote.total_price).toLocaleString() + '. Scope agreement stage begins.',
+    })
+  }
 
   const draftScope = async (suggestion?: string) => {
     if (!job) return
@@ -105,36 +133,16 @@ const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs
     setPushingMsg(msg.id)
     await draftScope(msg.body)
     const supabase = createClient()
-    await supabase.from('job_messages').insert({
-      job_id: job.id,
-      sender_id: user.id,
-      body: 'Scope redrafted incorporating: "' + msg.body + '"',
-    })
+    await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user.id, body: 'Scope redrafted incorporating: "' + msg.body + '"' })
     setPushingMsg(null)
   }
 
-  const [saving, setSaving] = useState(false)
-  const [savedAt, setSavedAt] = useState<string|null>(null)
-
-const scoreDialogue = async () => {
-    if (!job) return
-    setScoringDialogue(true)
-    const res = await fetch('/api/dialogue', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_id: job.id }),
-    })
-    const data = await res.json()
-    if (!data.error) setDialogueScore(data)
-    setScoringDialogue(false)
-  }
   const saveEdit = async (updates: any) => {
     if (!scope) return
     setSaving(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    const newScope = { ...scope, ...updates }
-    setScope(newScope)
+    setScope({ ...scope, ...updates })
     await supabase.from('scope_agreements').update({
       ...updates,
       last_edited_by: session?.user.id,
@@ -146,7 +154,20 @@ const scoreDialogue = async () => {
     setSavedAt(new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' }))
   }
 
-    const signScope = async () => {
+  const scoreDialogue = async () => {
+    if (!job) return
+    setScoringDialogue(true)
+    const res = await fetch('/api/dialogue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_id: job.id }),
+    })
+    const data = await res.json()
+    if (!data.error) setDialogueScore(data)
+    setScoringDialogue(false)
+  }
+
+  const signScope = async () => {
     if (!job || !scope) return
     const supabase = createClient()
     const field = profile?.role === 'tradie' ? 'tradie_signed_at' : 'client_signed_at'
@@ -160,6 +181,9 @@ const scoreDialogue = async () => {
   }
 
   const isTradie = profile?.role === 'tradie'
+  const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
+  const pendingQuoteRequests = quoteRequests.filter(qr => qr.status === 'requested')
+  const hasAcceptedQuote = !!job?.tradie_id && quoteRequests.some(qr => qr.status === 'accepted')
 
   const nav = (
     <div>
@@ -204,8 +228,15 @@ const scoreDialogue = async () => {
           </div>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const, marginBottom:'6px' }}>
             <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px' }}>SCOPE AGREEMENT</h1>
-            {scope && <span style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.06)', padding:'4px 10px', borderRadius:'6px' }}>Version {scopeVersion}</span>}
+            {scope && <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+              <span style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.06)', padding:'4px 10px', borderRadius:'6px' }}>Version {scopeVersion}</span>
+              {saving && <span style={{ fontSize:'11px', color:'#7A9098' }}>Saving...</span>}
+              {savedAt && !saving && <span style={{ fontSize:'11px', color:'#2E7D60' }}>Saved {savedAt}</span>}
+            </div>}
           </div>
+          <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'24px', lineHeight:'1.6' }}>
+            Review the scope below. Use the message thread to suggest changes — either party can push a suggestion directly into a new scope draft.
+          </p>
 
           <HintPanel color="#6B4FA8" hints={[
             "In WA, written agreements are recommended for any job over $7,500. Your Steadyhand scope is your legal protection.",
@@ -214,22 +245,89 @@ const scoreDialogue = async () => {
             "Both parties must sign before work begins. Don't allow work to start on a handshake alone.",
             "If you're unsure about any scope item, use the negotiation thread to ask questions before signing.",
           ]} />
-          <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'24px', lineHeight:'1.6' }}>
-            Review the scope below. Use the message thread to suggest changes — either party can push a suggestion directly into a new scope draft.
-          </p>
 
           <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
             <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
             <div style={{ position:'relative', zIndex:1 }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(216,228,225,0.1)', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'100px', padding:'3px 10px', marginBottom:'10px' }}>
                 <div style={{ width:'6px', height:'6px', background:'#D4522A', borderRadius:'50%' }} />
-                <span style={{ fontSize:'10px', color:'rgba(216,228,225,0.7)', letterSpacing:'0.8px', textTransform:'uppercase' as const }}>AI drafted · v{scopeVersion}</span>
+                <span style={{ fontSize:'10px', color:'rgba(216,228,225,0.7)', letterSpacing:'0.8px', textTransform:'uppercase' as const }}>Steadyhand drafted · v{scopeVersion}</span>
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'4px' }}>{job.title}</h3>
-              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name || 'Tradie assigned'}</p>
+              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name || 'Awaiting tradie selection'}</p>
             </div>
           </div>
-{currentQuote && (
+
+          {multipleQuotes && !isTradie && (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
+              <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>QUOTE COMPARISON</p>
+                <p style={{ fontSize:'12px', color:'#7A9098' }}>
+                  {pendingQuoteRequests.length > 0
+                    ? pendingQuoteRequests.length + ' quote' + (pendingQuoteRequests.length > 1 ? 's' : '') + ' still pending · ' + allQuotes.length + ' received'
+                    : allQuotes.length + ' quotes received — select one to proceed'}
+                </p>
+              </div>
+              {pendingQuoteRequests.length > 0 && allQuotes.length === 0 && (
+                <div style={{ padding:'20px', textAlign:'center' as const }}>
+                  <div style={{ fontSize:'32px', marginBottom:'8px' }}>⏳</div>
+                  <p style={{ fontSize:'14px', color:'#1C2B32', fontWeight:500, marginBottom:'4px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'13px', color:'#7A9098' }}>You have requested quotes from {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''}. They will appear here as they are submitted.</p>
+                  <div style={{ marginTop:'16px', display:'flex', flexDirection:'column', gap:'8px' }}>
+                    {quoteRequests.map(qr => (
+                      <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'#C8D5D2', borderRadius:'8px' }}>
+                        <span style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500 }}>{qr.tradie?.business_name}</span>
+                        <span style={{ fontSize:'11px', color: qr.status === 'accepted' ? '#2E7D60' : qr.status === 'declined' ? '#D4522A' : '#C07830', textTransform:'capitalize' as const }}>{qr.status}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {allQuotes.length > 0 && (
+                <div style={{ padding:'16px 18px' }}>
+                  <div style={{ display:'grid', gridTemplateColumns: allQuotes.length === 1 ? '1fr' : allQuotes.length === 2 ? '1fr 1fr' : 'repeat(3, 1fr)', gap:'12px' }}>
+                    {allQuotes.map((q, i) => {
+                      const isAccepted = job?.tradie_id === q.tradie_id
+                      const isLowest = q.total_price === Math.min(...allQuotes.map((x: any) => Number(x.total_price)))
+                      return (
+                        <div key={q.id} style={{ border:'2px solid ' + (isAccepted ? '#2E7D60' : isLowest ? '#2E6A8F' : 'rgba(28,43,50,0.12)'), borderRadius:'10px', padding:'14px', background: isAccepted ? 'rgba(46,125,96,0.04)' : '#C8D5D2', position:'relative' as const }}>
+                          {isLowest && !isAccepted && <div style={{ position:'absolute', top:'-10px', left:'50%', transform:'translateX(-50%)', background:'#2E6A8F', color:'white', fontSize:'9px', fontWeight:700, padding:'2px 8px', borderRadius:'100px', whiteSpace:'nowrap' as const }}>LOWEST QUOTE</div>}
+                          {isAccepted && <div style={{ position:'absolute', top:'-10px', left:'50%', transform:'translateX(-50%)', background:'#2E7D60', color:'white', fontSize:'9px', fontWeight:700, padding:'2px 8px', borderRadius:'100px', whiteSpace:'nowrap' as const }}>✓ SELECTED</div>}
+                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', marginBottom:'6px' }}>{q.tradie?.business_name || 'Tradie'}</p>
+                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color: isAccepted ? '#2E7D60' : '#1C2B32', marginBottom:'6px' }}>${Number(q.total_price).toLocaleString()}</p>
+                          {q.estimated_days && <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'4px' }}>{q.estimated_days} days</p>}
+                          {q.estimated_start && <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'8px' }}>From {new Date(q.estimated_start).toLocaleDateString('en-AU')}</p>}
+                          {q.breakdown?.length > 0 && (
+                            <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'8px', marginBottom:'8px' }}>
+                              {q.breakdown.map((b: any, bi: number) => (
+                                <div key={bi} style={{ display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#4A5E64', padding:'2px 0' }}>
+                                  <span>{b.label}</span>
+                                  <span>${Number(b.amount).toLocaleString()}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {q.conditions && <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontStyle:'italic' }}>{q.conditions}</p>}
+                          {!isAccepted && !hasAcceptedQuote && (
+                            <button type="button" onClick={() => acceptQuote(q)} disabled={acceptingQuote}
+                              style={{ width:'100%', background:'#1C2B32', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: acceptingQuote ? 0.7 : 1, marginTop:'4px' }}>
+                              Accept this quote →
+                            </button>
+                          )}
+                          <p style={{ fontSize:'10px', color:'#7A9098', marginTop:'6px', textAlign:'center' as const }}>v{q.version} · {new Date(q.created_at).toLocaleDateString('en-AU')}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  {!hasAcceptedQuote && allQuotes.length > 0 && (
+                    <p style={{ fontSize:'12px', color:'#7A9098', marginTop:'12px', textAlign:'center' as const }}>Accept a quote to assign the tradie and begin the scope agreement.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!multipleQuotes && currentQuote && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
               <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <div>
@@ -268,15 +366,17 @@ const scoreDialogue = async () => {
             </div>
           )}
 
-  {job && user && (
-            <DialogueGuide
-              jobId={job.id}
-              userRole={profile?.role || 'client'}
-              userId={user.id}
-              onComplete={scoreDialogue}
-            />
+          {!currentQuote && job.tradie_id && !multipleQuotes && (
+            <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+              <p style={{ fontSize:'13px', color:'#C07830' }}>⏳ Waiting for the tradie to submit a quote before the scope can be signed.</p>
+            </div>
           )}
- {dialogueScore ? (
+
+          {job && user && (
+            <DialogueGuide jobId={job.id} userRole={profile?.role || 'client'} userId={user.id} onComplete={scoreDialogue} />
+          )}
+
+          {dialogueScore ? (
             <DialogueScore
               score={dialogueScore.overall}
               dimensions={dialogueScore.dimensions}
@@ -298,87 +398,65 @@ const scoreDialogue = async () => {
               </button>
             </div>
           )}
-          {!currentQuote && job?.tradie_id && (
-            <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
-              <p style={{ fontSize:'13px', color:'#C07830' }}>Waiting for the tradie to submit a quote before the scope can be signed.</p>
-            </div>
-          )}
+
           {!scope && (
             <div style={{ textAlign:'center', padding:'40px', background:'#E8F0EE', borderRadius:'14px', marginBottom:'20px', border:'1px solid rgba(28,43,50,0.1)' }}>
-              <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No scope drafted yet. Click below to have Claude draft a scope from your job details.</p>
+              <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No scope drafted yet. Click below to have Steadyhand draft a scope from your job details.</p>
               <button type="button" onClick={() => draftScope()} disabled={drafting}
                 style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
-                {drafting ? 'Drafting...' : 'Draft scope with AI →'}
+                {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
               </button>
             </div>
           )}
 
           {scope && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-             {scope.inclusions?.length > 0 && (
-  <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
-      <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is included</p>
-      <span style={{ fontSize:'10px', color:'#2E7D60' }}>Click to edit</span>
-    </div>
-    {scope.inclusions.map((item: string, i: number) => (
-      <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
-        <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>
-        <input
-          type="text"
-          defaultValue={item}
-          onBlur={e => {
-            const updated = [...scope.inclusions]
-            updated[i] = e.target.value
-            saveEdit({ inclusions: updated })
-          }}
-          style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
-          onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }}
-        />
-        <button type="button" onClick={() => {
-          const updated = scope.inclusions.filter((_: string, idx: number) => idx !== i)
-          saveEdit({ inclusions: updated })
-        }} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
-      </div>
-    ))}
-    <button type="button" onClick={() => saveEdit({ inclusions: [...scope.inclusions, 'New inclusion'] })}
-      style={{ marginTop:'8px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
-      + Add inclusion
-    </button>
-  </div>
-)}
+              {scope.inclusions?.length > 0 && (
+                <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+                    <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is included</p>
+                    <span style={{ fontSize:'10px', color:'#2E7D60' }}>Click to edit</span>
+                  </div>
+                  {scope.inclusions.map((item: string, i: number) => (
+                    <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
+                      <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>
+                      <input type="text" defaultValue={item}
+                        onBlur={e => { const updated = [...scope.inclusions]; updated[i] = e.target.value; saveEdit({ inclusions: updated }) }}
+                        style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
+                        onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }} />
+                      <button type="button" onClick={() => { const updated = scope.inclusions.filter((_: string, idx: number) => idx !== i); saveEdit({ inclusions: updated }) }}
+                        style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => saveEdit({ inclusions: [...scope.inclusions, 'New inclusion'] })}
+                    style={{ marginTop:'8px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+                    + Add inclusion
+                  </button>
+                </div>
+              )}
               {scope.exclusions?.length > 0 && (
-  <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
-      <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is excluded</p>
-      <span style={{ fontSize:'10px', color:'#D4522A' }}>Click to edit</span>
-    </div>
-    {scope.exclusions.map((item: string, i: number) => (
-      <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
-        <span style={{ color:'#D4522A', flexShrink:0 }}>×</span>
-        <input
-          type="text"
-          defaultValue={item}
-          onBlur={e => {
-            const updated = [...scope.exclusions]
-            updated[i] = e.target.value
-            saveEdit({ exclusions: updated })
-          }}
-          style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
-          onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }}
-        />
-        <button type="button" onClick={() => {
-          const updated = scope.exclusions.filter((_: string, idx: number) => idx !== i)
-          saveEdit({ exclusions: updated })
-        }} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
-      </div>
-    ))}
-    <button type="button" onClick={() => saveEdit({ exclusions: [...scope.exclusions, 'New exclusion'] })}
-      style={{ marginTop:'8px', fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
-      + Add exclusion
-    </button>
-  </div>
-)}
+                <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+                    <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>What is excluded</p>
+                    <span style={{ fontSize:'10px', color:'#D4522A' }}>Click to edit</span>
+                  </div>
+                  {scope.exclusions.map((item: string, i: number) => (
+                    <div key={i} style={{ display:'flex', gap:'10px', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', alignItems:'center' }}>
+                      <span style={{ color:'#D4522A', flexShrink:0 }}>×</span>
+                      <input type="text" defaultValue={item}
+                        onBlur={e => { const updated = [...scope.exclusions]; updated[i] = e.target.value; saveEdit({ exclusions: updated }) }}
+                        style={{ flex:1, border:'none', background:'transparent', fontSize:'13px', color:'#1C2B32', outline:'none', padding:'4px 6px', borderRadius:'4px', cursor:'text' }}
+                        onFocus={e => { e.target.style.background = 'rgba(28,43,50,0.05)' }} />
+                      <button type="button" onClick={() => { const updated = scope.exclusions.filter((_: string, idx: number) => idx !== i); saveEdit({ exclusions: updated }) }}
+                        style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'14px', flexShrink:0, padding:'0 4px' }}>×</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => saveEdit({ exclusions: [...scope.exclusions, 'New exclusion'] })}
+                    style={{ marginTop:'8px', fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+                    + Add exclusion
+                  </button>
+                </div>
+              )}
               {scope.milestones?.length > 0 && (
                 <div style={{ padding:'18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>Payment milestones</p>
@@ -406,7 +484,6 @@ const scoreDialogue = async () => {
                   </div>
                 ))}
               </div>
-
               <div style={{ padding:'18px' }}>
                 <div style={{ display:'flex', gap:'12px', marginBottom:'16px', flexWrap:'wrap' as const }}>
                   <div style={{ flex:1, padding:'14px', background: scope.client_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border:'1.5px ' + (scope.client_signed_at ? 'solid #2E7D60' : 'dashed rgba(28,43,50,0.2)'), borderRadius:'10px', textAlign:'center' as const }}>
@@ -420,7 +497,6 @@ const scoreDialogue = async () => {
                     <div style={{ fontSize:'11px', color:'#7A9098' }}>{scope.tradie_signed_at ? 'Signed' : 'Not yet signed'}</div>
                   </div>
                 </div>
-
                 {!(profile?.role === 'tradie' ? scope.tradie_signed_at : scope.client_signed_at) && (
                   <button type="button" onClick={signScope}
                     style={{ width:'100%', background:'#6B4FA8', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', marginBottom:'8px' }}>
@@ -429,7 +505,7 @@ const scoreDialogue = async () => {
                 )}
                 <button type="button" onClick={() => draftScope()} disabled={drafting}
                   style={{ width:'100%', background:'transparent', color:'#6B4FA8', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(107,79,168,0.3)', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
-                  {drafting ? 'Redrafting...' : '↻ Redraft scope with AI'}
+                  {drafting ? 'Redrafting...' : '↻ Redraft scope with Steadyhand'}
                 </button>
               </div>
             </div>
@@ -441,7 +517,6 @@ const scoreDialogue = async () => {
             <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px' }}>NEGOTIATION THREAD</p>
             <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>Suggest changes · Push to scope</p>
           </div>
-
           <div style={{ flex:1, overflowY:'auto', padding:'16px', display:'flex', flexDirection:'column' as const, gap:'10px' }}>
             {messages.length === 0 && (
               <div style={{ textAlign:'center', padding:'32px 16px', color:'#7A9098', fontSize:'13px' }}>
@@ -450,7 +525,7 @@ const scoreDialogue = async () => {
             )}
             {messages.map(msg => {
               const isMine = msg.sender_id === user?.id
-              const isSystemMsg = msg.body.startsWith('Scope redrafted')
+              const isSystemMsg = msg.body.startsWith('Scope redrafted') || msg.body.startsWith('Quote from')
               return (
                 <div key={msg.id} style={{ display:'flex', flexDirection:'column' as const, alignItems: isSystemMsg ? 'center' : isMine ? 'flex-end' : 'flex-start' }}>
                   {isSystemMsg ? (
@@ -467,7 +542,7 @@ const scoreDialogue = async () => {
                       </div>
                       <button type="button" onClick={() => pushToScope(msg)} disabled={!!pushingMsg || drafting}
                         style={{ marginTop:'4px', fontSize:'10px', color:'#6B4FA8', background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'6px', padding:'3px 8px', cursor:'pointer', opacity: pushingMsg === msg.id ? 0.7 : 1 }}>
-                        {pushingMsg === msg.id ? '↻ Pushing to scope...' : '↑ Push to scope'}
+                        {pushingMsg === msg.id ? '↻ Pushing...' : '↑ Push to scope'}
                       </button>
                     </>
                   )}
@@ -476,17 +551,13 @@ const scoreDialogue = async () => {
             })}
             <div ref={bottomRef} />
           </div>
-
           <div style={{ padding:'12px', borderTop:'1px solid rgba(28,43,50,0.1)', flexShrink:0 }}>
             <div style={{ display:'flex', gap:'8px' }}>
-              <textarea
-                value={newMessage}
-                onChange={e => setNewMessage(e.target.value)}
+              <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                 placeholder="Suggest a change..."
                 rows={2}
-                style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'none', fontFamily:'sans-serif', lineHeight:'1.4' }}
-              />
+                style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'none', fontFamily:'sans-serif', lineHeight:'1.4' }} />
               <button type="button" onClick={sendMessage} disabled={sending || !newMessage.trim()}
                 style={{ background:'#D4522A', color:'white', padding:'8px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontSize:'13px', fontWeight:500, opacity: sending || !newMessage.trim() ? 0.5 : 1, flexShrink:0, alignSelf:'flex-end' as const }}>
                 Send
