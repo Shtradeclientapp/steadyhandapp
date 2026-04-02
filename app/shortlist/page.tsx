@@ -123,7 +123,7 @@ export default function ShortlistPage() {
     </div>
   )
 
-  if (loading) return (
+if (loading) return (
     <>
       {nav}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
