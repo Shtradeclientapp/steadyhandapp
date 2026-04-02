@@ -1,5 +1,6 @@
 
 'use client'
+import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -119,6 +120,13 @@ window.location.href = '/shortlist'
             <span style={{ fontSize:'11px', color:'#2E7D60', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 1</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
+
+          <HintPanel color="#2E7D60" hints={[
+            "The more detail you provide, the better your Steadyhand shortlist will be. Include property age, access constraints and any relevant history.",
+            "Photos help tradies understand the scope before they quote. Upload as many as you can.",
+            "Setting a realistic budget range helps Steadyhand match you with tradies who are right for your job size.",
+            "Warranty periods are written into your scope agreement. Think about how long you want coverage before submitting.",
+          ]} />
           <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
             You set the brief. The more detail you give, the better your AI-matched shortlist.
           </p>

@@ -1,4 +1,5 @@
 'use client'
+import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -180,6 +181,14 @@ const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs
             <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px' }}>SCOPE AGREEMENT</h1>
             {scope && <span style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.06)', padding:'4px 10px', borderRadius:'6px' }}>Version {scopeVersion}</span>}
           </div>
+
+          <HintPanel color="#6B4FA8" hints={[
+            "In WA, written agreements are recommended for any job over $7,500. Your Steadyhand scope is your legal protection.",
+            "Read every inclusion and exclusion carefully. If something is missing, add it before signing.",
+            "Milestone payments mean you only pay for work that has been completed and approved. Never pay in full upfront.",
+            "Both parties must sign before work begins. Don't allow work to start on a handshake alone.",
+            "If you're unsure about any scope item, use the negotiation thread to ask questions before signing.",
+          ]} />
           <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'24px', lineHeight:'1.6' }}>
             Review the scope below. Use the message thread to suggest changes — either party can push a suggestion directly into a new scope draft.
           </p>

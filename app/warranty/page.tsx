@@ -1,4 +1,5 @@
 'use client'
+import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'

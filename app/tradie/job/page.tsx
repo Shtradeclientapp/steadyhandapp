@@ -1,4 +1,5 @@
 'use client'
+import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -150,7 +151,14 @@ await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'applica
           </div>
         </div>
 
-        <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', marginBottom:'20px' }}>
+         <HintPanel color="#2E6A8F" hints={[
+          "Read the scope carefully before signing. Once signed, variations should be agreed in writing via the message thread.",
+          "Submit a detailed quote breakdown — clients are more likely to accept quotes they can understand.",
+          "If the scope doesn't reflect the actual job, request changes via the negotiation thread before signing.",
+          "Only mark a milestone complete when the work is genuinely finished. Clients can flag issues before approving.",
+          "Keep the client updated via the message thread as you progress through each milestone.",
+        ]} />
+<div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', marginBottom:'20px' }}>
           <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>Client details</p>
           {[
             { label:'Name', value: job.client?.full_name },

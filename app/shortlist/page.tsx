@@ -1,4 +1,5 @@
 'use client'
+import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -128,6 +129,13 @@ export default function ShortlistPage() {
             <span style={{ fontSize:'11px', color:'#2E6A8F', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 2</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR AI SHORTLIST</h1>
+
+          <HintPanel color="#2E6A8F" hints={[
+            "Steadyhand ranks tradies by category fit, location, track record and verification status — not by who pays to be listed.",
+            "Check each tradie's completed job count and rating before selecting. More jobs means more experience on the platform.",
+            "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials. Only select verified tradies.",
+            "You're not committing to anything by viewing the shortlist. Take your time before selecting.",
+          ]} />
           <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
             These tradies match your request. Review each one, then select who you'd like to proceed with.
           </p>
