@@ -10,7 +10,7 @@ export default function ShortlistPage() {
   const [matching, setMatching] = useState(false)
   const [selected, setSelected] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
- const [showInvite, setShowInvite] = useState(false)
+  const [showInvite, setShowInvite] = useState(false)
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteSent, setInviteSent] = useState(false)
@@ -87,6 +87,21 @@ export default function ShortlistPage() {
     setTimeout(() => { window.location.href = '/agreement' }, 1000)
   }
 
+  const sendInvite = async () => {
+    if (!inviteForm.business_name || !inviteForm.email) return
+    setInviteSending(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch('/api/invite', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...inviteForm }),
+    })
+    const data = await res.json()
+    if (data.sent) setInviteSent(true)
+    setInviteSending(false)
+  }
+
   const nav = (
     <div>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 48px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
@@ -115,6 +130,8 @@ export default function ShortlistPage() {
       </div>
     </>
   )
+
+  const inpStyle = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }
 
   return (
     <>
@@ -195,7 +212,7 @@ export default function ShortlistPage() {
                   return (
                     <div key={entry.id} style={{ background:'#E8F0EE', border: i === 0 ? '1.5px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderTop: i === 0 ? '3px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderRadius:'14px', padding:'24px', position:'relative' as const }}>
                       {i === 0 && (
-                        <div style={{ position:'absolute', top:'12px', right:'12px', background:'#D4522A', color:'white', fontSize:'9px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px', fontFamily:'sans-serif', letterSpacing:'0.5px' }}>
+                        <div style={{ position:'absolute', top:'12px', right:'12px', background:'#D4522A', color:'white', fontSize:'9px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px', letterSpacing:'0.5px' }}>
                           STEADYHAND TOP PICK
                         </div>
                       )}
@@ -205,26 +222,26 @@ export default function ShortlistPage() {
                         </div>
                         <div>
                           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px' }}>{t?.business_name}</div>
-                          <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px', fontFamily:'sans-serif' }}>
+                          <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>
                             {t?.service_areas?.[0]} · ⭐ {Number(t?.rating_avg).toFixed(1)} · {t?.jobs_completed} jobs
                           </div>
                         </div>
                         <div style={{ marginLeft:'auto', textAlign:'right' as const }}>
                           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A' }}>{Math.round(entry.ai_score)}%</div>
-                          <div style={{ fontSize:'10px', color:'#7A9098', fontFamily:'sans-serif' }}>match score</div>
+                          <div style={{ fontSize:'10px', color:'#7A9098' }}>match score</div>
                         </div>
                       </div>
                       <div style={{ display:'flex', gap:'8px', marginBottom:'12px', flexWrap:'wrap' as const }}>
-                        {t?.licence_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60', fontFamily:'sans-serif' }}>✓ Licence verified</span>}
-                        {t?.insurance_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60', fontFamily:'sans-serif' }}>✓ Insurance current</span>}
+                        {t?.licence_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Licence verified</span>}
+                        {t?.insurance_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Insurance current</span>}
                       </div>
                       <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'9px', padding:'12px 14px', marginBottom:'14px' }}>
-                        <div style={{ fontSize:'9px', fontWeight:'600', letterSpacing:'0.8px', textTransform:'uppercase' as const, color:'#D4522A', marginBottom:'4px', fontFamily:'sans-serif' }}>Why Steadyhand recommends</div>
-                        <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', fontFamily:'sans-serif' }}>{entry.ai_reasoning}</p>
+                        <div style={{ fontSize:'9px', fontWeight:'600', letterSpacing:'0.8px', textTransform:'uppercase' as const, color:'#D4522A', marginBottom:'4px' }}>Why Steadyhand recommends</div>
+                        <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55' }}>{entry.ai_reasoning}</p>
                       </div>
-                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'14px', fontFamily:'sans-serif' }}>{t?.bio}</p>
+                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'14px' }}>{t?.bio}</p>
                       <button onClick={() => selectTradie(t.id)} disabled={!!selected}
-                        style={{ width:'100%', background: isSelected ? '#2E7D60' : '#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', fontFamily:'sans-serif', opacity: selected && !isSelected ? 0.5 : 1 }}>
+                        style={{ width:'100%', background: isSelected ? '#2E7D60' : '#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity: selected && !isSelected ? 0.5 : 1 }}>
                         {isSelected ? '✓ Selected — proceeding to agreement...' : 'Select this tradie →'}
                       </button>
                     </div>
@@ -233,6 +250,58 @@ export default function ShortlistPage() {
               </div>
             </>
           )}
+
+          <div style={{ marginTop:'24px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+            <div onClick={() => setShowInvite(!showInvite)} style={{ padding:'18px 20px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>INVITE YOUR OWN TRADIE</p>
+                <p style={{ fontSize:'12px', color:'#7A9098' }}>Already have a tradie you trust? Invite them to respond through Steadyhand.</p>
+              </div>
+              <span style={{ fontSize:'20px', color:'#7A9098', flexShrink:0 }}>{showInvite ? '▲' : '▼'}</span>
+            </div>
+            {showInvite && (
+              <div style={{ padding:'0 20px 20px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+                {inviteSent ? (
+                  <div style={{ padding:'20px', textAlign:'center' as const, background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginTop:'16px' }}>
+                    <div style={{ fontSize:'32px', marginBottom:'8px' }}>✅</div>
+                    <p style={{ fontSize:'14px', color:'#2E7D60', fontWeight:500, marginBottom:'4px' }}>Invitation sent</p>
+                    <p style={{ fontSize:'13px', color:'#4A5E64' }}>We have emailed {inviteForm.business_name} with the job details and a link to create their account.</p>
+                  </div>
+                ) : (
+                  <div style={{ marginTop:'16px' }}>
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'12px' }}>
+                      <div>
+                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name *</label>
+                        <input type="text" placeholder="e.g. Smith Carpentry" value={inviteForm.business_name} onChange={e => setInviteForm(f => ({ ...f, business_name: e.target.value }))} style={inpStyle} />
+                      </div>
+                      <div>
+                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Email address *</label>
+                        <input type="email" placeholder="tradie@email.com" value={inviteForm.email} onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))} style={inpStyle} />
+                      </div>
+                    </div>
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'16px' }}>
+                      <div>
+                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Trade category</label>
+                        <input type="text" placeholder="e.g. Carpentry" value={inviteForm.trade_category} onChange={e => setInviteForm(f => ({ ...f, trade_category: e.target.value }))} style={inpStyle} />
+                      </div>
+                      <div>
+                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Phone (optional)</label>
+                        <input type="tel" placeholder="0400 000 000" value={inviteForm.phone} onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))} style={inpStyle} />
+                      </div>
+                    </div>
+                    <button type="button" disabled={inviteSending || !inviteForm.business_name || !inviteForm.email} onClick={sendInvite}
+                      style={{ width:'100%', background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: inviteSending || !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
+                      {inviteSending ? 'Sending invitation...' : 'Send invitation →'}
+                    </button>
+                    <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px', textAlign:'center' as const }}>
+                      We will email them the job details and a link to create their free Steadyhand account.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
     </>
