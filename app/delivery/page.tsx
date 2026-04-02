@@ -58,10 +58,17 @@ export default function DeliveryPage() {
     })
   }, [])
 
-  const approveM = async (id: string) => {
+ const approveM = async (id: string, amount: number) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id)
     setMilestones(ms => ms.map(m => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString() } : m))
+    if (amount > 0) {
+      await fetch('/api/stripe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'release_milestone', milestone_id: id }),
+      })
+    }
     const allDone = milestones.every(m => m.id === id ? true : m.status === 'approved')
     if (allDone && job) {
       await supabase.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
@@ -174,7 +181,7 @@ export default function DeliveryPage() {
                   </p>
                   {isActive && !isDone && (
                     <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
-                      <button type="button" onClick={() => approveM(m.id)}
+                      <button type="button" onClick={() => approveM(m.id, m.amount || 0)}
                         style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
                         Approve milestone →
                       </button>
