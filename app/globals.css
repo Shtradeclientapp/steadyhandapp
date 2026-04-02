@@ -278,3 +278,13 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 @media (max-width: 768px) {
   .diy-grid { grid-template-columns: 1fr !important; }
 }
+/* Agreement 3-column layout */
+.agreement-3col { display: grid; grid-template-columns: 220px 1fr 280px; gap: 20px; }
+@media (max-width: 1024px) {
+  .agreement-3col { grid-template-columns: 1fr 280px !important; }
+  .agreement-3col > div:first-child { display: none !important; }
+}
+@media (max-width: 768px) {
+  .agreement-3col { grid-template-columns: 1fr !important; }
+  .agreement-3col > div:last-child { position: static !important; height: 400px !important; }
+}
