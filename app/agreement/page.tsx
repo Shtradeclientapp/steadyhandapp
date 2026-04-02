@@ -1,6 +1,7 @@
 'use client'
 import { HintPanel } from '@/components/ui/HintPanel'
 import { DialogueScore } from '@/components/ui/DialogueScore'
+import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -267,6 +268,14 @@ const scoreDialogue = async () => {
             </div>
           )}
 
+  {job && user && (
+            <DialogueGuide
+              jobId={job.id}
+              userRole={profile?.role || 'client'}
+              userId={user.id}
+              onComplete={scoreDialogue}
+            />
+          )}
  {dialogueScore ? (
             <DialogueScore
               score={dialogueScore.overall}
