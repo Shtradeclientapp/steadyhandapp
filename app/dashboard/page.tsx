@@ -148,6 +148,26 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
+
+        <div style={{ marginTop:'32px' }}>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>HOME HUB</h2>
+          <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'12px' }}>
+            <a href="/wallet" style={{ textDecoration:'none' }}>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer' }}>
+                <div style={{ fontSize:'28px', marginBottom:'10px' }}>💰</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>WALLET</div>
+                <div style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</div>
+              </div>
+            </a>
+            <a href="/diy" style={{ textDecoration:'none' }}>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer' }}>
+                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🏠</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>DIY PROJECTS</div>
+                <div style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.5' }}>Manage your own home improvement projects with tasks, budgets and expenses.</div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )
