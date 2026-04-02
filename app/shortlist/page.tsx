@@ -13,10 +13,11 @@ export default function ShortlistPage() {
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
-  const [showInvite, setShowInvite] = useState(false)
+  const [tab, setTab] = useState<'matches'|'invite'|'requested'>('matches')
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteSent, setInviteSent] = useState(false)
+  const [pendingInvites, setPendingInvites] = useState<any[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -63,81 +64,46 @@ export default function ShortlistPage() {
     const supabase = createClient()
     const { data } = await supabase
       .from('quote_requests')
-      .select('*')
+      .select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)')
       .eq('job_id', jobId)
     setQuoteRequests(data || [])
-    if (data && data.length > 0) setSent(true)
-  }
-
-  const runMatching = async () => {
-    if (!selectedJob) return
-    setMatching(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('/api/match', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
-      body: JSON.stringify({ job_id: selectedJob.id }),
-    })
-    const data = await res.json()
-    if (data.shortlist) await loadShortlist(selectedJob.id)
-    setMatching(false)
+    if (data && data.length > 0) { setSent(true); setTab('requested') }
   }
 
   const toggleTradie = (tradieId: string) => {
     setSelectedTradies(prev =>
-      prev.includes(tradieId)
-        ? prev.filter(id => id !== tradieId)
-        : prev.length >= 4 ? prev : [...prev, tradieId]
+      prev.includes(tradieId) ? prev.filter(id => id !== tradieId) : prev.length >= 4 ? prev : [...prev, tradieId]
     )
   }
 
   const sendQuoteRequests = async () => {
-    if (selectedTradies.length === 0 || !selectedJob) return
+    if (selectedTradies.length === 0 && pendingInvites.length === 0) return
     setSending(true)
     const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
     for (const tradieId of selectedTradies) {
-      await supabase.from('quote_requests').upsert({
-        job_id: selectedJob.id,
-        tradie_id: tradieId,
-        status: 'requested',
-        requested_at: new Date().toISOString(),
-      }, { onConflict: 'job_id,tradie_id' })
-      await fetch('/api/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
-      }).catch(() => {})
-      await fetch('/api/notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
-      }).catch(() => {})
+      await supabase.from('quote_requests').upsert({ job_id: selectedJob.id, tradie_id: tradieId, status: 'requested', requested_at: new Date().toISOString() }, { onConflict: 'job_id,tradie_id' })
+      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }) }).catch(() => {})
     }
-    await supabase.from('jobs').update({
-      status: 'agreement',
-      quote_request_sent_at: new Date().toISOString(),
-    }).eq('id', selectedJob.id)
+    for (const invite of pendingInvites) {
+      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite }) })
+    }
+    await supabase.from('jobs').update({ status: 'agreement', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
     setSending(false)
-    setTimeout(() => { window.location.href = '/agreement' }, 1500)
+    setTab('requested')
   }
 
-  const sendInvite = async () => {
+  const addInvite = () => {
     if (!inviteForm.business_name || !inviteForm.email) return
-    setInviteSending(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('/api/invite', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...inviteForm }),
-    })
-    const data = await res.json()
-    if (data.sent) setInviteSent(true)
-    setInviteSending(false)
+    setPendingInvites(prev => [...prev, { ...inviteForm }])
+    setInviteForm({ business_name:'', email:'', trade_category:'', phone:'' })
+    setInviteSent(true)
+    setTimeout(() => setInviteSent(false), 2000)
   }
+
+  const removeInvite = (i: number) => setPendingInvites(prev => prev.filter((_, idx) => idx !== i))
 
   const nav = (
     <div>
@@ -168,13 +134,15 @@ export default function ShortlistPage() {
     </>
   )
 
+  const totalSelected = selectedTradies.length + pendingInvites.length
   const inpStyle = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }
 
   return (
     <>
       {nav}
-      <div style={{ minHeight:'calc(100vh - 110px)', background:'#C8D5D2', padding:'40px 24px' }}>
+      <div style={{ minHeight:'calc(100vh - 110px)', background:'#C8D5D2', padding:'32px 24px' }}>
         <div style={{ maxWidth:'800px', margin:'0 auto' }}>
+
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#2E6A8F', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Stage 2</span>
           </div>
@@ -183,210 +151,252 @@ export default function ShortlistPage() {
           <HintPanel color="#2E6A8F" hints={[
             "Best practice is to request quotes from at least 3 tradies so you can compare pricing and approach.",
             "Steadyhand ranks tradies by category fit, location, track record and verification status — not by who pays to be listed.",
-            "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials. Only select verified tradies.",
-            "You can select up to 4 tradies to request quotes from. Once all quotes are in, you choose who to proceed with.",
+            "You can select from Steadyhand matches and invite your own tradie — all quotes are compared in one place.",
+            "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials.",
           ]} />
 
-          <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-            Select 2–4 tradies to request quotes from. Once they respond, you can compare quotes and choose who to proceed with.
-          </p>
-
           {jobs.length > 1 && (
-            <div style={{ marginBottom:'24px' }}>
-              <label style={{ fontSize:'13px', fontWeight:'500', color:'#1C2B32', fontFamily:'sans-serif', marginBottom:'6px', display:'block' }}>Select job</label>
+            <div style={{ marginBottom:'20px' }}>
+              <label style={{ fontSize:'13px', fontWeight:'500', color:'#1C2B32', marginBottom:'6px', display:'block' }}>Select job</label>
               <select value={selectedJob?.id || ''} onChange={async e => {
                 const job = jobs.find(j => j.id === e.target.value)
                 setSelectedJob(job)
                 setSelectedTradies([])
                 setSent(false)
+                setTab('matches')
                 await loadShortlist(job.id)
                 await loadQuoteRequests(job.id)
-              }} style={{ padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', width:'100%' }}>
+              }} style={{ padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', width:'100%' }}>
                 {jobs.map(j => <option key={j.id} value={j.id}>{j.title} — {j.suburb}</option>)}
               </select>
             </div>
           )}
 
           {selectedJob && (
-            <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'20px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
+            <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'18px 20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
-              <div style={{ position:'relative', zIndex:1 }}>
-                <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(216,228,225,0.1)', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'100px', padding:'3px 10px', marginBottom:'10px' }}>
-                  <div style={{ width:'6px', height:'6px', background:'#D4522A', borderRadius:'50%' }} />
-                  <span style={{ fontSize:'10px', color:'rgba(216,228,225,0.7)', letterSpacing:'0.8px', textTransform:'uppercase' as const }}>Steadyhand matching</span>
+              <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                <div>
+                  <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'3px' }}>{selectedJob.title}</h3>
+                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
                 </div>
-                <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'6px' }}>{selectedJob.title}</h3>
-                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)', fontFamily:'sans-serif' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
-              </div>
-            </div>
-          )}
-
-          {sent && quoteRequests.length > 0 && (
-            <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px' }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>✓ Quote requests sent to {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''}</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies have been notified and will submit quotes through the platform. You can compare quotes on the agreement page.</p>
-              <button type="button" onClick={() => window.location.href = '/agreement'}
-                style={{ marginTop:'10px', background:'#2E7D60', color:'white', padding:'9px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                Go to agreement page →
-              </button>
-            </div>
-          )}
-
-          {shortlist.length === 0 && (
-            <div style={{ textAlign:'center', padding:'40px', background:'#E8F0EE', borderRadius:'14px', marginBottom:'24px', border:'1px solid rgba(28,43,50,0.1)' }}>
-              {matching ? (
-                <>
-                  <div style={{ fontSize:'32px', marginBottom:'12px' }}>🔍</div>
-                  <p style={{ fontSize:'15px', color:'#1C2B32', fontWeight:500, marginBottom:'6px' }}>Finding your best matches...</p>
-                  <p style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.6' }}>Steadyhand is reviewing your job and ranking verified local tradies.</p>
-                </>
-              ) : (
-                <>
-                  <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No matches found. Try running matching again.</p>
-                  <button type="button" onClick={runMatching} style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                    Retry matching →
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-
-          {shortlist.length > 0 && (
-            <>
-              {!sent && (
-                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                  <div>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'2px' }}>
-                      {selectedTradies.length === 0 ? 'Select tradies to request quotes from' : selectedTradies.length + ' tradie' + (selectedTradies.length > 1 ? 's' : '') + ' selected'}
-                    </p>
-                    <p style={{ fontSize:'12px', color:'#7A9098' }}>Select 2–4 tradies, then send quote requests</p>
-                  </div>
-                  <button type="button" onClick={sendQuoteRequests}
-                    disabled={selectedTradies.length < 1 || sending}
-                    style={{ background: selectedTradies.length >= 2 ? '#2E6A8F' : 'rgba(28,43,50,0.2)', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor: selectedTradies.length >= 1 ? 'pointer' : 'not-allowed', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
-                    {sending ? 'Sending...' : 'Request quotes →'}
-                  </button>
-                </div>
-              )}
-
-              <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
-                {shortlist.map((entry, i) => {
-                  const t = entry.tradie
-                  const isSelected = selectedTradies.includes(t?.id)
-                  const hasRequest = quoteRequests.find(qr => qr.tradie_id === t?.id)
-                  return (
-                    <div key={entry.id} onClick={() => !sent && toggleTradie(t?.id)}
-                      style={{ background:'#E8F0EE', border: isSelected ? '2px solid #2E6A8F' : i === 0 ? '1.5px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderTop: isSelected ? '2px solid #2E6A8F' : i === 0 ? '3px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderRadius:'14px', padding:'24px', position:'relative' as const, cursor: sent ? 'default' : 'pointer', transition:'all 0.15s' }}>
-                      <div style={{ position:'absolute', top:'12px', right:'12px', display:'flex', gap:'6px', alignItems:'center' }}>
-                        {i === 0 && !isSelected && !hasRequest && (
-                          <div style={{ background:'#D4522A', color:'white', fontSize:'9px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px', letterSpacing:'0.5px' }}>TOP PICK</div>
-                        )}
-                        {hasRequest && (
-                          <div style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', color:'#2E7D60', fontSize:'10px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px' }}>✓ Quote requested</div>
-                        )}
-                        {!sent && (
-                          <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'2px solid ' + (isSelected ? '#2E6A8F' : 'rgba(28,43,50,0.2)'), background: isSelected ? '#2E6A8F' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', color:'white', flexShrink:0 }}>
-                            {isSelected ? '✓' : ''}
-                          </div>
-                        )}
-                      </div>
-
-                      <div style={{ display:'flex', alignItems:'center', gap:'14px', marginBottom:'14px' }}>
-                        <div style={{ width:'48px', height:'48px', borderRadius:'11px', background: i === 0 ? '#2E7D60' : i === 1 ? '#2E6A8F' : '#6B4FA8', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'white', flexShrink:0 }}>
-                          {t?.business_name?.charAt(0) || '?'}
-                        </div>
-                        <div>
-                          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px' }}>{t?.business_name}</div>
-                          <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>
-                            {t?.service_areas?.[0]} · ⭐ {Number(t?.rating_avg).toFixed(1)} · {t?.jobs_completed} jobs
-                          </div>
-                        </div>
-                        <div style={{ marginLeft:'auto', textAlign:'right' as const }}>
-                          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A' }}>{Math.round(entry.ai_score)}%</div>
-                          <div style={{ fontSize:'10px', color:'#7A9098' }}>match score</div>
-                        </div>
-                      </div>
-
-                      <div style={{ display:'flex', gap:'8px', marginBottom:'12px', flexWrap:'wrap' as const }}>
-                        {t?.licence_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Licence verified</span>}
-                        {t?.insurance_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Insurance current</span>}
-                      </div>
-
-                      <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'9px', padding:'12px 14px', marginBottom:'14px' }}>
-                        <div style={{ fontSize:'9px', fontWeight:'600', letterSpacing:'0.8px', textTransform:'uppercase' as const, color:'#D4522A', marginBottom:'4px' }}>Why Steadyhand recommends</div>
-                        <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55' }}>{entry.ai_reasoning}</p>
-                      </div>
-                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55' }}>{t?.bio}</p>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {!sent && selectedTradies.length > 0 && (
-                <div style={{ marginTop:'20px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.25)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                  <div>
-                    <p style={{ fontSize:'14px', fontWeight:500, color:'#2E6A8F', marginBottom:'2px' }}>{selectedTradies.length} tradie{selectedTradies.length > 1 ? 's' : ''} selected</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64' }}>{selectedTradies.length < 2 ? 'Consider selecting at least 2 tradies for comparison' : 'Ready to request quotes'}</p>
-                  </div>
+                {totalSelected > 0 && !sent && (
                   <button type="button" onClick={sendQuoteRequests} disabled={sending}
-                    style={{ background:'#2E6A8F', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
-                    {sending ? 'Sending requests...' : 'Send quote requests →'}
+                    style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
+                    {sending ? 'Sending...' : 'Request quotes from ' + totalSelected + ' tradie' + (totalSelected > 1 ? 's' : '') + ' →'}
                   </button>
-                </div>
-              )}
-            </>
+                )}
+                {sent && (
+                  <button type="button" onClick={() => window.location.href = '/agreement'}
+                    style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    View quotes →
+                  </button>
+                )}
+              </div>
+            </div>
           )}
 
-          <div style={{ marginTop:'24px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-            <div onClick={() => setShowInvite(!showInvite)} style={{ padding:'18px 20px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <div>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>INVITE YOUR OWN TRADIE</p>
-                <p style={{ fontSize:'12px', color:'#7A9098' }}>Already have a tradie you trust? Invite them to quote through Steadyhand.</p>
-              </div>
-              <span style={{ fontSize:'20px', color:'#7A9098', flexShrink:0 }}>{showInvite ? '▲' : '▼'}</span>
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+            <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
+              {[
+                { key:'matches', label:'Steadyhand matches', count: shortlist.length },
+                { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
+                { key:'requested', label:'Requested', count: quoteRequests.length },
+              ].map(t => (
+                <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
+                  style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                  {t.label}
+                  {t.count > 0 && <span style={{ background: tab === t.key ? '#2E6A8F' : 'rgba(28,43,50,0.1)', color: tab === t.key ? 'white' : '#7A9098', fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius:'100px' }}>{t.count}</span>}
+                </button>
+              ))}
             </div>
-            {showInvite && (
-              <div style={{ padding:'0 20px 20px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
-                {inviteSent ? (
-                  <div style={{ padding:'20px', textAlign:'center' as const, background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginTop:'16px' }}>
-                    <div style={{ fontSize:'32px', marginBottom:'8px' }}>✅</div>
-                    <p style={{ fontSize:'14px', color:'#2E7D60', fontWeight:500, marginBottom:'4px' }}>Invitation sent</p>
-                    <p style={{ fontSize:'13px', color:'#4A5E64' }}>We have emailed {inviteForm.business_name} with the job details and a link to create their account.</p>
+
+            {tab === 'matches' && (
+              <div style={{ padding:'20px' }}>
+                {matching && (
+                  <div style={{ textAlign:'center', padding:'40px' }}>
+                    <div style={{ fontSize:'32px', marginBottom:'12px' }}>🔍</div>
+                    <p style={{ fontSize:'15px', color:'#1C2B32', fontWeight:500, marginBottom:'6px' }}>Finding your best matches...</p>
+                    <p style={{ fontSize:'13px', color:'#7A9098' }}>Steadyhand is reviewing your job and ranking verified local tradies.</p>
+                  </div>
+                )}
+                {!matching && shortlist.length === 0 && (
+                  <div style={{ textAlign:'center', padding:'40px' }}>
+                    <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>No matches found for this job.</p>
+                    <button type="button" onClick={async () => {
+                      setMatching(true)
+                      const supabase = createClient()
+                      const { data: { session } } = await supabase.auth.getSession()
+                      const res = await fetch('/api/match', { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + session?.access_token }, body: JSON.stringify({ job_id: selectedJob?.id }) })
+                      const data = await res.json()
+                      if (data.shortlist) await loadShortlist(selectedJob?.id)
+                      setMatching(false)
+                    }} style={{ background:'#2E7D60', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                      Retry matching →
+                    </button>
+                  </div>
+                )}
+                {!matching && shortlist.length > 0 && (
+                  <>
+                    {!sent && <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'16px' }}>Select tradies to request quotes from — tick 2–4 for best results.</p>}
+                    <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
+                      {shortlist.map((entry, i) => {
+                        const t = entry.tradie
+                        const isSelected = selectedTradies.includes(t?.id)
+                        const hasRequest = quoteRequests.find(qr => qr.tradie_id === t?.id)
+                        return (
+                          <div key={entry.id} onClick={() => !sent && !hasRequest && toggleTradie(t?.id)}
+                            style={{ border:'2px solid ' + (isSelected ? '#2E6A8F' : hasRequest ? '#2E7D60' : i === 0 ? 'rgba(212,82,42,0.3)' : 'rgba(28,43,50,0.1)'), borderRadius:'12px', padding:'18px', cursor: sent || hasRequest ? 'default' : 'pointer', background: isSelected ? 'rgba(46,106,143,0.04)' : hasRequest ? 'rgba(46,125,96,0.04)' : '#E8F0EE', transition:'all 0.15s', position:'relative' as const }}>
+                            <div style={{ position:'absolute', top:'12px', right:'12px', display:'flex', gap:'6px', alignItems:'center' }}>
+                              {i === 0 && !hasRequest && <span style={{ background:'#D4522A', color:'white', fontSize:'9px', fontWeight:700, padding:'2px 8px', borderRadius:'100px' }}>TOP PICK</span>}
+                              {hasRequest && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', color:'#2E7D60', fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>✓ Requested</span>}
+                              {!sent && !hasRequest && (
+                                <div style={{ width:'20px', height:'20px', borderRadius:'50%', border:'2px solid ' + (isSelected ? '#2E6A8F' : 'rgba(28,43,50,0.2)'), background: isSelected ? '#2E6A8F' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', color:'white' }}>
+                                  {isSelected ? '✓' : ''}
+                                </div>
+                              )}
+                            </div>
+                            <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'10px' }}>
+                              <div style={{ width:'44px', height:'44px', borderRadius:'10px', background: i === 0 ? '#2E7D60' : i === 1 ? '#2E6A8F' : '#6B4FA8', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'white', flexShrink:0 }}>
+                                {t?.business_name?.charAt(0) || '?'}
+                              </div>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px' }}>{t?.business_name}</div>
+                                <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>{t?.service_areas?.[0]} · ⭐ {Number(t?.rating_avg).toFixed(1)} · {t?.jobs_completed} jobs</div>
+                              </div>
+                              <div style={{ textAlign:'right' as const, flexShrink:0 }}>
+                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#D4522A' }}>{Math.round(entry.ai_score)}%</div>
+                                <div style={{ fontSize:'10px', color:'#7A9098' }}>match</div>
+                              </div>
+                            </div>
+                            <div style={{ display:'flex', gap:'6px', marginBottom:'10px', flexWrap:'wrap' as const }}>
+                              {t?.licence_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'2px 9px', fontSize:'11px', color:'#2E7D60' }}>✓ Licence verified</span>}
+                              {t?.insurance_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'2px 9px', fontSize:'11px', color:'#2E7D60' }}>✓ Insurance current</span>}
+                            </div>
+                            <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 12px', marginBottom:'8px' }}>
+                              <div style={{ fontSize:'9px', fontWeight:'600', letterSpacing:'0.8px', textTransform:'uppercase' as const, color:'#D4522A', marginBottom:'3px' }}>Why Steadyhand recommends</div>
+                              <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.55', margin:0 }}>{entry.ai_reasoning}</p>
+                            </div>
+                            <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:0 }}>{t?.bio}</p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {tab === 'invite' && (
+              <div style={{ padding:'20px' }}>
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>
+                  Have a tradie you already trust? Add them below — they will receive an email with your job details and a link to submit a quote through Steadyhand.
+                </p>
+                {pendingInvites.length > 0 && (
+                  <div style={{ marginBottom:'20px' }}>
+                    <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'8px' }}>Added to quote request ({pendingInvites.length})</p>
+                    {pendingInvites.map((inv, i) => (
+                      <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', marginBottom:'6px' }}>
+                        <div>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{inv.business_name}</p>
+                          <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{inv.email}</p>
+                        </div>
+                        <button type="button" onClick={() => removeInvite(i)} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'16px', padding:'0 4px' }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'16px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'14px' }}>Add a tradie</p>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
+                    <div>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name *</label>
+                      <input type="text" placeholder="e.g. Smith Carpentry" value={inviteForm.business_name} onChange={e => setInviteForm(f => ({ ...f, business_name: e.target.value }))} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Email address *</label>
+                      <input type="email" placeholder="tradie@email.com" value={inviteForm.email} onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))} style={inpStyle} />
+                    </div>
+                  </div>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'14px' }}>
+                    <div>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Trade category</label>
+                      <input type="text" placeholder="e.g. Carpentry" value={inviteForm.trade_category} onChange={e => setInviteForm(f => ({ ...f, trade_category: e.target.value }))} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Phone (optional)</label>
+                      <input type="tel" placeholder="0400 000 000" value={inviteForm.phone} onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))} style={inpStyle} />
+                    </div>
+                  </div>
+                  <button type="button" onClick={addInvite} disabled={!inviteForm.business_name || !inviteForm.email}
+                    style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
+                    {inviteSent ? '✓ Added' : '+ Add to quote request'}
+                  </button>
+                </div>
+                {pendingInvites.length > 0 && !sent && (
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginTop:'12px', textAlign:'center' as const }}>
+                    Invitations will be sent when you click "Request quotes" above.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {tab === 'requested' && (
+              <div style={{ padding:'20px' }}>
+                {quoteRequests.length === 0 ? (
+                  <div style={{ textAlign:'center', padding:'32px', color:'#7A9098', fontSize:'14px' }}>
+                    No quote requests sent yet. Select tradies from the Steadyhand matches tab or invite your own.
                   </div>
                 ) : (
-                  <div style={{ marginTop:'16px' }}>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'12px' }}>
-                      <div>
-                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name *</label>
-                        <input type="text" placeholder="e.g. Smith Carpentry" value={inviteForm.business_name} onChange={e => setInviteForm(f => ({ ...f, business_name: e.target.value }))} style={inpStyle} />
-                      </div>
-                      <div>
-                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Email address *</label>
-                        <input type="email" placeholder="tradie@email.com" value={inviteForm.email} onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))} style={inpStyle} />
-                      </div>
-                    </div>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'16px' }}>
-                      <div>
-                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Trade category</label>
-                        <input type="text" placeholder="e.g. Carpentry" value={inviteForm.trade_category} onChange={e => setInviteForm(f => ({ ...f, trade_category: e.target.value }))} style={inpStyle} />
-                      </div>
-                      <div>
-                        <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Phone (optional)</label>
-                        <input type="tel" placeholder="0400 000 000" value={inviteForm.phone} onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))} style={inpStyle} />
-                      </div>
-                    </div>
-                    <button type="button" disabled={inviteSending || !inviteForm.business_name || !inviteForm.email} onClick={sendInvite}
-                      style={{ width:'100%', background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: inviteSending || !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
-                      {inviteSending ? 'Sending invitation...' : 'Send invitation →'}
-                    </button>
-                    <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px', textAlign:'center' as const }}>
-                      We will email them the job details and a link to create their free Steadyhand account.
+                  <>
+                    <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>
+                      Quote requests sent to {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''}. Quotes will appear on the agreement page as they are submitted.
                     </p>
-                  </div>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'20px' }}>
+                      {quoteRequests.map(qr => (
+                        <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 16px', background:'#C8D5D2', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px' }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                            <div style={{ width:'36px', height:'36px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0 }}>
+                              {qr.tradie?.business_name?.charAt(0) || '?'}
+                            </div>
+                            <div>
+                              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{qr.tradie?.business_name}</p>
+                              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>⭐ {Number(qr.tradie?.rating_avg || 0).toFixed(1)} · {qr.tradie?.jobs_completed || 0} jobs</p>
+                            </div>
+                          </div>
+                          <span style={{ fontSize:'11px', fontWeight:600, padding:'4px 10px', borderRadius:'100px', background: qr.status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)', color: qr.status === 'accepted' ? '#2E7D60' : qr.status === 'declined' ? '#D4522A' : '#C07830', textTransform:'capitalize' as const }}>
+                            {qr.status === 'requested' ? '⏳ Awaiting quote' : qr.status === 'accepted' ? '✓ Quote accepted' : qr.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <button type="button" onClick={() => window.location.href = '/agreement'}
+                      style={{ width:'100%', background:'#2E6A8F', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                      Go to agreement page to compare quotes →
+                    </button>
+                  </>
                 )}
               </div>
             )}
           </div>
+
+          {!sent && totalSelected > 0 && (
+            <div style={{ marginTop:'16px', background:'#1C2B32', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+              <div>
+                <p style={{ fontSize:'14px', fontWeight:500, color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>
+                  {totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected
+                  {selectedTradies.length > 0 && pendingInvites.length > 0 && ' (' + selectedTradies.length + ' matched + ' + pendingInvites.length + ' invited)'}
+                </p>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>
+                  {totalSelected < 2 ? 'Consider selecting at least 2 for comparison' : 'Ready to send quote requests'}
+                </p>
+              </div>
+              <button type="button" onClick={sendQuoteRequests} disabled={sending}
+                style={{ background:'#D4522A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
+                {sending ? 'Sending...' : 'Request quotes →'}
+              </button>
+            </div>
+          )}
 
         </div>
       </div>
