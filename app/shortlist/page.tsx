@@ -8,8 +8,11 @@ export default function ShortlistPage() {
   const [selectedJob, setSelectedJob] = useState<any>(null)
   const [shortlist, setShortlist] = useState<any[]>([])
   const [matching, setMatching] = useState(false)
-  const [selected, setSelected] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedTradies, setSelectedTradies] = useState<string[]>([])
+  const [quoteRequests, setQuoteRequests] = useState<any[]>([])
+  const [sending, setSending] = useState(false)
+  const [sent, setSent] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
@@ -29,6 +32,7 @@ export default function ShortlistPage() {
       setJobs(jobsData)
       setSelectedJob(jobsData[0])
       const existing = await loadShortlist(jobsData[0].id)
+      await loadQuoteRequests(jobsData[0].id)
       if (!existing || existing.length === 0) {
         setMatching(true)
         const res = await fetch('/api/match', {
@@ -55,6 +59,16 @@ export default function ShortlistPage() {
     return data
   }
 
+  const loadQuoteRequests = async (jobId: string) => {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('quote_requests')
+      .select('*')
+      .eq('job_id', jobId)
+    setQuoteRequests(data || [])
+    if (data && data.length > 0) setSent(true)
+  }
+
   const runMatching = async () => {
     if (!selectedJob) return
     setMatching(true)
@@ -70,21 +84,44 @@ export default function ShortlistPage() {
     setMatching(false)
   }
 
-  const selectTradie = async (tradieId: string) => {
-    setSelected(tradieId)
+  const toggleTradie = (tradieId: string) => {
+    setSelectedTradies(prev =>
+      prev.includes(tradieId)
+        ? prev.filter(id => id !== tradieId)
+        : prev.length >= 4 ? prev : [...prev, tradieId]
+    )
+  }
+
+  const sendQuoteRequests = async () => {
+    if (selectedTradies.length === 0 || !selectedJob) return
+    setSending(true)
     const supabase = createClient()
-    await supabase.from('jobs').update({ tradie_id: tradieId, status: 'agreement' }).eq('id', selectedJob.id)
-    await fetch('/api/email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
-    })
-    await fetch('/api/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
-    })
-    setTimeout(() => { window.location.href = '/agreement' }, 1000)
+    for (const tradieId of selectedTradies) {
+      await supabase.from('quote_requests').upsert({
+        job_id: selectedJob.id,
+        tradie_id: tradieId,
+        status: 'requested',
+        requested_at: new Date().toISOString(),
+      }, { onConflict: 'job_id,tradie_id' })
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
+      }).catch(() => {})
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
+      }).catch(() => {})
+    }
+    await supabase.from('jobs').update({
+      status: 'agreement',
+      quote_request_sent_at: new Date().toISOString(),
+    }).eq('id', selectedJob.id)
+    await loadQuoteRequests(selectedJob.id)
+    setSent(true)
+    setSending(false)
+    setTimeout(() => { window.location.href = '/agreement' }, 1500)
   }
 
   const sendInvite = async () => {
@@ -144,14 +181,14 @@ export default function ShortlistPage() {
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR SHORTLIST</h1>
 
           <HintPanel color="#2E6A8F" hints={[
+            "Best practice is to request quotes from at least 3 tradies so you can compare pricing and approach.",
             "Steadyhand ranks tradies by category fit, location, track record and verification status — not by who pays to be listed.",
-            "Check each tradie's completed job count and rating before selecting. More jobs means more experience on the platform.",
             "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials. Only select verified tradies.",
-            "You're not committing to anything by viewing the shortlist. Take your time before selecting.",
+            "You can select up to 4 tradies to request quotes from. Once all quotes are in, you choose who to proceed with.",
           ]} />
 
           <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-            These tradies match your request. Review each one, then select who you'd like to proceed with.
+            Select 2–4 tradies to request quotes from. Once they respond, you can compare quotes and choose who to proceed with.
           </p>
 
           {jobs.length > 1 && (
@@ -160,7 +197,10 @@ export default function ShortlistPage() {
               <select value={selectedJob?.id || ''} onChange={async e => {
                 const job = jobs.find(j => j.id === e.target.value)
                 setSelectedJob(job)
+                setSelectedTradies([])
+                setSent(false)
                 await loadShortlist(job.id)
+                await loadQuoteRequests(job.id)
               }} style={{ padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', width:'100%' }}>
                 {jobs.map(j => <option key={j.id} value={j.id}>{j.title} — {j.suburb}</option>)}
               </select>
@@ -178,6 +218,17 @@ export default function ShortlistPage() {
                 <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'6px' }}>{selectedJob.title}</h3>
                 <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)', fontFamily:'sans-serif' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
               </div>
+            </div>
+          )}
+
+          {sent && quoteRequests.length > 0 && (
+            <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px' }}>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>✓ Quote requests sent to {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''}</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies have been notified and will submit quotes through the platform. You can compare quotes on the agreement page.</p>
+              <button type="button" onClick={() => window.location.href = '/agreement'}
+                style={{ marginTop:'10px', background:'#2E7D60', color:'white', padding:'9px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to agreement page →
+              </button>
             </div>
           )}
 
@@ -202,20 +253,44 @@ export default function ShortlistPage() {
 
           {shortlist.length > 0 && (
             <>
-              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', fontFamily:'sans-serif' }}>
-                {shortlist.length} tradies matched — select one to proceed to the agreement stage.
-              </p>
+              {!sent && (
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                  <div>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'2px' }}>
+                      {selectedTradies.length === 0 ? 'Select tradies to request quotes from' : selectedTradies.length + ' tradie' + (selectedTradies.length > 1 ? 's' : '') + ' selected'}
+                    </p>
+                    <p style={{ fontSize:'12px', color:'#7A9098' }}>Select 2–4 tradies, then send quote requests</p>
+                  </div>
+                  <button type="button" onClick={sendQuoteRequests}
+                    disabled={selectedTradies.length < 1 || sending}
+                    style={{ background: selectedTradies.length >= 2 ? '#2E6A8F' : 'rgba(28,43,50,0.2)', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor: selectedTradies.length >= 1 ? 'pointer' : 'not-allowed', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
+                    {sending ? 'Sending...' : 'Request quotes →'}
+                  </button>
+                </div>
+              )}
+
               <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
                 {shortlist.map((entry, i) => {
                   const t = entry.tradie
-                  const isSelected = selected === t?.id
+                  const isSelected = selectedTradies.includes(t?.id)
+                  const hasRequest = quoteRequests.find(qr => qr.tradie_id === t?.id)
                   return (
-                    <div key={entry.id} style={{ background:'#E8F0EE', border: i === 0 ? '1.5px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderTop: i === 0 ? '3px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderRadius:'14px', padding:'24px', position:'relative' as const }}>
-                      {i === 0 && (
-                        <div style={{ position:'absolute', top:'12px', right:'12px', background:'#D4522A', color:'white', fontSize:'9px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px', letterSpacing:'0.5px' }}>
-                          STEADYHAND TOP PICK
-                        </div>
-                      )}
+                    <div key={entry.id} onClick={() => !sent && toggleTradie(t?.id)}
+                      style={{ background:'#E8F0EE', border: isSelected ? '2px solid #2E6A8F' : i === 0 ? '1.5px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderTop: isSelected ? '2px solid #2E6A8F' : i === 0 ? '3px solid #D4522A' : '1.5px solid rgba(28,43,50,0.12)', borderRadius:'14px', padding:'24px', position:'relative' as const, cursor: sent ? 'default' : 'pointer', transition:'all 0.15s' }}>
+                      <div style={{ position:'absolute', top:'12px', right:'12px', display:'flex', gap:'6px', alignItems:'center' }}>
+                        {i === 0 && !isSelected && !hasRequest && (
+                          <div style={{ background:'#D4522A', color:'white', fontSize:'9px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px', letterSpacing:'0.5px' }}>TOP PICK</div>
+                        )}
+                        {hasRequest && (
+                          <div style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', color:'#2E7D60', fontSize:'10px', fontWeight:'600', padding:'3px 8px', borderRadius:'100px' }}>✓ Quote requested</div>
+                        )}
+                        {!sent && (
+                          <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'2px solid ' + (isSelected ? '#2E6A8F' : 'rgba(28,43,50,0.2)'), background: isSelected ? '#2E6A8F' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', color:'white', flexShrink:0 }}>
+                            {isSelected ? '✓' : ''}
+                          </div>
+                        )}
+                      </div>
+
                       <div style={{ display:'flex', alignItems:'center', gap:'14px', marginBottom:'14px' }}>
                         <div style={{ width:'48px', height:'48px', borderRadius:'11px', background: i === 0 ? '#2E7D60' : i === 1 ? '#2E6A8F' : '#6B4FA8', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'white', flexShrink:0 }}>
                           {t?.business_name?.charAt(0) || '?'}
@@ -231,23 +306,34 @@ export default function ShortlistPage() {
                           <div style={{ fontSize:'10px', color:'#7A9098' }}>match score</div>
                         </div>
                       </div>
+
                       <div style={{ display:'flex', gap:'8px', marginBottom:'12px', flexWrap:'wrap' as const }}>
                         {t?.licence_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Licence verified</span>}
                         {t?.insurance_verified && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>✓ Insurance current</span>}
                       </div>
+
                       <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'9px', padding:'12px 14px', marginBottom:'14px' }}>
                         <div style={{ fontSize:'9px', fontWeight:'600', letterSpacing:'0.8px', textTransform:'uppercase' as const, color:'#D4522A', marginBottom:'4px' }}>Why Steadyhand recommends</div>
                         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55' }}>{entry.ai_reasoning}</p>
                       </div>
-                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'14px' }}>{t?.bio}</p>
-                      <button onClick={() => selectTradie(t.id)} disabled={!!selected}
-                        style={{ width:'100%', background: isSelected ? '#2E7D60' : '#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity: selected && !isSelected ? 0.5 : 1 }}>
-                        {isSelected ? '✓ Selected — proceeding to agreement...' : 'Select this tradie →'}
-                      </button>
+                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55' }}>{t?.bio}</p>
                     </div>
                   )
                 })}
               </div>
+
+              {!sent && selectedTradies.length > 0 && (
+                <div style={{ marginTop:'20px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.25)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                  <div>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#2E6A8F', marginBottom:'2px' }}>{selectedTradies.length} tradie{selectedTradies.length > 1 ? 's' : ''} selected</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64' }}>{selectedTradies.length < 2 ? 'Consider selecting at least 2 tradies for comparison' : 'Ready to request quotes'}</p>
+                  </div>
+                  <button type="button" onClick={sendQuoteRequests} disabled={sending}
+                    style={{ background:'#2E6A8F', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
+                    {sending ? 'Sending requests...' : 'Send quote requests →'}
+                  </button>
+                </div>
+              )}
             </>
           )}
 
@@ -255,7 +341,7 @@ export default function ShortlistPage() {
             <div onClick={() => setShowInvite(!showInvite)} style={{ padding:'18px 20px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>INVITE YOUR OWN TRADIE</p>
-                <p style={{ fontSize:'12px', color:'#7A9098' }}>Already have a tradie you trust? Invite them to respond through Steadyhand.</p>
+                <p style={{ fontSize:'12px', color:'#7A9098' }}>Already have a tradie you trust? Invite them to quote through Steadyhand.</p>
               </div>
               <span style={{ fontSize:'20px', color:'#7A9098', flexShrink:0 }}>{showInvite ? '▲' : '▼'}</span>
             </div>
