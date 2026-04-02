@@ -106,6 +106,7 @@ export default function TradieJobPage() {
     await supabase.from('milestones').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', id)
     setMilestones(ms => ms.map(m => m.id === id ? { ...m, status: 'submitted' } : m))
     await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'milestone_submitted', milestone_id: id }) }).catch(() => {})
+await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'milestone_submitted', milestone_id: id }) }).catch(() => {})
   }
 
   const resolveIssue = async (id: string) => {

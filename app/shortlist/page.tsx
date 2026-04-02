@@ -81,6 +81,11 @@ export default function ShortlistPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
     })
+ await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }),
+    })
     setTimeout(() => { window.location.href = '/agreement' }, 1000)
   }
 

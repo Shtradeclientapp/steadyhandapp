@@ -68,6 +68,11 @@ export default function DeliveryPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'release_milestone', milestone_id: id }),
       })
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'milestone_approved', milestone_id: id }),
+    }).catch(() => {})
     }
     const allDone = milestones.every(m => m.id === id ? true : m.status === 'approved')
     if (allDone && job) {
