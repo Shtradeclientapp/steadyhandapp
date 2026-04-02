@@ -1,5 +1,6 @@
 'use client'
 import { HintPanel } from '@/components/ui/HintPanel'
+import { DialogueScore } from '@/components/ui/DialogueScore'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -15,8 +16,10 @@ export default function AgreementPage() {
   const [sending, setSending] = useState(false)
   const [pushingMsg, setPushingMsg] = useState<string|null>(null)
   const [scopeVersion, setScopeVersion] = useState(1)
-const [currentQuote, setCurrentQuote] = useState<any>(null)
+  const [currentQuote, setCurrentQuote] = useState<any>(null)
   const [quoteHistory, setQuoteHistory] = useState<any[]>([])
+  const [dialogueScore, setDialogueScore] = useState<any>(null)
+  const [scoringDialogue, setScoringDialogue] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -45,7 +48,16 @@ const [currentQuote, setCurrentQuote] = useState<any>(null)
         setMessages(msgs || [])
 const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
         if (qs && qs.length > 0) { setCurrentQuote(qs[0]); setQuoteHistory(qs) }
-      }
+  if (scopeData?.dialogue_score) {
+          setDialogueScore({
+            overall: scopeData.dialogue_score,
+            dimensions: scopeData.dialogue_breakdown,
+            suggestions: scopeData.dialogue_suggestions,
+            band: scopeData.dialogue_score >= 85 ? 'Excellent' : scopeData.dialogue_score >= 70 ? 'Good' : scopeData.dialogue_score >= 55 ? 'Fair' : 'Low',
+            band_message: scopeData.dialogue_score >= 85 ? 'Both parties have had a thorough, transparent conversation.' : scopeData.dialogue_score >= 70 ? 'Most key areas covered. Review suggestions before signing.' : 'Important areas not discussed. Review suggestions before signing.',
+          })
+        }     
+ }
       setLoading(false)
     })
   }, [])
@@ -103,6 +115,18 @@ const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<string|null>(null)
 
+const scoreDialogue = async () => {
+    if (!job) return
+    setScoringDialogue(true)
+    const res = await fetch('/api/dialogue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_id: job.id }),
+    })
+    const data = await res.json()
+    if (!data.error) setDialogueScore(data)
+    setScoringDialogue(false)
+  }
   const saveEdit = async (updates: any) => {
     if (!scope) return
     setSaving(true)
@@ -243,6 +267,28 @@ const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs
             </div>
           )}
 
+ {dialogueScore ? (
+            <DialogueScore
+              score={dialogueScore.overall}
+              dimensions={dialogueScore.dimensions}
+              suggestions={dialogueScore.suggestions || []}
+              band={dialogueScore.band}
+              bandMessage={dialogueScore.band_message}
+              loading={scoringDialogue}
+              onRefresh={scoreDialogue}
+            />
+          ) : (
+            <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'4px' }}>Dialogue Trust Score</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64' }}>Score the quality of your negotiation dialogue before signing.</p>
+              </div>
+              <button type="button" onClick={scoreDialogue} disabled={scoringDialogue}
+                style={{ background:'#6B4FA8', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0, opacity: scoringDialogue ? 0.7 : 1 }}>
+                {scoringDialogue ? 'Scoring...' : 'Score dialogue →'}
+              </button>
+            </div>
+          )}
           {!currentQuote && job?.tradie_id && (
             <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
               <p style={{ fontSize:'13px', color:'#C07830' }}>Waiting for the tradie to submit a quote before the scope can be signed.</p>
