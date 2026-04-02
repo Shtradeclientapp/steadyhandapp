@@ -15,6 +15,7 @@ export default function TradieDashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [stripeConnected, setStripeConnected] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -32,6 +33,15 @@ export default function TradieDashboard() {
         return
       }
       setProfile(prof)
+
+      const stripeRes = await fetch('/api/stripe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_account_status', tradie_id: session.user.id }),
+      })
+      const stripeData = await stripeRes.json()
+      setStripeConnected(stripeData.connected || false)
+
 
       const { data: jobData } = await supabase
         .from('jobs')
@@ -94,7 +104,31 @@ export default function TradieDashboard() {
           ))}
         </div>
 
-        {profile?.tradie?.subscription_active === false && (
+        {!stripeConnected && (
+          <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' as const }}>
+            <div style={{ flex:1 }}>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Connect your bank account</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Set up Stripe to receive milestone payments directly to your bank account.</p>
+            </div>
+            <button type="button" onClick={async () => {
+              const res = await fetch('/api/stripe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'create_connect_account', tradie_id: profile?.id, email: profile?.email }),
+              })
+              const data = await res.json()
+              if (data.url) window.location.href = data.url
+            }} style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+              Connect with Stripe →
+            </button>
+          </div>
+        )}
+        {stripeConnected && (
+          <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'12px 16px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'8px' }}>
+            <span style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500 }}>✓ Stripe connected — payments will be deposited directly to your bank</span>
+          </div>
+        )}
+{profile?.tradie?.subscription_active === false && (
           <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' }}>
             <div style={{ flex:1 }}>
               <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', marginBottom:'4px' }}>Profile pending verification</p>
