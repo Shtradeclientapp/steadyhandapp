@@ -14,6 +14,8 @@ export default function AgreementPage() {
   const [sending, setSending] = useState(false)
   const [pushingMsg, setPushingMsg] = useState<string|null>(null)
   const [scopeVersion, setScopeVersion] = useState(1)
+const [currentQuote, setCurrentQuote] = useState<any>(null)
+  const [quoteHistory, setQuoteHistory] = useState<any[]>([])
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -40,6 +42,8 @@ export default function AgreementPage() {
         if (scopeData) { setScope(scopeData); setScopeVersion(scopeData.version || 1) }
         const { data: msgs } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', jobs[0].id).order('created_at', { ascending: true })
         setMessages(msgs || [])
+const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
+        if (qs && qs.length > 0) { setCurrentQuote(qs[0]); setQuoteHistory(qs) }
       }
       setLoading(false)
     })
@@ -191,7 +195,50 @@ export default function AgreementPage() {
               <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name || 'Tradie assigned'}</p>
             </div>
           </div>
+{currentQuote && (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
+              <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div>
+                  <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500, marginBottom:'2px' }}>Quote from tradie</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098' }}>Version {currentQuote.version} · {new Date(currentQuote.created_at).toLocaleDateString('en-AU')}</p>
+                </div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</div>
+              </div>
+              <div style={{ padding:'16px 18px' }}>
+                {currentQuote.estimated_start && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Start date: {new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>}
+                {currentQuote.estimated_days && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Duration: {currentQuote.estimated_days} days</p>}
+                {currentQuote.conditions && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Conditions: {currentQuote.conditions}</p>}
+                {currentQuote.breakdown?.length > 0 && (
+                  <div style={{ marginTop:'12px', borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
+                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontWeight:500 }}>Breakdown</p>
+                    {currentQuote.breakdown.map((b: any, i: number) => (
+                      <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'13px', color:'#1C2B32', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                        <span>{b.label}</span>
+                        <span style={{ fontWeight:500 }}>${Number(b.amount).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {quoteHistory.length > 1 && (
+                  <div style={{ marginTop:'12px', borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
+                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', fontWeight:500 }}>Previous quotes</p>
+                    {quoteHistory.slice(1).map(q => (
+                      <div key={q.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#7A9098', padding:'3px 0' }}>
+                        <span>v{q.version} · ${Number(q.total_price).toLocaleString()}</span>
+                        <span>{new Date(q.created_at).toLocaleDateString('en-AU')}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
+          {!currentQuote && job?.tradie_id && (
+            <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+              <p style={{ fontSize:'13px', color:'#C07830' }}>Waiting for the tradie to submit a quote before the scope can be signed.</p>
+            </div>
+          )}
           {!scope && (
             <div style={{ textAlign:'center', padding:'40px', background:'#E8F0EE', borderRadius:'14px', marginBottom:'20px', border:'1px solid rgba(28,43,50,0.1)' }}>
               <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No scope drafted yet. Click below to have Claude draft a scope from your job details.</p>
