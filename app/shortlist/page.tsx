@@ -26,13 +26,29 @@ export default function ShortlistPage() {
       setJobs(jobsData || [])
       if (jobsData && jobsData.length > 0) {
         setSelectedJob(jobsData[0])
-        loadShortlist(jobsData[0].id, session.access_token)
+        const existing = await loadShortlist(jobsData[0].id, session.access_token)
+        if (!existing || existing.length === 0) {
+          setMatching(true)
+          const res = await fetch('/api/match', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + session.access_token,
+            },
+            body: JSON.stringify({ job_id: jobsData[0].id }),
+          })
+          const data = await res.json()
+          if (data.shortlist) {
+            await loadShortlist(jobsData[0].id, session.access_token)
+          }
+          setMatching(false)
+        }
       }
       setLoading(false)
     })
   }, [])
 
-  const loadShortlist = async (jobId: string, token: string) => {
+ const loadShortlist = async (jobId: string, token: string) => {
     const supabase = createClient()
     const { data } = await supabase
       .from('shortlist')
@@ -40,6 +56,8 @@ export default function ShortlistPage() {
       .eq('job_id', jobId)
       .order('rank', { ascending: true })
     setShortlist(data || [])
+    return data
+  }
   }
 
   const runMatching = async () => {
@@ -175,18 +193,22 @@ export default function ShortlistPage() {
           )}
 
           {/* Run matching button */}
-          {shortlist.length === 0 && (
+           {shortlist.length === 0 && (
             <div style={{ textAlign:'center', padding:'40px', background:'#E8F0EE', borderRadius:'14px', marginBottom:'24px', border:'1px solid rgba(28,43,50,0.1)' }}>
-              <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', fontFamily:'sans-serif', lineHeight:'1.6' }}>
-                No shortlist yet. Click below to run AI matching for this job.
-              </p>
-           <button
-  type="button"
-  onClick={runMatching}
-  disabled={matching}
-  style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', fontFamily:'sans-serif', opacity: matching ? 0.7 : 1 }}>
-  {matching ? 'Matching in progress...' : 'Run AI matching →'}
-</button>
+              {matching ? (
+                <>
+                  <div style={{ fontSize:'32px', marginBottom:'12px' }}>🔍</div>
+                  <p style={{ fontSize:'15px', color:'#1C2B32', fontWeight:500, marginBottom:'6px' }}>Finding your best matches...</p>
+                  <p style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.6' }}>Steadyhand is reviewing your job and ranking verified local tradies.</p>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No matches found. Try running matching again.</p>
+                  <button type="button" onClick={runMatching} style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    Retry matching →
+                  </button>
+                </>
+              )}
             </div>
           )}
 
