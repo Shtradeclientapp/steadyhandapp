@@ -31,16 +31,11 @@ export default function ShortlistPage() {
           setMatching(true)
           const res = await fetch('/api/match', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + session.access_token,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
             body: JSON.stringify({ job_id: jobsData[0].id }),
           })
           const data = await res.json()
-          if (data.shortlist) {
-            await loadShortlist(jobsData[0].id, session.access_token)
-          }
+          if (data.shortlist) await loadShortlist(jobsData[0].id, session.access_token)
           setMatching(false)
         }
       }
@@ -279,4 +274,4 @@ export default function ShortlistPage() {
       </div>
     </>
   )
-}// Wed  1 Apr 2026 13:45:03 AWST
+}
