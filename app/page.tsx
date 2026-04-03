@@ -69,7 +69,7 @@ export default function Home() {
             CONNECTING WA'S UNIQUE DIGITAL AND TRADE CAPABILITIES
           </h1>
           <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.6)', lineHeight:'1.7', maxWidth:'560px', margin:'0 auto 16px' }}>
-            Steadyhand helps to structure the relationship between homeowners and trade businesses through a unique trust protocol that centres the client — from first request through to scope and contract variations, milestone delivery and warranty.
+            Steadyhand helps homeowners, trade businesses, digital workers and policymakers align through solid frameworks of security, trust and sterling documentation — from first request through to scope and contract variations, milestone delivery, direct payments and warranty.
           </p>
           <p style={{ fontSize:'15px', fontWeight:'300', color:'rgba(216,228,225,0.4)', lineHeight:'1.7', maxWidth:'480px', margin:'0 auto 40px' }}>
             Good work starts with a good conversation. Steadyhand makes that conversation structured, documented and fair for both sides.
