@@ -220,13 +220,14 @@ export default function AgreementPage() {
   return (
     <>{nav}
     <div style={{ minHeight:'calc(100vh - 110px)', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'32px 24px', display:'grid', gridTemplateColumns:'220px 1fr 280px', gap:'20px', alignItems:'start' }} className="agreement-3col">
+      <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'32px 24px', display:'grid', gridTemplateColumns:'260px 1fr', gap:'24px', alignItems:'start' }} className="agreement-2col">
 
         {/* LEFT SIDEBAR */}
-        <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', position:'sticky' as const, top:'130px' }}>
+        <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px', position:'sticky' as const, top:'130px' }}>
+
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
             <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.5)', letterSpacing:'1px', marginBottom:'2px' }}>DOCUMENT</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.4)', letterSpacing:'1px', marginBottom:'2px' }}>DOCUMENT</p>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px' }}>{jobRef}</p>
             </div>
             <div style={{ padding:'14px 16px' }}>
@@ -246,7 +247,43 @@ export default function AgreementPage() {
             </div>
           </div>
 
-          {dialogueScore ? (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
+            <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px' }}>SIGNING STATUS</p>
+            </div>
+            <div style={{ padding:'14px 16px', display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+              {[
+                { label: job.client?.full_name || 'Client', role:'client', signed: scope?.client_signed_at },
+                { label: job.tradie?.business_name || 'Tradie', role:'tradie', signed: scope?.tradie_signed_at },
+              ].map(party => (
+                <div key={party.role} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                  <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: party.signed ? '#2E7D60' : 'rgba(28,43,50,0.08)', border:'1.5px solid ' + (party.signed ? '#2E7D60' : 'rgba(28,43,50,0.15)'), display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', flexShrink:0 }}>
+                    {party.signed ? '✓' : ''}
+                  </div>
+                  <div>
+                    <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', margin:0 }}>{party.label}</p>
+                    <p style={{ fontSize:'10px', color: party.signed ? '#2E7D60' : '#9AA5AA', margin:0 }}>{party.signed ? 'Signed ' + new Date(party.signed).toLocaleDateString('en-AU') : 'Not yet signed'}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <a href="/messages" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'13px 16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', textDecoration:'none', transition:'all 0.15s' }}>
+            <span style={{ fontSize:'18px' }}>💬</span>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Job messages</p>
+              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Continue the conversation →</p>
+            </div>
+          </a>
+
+          {job && user && (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
+              <DialogueGuide jobId={job.id} userRole={profile?.role || 'client'} userId={user.id} onComplete={scoreDialogue} />
+            </div>
+          )}
+
+          {dialogueScore && (
             <DialogueScore
               score={dialogueScore.overall}
               dimensions={dialogueScore.dimensions}
@@ -256,20 +293,15 @@ export default function AgreementPage() {
               loading={scoringDialogue}
               onRefresh={scoreDialogue}
             />
-          ) : (
+          )}
+
+          {!dialogueScore && (
             <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px' }}>
               <p style={{ fontSize:'12px', fontWeight:500, color:'#6B4FA8', marginBottom:'4px' }}>Dialogue Trust Score</p>
-              <p style={{ fontSize:'11px', color:'#4A5E64', marginBottom:'10px', lineHeight:'1.5' }}>Score the quality of your negotiation before signing.</p>
-              <button type="button" onClick={scoreDialogue} disabled={scoringDialogue}
-                style={{ width:'100%', background:'#6B4FA8', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: scoringDialogue ? 0.7 : 1 }}>
-                {scoringDialogue ? 'Scoring...' : 'Score dialogue →'}
-              </button>
+              <p style={{ fontSize:'11px', color:'#4A5E64', marginBottom:'10px', lineHeight:'1.5' }}>Complete the pre-signing dialogue above to generate your trust score automatically.</p>
             </div>
           )}
 
-          {job && user && (
-            <DialogueGuide jobId={job.id} userRole={profile?.role || 'client'} userId={user.id} onComplete={scoreDialogue} />
-          )}
         </div>
 
         {/* CENTRE — THE DOCUMENT */}
@@ -592,66 +624,6 @@ export default function AgreementPage() {
                 </div>
               </>
             )}
-          </div>
-        </div>
-
-        {/* RIGHT SIDEBAR — NEGOTIATION THREAD */}
-        <div style={{ position:'sticky' as const, top:'130px' }}>
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', display:'flex', flexDirection:'column' as const, height:'70vh' }}>
-            <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexShrink:0 }}>
-              <div>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.3px' }}>NEGOTIATION</p>
-                <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'1px' }}>Suggest changes · Push to scope</p>
-              </div>
-              <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', padding:'3px 8px', borderRadius:'6px' }}>{messages.length}</span>
-            </div>
-
-            <div style={{ flex:1, overflowY:'auto', padding:'14px', display:'flex', flexDirection:'column' as const, gap:'10px' }}>
-              {messages.length === 0 && (
-                <div style={{ textAlign:'center', padding:'28px 12px', color:'#7A9098', fontSize:'13px', lineHeight:'1.6' }}>
-                  Use this thread to suggest changes to the scope. Either party can push a message directly into a new draft.
-                </div>
-              )}
-              {messages.map(msg => {
-                const isMine = msg.sender_id === user?.id
-                const isSystem = msg.body.startsWith('Scope updated') || msg.body.startsWith('Quote from')
-                return (
-                  <div key={msg.id} style={{ display:'flex', flexDirection:'column' as const, alignItems: isSystem ? 'center' : isMine ? 'flex-end' : 'flex-start' }}>
-                    {isSystem ? (
-                      <div style={{ background:'rgba(107,79,168,0.07)', border:'1px solid rgba(107,79,168,0.18)', borderRadius:'8px', padding:'5px 10px', fontSize:'11px', color:'#6B4FA8', textAlign:'center' as const }}>↻ {msg.body}</div>
-                    ) : (
-                      <>
-                        <div style={{ fontSize:'10px', color:'#7A9098', marginBottom:'3px' }}>
-                          {msg.sender?.full_name} · {new Date(msg.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
-                        </div>
-                        <div style={{ maxWidth:'92%', padding:'8px 12px', borderRadius:'10px', background: isMine ? '#1C2B32' : '#C8D5D2', color: isMine ? 'rgba(216,228,225,0.9)' : '#1C2B32', fontSize:'13px', lineHeight:'1.5', borderBottomRightRadius: isMine ? '3px' : '10px', borderBottomLeftRadius: isMine ? '10px' : '3px' }}>
-                          {msg.body}
-                        </div>
-                        <button type="button" onClick={() => pushToScope(msg)} disabled={!!pushingMsg || drafting}
-                          style={{ marginTop:'3px', fontSize:'10px', color:'#6B4FA8', background:'rgba(107,79,168,0.05)', border:'1px solid rgba(107,79,168,0.18)', borderRadius:'5px', padding:'2px 7px', cursor:'pointer', opacity: pushingMsg === msg.id ? 0.6 : 1 }}>
-                          {pushingMsg === msg.id ? '↻ Updating...' : '↑ Push to scope'}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )
-              })}
-              <div ref={bottomRef} />
-            </div>
-
-            <div style={{ padding:'10px', borderTop:'1px solid rgba(28,43,50,0.08)', flexShrink:0 }}>
-              <div style={{ display:'flex', gap:'6px' }}>
-                <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-                  placeholder="Suggest a change..."
-                  rows={2}
-                  style={{ flex:1, padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.13)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'none', fontFamily:'sans-serif', lineHeight:'1.4' }} />
-                <button type="button" onClick={sendMessage} disabled={sending || !newMessage.trim()}
-                  style={{ background:'#D4522A', color:'white', padding:'8px 12px', borderRadius:'8px', border:'none', cursor:'pointer', fontSize:'12px', fontWeight:500, opacity: sending || !newMessage.trim() ? 0.5 : 1, flexShrink:0, alignSelf:'flex-end' as const }}>
-                  Send
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
