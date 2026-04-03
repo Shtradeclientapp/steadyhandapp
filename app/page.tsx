@@ -63,16 +63,13 @@ export default function Home() {
         <div className="hero-inner" style={{ position:'relative', zIndex:1 }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(216,228,225,0.08)', border:'1px solid rgba(216,228,225,0.15)', borderRadius:'100px', padding:'6px 16px', marginBottom:'28px' }}>
             <div style={{ width:'6px', height:'6px', background:'#D4522A', borderRadius:'50%', flexShrink:0 }} />
-            <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', letterSpacing:'0.5px' }}>Built for Western Australia</span>
+            <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', letterSpacing:'0.5px' }}>Built exclusively for Western Australia</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(32px, 6vw, 68px)', color:'rgba(216,228,225,0.92)', letterSpacing:'3px', lineHeight:'1.1', marginBottom:'24px', maxWidth:'780px', margin:'0 auto 24px' }}>
-            CONNECTING WA'S UNIQUE DIGITAL AND TRADE CAPABILITIES
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(28px, 5vw, 64px)', color:'rgba(216,228,225,0.92)', letterSpacing:'3px', lineHeight:'1.1', marginBottom:'24px', maxWidth:'780px', margin:'0 auto 24px' }}>
+            THE TRADES PLATFORM THAT STAYS WITH YOU
           </h1>
-          <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.6)', lineHeight:'1.7', maxWidth:'560px', margin:'0 auto 16px' }}>
-            Steadyhand helps homeowners, trade businesses, digital workers and policymakers align through solid frameworks of security, trust and sterling documentation — from first request through to scope and contract variations, milestone delivery, direct payments and warranty.
-          </p>
-          <p style={{ fontSize:'15px', fontWeight:'300', color:'rgba(216,228,225,0.4)', lineHeight:'1.7', maxWidth:'480px', margin:'0 auto 40px' }}>
-            Good work starts with a good conversation. Steadyhand makes that conversation structured, documented and fair for both sides.
+          <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.55)', lineHeight:'1.7', maxWidth:'520px', margin:'0 auto 40px' }}>
+            Western Australia&apos;s only request-to-warranty platform for homeowners and trade businesses.
           </p>
           <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
             <Link href="/signup">
@@ -105,7 +102,7 @@ export default function Home() {
         <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E7D60', fontWeight:'500', marginBottom:'10px' }}>How it works</p>
         <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST TO WARRANTY</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'520px', marginBottom:'40px' }}>
-          Every Steadyhand job follows a structured six-stage process. Each stage is documented, signed or approved before the next begins.
+          Most platforms connect you with a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — with a documented process that protects both parties.
         </p>
         <div className="steps-grid">
           {[
@@ -126,18 +123,18 @@ export default function Home() {
       </div>
 
       <div style={{ background:'#1C2B32' }}>
-        <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'80px 48px' }}>
+        <div className="section-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>Why Steadyhand is different</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>A DIFFERENT KIND OF PLATFORM</h2>
-          <p style={{ fontSize:'16px', color:'rgba(216,228,225,0.55)', fontWeight:'300', lineHeight:'1.7', maxWidth:'560px', marginBottom:'48px' }}>
-            Most trades platforms charge businesses for leads regardless of outcome — creating pressure to underprice, overpromise and move fast. Steadyhand is built on a different principle: that good work starts with a good conversation, and that both parties deserve a process that protects them.
+          <p style={{ fontSize:'16px', color:'rgba(216,228,225,0.5)', fontWeight:'300', lineHeight:'1.7', maxWidth:'580px', marginBottom:'48px' }}>
+            There is no shortage of platforms that will sell a trade business access to your job request. Steadyhand does not work that way. Trade businesses on Steadyhand are verified, not purchased. Jobs are awarded through structured dialogue, not to the fastest bidder. And Steadyhand earns only when work is completed and approved — not when a lead is clicked.
           </p>
           <div className="values-grid">
             {[
               { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. Our 5% milestone fee aligns our success with yours — not with the volume of leads we sell.' },
-              { icon:'📋', title:'Structured dialogue', body:'The Dialogue Trust Score analyses your pre-work conversation across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
-              { icon:'🔒', title:'Your workflow, your tools', body:'Steadyhand respects how trade businesses already operate. Use Xero for invoicing, your CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
-              { icon:'✅', title:'Verified, not just listed', body:'Every tradie on Steadyhand has their licence and insurance verified by a human before they appear in any shortlist. Verification is not a badge — it is a requirement.' },
+              { icon:'📋', title:'Dialogue Trust Score', body:'Every job includes a pre-signing dialogue scored across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
+              { icon:'🔒', title:'Your workflow, your tools', body:'Steadyhand respects how trade businesses already operate. Use Xero for invoicing or your own CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
+              { icon:'✅', title:'Verified, not just listed', body:'Every trade business on Steadyhand has their licence and insurance verified before they appear in any shortlist. Verification is not a badge — it is a requirement.' },
             ].map(v => (
               <div key={v.title} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'14px', padding:'28px' }}>
                 <div style={{ fontSize:'28px', marginBottom:'14px' }}>{v.icon}</div>
@@ -174,11 +171,14 @@ export default function Home() {
       <div style={{ background:'#1C2B32' }}>
         <div className="testimonial-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'24px' }}>From the field</p>
-          <blockquote style={{ fontSize:'20px', fontStyle:'italic', fontWeight:'300', color:'rgba(216,228,225,0.85)', lineHeight:'1.7', marginBottom:'24px' }}>
-            "Steadyhand gave us a genuine pipeline of local jobs. We&apos;ve stopped chasing leads on three other platforms."
+          <blockquote style={{ fontSize:'22px', fontStyle:'italic', fontWeight:'300', color:'rgba(216,228,225,0.85)', lineHeight:'1.7', marginBottom:'28px' }}>
+            &ldquo;I recommend Steadyhand wholeheartedly as digital operations professionals.&rdquo;
           </blockquote>
-          <cite style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', fontStyle:'normal' }}>
-            Chris Creevey, Re-Gutters, Margaret River
+          <div style={{ width:'40px', height:'1px', background:'rgba(212,82,42,0.5)', margin:'0 auto 20px' }} />
+          <cite style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
+            Cullum Creevey<br />
+            Small Business Owner<br />
+            Margaret River and Busselton Re-Gutters
           </cite>
         </div>
       </div>
@@ -186,7 +186,7 @@ export default function Home() {
       <div className="cta-inner">
         <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT FOR WA. BUILT FOR TRUST.</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', marginBottom:'32px', maxWidth:'480px', margin:'0 auto 32px', lineHeight:'1.7' }}>
-          Steadyhand is focused on Western Australian homeowners and trade businesses who believe that good work deserves a proper process.
+          Steadyhand is for Western Australian homeowners and trade businesses who believe that good work deserves a proper process.
         </p>
         <div className="cta-buttons">
           <Link href="/signup">
