@@ -1,4 +1,3 @@
-cat > ~/Downloads/steadyhand-app/app/agreement/page.tsx << 'ENDOFFILE'
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -614,4 +613,3 @@ export default function AgreementPage() {
     </div></>
   )
 }
-ENDOFFILE
