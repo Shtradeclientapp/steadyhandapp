@@ -66,7 +66,7 @@ export default function Home() {
             <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', letterSpacing:'0.5px' }}>Built for Western Australia</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(32px, 6vw, 68px)', color:'rgba(216,228,225,0.92)', letterSpacing:'3px', lineHeight:'1.1', marginBottom:'24px', maxWidth:'780px', margin:'0 auto 24px' }}>
-            WESTERN AUSTRALIA'S PREMIERE TRADE CLIENT PLATFORM
+            CONNECTING WA'S UNIQUE DIGITAL AND TRADE CAPABILITIES
           </h1>
           <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.6)', lineHeight:'1.7', maxWidth:'560px', margin:'0 auto 16px' }}>
             Steadyhand helps to structure the relationship between homeowners and trade businesses through a unique trust protocol that centres the client — from first request through to scope and contract variations, milestone delivery and warranty.
