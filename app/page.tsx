@@ -43,9 +43,9 @@ export default function Home() {
         <div className="nav-inner">
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
           <div className="nav-links">
-            <span style={{ fontSize:'13px', color:'#4A5E64' }}>For homeowners</span>
-            <span style={{ fontSize:'13px', color:'#4A5E64' }}>For trade businesses</span>
-            <span style={{ fontSize:'13px', color:'#4A5E64' }}>About</span>
+            <a href="#how-it-works" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For homeowners</a>
+            <a href="#for-trade-businesses" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For trade businesses</a>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>About</a>
           </div>
           <div className="nav-buttons" style={{ display:'flex', gap:'10px' }}>
             <Link href="/login">
@@ -98,7 +98,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="section-inner">
+      <div className="section-inner" id="how-it-works">
         <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E7D60', fontWeight:'500', marginBottom:'10px' }}>How it works</p>
         <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST TO WARRANTY</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'520px', marginBottom:'40px' }}>
@@ -146,7 +146,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div style={{ background:'#E8F0EE' }}>
+      <div style={{ background:'#E8F0EE' }} id="for-trade-businesses">
         <div className="section-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E6A8F', fontWeight:'500', marginBottom:'10px' }}>For trade businesses</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT TO SUPPORT YOUR PRACTICE</h2>
