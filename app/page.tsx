@@ -66,10 +66,10 @@ export default function Home() {
             <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', letterSpacing:'0.5px' }}>Built for Western Australia</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(32px, 6vw, 68px)', color:'rgba(216,228,225,0.92)', letterSpacing:'3px', lineHeight:'1.1', marginBottom:'24px', maxWidth:'780px', margin:'0 auto 24px' }}>
-            THE TRUST LAYER FOR WA TRADES
+            CONNECTING WESTERN AUSTRALIA'S DIGITAL AND TRADE CAPABILITIES
           </h1>
           <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.6)', lineHeight:'1.7', maxWidth:'560px', margin:'0 auto 16px' }}>
-            Steadyhand is not a lead generator. It is a request-to-warranty platform that structures the conversation between homeowners and trade businesses — from first quote through to signed scope, milestone delivery and warranty.
+            Steadyhand structures the relationship between homeowners and trade businesses — from first quote through to signed scope, milestone delivery and warranty.
           </p>
           <p style={{ fontSize:'15px', fontWeight:'300', color:'rgba(216,228,225,0.4)', lineHeight:'1.7', maxWidth:'480px', margin:'0 auto 40px' }}>
             Good work starts with a good conversation. Steadyhand makes that conversation structured, documented and fair for both sides.
@@ -128,9 +128,9 @@ export default function Home() {
       <div style={{ background:'#1C2B32' }}>
         <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'80px 48px' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>Why Steadyhand is different</p>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>NOT A LEAD GENERATOR</h2>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>A DIFFERENT KIND OF PLATFORM</h2>
           <p style={{ fontSize:'16px', color:'rgba(216,228,225,0.55)', fontWeight:'300', lineHeight:'1.7', maxWidth:'560px', marginBottom:'48px' }}>
-            Platforms like HiPages charge trade businesses for leads regardless of outcome, creating a race to the bottom on price and quality. Steadyhand works differently.
+            Most trades platforms charge businesses for leads regardless of outcome — creating pressure to underprice, overpromise and move fast. Steadyhand is built on a different principle: that good work starts with a good conversation, and that both parties deserve a process that protects them.
           </p>
           <div className="values-grid">
             {[
