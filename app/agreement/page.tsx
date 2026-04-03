@@ -374,7 +374,35 @@ export default function AgreementPage() {
               </div>
             </div>
 
-            {/* Quote details */}
+                {/* External document upload */}
+                <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
+                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'6px', fontWeight:600 }}>Working in your own system?</p>
+                  <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'14px' }}>If you have prepared your agreement or quote in Xero, your CRM, or another tool, upload the signed document here. Steadyhand will store it against this job and warranty tracking will continue from the signing date.</p>
+                  {uploadedDoc ? (
+                    <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px' }}>
+                      <span style={{ fontSize:'20px' }}>📄</span>
+                      <div style={{ flex:1 }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadedDoc.name}</p>
+                        <p style={{ fontSize:'11px', color:'#2E7D60', margin:0 }}>✓ Stored against this job</p>
+                      </div>
+                      <label style={{ fontSize:'12px', color:'#7A9098', cursor:'pointer', textDecoration:'underline' }}>
+                        Replace
+                        <input type="file" accept=".pdf,.doc,.docx" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} />
+                      </label>
+                    </div>
+                  ) : (
+                    <label style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'16px', border:'2px dashed rgba(28,43,50,0.15)', borderRadius:'10px', cursor:'pointer', background:'white' }}>
+                      <span style={{ fontSize:'20px' }}>📎</span>
+                      <div style={{ textAlign:'center' as const }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadingDoc ? 'Uploading...' : 'Upload signed agreement or quote'}</p>
+                        <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'2px' }}>PDF, Word or image · Max 10MB</p>
+                      </div>
+                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} disabled={uploadingDoc} />
+                    </label>
+                  )}
+                </div>
+
+                            {/* Quote details */}
             {currentQuote && (
               <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'16px', fontWeight:600 }}>Agreed price</p>
@@ -524,35 +552,7 @@ export default function AgreementPage() {
                   </div>
                 </div>
 
-                {/* External document upload */}
-                <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'6px', fontWeight:600 }}>Working in your own system?</p>
-                  <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'14px' }}>If you have prepared your agreement or quote in Xero, your CRM, or another tool, upload the signed document here. Steadyhand will store it against this job and warranty tracking will continue from the signing date.</p>
-                  {uploadedDoc ? (
-                    <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px' }}>
-                      <span style={{ fontSize:'20px' }}>📄</span>
-                      <div style={{ flex:1 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadedDoc.name}</p>
-                        <p style={{ fontSize:'11px', color:'#2E7D60', margin:0 }}>✓ Stored against this job</p>
-                      </div>
-                      <label style={{ fontSize:'12px', color:'#7A9098', cursor:'pointer', textDecoration:'underline' }}>
-                        Replace
-                        <input type="file" accept=".pdf,.doc,.docx" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} />
-                      </label>
-                    </div>
-                  ) : (
-                    <label style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'16px', border:'2px dashed rgba(28,43,50,0.15)', borderRadius:'10px', cursor:'pointer', background:'white' }}>
-                      <span style={{ fontSize:'20px' }}>📎</span>
-                      <div style={{ textAlign:'center' as const }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadingDoc ? 'Uploading...' : 'Upload signed agreement or quote'}</p>
-                        <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'2px' }}>PDF, Word or image · Max 10MB</p>
-                      </div>
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} disabled={uploadingDoc} />
-                    </label>
-                  )}
-                </div>
-
-                                {/* Signature blocks */}
+                {/* Signature blocks */}
                 <div style={{ padding:'32px', background:'#FAFBFB' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'20px', fontWeight:600 }}>Signatures</p>
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', marginBottom:'24px' }}>
