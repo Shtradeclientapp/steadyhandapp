@@ -288,3 +288,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   .agreement-3col { grid-template-columns: 1fr !important; }
   .agreement-3col > div:last-child { position: static !important; height: 400px !important; }
 }
+
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+}

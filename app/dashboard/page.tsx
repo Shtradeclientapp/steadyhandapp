@@ -54,7 +54,7 @@ export default function DashboardPage() {
         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>Messages</a>
-<span style={{ fontSize:'13px', color:'#4A5E64' }}>{user?.email}</span>
+<span style={{ fontSize:'13px', color:'#4A5E64' }} className="hide-mobile">{user?.email}</span>
           <button onClick={signOut} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#1C2B32', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', cursor:'pointer' }}>Sign out</button>
         </div>
       </nav>
