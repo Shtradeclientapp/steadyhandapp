@@ -494,7 +494,68 @@ export default function AgreementPage() {
             )}
 
             {/* Scope */}
-            {!scope && (
+  
+          {allQuotes.length > 1 && job?.tradie_id && (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
+              <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>QUOTE VERSION HISTORY</p>
+                <p style={{ fontSize:'12px', color:'#7A9098' }}>Full revision trail — available to both parties for contract variation reference</p>
+              </div>
+              <div style={{ padding:'16px 18px' }}>
+                {allQuotes.map((q, i) => (
+                  <div key={q.id} style={{ marginBottom: i < allQuotes.length - 1 ? '16px' : 0 }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        <div style={{ background: i === 0 ? '#2E7D60' : 'rgba(28,43,50,0.1)', color: i === 0 ? 'white' : '#7A9098', fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>
+                          {i === 0 ? 'CURRENT · v' + q.version : 'v' + q.version}
+                        </div>
+                        <span style={{ fontSize:'12px', color:'#7A9098' }}>{new Date(q.created_at).toLocaleDateString('en-AU')} at {new Date(q.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</span>
+                        {q.tradie?.business_name && <span style={{ fontSize:'12px', color:'#7A9098' }}>· {q.tradie.business_name}</span>}
+                      </div>
+                      <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color: i === 0 ? '#1C2B32' : '#7A9098' }}>${Number(q.total_price).toLocaleString()}</span>
+                    </div>
+                    {q.breakdown?.length > 0 && (
+                      <div style={{ background: i === 0 ? '#F4F8F7' : 'rgba(28,43,50,0.03)', borderRadius:'8px', overflow:'hidden', marginBottom:'8px' }}>
+                        {q.breakdown.map((b: any, bi: number) => {
+                          const prev = i < allQuotes.length - 1 ? allQuotes[i + 1].breakdown?.find((pb: any) => pb.label === b.label) : null
+                          const changed = prev && prev.amount !== b.amount
+                          const isNew = i < allQuotes.length - 1 && !allQuotes[i + 1].breakdown?.find((pb: any) => pb.label === b.label)
+                          return (
+                            <div key={bi} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'7px 12px', borderBottom:'1px solid rgba(28,43,50,0.05)', background: isNew ? 'rgba(46,125,96,0.04)' : changed ? 'rgba(192,120,48,0.04)' : 'transparent' }}>
+                              <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                                {isNew && <span style={{ fontSize:'9px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', padding:'1px 5px', borderRadius:'4px', fontWeight:600 }}>NEW</span>}
+                                {changed && <span style={{ fontSize:'9px', background:'rgba(192,120,48,0.1)', color:'#C07830', padding:'1px 5px', borderRadius:'4px', fontWeight:600 }}>CHANGED</span>}
+                                <span style={{ fontSize:'12px', color:'#4A5E64' }}>{b.category ? b.category + ' — ' : ''}{b.label}</span>
+                              </div>
+                              <div style={{ textAlign:'right' as const }}>
+                                <span style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
+                                {changed && prev && <p style={{ fontSize:'10px', color:'#C07830', margin:0 }}>was ${Number(prev.amount).toLocaleString()}</p>}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+                    {q.conditions && i > 0 && q.conditions !== allQuotes[i-1]?.conditions && (
+                      <div style={{ background:'rgba(192,120,48,0.04)', border:'1px solid rgba(192,120,48,0.15)', borderRadius:'6px', padding:'8px 10px' }}>
+                        <p style={{ fontSize:'10px', fontWeight:600, color:'#C07830', margin:'0 0 3px', letterSpacing:'0.5px' }}>TERMS UPDATED</p>
+                        <p style={{ fontSize:'11px', color:'#4A5E64', margin:0 }}>Conditions were revised in this version.</p>
+                      </div>
+                    )}
+                    {i < allQuotes.length - 1 && (
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px', margin:'12px 0 0' }}>
+                        <div style={{ flex:1, height:'1px', background:'rgba(28,43,50,0.08)' }} />
+                        <span style={{ fontSize:'10px', color:'#9AA5AA' }}>previous version</span>
+                        <div style={{ flex:1, height:'1px', background:'rgba(28,43,50,0.08)' }} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!scope && (
               <div style={{ padding:'32px', textAlign:'center' as const, borderBottom:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No scope drafted yet. Steadyhand will generate a scope from your job details.</p>
                 <button type="button" onClick={() => draftScope()} disabled={drafting}
