@@ -1,364 +1,347 @@
 'use client'
-import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const CATEGORIES = ['Labour', 'Materials', 'Plant & Equipment', 'Subcontractors', 'Preliminaries', 'Contingency']
+
+const DEFAULT_CONDITIONS = `Payment terms: As per milestone schedule agreed in scope.
+Variations: Any changes to scope must be agreed in writing before work proceeds.
+Access: Client to ensure clear site access on agreed start date.
+Materials: All materials remain property of contractor until paid in full.
+Weather delays: Timeline subject to reasonable weather conditions.
+Defects liability: 90 days from practical completion, as per scope agreement.
+Dispute resolution: Steadyhand mediation in first instance.
+GST: All prices inclusive of GST unless otherwise stated.`
+
 export default function TradieJobPage() {
+  const [user, setUser] = useState<any>(null)
   const [job, setJob] = useState<any>(null)
   const [scope, setScope] = useState<any>(null)
-  const [milestones, setMilestones] = useState<any[]>([])
-  const [issues, setIssues] = useState<any[]>([])
   const [quotes, setQuotes] = useState<any[]>([])
+  const [milestones, setMilestones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [signing, setSigning] = useState(false)
   const [showQuoteForm, setShowQuoteForm] = useState(false)
   const [submittingQuote, setSubmittingQuote] = useState(false)
   const [quoteForm, setQuoteForm] = useState({
-    total_price: '',
     estimated_start: '',
     estimated_days: '',
-    conditions: '',
-    breakdown: [{ label: '', amount: '' }],
+    conditions: DEFAULT_CONDITIONS,
+    lineItems: [
+      { category: 'Labour', label: '', quantity: '1', unit: 'hrs', unit_price: '', amount: '' },
+      { category: 'Materials', label: '', quantity: '1', unit: 'lot', unit_price: '', amount: '' },
+    ],
   })
-  const setQ = (k: string) => (e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) =>
-    setQuoteForm(f => ({ ...f, [k]: e.target.value }))
+
+  const currentQuote = quotes[0] || null
+
+  const calcTotal = () => {
+    return quoteForm.lineItems.reduce((sum, item) => {
+      const amt = parseFloat(item.amount) || (parseFloat(item.quantity) * parseFloat(item.unit_price)) || 0
+      return sum + amt
+    }, 0)
+  }
+
+  const updateLineItem = (i: number, field: string, value: string) => {
+    setQuoteForm(f => {
+      const updated = [...f.lineItems]
+      updated[i] = { ...updated[i], [field]: value }
+      if (field === 'quantity' || field === 'unit_price') {
+        const qty = parseFloat(field === 'quantity' ? value : updated[i].quantity) || 0
+        const price = parseFloat(field === 'unit_price' ? value : updated[i].unit_price) || 0
+        updated[i].amount = qty && price ? (qty * price).toFixed(2) : updated[i].amount
+      }
+      return { ...f, lineItems: updated }
+    })
+  }
+
+  const addLineItem = (category: string) => {
+    setQuoteForm(f => ({
+      ...f,
+      lineItems: [...f.lineItems, { category, label: '', quantity: '1', unit: 'lot', unit_price: '', amount: '' }]
+    }))
+  }
+
+  const removeLineItem = (i: number) => {
+    setQuoteForm(f => ({ ...f, lineItems: f.lineItems.filter((_, idx) => idx !== i) }))
+  }
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const jobId = params.get('id')
-    if (!jobId) { window.location.href = '/tradie/dashboard'; return }
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: jobData } = await supabase.from('jobs').select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb, id)').eq('id', jobId).single()
-      if (!jobData || jobData.tradie_id !== session.user.id) { window.location.href = '/tradie/dashboard'; return }
+      setUser(session.user)
+      const params = new URLSearchParams(window.location.search)
+      const jobId = params.get('id')
+      if (!jobId) { setLoading(false); return }
+      const { data: jobData } = await supabase.from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+        .eq('id', jobId).single()
       setJob(jobData)
-      const { data: s } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).single()
-      if (s) setScope(s)
-      const { data: ms } = await supabase.from('milestones').select('*').eq('job_id', jobId).order('order_index', { ascending: true })
-      setMilestones(ms || [])
-      const { data: iss } = await supabase.from('warranty_issues').select('*').eq('job_id', jobId).order('created_at', { ascending: false })
-      setIssues(iss || [])
+      const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).single()
+      setScope(scopeData)
       const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobId).order('created_at', { ascending: false })
       setQuotes(qs || [])
+      const { data: ms } = await supabase.from('milestones').select('*').eq('job_id', jobId).order('created_at', { ascending: true })
+      setMilestones(ms || [])
       setLoading(false)
     })
   }, [])
 
   const submitQuote = async () => {
-    if (!job || !quoteForm.total_price) return
+    const total = calcTotal()
+    if (!job || total === 0) return
     setSubmittingQuote(true)
     const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
     const latestVersion = quotes.length > 0 ? quotes[0].version + 1 : 1
-    const breakdown = quoteForm.breakdown.filter(b => b.label && b.amount)
+    const breakdown = quoteForm.lineItems
+      .filter(item => item.label && item.amount)
+      .map(item => ({ label: item.label, amount: parseFloat(item.amount), category: item.category }))
     const { data: quote } = await supabase.from('quotes').insert({
       job_id: job.id,
-      tradie_id: job.tradie_id,
+      tradie_id: user.id,
       version: latestVersion,
-      total_price: Number(quoteForm.total_price),
+      total_price: total,
       breakdown: breakdown.length > 0 ? breakdown : null,
       estimated_start: quoteForm.estimated_start || null,
       estimated_days: quoteForm.estimated_days ? Number(quoteForm.estimated_days) : null,
       conditions: quoteForm.conditions || null,
-      status: 'submitted',
     }).select().single()
-
     if (quote) {
       setQuotes(prev => [quote, ...prev])
       await supabase.from('job_messages').insert({
         job_id: job.id,
-        sender_id: session?.user.id,
-        body: 'Quote v' + latestVersion + ' submitted: $' + Number(quoteForm.total_price).toLocaleString() + (quoteForm.estimated_days ? ' · Est. ' + quoteForm.estimated_days + ' days' : '') + (quoteForm.estimated_start ? ' · Starting ' + new Date(quoteForm.estimated_start).toLocaleDateString('en-AU') : ''),
+        sender_id: user.id,
+        body: 'Quote v' + latestVersion + ' submitted: $' + total.toLocaleString() + (quoteForm.estimated_days ? ' · Est. ' + quoteForm.estimated_days + ' days' : '') + (quoteForm.estimated_start ? ' · Starting ' + new Date(quoteForm.estimated_start).toLocaleDateString('en-AU') : ''),
       })
-      await supabase.from('scope_agreements').update({
-        total_price: Number(quoteForm.total_price),
-        client_signed_at: null,
-        tradie_signed_at: null,
-      }).eq('job_id', job.id)
-      setScope((s: any) => s ? { ...s, total_price: Number(quoteForm.total_price), client_signed_at: null, tradie_signed_at: null } : s)
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'quote_submitted', job_id: job.id }),
+      }).catch(() => {})
     }
-
     setShowQuoteForm(false)
-    setQuoteForm({ total_price: '', estimated_start: '', estimated_days: '', conditions: '', breakdown: [{ label: '', amount: '' }] })
     setSubmittingQuote(false)
+  }
 
-    await fetch('/api/email', {
+  const submitMilestone = async (milestone: any) => {
+    const supabase = createClient()
+    await supabase.from('milestones').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', milestone.id)
+    setMilestones(prev => prev.map(m => m.id === milestone.id ? { ...m, status: 'submitted' } : m))
+    await fetch('/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'quote_submitted', job_id: job.id }),
+      body: JSON.stringify({ type: 'milestone_submitted', job_id: job.id }),
     }).catch(() => {})
   }
 
-  const signScope = async () => {
-    if (!scope) return
-    setSigning(true)
-    const supabase = createClient()
-    await supabase.from('scope_agreements').update({ tradie_signed_at: new Date().toISOString() }).eq('id', scope.id)
-    await supabase.from('jobs').update({ status: 'delivery' }).eq('id', job.id)
-    setScope({ ...scope, tradie_signed_at: new Date().toISOString() })
-    setJob({ ...job, status: 'delivery' })
-    setSigning(false)
-    setTimeout(() => { window.location.href = '/tradie/dashboard' }, 1500)
-  }
+  const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
 
-  const submitMilestone = async (id: string) => {
-    const supabase = createClient()
-    await supabase.from('milestones').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', id)
-    setMilestones(ms => ms.map(m => m.id === id ? { ...m, status: 'submitted' } : m))
-    await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'milestone_submitted', milestone_id: id }) }).catch(() => {})
-await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'milestone_submitted', milestone_id: id }) }).catch(() => {})
-  }
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}>
+      <p style={{ color: '#4A5E64', fontFamily: 'sans-serif' }}>Loading...</p>
+    </div>
+  )
 
-  const resolveIssue = async (id: string) => {
-    const supabase = createClient()
-    await supabase.from('warranty_issues').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', id)
-    setIssues(iss => iss.map(i => i.id === id ? { ...i, status: 'resolved' } : i))
-  }
+  if (!job) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}>
+      <p style={{ color: '#4A5E64', fontFamily: 'sans-serif' }}>Job not found.</p>
+    </div>
+  )
 
-  const addBreakdownRow = () => setQuoteForm(f => ({ ...f, breakdown: [...f.breakdown, { label: '', amount: '' }] }))
-  const updateBreakdown = (i: number, k: 'label'|'amount', v: string) => setQuoteForm(f => {
-    const updated = [...f.breakdown]
-    updated[i] = { ...updated[i], [k]: v }
-    return { ...f, breakdown: updated }
-  })
-
-  if (loading) return <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}><p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p></div>
-  if (!job) return null
-
-  const statusColor: Record<string,string> = { open:'#D4522A', pending:'#C07830', resolved:'#2E7D60', escalated:'#6B4FA8' }
-  const currentQuote = quotes[0]
-  const inp = { width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif' }
+  const total = calcTotal()
 
   return (
-    <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
-        <a href="/tradie/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Back to dashboard</a>
+    <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
+      <nav style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(200,213,210,0.95)', borderBottom: '1px solid rgba(28,43,50,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
+        <a href="/tradie/dashboard" style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#D4522A', letterSpacing: '2px', textDecoration: 'none' }}>STEADYHAND</a>
+        <a href="/tradie/dashboard" style={{ fontSize: '13px', color: '#4A5E64', textDecoration: 'none' }}>← Back to dashboard</a>
       </nav>
 
-      <div style={{ maxWidth:'720px', margin:'0 auto', padding:'32px 24px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '100px', padding: '4px 12px', marginBottom: '12px' }}>
+          <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Tradie view</span>
+        </div>
+        <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '24px', color: '#1C2B32', letterSpacing: '1.5px', marginBottom: '4px' }}>{job.title}</h1>
+        <p style={{ fontSize: '14px', color: '#7A9098', marginBottom: '24px' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</p>
 
-        <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'20px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
-          <div style={{ position:'relative', zIndex:1 }}>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(216,228,225,0.1)', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'100px', padding:'3px 10px', marginBottom:'10px' }}>
-              <span style={{ fontSize:'10px', color:'rgba(216,228,225,0.7)', letterSpacing:'0.8px', textTransform:'uppercase' as const }}>{job.status}</span>
-            </div>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'6px' }}>{job.title}</h2>
-            <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)', marginBottom:'10px' }}>{job.trade_category} · {job.suburb} · {job.property_type}</p>
-            <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', lineHeight:'1.6' }}>{job.description}</p>
+        <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+          <p style={{ fontSize: '10px', letterSpacing: '1px', textTransform: 'uppercase' as const, color: '#7A9098', marginBottom: '8px', fontWeight: 500 }}>Job description</p>
+          <p style={{ fontSize: '14px', color: '#1C2B32', lineHeight: '1.65', marginBottom: '12px' }}>{job.description}</p>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
+            {job.budget_range && <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>Budget: {job.budget_range}</span>}
+            {job.property_type && <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>{job.property_type}</span>}
+            <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>{job.suburb}</span>
           </div>
         </div>
 
-         <HintPanel color="#2E6A8F" hints={[
-          "Read the scope carefully before signing. Once signed, variations should be agreed in writing via the message thread.",
-          "Submit a detailed quote breakdown — clients are more likely to accept quotes they can understand.",
-          "If the scope doesn't reflect the actual job, request changes via the negotiation thread before signing.",
-          "Only mark a milestone complete when the work is genuinely finished. Clients can flag issues before approving.",
-          "Keep the client updated via the message thread as you progress through each milestone.",
-        ]} />
-<div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', marginBottom:'20px' }}>
-          <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:500 }}>Client details</p>
-          {[
-            { label:'Name', value: job.client?.full_name },
-            { label:'Email', value: job.client?.email },
-            { label:'Suburb', value: job.client?.suburb },
-            { label:'Budget', value: job.budget_range || 'Not specified' },
-            { label:'Warranty', value: job.warranty_period + ' days' },
-          ].map(item => (
-            <div key={item.label} style={{ display:'flex', gap:'12px', padding:'7px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
-              <span style={{ fontSize:'13px', color:'#7A9098', minWidth:'80px', flexShrink:0 }}>{item.label}</span>
-              <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{item.value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-          <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap' as const, gap:'10px' }}>
+        <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500, marginBottom:'2px' }}>Your quote</p>
-              {currentQuote && <p style={{ fontSize:'12px', color:'#7A9098' }}>Version {currentQuote.version} · Submitted {new Date(currentQuote.created_at).toLocaleDateString('en-AU')}</p>}
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE</p>
+              <p style={{ fontSize: '12px', color: '#7A9098' }}>{currentQuote ? 'Version ' + currentQuote.version + ' submitted · ' + new Date(currentQuote.created_at).toLocaleDateString('en-AU') : 'No quote submitted yet'}</p>
             </div>
             <button type="button" onClick={() => setShowQuoteForm(!showQuoteForm)}
-              style={{ background: currentQuote ? 'transparent' : '#2E7D60', color: currentQuote ? '#2E7D60' : 'white', padding:'8px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border: currentQuote ? '1px solid rgba(46,125,96,0.3)' : 'none', cursor:'pointer' }}>
-              {currentQuote ? '↻ Revise quote' : '+ Submit quote'}
+              style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#1C2B32' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+              {showQuoteForm ? 'Cancel' : currentQuote ? 'Revise quote' : 'Build quote →'}
             </button>
           </div>
 
           {currentQuote && !showQuoteForm && (
-            <div style={{ padding:'16px 18px' }}>
-              <div style={{ display:'flex', alignItems:'baseline', gap:'8px', marginBottom:'12px' }}>
-                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:'#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
-                <span style={{ fontSize:'13px', color:'#7A9098' }}>total</span>
+            <div style={{ padding: '16px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '14px' }}>
+                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '32px', color: '#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                <span style={{ fontSize: '13px', color: '#9AA5AA' }}>AUD inc. GST</span>
               </div>
-              {currentQuote.estimated_start && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Start: {new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>}
-              {currentQuote.estimated_days && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Duration: {currentQuote.estimated_days} days</p>}
-              {currentQuote.conditions && <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'4px' }}>Conditions: {currentQuote.conditions}</p>}
-              {currentQuote.breakdown && currentQuote.breakdown.length > 0 && (
-                <div style={{ marginTop:'12px', borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
-                  <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontWeight:500 }}>Breakdown</p>
+              {currentQuote.breakdown?.length > 0 && (
+                <div style={{ background: '#F4F8F7', borderRadius: '8px', overflow: 'hidden', marginBottom: '12px' }}>
                   {currentQuote.breakdown.map((b: any, i: number) => (
-                    <div key={i} style={{ display:'flex', justifyContent:'space-between', fontSize:'13px', color:'#1C2B32', padding:'4px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
-                      <span>{b.label}</span>
-                      <span style={{ fontWeight:500 }}>${Number(b.amount).toLocaleString()}</span>
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', borderBottom: '1px solid rgba(28,43,50,0.06)', fontSize: '13px' }}>
+                      <span style={{ color: '#4A5E64' }}>{b.category ? b.category + ' — ' : ''}{b.label}</span>
+                      <span style={{ fontWeight: 500, color: '#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
                     </div>
                   ))}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#E8F0EE', fontSize: '13px', fontWeight: 600 }}>
+                    <span>Total</span>
+                    <span>${Number(currentQuote.total_price).toLocaleString()}</span>
+                  </div>
                 </div>
               )}
+              {currentQuote.estimated_start && <p style={{ fontSize: '13px', color: '#4A5E64', marginBottom: '4px' }}>Start: {new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>}
+              {currentQuote.estimated_days && <p style={{ fontSize: '13px', color: '#4A5E64', marginBottom: '4px' }}>Duration: {currentQuote.estimated_days} days</p>}
             </div>
           )}
 
           {showQuoteForm && (
-            <div style={{ padding:'18px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>
-                {currentQuote ? 'REVISE QUOTE (v' + (currentQuote.version + 1) + ')' : 'SUBMIT QUOTE'}
-              </p>
-              <div style={{ marginBottom:'14px' }}>
-                <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Total price ($) *</label>
-                <input type="number" placeholder="4200" value={quoteForm.total_price} onChange={setQ('total_price')} style={inp} />
+            <div style={{ padding: '20px' }}>
+              <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '12px 14px', marginBottom: '20px' }}>
+                <p style={{ fontSize: '12px', color: '#2E7D60', margin: 0, lineHeight: '1.6' }}>
+                  Build your quote line by line — a detailed breakdown helps clients understand your pricing and reduces disputes later. Your total will calculate automatically.
+                </p>
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'14px' }}>
-                <div>
-                  <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Estimated start date</label>
-                  <input type="date" value={quoteForm.estimated_start} onChange={setQ('estimated_start')} style={inp} />
-                </div>
-                <div>
-                  <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Duration (days)</label>
-                  <input type="number" placeholder="14" value={quoteForm.estimated_days} onChange={setQ('estimated_days')} style={inp} />
-                </div>
-              </div>
-              <div style={{ marginBottom:'14px' }}>
-                <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Price breakdown (optional)</label>
-                {quoteForm.breakdown.map((b, i) => (
-                  <div key={i} style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'8px', marginBottom:'6px' }}>
-                    <input type="text" placeholder="Labour" value={b.label} onChange={e => updateBreakdown(i, 'label', e.target.value)} style={{ ...inp, marginBottom:0 }} />
-                    <input type="number" placeholder="1200" value={b.amount} onChange={e => updateBreakdown(i, 'amount', e.target.value)} style={{ ...inp, marginBottom:0, width:'100px' }} />
-                  </div>
-                ))}
-                <button type="button" onClick={addBreakdownRow} style={{ fontSize:'12px', color:'#2E7D60', background:'none', border:'none', cursor:'pointer', padding:'4px 0' }}>+ Add line item</button>
-              </div>
-              <div style={{ marginBottom:'16px' }}>
-                <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Special conditions</label>
-                <textarea placeholder="e.g. Price subject to site inspection, materials to be confirmed..." value={quoteForm.conditions} onChange={setQ('conditions')} rows={3} style={{ ...inp, resize:'vertical' as const }} />
-              </div>
-              <div style={{ display:'flex', gap:'10px' }}>
-                <button type="button" onClick={() => setShowQuoteForm(false)} style={{ background:'transparent', color:'#1C2B32', padding:'11px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Cancel</button>
-                <button type="button" onClick={submitQuote} disabled={submittingQuote || !quoteForm.total_price}
-                  style={{ flex:1, background:'#2E7D60', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: submittingQuote || !quoteForm.total_price ? 0.6 : 1 }}>
-                  {submittingQuote ? 'Submitting...' : currentQuote ? 'Submit revised quote →' : 'Submit quote →'}
-                </button>
-              </div>
-            </div>
-          )}
 
-          {quotes.length > 1 && (
-            <div style={{ padding:'14px 18px', borderTop:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.02)' }}>
-              <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontWeight:500 }}>Quote history</p>
-              {quotes.slice(1).map(q => (
-                <div key={q.id} style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#7A9098', padding:'4px 0' }}>
-                  <span>v{q.version} · ${Number(q.total_price).toLocaleString()}</span>
-                  <span>{new Date(q.created_at).toLocaleDateString('en-AU')}</span>
+              {CATEGORIES.map(cat => {
+                const items = quoteForm.lineItems.map((item, i) => ({ ...item, i })).filter(item => item.category === cat)
+                return (
+                  <div key={cat} style={{ marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <p style={{ fontSize: '11px', fontWeight: 600, color: '#1C2B32', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: 0 }}>{cat}</p>
+                      <button type="button" onClick={() => addLineItem(cat)}
+                        style={{ fontSize: '11px', color: '#2E7D60', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '5px', padding: '2px 8px', cursor: 'pointer' }}>
+                        + Add
+                      </button>
+                    </div>
+                    {items.length === 0 && (
+                      <div style={{ padding: '10px', background: 'rgba(28,43,50,0.03)', borderRadius: '6px', border: '1px dashed rgba(28,43,50,0.1)', textAlign: 'center' as const }}>
+                        <span style={{ fontSize: '12px', color: '#9AA5AA' }}>No {cat.toLowerCase()} items — click + Add to include</span>
+                      </div>
+                    )}
+                    {items.map(item => (
+                      <div key={item.i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '6px', marginBottom: '6px', alignItems: 'center' }}>
+                        <input type="text" placeholder="Description" value={item.label} onChange={e => updateLineItem(item.i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <input type="number" placeholder="Qty" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
+                          {['hrs', 'days', 'lot', 'm', 'm²', 'each', 'kg'].map(u => <option key={u} value={u}>{u}</option>)}
+                        </select>
+                        <input type="number" placeholder="Unit $" value={item.unit_price} onChange={e => updateLineItem(item.i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <input type="number" placeholder="Total" value={item.amount} onChange={e => updateLineItem(item.i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <button type="button" onClick={() => removeLineItem(item.i)} style={{ background: 'none', border: 'none', color: '#D4522A', cursor: 'pointer', fontSize: '16px', padding: 0, lineHeight: 1 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
+
+              <div style={{ background: '#1C2B32', borderRadius: '8px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(216,228,225,0.7)' }}>Total (inc. GST)</span>
+                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: 'rgba(216,228,225,0.9)' }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '5px' }}>Estimated start date</label>
+                  <input type="date" value={quoteForm.estimated_start} onChange={e => setQuoteForm(f => ({ ...f, estimated_start: e.target.value }))} style={inp} />
                 </div>
-              ))}
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '5px' }}>Estimated duration (days)</label>
+                  <input type="number" placeholder="14" value={quoteForm.estimated_days} onChange={e => setQuoteForm(f => ({ ...f, estimated_days: e.target.value }))} style={inp} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>Terms and conditions</label>
+                  <span style={{ fontSize: '11px', color: '#7A9098' }}>WA defaults pre-filled · edit as needed</span>
+                </div>
+                <textarea value={quoteForm.conditions} onChange={e => setQuoteForm(f => ({ ...f, conditions: e.target.value }))} rows={8} style={{ ...inp, resize: 'vertical' as const, lineHeight: '1.6', fontSize: '12px' }} />
+              </div>
+
+              <div style={{ background: 'rgba(192,120,48,0.06)', border: '1px solid rgba(192,120,48,0.2)', borderRadius: '8px', padding: '12px 14px', marginBottom: '16px' }}>
+                <p style={{ fontSize: '11px', fontWeight: 600, color: '#C07830', marginBottom: '4px', letterSpacing: '0.5px' }}>BEFORE YOU SUBMIT</p>
+                <p style={{ fontSize: '12px', color: '#4A5E64', lineHeight: '1.6', margin: 0 }}>
+                  Check your line items cover all materials, travel, contingency and margin. Underquoting now leads to disputes later. A detailed, well-structured quote signals professionalism and is more likely to be accepted.
+                </p>
+              </div>
+
+              <button type="button" onClick={submitQuote} disabled={submittingQuote || total === 0}
+                style={{ width: '100%', background: '#2E7D60', color: 'white', padding: '14px', borderRadius: '8px', fontSize: '14px', fontWeight: 500, border: 'none', cursor: 'pointer', opacity: submittingQuote || total === 0 ? 0.6 : 1 }}>
+                {submittingQuote ? 'Submitting...' : 'Submit quote — $' + total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' →'}
+              </button>
             </div>
           )}
         </div>
 
-        {scope && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-            <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>Scope agreement</p>
-              <div style={{ display:'flex', gap:'8px' }}>
-                <span style={{ fontSize:'11px', color: scope.client_signed_at ? '#2E7D60' : '#7A9098' }}>Client {scope.client_signed_at ? '✓' : '⏳'}</span>
-                <span style={{ fontSize:'11px', color: scope.tradie_signed_at ? '#2E7D60' : '#7A9098' }}>You {scope.tradie_signed_at ? '✓' : '⏳'}</span>
-              </div>
-            </div>
-            {scope.inclusions?.length > 0 && (
-              <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-                <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontWeight:500 }}>Inclusions</p>
-                {scope.inclusions.map((item: string, i: number) => (
-                  <div key={i} style={{ display:'flex', gap:'8px', padding:'4px 0', fontSize:'13px', color:'#1C2B32' }}><span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>{item}</div>
-                ))}
-              </div>
-            )}
-            {scope.exclusions?.length > 0 && (
-              <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-                <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'8px', fontWeight:500 }}>Exclusions</p>
-                {scope.exclusions.map((item: string, i: number) => (
-                  <div key={i} style={{ display:'flex', gap:'8px', padding:'4px 0', fontSize:'13px', color:'#1C2B32' }}><span style={{ color:'#D4522A', flexShrink:0 }}>×</span>{item}</div>
-                ))}
-              </div>
-            )}
-            {!scope.tradie_signed_at && scope.client_signed_at && currentQuote && (
-              <div style={{ padding:'16px 18px' }}>
-                <button type="button" onClick={signScope} disabled={signing}
-                  style={{ width:'100%', background:'#2E7D60', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: signing ? 0.7 : 1 }}>
-                  {signing ? 'Signing...' : 'Sign scope and start delivery →'}
-                </button>
-              </div>
-            )}
-            {!scope.tradie_signed_at && scope.client_signed_at && !currentQuote && (
-              <div style={{ padding:'14px 18px', background:'rgba(192,120,48,0.06)' }}>
-                <p style={{ fontSize:'13px', color:'#C07830' }}>Submit a quote before signing the scope.</p>
-              </div>
-            )}
-            {!scope.client_signed_at && (
-              <div style={{ padding:'14px 18px', background:'rgba(192,120,48,0.06)' }}>
-                <p style={{ fontSize:'13px', color:'#C07830' }}>Waiting for client to review and sign.</p>
-              </div>
-            )}
-          </div>
-        )}
-
         {milestones.length > 0 && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-            <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>Milestones</p>
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)' }}>
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>MILESTONES</p>
+              <p style={{ fontSize: '12px', color: '#7A9098' }}>Submit each milestone when complete — client approves and payment releases</p>
             </div>
-            {milestones.map((m, i) => {
-              const isActive = m.status === 'pending' && (i === 0 || milestones[i-1]?.status === 'approved')
-              return (
-                <div key={m.id} style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
-                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'2px' }}>{m.label}</div>
-                      <div style={{ fontSize:'12px', color:'#7A9098' }}>{m.description} · {m.percent}%</div>
-                    </div>
-                    <div style={{ flexShrink:0 }}>
-                      {m.status === 'approved' && <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>✓ Approved</span>}
-                      {m.status === 'submitted' && <span style={{ fontSize:'12px', color:'#C07830' }}>⏳ Awaiting approval</span>}
-                      {isActive && <button type="button" onClick={() => submitMilestone(m.id)} style={{ background:'#C07830', color:'white', padding:'8px 16px', borderRadius:'6px', fontSize:'12px', border:'none', cursor:'pointer' }}>Mark complete →</button>}
-                    </div>
+            <div style={{ padding: '16px 20px' }}>
+              {milestones.map(m => (
+                <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(28,43,50,0.06)' }}>
+                  <div>
+                    <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', marginBottom: '2px' }}>{m.label}</p>
+                    <p style={{ fontSize: '12px', color: '#7A9098' }}>{m.percent}% · ${Math.round(Number(currentQuote?.total_price || 0) * m.percent / 100).toLocaleString()}</p>
+                  </div>
+                  <div style={{ textAlign: 'right' as const }}>
+                    {m.status === 'approved' && <span style={{ fontSize: '12px', color: '#2E7D60', fontWeight: 500 }}>✓ Approved</span>}
+                    {m.status === 'submitted' && <span style={{ fontSize: '12px', color: '#C07830' }}>⏳ Awaiting approval</span>}
+                    {m.status === 'pending' && (
+                      <button type="button" onClick={() => submitMilestone(m)}
+                        style={{ background: '#1C2B32', color: 'white', padding: '8px 16px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                        Mark complete →
+                      </button>
+                    )}
                   </div>
                 </div>
-              )
-            })}
+              ))}
+            </div>
           </div>
         )}
 
-        {issues.length > 0 && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
-            <div style={{ padding:'16px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500 }}>Warranty issues ({issues.length})</p>
-            </div>
-            {issues.map(issue => (
-              <div key={issue.id} style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.06)', borderLeft:'3px solid ' + (statusColor[issue.status] || '#7A9098') }}>
-                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                  <div style={{ flex:1 }}>
-                    <div style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>{issue.title}</div>
-                    <div style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'6px' }}>{issue.description}</div>
-                    <div style={{ display:'flex', gap:'8px' }}>
-                      <span style={{ fontSize:'11px', color: statusColor[issue.status] || '#7A9098', textTransform:'capitalize' as const }}>{issue.status}</span>
-                      <span style={{ fontSize:'11px', color:'#7A9098' }}>· {issue.severity}</span>
-                    </div>
-                  </div>
-                  {issue.status === 'open' && <button type="button" onClick={() => resolveIssue(issue.id)} style={{ background:'#2E7D60', color:'white', padding:'8px 14px', borderRadius:'6px', fontSize:'12px', border:'none', cursor:'pointer', flexShrink:0 }}>Mark resolved</button>}
-                </div>
+        {scope && (
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
+            <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ flex: 1, padding: '10px', background: scope.tradie_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.tradie_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
+                <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 3px' }}>Tradie</p>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.tradie_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.tradie_signed_at ? '✓ Signed' : 'Not signed'}</p>
               </div>
-            ))}
+              <div style={{ flex: 1, padding: '10px', background: scope.client_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.client_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
+                <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 3px' }}>Client</p>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.client_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.client_signed_at ? '✓ Signed' : 'Not signed'}</p>
+              </div>
+            </div>
+            {!scope.tradie_signed_at && (
+              <a href="/agreement">
+                <button type="button" style={{ width: '100%', marginTop: '12px', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                  Go to agreement page to sign →
+                </button>
+              </a>
+            )}
           </div>
         )}
+
       </div>
     </div>
   )
