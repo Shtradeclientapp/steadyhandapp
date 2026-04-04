@@ -661,10 +661,19 @@ export default function AgreementPage() {
                   </div>
 
                   {!(profile?.role === 'tradie' ? scope.tradie_signed_at : scope.client_signed_at) && (
-                    <button type="button" onClick={signScope}
-                      style={{ width:'100%', background:'#1C2B32', color:'white', padding:'15px', borderRadius:'10px', fontSize:'15px', fontWeight:600, border:'none', cursor:'pointer', letterSpacing:'0.3px', marginBottom:'10px' }}>
-                      Sign as {profile?.role === 'tradie' ? job.tradie?.business_name : job.client?.full_name} →
-                    </button>
+                    <>
+                      {!scope && !uploadedDoc ? (
+                        <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'10px' }}>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'4px' }}>Scope required before signing</p>
+                          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Generate a scope agreement with Steadyhand or upload your own document before signing.</p>
+                        </div>
+                      ) : (
+                        <button type="button" onClick={signScope}
+                          style={{ width:'100%', background:'#1C2B32', color:'white', padding:'15px', borderRadius:'10px', fontSize:'15px', fontWeight:600, border:'none', cursor:'pointer', letterSpacing:'0.3px', marginBottom:'10px' }}>
+                          Sign as {profile?.role === 'tradie' ? job.tradie?.business_name : job.client?.full_name} →
+                        </button>
+                      )}
+                    </>
                   )}
                   <button type="button" onClick={() => draftScope()} disabled={drafting}
                     style={{ width:'100%', background:'transparent', color:'#6B4FA8', padding:'12px', borderRadius:'10px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(107,79,168,0.25)', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
