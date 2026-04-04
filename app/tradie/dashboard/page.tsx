@@ -13,6 +13,7 @@ const STAGE_LABELS: Record<string, { label: string; color: string; action: strin
 
 export default function TradieDashboard() {
   const [profile, setProfile] = useState<any>(null)
+  const [user, setUser] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [stripeConnected, setStripeConnected] = useState(false)
@@ -32,6 +33,7 @@ export default function TradieDashboard() {
         window.location.href = '/dashboard'
         return
       }
+      setUser(session.user)
       setProfile(prof)
 
       const stripeRes = await fetch('/api/stripe', {
@@ -171,7 +173,7 @@ export default function TradieDashboard() {
         <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
           {activeJobs.map(job => {
             const stage = STAGE_LABELS[job.status]
-            const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === job.tradie_id)
+            const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id)
             const isAssigned = !!job.tradie_id
             const isDeclined = myQR?.status === 'declined'
             if (isDeclined) return null
