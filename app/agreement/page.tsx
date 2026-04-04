@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { DialogueScore } from '@/components/ui/DialogueScore'
 import { DialogueGuide } from '@/components/ui/DialogueGuide'
+import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
 
 export default function AgreementPage() {
   const [user, setUser] = useState<any>(null)
