@@ -2,7 +2,36 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const CATEGORIES = ['Labour', 'Materials', 'Plant & Equipment', 'Subcontractors', 'Preliminaries', 'Contingency']
+const TEMPLATES = [
+  {
+    id: 'detailed',
+    name: 'Detailed breakdown',
+    description: 'Labour, materials, plant and subcontractors listed separately',
+    best_for: 'Builders, carpenters, plumbers on larger jobs',
+    categories: ['Labour', 'Materials', 'Plant & Equipment', 'Subcontractors', 'Preliminaries', 'Contingency'],
+  },
+  {
+    id: 'fixed',
+    name: 'Fixed price',
+    description: 'Single price with scope description and inclusions',
+    best_for: 'Painters, landscapers, well-defined scope jobs',
+    categories: ['Scope items'],
+  },
+  {
+    id: 'rate',
+    name: 'Rate-based',
+    description: 'Per-unit rates that bundle labour and materials',
+    best_for: 'Electricians, plumbers, tilers with standard rates',
+    categories: ['Installation rates', 'Service rates', 'Allowances'],
+  },
+  {
+    id: 'dayrate',
+    name: 'Day rate',
+    description: 'Days on site plus materials allowance',
+    best_for: 'Handymen, variable-scope jobs',
+    categories: ['Day rates', 'Materials allowance', 'Other'],
+  },
+]
 
 const DEFAULT_CONDITIONS = `Payment terms: As per milestone schedule agreed in scope.
 Variations: Any changes to scope must be agreed in writing before work proceeds.
@@ -13,6 +42,8 @@ Defects liability: 90 days from practical completion, as per scope agreement.
 Dispute resolution: Steadyhand mediation in first instance.
 GST: All prices inclusive of GST unless otherwise stated.`
 
+const BLANK_ITEM = (category: string) => ({ category, label: '', quantity: '1', unit: 'lot', unit_price: '', amount: '' })
+
 export default function TradieJobPage() {
   const [user, setUser] = useState<any>(null)
   const [job, setJob] = useState<any>(null)
@@ -21,25 +52,23 @@ export default function TradieJobPage() {
   const [milestones, setMilestones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showQuoteForm, setShowQuoteForm] = useState(false)
+  const [showTemplates, setShowTemplates] = useState(false)
   const [submittingQuote, setSubmittingQuote] = useState(false)
+  const [activeTemplate, setActiveTemplate] = useState<string>('detailed')
   const [quoteForm, setQuoteForm] = useState({
     estimated_start: '',
     estimated_days: '',
     conditions: DEFAULT_CONDITIONS,
-    lineItems: [
-      { category: 'Labour', label: '', quantity: '1', unit: 'hrs', unit_price: '', amount: '' },
-      { category: 'Materials', label: '', quantity: '1', unit: 'lot', unit_price: '', amount: '' },
-    ],
+    lineItems: [BLANK_ITEM('Labour'), BLANK_ITEM('Materials')],
   })
 
   const currentQuote = quotes[0] || null
+  const template = TEMPLATES.find(t => t.id === activeTemplate) || TEMPLATES[0]
 
-  const calcTotal = () => {
-    return quoteForm.lineItems.reduce((sum, item) => {
-      const amt = parseFloat(item.amount) || (parseFloat(item.quantity) * parseFloat(item.unit_price)) || 0
-      return sum + amt
-    }, 0)
-  }
+  const calcTotal = () => quoteForm.lineItems.reduce((sum, item) => {
+    const amt = parseFloat(item.amount) || (parseFloat(item.quantity) * parseFloat(item.unit_price)) || 0
+    return sum + amt
+  }, 0)
 
   const updateLineItem = (i: number, field: string, value: string) => {
     setQuoteForm(f => {
@@ -48,24 +77,37 @@ export default function TradieJobPage() {
       if (field === 'quantity' || field === 'unit_price') {
         const qty = parseFloat(field === 'quantity' ? value : updated[i].quantity) || 0
         const price = parseFloat(field === 'unit_price' ? value : updated[i].unit_price) || 0
-        updated[i].amount = qty && price ? (qty * price).toFixed(2) : updated[i].amount
+        if (qty && price) updated[i].amount = (qty * price).toFixed(2)
       }
       return { ...f, lineItems: updated }
     })
   }
 
   const addLineItem = (category: string) => {
-    setQuoteForm(f => ({
-      ...f,
-      lineItems: [...f.lineItems, { category, label: '', quantity: '1', unit: 'lot', unit_price: '', amount: '' }]
-    }))
+    setQuoteForm(f => ({ ...f, lineItems: [...f.lineItems, BLANK_ITEM(category)] }))
   }
 
   const removeLineItem = (i: number) => {
     setQuoteForm(f => ({ ...f, lineItems: f.lineItems.filter((_, idx) => idx !== i) }))
   }
 
+  const switchTemplate = (templateId: string) => {
+    const t = TEMPLATES.find(t => t.id === templateId)!
+    setActiveTemplate(templateId)
+    setShowTemplates(false)
+    localStorage.setItem('sh_preferred_template', templateId)
+    setQuoteForm(f => ({
+      ...f,
+      lineItems: f.lineItems.length > 0 ? f.lineItems.map(item => ({
+        ...item,
+        category: t.categories.includes(item.category) ? item.category : t.categories[0]
+      })) : [BLANK_ITEM(t.categories[0])]
+    }))
+  }
+
   useEffect(() => {
+    const saved = localStorage.getItem('sh_preferred_template')
+    if (saved && TEMPLATES.find(t => t.id === saved)) setActiveTemplate(saved)
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
@@ -108,7 +150,8 @@ export default function TradieJobPage() {
     }).select().single()
     if (quote) {
       setQuotes(prev => [quote, ...prev])
-      await supabase.from('job_messages').insert({
+      const supabase2 = createClient()
+      await supabase2.from('job_messages').insert({
         job_id: job.id,
         sender_id: user.id,
         body: 'Quote v' + latestVersion + ' submitted: $' + total.toLocaleString() + (quoteForm.estimated_days ? ' · Est. ' + quoteForm.estimated_days + ' days' : '') + (quoteForm.estimated_start ? ' · Starting ' + new Date(quoteForm.estimated_start).toLocaleDateString('en-AU') : ''),
@@ -135,20 +178,10 @@ export default function TradieJobPage() {
   }
 
   const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
-
-  if (loading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}>
-      <p style={{ color: '#4A5E64', fontFamily: 'sans-serif' }}>Loading...</p>
-    </div>
-  )
-
-  if (!job) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}>
-      <p style={{ color: '#4A5E64', fontFamily: 'sans-serif' }}>Job not found.</p>
-    </div>
-  )
-
   const total = calcTotal()
+
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}><p style={{ color: '#4A5E64' }}>Loading...</p></div>
+  if (!job) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}><p style={{ color: '#4A5E64' }}>Job not found.</p></div>
 
   return (
     <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
@@ -175,10 +208,10 @@ export default function TradieJobPage() {
         </div>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' as const, gap: '10px' }}>
             <div>
               <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE</p>
-              <p style={{ fontSize: '12px', color: '#7A9098' }}>{currentQuote ? 'Version ' + currentQuote.version + ' submitted · ' + new Date(currentQuote.created_at).toLocaleDateString('en-AU') : 'No quote submitted yet'}</p>
+              <p style={{ fontSize: '12px', color: '#7A9098' }}>{currentQuote ? 'Version ' + currentQuote.version + ' · ' + new Date(currentQuote.created_at).toLocaleDateString('en-AU') : 'No quote submitted yet'}</p>
             </div>
             <button type="button" onClick={() => setShowQuoteForm(!showQuoteForm)}
               style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#1C2B32' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
@@ -201,28 +234,54 @@ export default function TradieJobPage() {
                     </div>
                   ))}
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#E8F0EE', fontSize: '13px', fontWeight: 600 }}>
-                    <span>Total</span>
-                    <span>${Number(currentQuote.total_price).toLocaleString()}</span>
+                    <span>Total</span><span>${Number(currentQuote.total_price).toLocaleString()}</span>
                   </div>
                 </div>
               )}
               {currentQuote.estimated_start && <p style={{ fontSize: '13px', color: '#4A5E64', marginBottom: '4px' }}>Start: {new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>}
-              {currentQuote.estimated_days && <p style={{ fontSize: '13px', color: '#4A5E64', marginBottom: '4px' }}>Duration: {currentQuote.estimated_days} days</p>}
+              {currentQuote.estimated_days && <p style={{ fontSize: '13px', color: '#4A5E64' }}>Duration: {currentQuote.estimated_days} days</p>}
             </div>
           )}
 
           {showQuoteForm && (
             <div style={{ padding: '20px' }}>
-              <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '12px 14px', marginBottom: '20px' }}>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <div>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', margin: '0 0 2px' }}>Quote style: <span style={{ color: '#2E7D60' }}>{template.name}</span></p>
+                    <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>{template.description}</p>
+                  </div>
+                  <button type="button" onClick={() => setShowTemplates(!showTemplates)}
+                    style={{ fontSize: '12px', color: '#2E6A8F', background: 'rgba(46,106,143,0.08)', border: '1px solid rgba(46,106,143,0.2)', borderRadius: '6px', padding: '5px 10px', cursor: 'pointer', flexShrink: 0 }}>
+                    {showTemplates ? 'Close' : 'Change style →'}
+                  </button>
+                </div>
+
+                {showTemplates && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                    {TEMPLATES.map(t => (
+                      <div key={t.id} onClick={() => switchTemplate(t.id)}
+                        style={{ padding: '12px', background: activeTemplate === t.id ? 'rgba(46,106,143,0.08)' : '#C8D5D2', border: '1.5px solid ' + (activeTemplate === t.id ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), borderRadius: '8px', cursor: 'pointer' }}>
+                        <p style={{ fontSize: '12px', fontWeight: 600, color: activeTemplate === t.id ? '#2E6A8F' : '#1C2B32', margin: '0 0 3px' }}>{t.name}</p>
+                        <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 4px', lineHeight: '1.4' }}>{t.description}</p>
+                        <p style={{ fontSize: '10px', color: '#9AA5AA', margin: 0 }}>Best for: {t.best_for}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '10px 14px', marginBottom: '20px' }}>
                 <p style={{ fontSize: '12px', color: '#2E7D60', margin: 0, lineHeight: '1.6' }}>
-                  Build your quote line by line — a detailed breakdown helps clients understand your pricing and reduces disputes later. Your total will calculate automatically.
+                  A detailed breakdown helps clients understand your pricing and reduces disputes later. Your total calculates automatically from your line items.
                 </p>
               </div>
 
-              {CATEGORIES.map(cat => {
+              {template.categories.map(cat => {
                 const items = quoteForm.lineItems.map((item, i) => ({ ...item, i })).filter(item => item.category === cat)
                 return (
-                  <div key={cat} style={{ marginBottom: '16px' }}>
+                  <div key={cat} style={{ marginBottom: '18px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                       <p style={{ fontSize: '11px', fontWeight: 600, color: '#1C2B32', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: 0 }}>{cat}</p>
                       <button type="button" onClick={() => addLineItem(cat)}
@@ -230,30 +289,60 @@ export default function TradieJobPage() {
                         + Add
                       </button>
                     </div>
-                    {items.length === 0 && (
+                    {items.length === 0 ? (
                       <div style={{ padding: '10px', background: 'rgba(28,43,50,0.03)', borderRadius: '6px', border: '1px dashed rgba(28,43,50,0.1)', textAlign: 'center' as const }}>
-                        <span style={{ fontSize: '12px', color: '#9AA5AA' }}>No {cat.toLowerCase()} items — click + Add to include</span>
+                        <span style={{ fontSize: '12px', color: '#9AA5AA' }}>No {cat.toLowerCase()} items — click + Add</span>
                       </div>
+                    ) : (
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '4px' }}>
+                          {['Description', 'Qty', 'Unit', 'Unit $', 'Total', ''].map(h => (
+                            <p key={h} style={{ fontSize: '10px', color: '#9AA5AA', margin: 0, padding: '0 2px' }}>{h}</p>
+                          ))}
+                        </div>
+                        {items.map(item => (
+                          <div key={item.i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
+                            <input type="text" placeholder="Description" value={item.label} onChange={e => updateLineItem(item.i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            <input type="number" placeholder="1" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
+                              {['hrs', 'days', 'wks', 'lot', 'm', 'm²', 'm³', 'each', 'kg', 'L'].map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                            <input type="number" placeholder="0.00" value={item.unit_price} onChange={e => updateLineItem(item.i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            <input type="number" placeholder="0.00" value={item.amount} onChange={e => updateLineItem(item.i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            <button type="button" onClick={() => removeLineItem(item.i)} style={{ background: 'none', border: 'none', color: '#D4522A', cursor: 'pointer', fontSize: '16px', padding: 0, lineHeight: 1 }}>×</button>
+                          </div>
+                        ))}
+                      </>
                     )}
-                    {items.map(item => (
-                      <div key={item.i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '6px', marginBottom: '6px', alignItems: 'center' }}>
-                        <input type="text" placeholder="Description" value={item.label} onChange={e => updateLineItem(item.i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                        <input type="number" placeholder="Qty" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                        <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
-                          {['hrs', 'days', 'lot', 'm', 'm²', 'each', 'kg'].map(u => <option key={u} value={u}>{u}</option>)}
-                        </select>
-                        <input type="number" placeholder="Unit $" value={item.unit_price} onChange={e => updateLineItem(item.i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                        <input type="number" placeholder="Total" value={item.amount} onChange={e => updateLineItem(item.i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                        <button type="button" onClick={() => removeLineItem(item.i)} style={{ background: 'none', border: 'none', color: '#D4522A', cursor: 'pointer', fontSize: '16px', padding: 0, lineHeight: 1 }}>×</button>
-                      </div>
-                    ))}
                   </div>
                 )
               })}
 
-              <div style={{ background: '#1C2B32', borderRadius: '8px', padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(216,228,225,0.7)' }}>Total (inc. GST)</span>
-                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: 'rgba(216,228,225,0.9)' }}>${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <div style={{ background: 'rgba(28,43,50,0.04)', borderRadius: '8px', padding: '4px 0', marginBottom: '4px' }}>
+                {quoteForm.lineItems.filter(item => !template.categories.includes(item.category)).length > 0 && (
+                  <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(28,43,50,0.06)' }}>
+                    <p style={{ fontSize: '11px', fontWeight: 600, color: '#7A9098', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: '0 0 8px' }}>Other items</p>
+                    {quoteForm.lineItems.map((item, i) => !template.categories.includes(item.category) && (
+                      <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
+                        <input type="text" value={item.label} onChange={e => updateLineItem(i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <input type="number" value={item.quantity} onChange={e => updateLineItem(i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <select value={item.unit} onChange={e => updateLineItem(i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
+                          {['hrs', 'days', 'lot', 'm', 'm²', 'each', 'kg'].map(u => <option key={u} value={u}>{u}</option>)}
+                        </select>
+                        <input type="number" value={item.unit_price} onChange={e => updateLineItem(i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <input type="number" value={item.amount} onChange={e => updateLineItem(i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                        <button type="button" onClick={() => removeLineItem(i)} style={{ background: 'none', border: 'none', color: '#D4522A', cursor: 'pointer', fontSize: '16px', padding: 0 }}>×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ background: '#1C2B32', borderRadius: '8px', padding: '14px 18px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '13px', color: 'rgba(216,228,225,0.6)' }}>Total (inc. GST)</span>
+                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: total > 0 ? 'rgba(216,228,225,0.9)' : 'rgba(216,228,225,0.3)' }}>
+                  ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
@@ -270,7 +359,7 @@ export default function TradieJobPage() {
               <div style={{ marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
                   <label style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>Terms and conditions</label>
-                  <span style={{ fontSize: '11px', color: '#7A9098' }}>WA defaults pre-filled · edit as needed</span>
+                  <span style={{ fontSize: '11px', color: '#7A9098' }}>WA defaults · edit as needed</span>
                 </div>
                 <textarea value={quoteForm.conditions} onChange={e => setQuoteForm(f => ({ ...f, conditions: e.target.value }))} rows={8} style={{ ...inp, resize: 'vertical' as const, lineHeight: '1.6', fontSize: '12px' }} />
               </div>
@@ -278,7 +367,7 @@ export default function TradieJobPage() {
               <div style={{ background: 'rgba(192,120,48,0.06)', border: '1px solid rgba(192,120,48,0.2)', borderRadius: '8px', padding: '12px 14px', marginBottom: '16px' }}>
                 <p style={{ fontSize: '11px', fontWeight: 600, color: '#C07830', marginBottom: '4px', letterSpacing: '0.5px' }}>BEFORE YOU SUBMIT</p>
                 <p style={{ fontSize: '12px', color: '#4A5E64', lineHeight: '1.6', margin: 0 }}>
-                  Check your line items cover all materials, travel, contingency and margin. Underquoting now leads to disputes later. A detailed, well-structured quote signals professionalism and is more likely to be accepted.
+                  Check your line items cover all materials, travel, contingency and margin. Underquoting leads to disputes later. A well-structured quote is more likely to be accepted.
                 </p>
               </div>
 
@@ -320,9 +409,9 @@ export default function TradieJobPage() {
         )}
 
         {scope && (
-          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
               <div style={{ flex: 1, padding: '10px', background: scope.tradie_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.tradie_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
                 <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 3px' }}>Tradie</p>
                 <p style={{ fontSize: '13px', fontWeight: 500, color: scope.tradie_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.tradie_signed_at ? '✓ Signed' : 'Not signed'}</p>
@@ -334,7 +423,7 @@ export default function TradieJobPage() {
             </div>
             {!scope.tradie_signed_at && (
               <a href="/agreement">
-                <button type="button" style={{ width: '100%', marginTop: '12px', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                <button type="button" style={{ width: '100%', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                   Go to agreement page to sign →
                 </button>
               </a>
