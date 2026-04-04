@@ -5,7 +5,6 @@ import { DialogueScore } from '@/components/ui/DialogueScore'
 import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
-import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
 export default function AgreementPage() {
   const [user, setUser] = useState<any>(null)
