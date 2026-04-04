@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/client'
 import { DialogueScore } from '@/components/ui/DialogueScore'
 import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
+import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
+import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
 export default function AgreementPage() {
   const [user, setUser] = useState<any>(null)
@@ -612,23 +614,7 @@ export default function AgreementPage() {
                   </div>
                 )}
 
-                {scope.milestones?.length > 0 && (
-                  <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
-                    <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'14px', fontWeight:600 }}>Payment milestones</p>
-                    {scope.milestones.map((m: any, i: number) => (
-                      <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', padding:'12px 0', borderBottom:'1px solid #F8F8F8' }}>
-                        <div style={{ flex:1 }}>
-                          <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', marginBottom:'2px' }}>{m.label}</p>
-                          <p style={{ fontSize:'12px', color:'#7A9098' }}>{m.description}</p>
-                        </div>
-                        <div style={{ textAlign:'right' as const, flexShrink:0, marginLeft:'20px' }}>
-                          <p style={{ fontSize:'15px', fontWeight:700, color:'#1C2B32' }}>{m.percent}%</p>
-                          {currentQuote && <p style={{ fontSize:'12px', color:'#7A9098' }}>${Math.round(Number(currentQuote.total_price) * m.percent / 100).toLocaleString()}</p>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <MilestoneEditor scope={scope} currentQuote={currentQuote} onSave={(milestones: any) => saveEdit({ milestones })} />
 
                 <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'14px', fontWeight:600 }}>Warranty terms</p>
