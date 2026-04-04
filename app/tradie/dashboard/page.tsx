@@ -45,7 +45,7 @@ export default function TradieDashboard() {
 
       const { data: assignedJobs } = await supabase
         .from('jobs')
-        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id)')
         .eq('tradie_id', session.user.id)
         .order('updated_at', { ascending: false })
 
@@ -59,7 +59,7 @@ export default function TradieDashboard() {
       if (quotedJobIds.length > 0) {
         const { data: qjData } = await supabase
           .from('jobs')
-          .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+          .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id)')
           .in('id', quotedJobIds)
           .order('updated_at', { ascending: false })
         quotedJobs = qjData || []
@@ -171,9 +171,15 @@ export default function TradieDashboard() {
         <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
           {activeJobs.map(job => {
             const stage = STAGE_LABELS[job.status]
+            const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === job.tradie_id)
+            const isAssigned = !!job.tradie_id
+            const isDeclined = myQR?.status === 'declined'
+            if (isDeclined) return null
+            const isQuoteRequested = !isAssigned && myQR?.status === 'requested'
+            const borderColor = isQuoteRequested ? '#C07830' : (stage?.color || '#7A9098')
             return (
               <a key={job.id} href={'/tradie/job?id=' + job.id} style={{ textDecoration:'none' }}>
-                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + (stage?.color || '#7A9098'), borderRadius:'11px', padding:'18px 20px', cursor:'pointer' }}>
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + borderColor, borderRadius:'11px', padding:'18px 20px', cursor:'pointer' }}>
                   <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' }}>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
@@ -181,10 +187,21 @@ export default function TradieDashboard() {
                       <div style={{ fontSize:'12px', color:'#4A5E64' }}>{job.description?.slice(0, 100)}{job.description?.length > 100 ? '...' : ''}</div>
                     </div>
                     <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px', flexShrink:0 }}>
-                      <span style={{ background: (stage?.color || '#7A9098') + '18', border:'1px solid ' + (stage?.color || '#7A9098') + '40', borderRadius:'100px', padding:'4px 12px', fontSize:'11px', fontWeight:500, color: stage?.color || '#7A9098' }}>
-                        {stage?.label || job.status}
-                      </span>
-                      <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500 }}>{stage?.action} →</span>
+                      {isQuoteRequested ? (
+                        <>
+                          <span style={{ background:'rgba(192,120,48,0.1)', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'100px', padding:'4px 12px', fontSize:'11px', fontWeight:500, color:'#C07830' }}>
+                            Quote requested
+                          </span>
+                          <span style={{ fontSize:'12px', color:'#C07830', fontWeight:500 }}>Submit a quote →</span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ background: (stage?.color || '#7A9098') + '18', border:'1px solid ' + (stage?.color || '#7A9098') + '40', borderRadius:'100px', padding:'4px 12px', fontSize:'11px', fontWeight:500, color: stage?.color || '#7A9098' }}>
+                            {stage?.label || job.status}
+                          </span>
+                          <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500 }}>{stage?.action} →</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
