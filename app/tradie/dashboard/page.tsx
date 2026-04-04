@@ -179,6 +179,7 @@ export default function TradieDashboard() {
             const stage = STAGE_LABELS[job.status]
             const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id)
             const isAssigned = !!job.tradie_id
+            console.log("job:", job.id, "myQR:", myQR, "user:", user?.id, "qrs:", job.quote_requests)
             const isDeclined = myQR?.status === 'declined'
             if (isDeclined) return null
             const isQuoteRequested = !isAssigned && myQR?.status === 'requested'
