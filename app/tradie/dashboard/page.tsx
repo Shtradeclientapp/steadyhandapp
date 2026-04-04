@@ -68,7 +68,7 @@ export default function TradieDashboard() {
       const assignedIds = new Set((assignedJobs || []).map((j: any) => j.id))
       const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
 
-      setJobs(jobData || [])
+      setJobs(merged)
       setLoading(false)
     })
   }, [])
