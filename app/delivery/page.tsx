@@ -22,7 +22,6 @@ export default function DeliveryPage() {
         .order('updated_at', { ascending: false })
         .limit(1)
 
-      console.log('delivery jobs:', jobs, 'session uid:', session.user.id)
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
         const { data: ms } = await supabase
