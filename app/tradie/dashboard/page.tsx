@@ -43,11 +43,30 @@ export default function TradieDashboard() {
       setStripeConnected(stripeData.connected || false)
 
 
-      const { data: jobData } = await supabase
+      const { data: assignedJobs } = await supabase
         .from('jobs')
         .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
         .eq('tradie_id', session.user.id)
         .order('updated_at', { ascending: false })
+
+      const { data: qrs } = await supabase
+        .from('quote_requests')
+        .select('job_id')
+        .eq('tradie_id', session.user.id)
+
+      const quotedJobIds = (qrs || []).map((q: any) => q.job_id)
+      let quotedJobs: any[] = []
+      if (quotedJobIds.length > 0) {
+        const { data: qjData } = await supabase
+          .from('jobs')
+          .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+          .in('id', quotedJobIds)
+          .order('updated_at', { ascending: false })
+        quotedJobs = qjData || []
+      }
+
+      const assignedIds = new Set((assignedJobs || []).map((j: any) => j.id))
+      const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
 
       setJobs(jobData || [])
       setLoading(false)
