@@ -97,6 +97,8 @@ export default function AgreementPage() {
     await supabase.from('jobs').update({ tradie_id: quote.tradie_id, status: 'agreement' }).eq('id', job.id)
     await supabase.from('quote_requests').update({ status: 'accepted' }).eq('job_id', job.id).eq('tradie_id', quote.tradie_id)
     await supabase.from('quote_requests').update({ status: 'declined' }).eq('job_id', job.id).neq('tradie_id', quote.tradie_id)
+    const { data: updatedQRs } = await supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)').eq('job_id', job.id)
+    setQuoteRequests(updatedQRs || [])
     setJob({ ...job, tradie_id: quote.tradie_id })
     setCurrentQuote(quote)
     await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user.id, body: 'Quote from ' + (quote.tradie?.business_name || 'tradie') + ' accepted — $' + Number(quote.total_price).toLocaleString() + '. Proceeding to scope agreement.' })
@@ -183,7 +185,7 @@ export default function AgreementPage() {
 
   const isTradie = profile?.role === 'tradie'
   const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
-  const hasAcceptedQuote = !!job?.tradie_id && quoteRequests.some(qr => qr.status === 'accepted')
+  const hasAcceptedQuote = quoteRequests.some(qr => qr.status === 'accepted')
   const jobRef = job ? 'SH-' + job.id.slice(0, 8).toUpperCase() : ''
   const today = new Date().toLocaleDateString('en-AU', { day:'numeric', month:'long', year:'numeric' })
 
