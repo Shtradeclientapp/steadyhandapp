@@ -70,6 +70,10 @@ export default function TradieDashboard() {
       const assignedIds = new Set((assignedJobs || []).map((j: any) => j.id))
       const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
 
+      console.log("assignedJobs:", assignedJobs)
+      console.log("qrs:", qrs)
+      console.log("quotedJobs:", quotedJobs)
+      console.log("merged:", merged)
       setJobs(merged)
       setLoading(false)
     })
