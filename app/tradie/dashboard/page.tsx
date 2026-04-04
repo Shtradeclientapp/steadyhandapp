@@ -71,6 +71,7 @@ export default function TradieDashboard() {
       const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
 
       setJobs(merged)
+      setLoading(false)
     })
   }, [])
 
