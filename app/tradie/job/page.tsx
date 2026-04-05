@@ -221,7 +221,7 @@ export default function TradieJobPage() {
             </button>
           </div>
 
-          {quoteSubmitted && currentQuote && (
+          {quoteSubmitted && (
             <div style={{ padding:'20px' }}>
               <div style={{ textAlign:'center' as const, padding:'24px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', marginBottom:'16px' }}>
                 <div style={{ fontSize:'36px', marginBottom:'12px' }}>✅</div>
