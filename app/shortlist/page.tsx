@@ -352,30 +352,43 @@ export default function ShortlistPage() {
                   </div>
                 ) : (
                   <>
-                    <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>
-                      Quote requests sent to {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''}. Quotes will appear on the agreement page as they are submitted.
-                    </p>
-                    <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'20px' }}>
+                    <div style={{ textAlign:'center' as const, padding:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginBottom:'20px' }}>
+                      <div style={{ fontSize:'32px', marginBottom:'8px' }}>✅</div>
+                      <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Quote requests sent</p>
+                      <p style={{ fontSize:'13px', color:'#4A5E64' }}>We have notified {quoteRequests.length} tradie{quoteRequests.length > 1 ? 's' : ''} about your job.</p>
+                    </div>
+                    <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'16px', marginBottom:'20px' }}>
+                      <p style={{ fontSize:'11px', fontWeight:600, color:'#1C2B32', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'12px' }}>What happens next</p>
+                      {[
+                        { step:'1', text:'Tradies review your job and submit their quotes — this usually takes 1–2 business days.' },
+                        { step:'2', text:'You will receive an email notification when each quote arrives.' },
+                        { step:'3', text:'Once you have quotes, go to the agreement page to compare them side by side.' },
+                        { step:'4', text:'Accept the quote you prefer and begin the scope agreement before work starts.' },
+                      ].map(s => (
+                        <div key={s.step} style={{ display:'flex', gap:'10px', marginBottom:'10px', alignItems:'flex-start' }}>
+                          <div style={{ width:'20px', height:'20px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', fontWeight:600, flexShrink:0, marginTop:'1px' }}>{s.step}</div>
+                          <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', margin:0 }}>{s.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
                       {quoteRequests.map(qr => (
-                        <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 16px', background:'#C8D5D2', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px' }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-                            <div style={{ width:'36px', height:'36px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0 }}>
+                        <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px' }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'white', flexShrink:0 }}>
                               {qr.tradie?.business_name?.charAt(0) || '?'}
                             </div>
-                            <div>
-                              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{qr.tradie?.business_name}</p>
-                              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>⭐ {Number(qr.tradie?.rating_avg || 0).toFixed(1)} · {qr.tradie?.jobs_completed || 0} jobs</p>
-                            </div>
+                            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{qr.tradie?.business_name}</p>
                           </div>
-                          <span style={{ fontSize:'11px', fontWeight:600, padding:'4px 10px', borderRadius:'100px', background: qr.status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)', color: qr.status === 'accepted' ? '#2E7D60' : qr.status === 'declined' ? '#D4522A' : '#C07830', textTransform:'capitalize' as const }}>
-                            {qr.status === 'requested' ? '⏳ Awaiting quote' : qr.status === 'accepted' ? '✓ Quote accepted' : qr.status}
+                          <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px', background: qr.status === 'accepted' ? 'rgba(46,125,96,0.1)' : 'rgba(192,120,48,0.1)', color: qr.status === 'accepted' ? '#2E7D60' : '#C07830' }}>
+                            {qr.status === 'requested' ? '⏳ Awaiting quote' : qr.status === 'accepted' ? '✓ Accepted' : qr.status}
                           </span>
                         </div>
                       ))}
                     </div>
                     <button type="button" onClick={() => window.location.href = '/agreement'}
                       style={{ width:'100%', background:'#2E6A8F', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                      Go to agreement page to compare quotes →
+                      Go to agreement page →
                     </button>
                   </>
                 )}
