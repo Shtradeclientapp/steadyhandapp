@@ -2,11 +2,13 @@
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function MessagesPage() {
+function MessagesPageInner() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [selectedJob, setSelectedJob] = useState<any>(null)
+  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
@@ -36,7 +38,19 @@ export default function MessagesPage() {
 
       setJobs(jobData || [])
       if (jobData && jobData.length > 0) {
-        setSelectedJob(jobData[0])
+        const jobParam = searchParams.get('job')
+        if (jobParam) {
+          const match = jobData.find((j: any) => j.id === jobParam)
+          setSelectedJob(match || jobData[0])
+        } else {
+          const jobParam = searchParams.get('job')
+        if (jobParam) {
+          const match = jobData.find((j: any) => j.id === jobParam)
+          setSelectedJob(match || jobData[0])
+        } else {
+          setSelectedJob(jobData[0])
+        }
+        }
         await loadMessages(jobData[0].id)
       }
       setLoading(false)
@@ -209,5 +223,13 @@ export default function MessagesPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div>}>
+      <MessagesPageInner />
+    </Suspense>
   )
 }

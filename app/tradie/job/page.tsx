@@ -626,7 +626,7 @@ export default function TradieJobPage() {
                     </div>
                   ))}
                 </div>
-                <a href="/messages">
+                <a href={"/messages?job=" + (job?.id || "")}>
                   <button type="button" style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                     Message the client →
                   </button>
@@ -706,7 +706,7 @@ export default function TradieJobPage() {
           </div>
         )}
 
-        <a href="/messages" style={{ display: 'block', marginBottom: '20px', textDecoration: 'none' }}>
+        <a href={"/messages?job=" + (job?.id || "")} style={{ display: 'block', marginBottom: '20px', textDecoration: 'none' }}>
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B32', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: '16px' }}>💬</span>
