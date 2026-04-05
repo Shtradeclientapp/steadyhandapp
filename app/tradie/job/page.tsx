@@ -171,6 +171,20 @@ export default function TradieJobPage() {
     setTimeout(() => setQuoteSubmitted(true), 100)
   }
 
+  const respondToIssue = async (issueId: string) => {
+    const response = responseForm[issueId]
+    if (!response?.trim()) return
+    const supabase = createClient()
+    await supabase.from('warranty_issues').update({
+      tradie_response: response,
+      tradie_responded_at: new Date().toISOString(),
+      status: 'in_progress',
+    }).eq('id', issueId)
+    setWarrantyIssues(prev => prev.map((i: any) => i.id === issueId ? { ...i, tradie_response: response, tradie_responded_at: new Date().toISOString(), status: 'in_progress' } : i))
+    setRespondingTo(null)
+    setResponseForm(prev => ({ ...prev, [issueId]: '' }))
+  }
+
   const submitMilestone = async (milestone: any) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', milestone.id)
