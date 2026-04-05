@@ -43,12 +43,32 @@ export default function AgreementPage() {
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
-        .eq(isTradie ? 'tradie_id' : 'client_id', session.user.id)
+        .or(isTradie ? 'tradie_id.eq.' + session.user.id : 'client_id.eq.' + session.user.id)
         .in('status', ['agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
-      if (jobs && jobs.length > 0) {
-        setJob(jobs[0])
+      // Fallback for tradies — find jobs via quote_requests if tradie_id not yet set
+      let jobList = jobs || []
+      if (isTradie && jobList.length === 0) {
+        const { data: qrs } = await supabase
+          .from('quote_requests')
+          .select('job_id')
+          .eq('tradie_id', session.user.id)
+        if (qrs && qrs.length > 0) {
+          const jobIds = qrs.map((q: any) => q.job_id)
+          const { data: fallbackJobs } = await supabase
+            .from('jobs')
+            .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+            .in('id', jobIds)
+            .in('status', ['agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
+            .order('updated_at', { ascending: false })
+            .limit(1)
+          jobList = fallbackJobs || []
+        }
+      }
+
+      if (jobList && jobList.length > 0) {
+        setJob(jobList[0])
         const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobs[0].id).single()
         if (scopeData) {
           setScope(scopeData)
