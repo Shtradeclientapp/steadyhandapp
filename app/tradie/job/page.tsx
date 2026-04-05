@@ -55,6 +55,9 @@ export default function TradieJobPage() {
   const [showTemplates, setShowTemplates] = useState(false)
   const [submittingQuote, setSubmittingQuote] = useState(false)
   const [quoteSubmitted, setQuoteSubmitted] = useState(false)
+  const [warrantyIssues, setWarrantyIssues] = useState<any[]>([])
+  const [respondingTo, setRespondingTo] = useState<string|null>(null)
+  const [responseForm, setResponseForm] = useState<Record<string,string>>({})
   const [activeTemplate, setActiveTemplate] = useState<string>('detailed')
   const [quoteForm, setQuoteForm] = useState({
     estimated_start: '',
