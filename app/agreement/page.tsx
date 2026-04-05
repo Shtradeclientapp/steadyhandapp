@@ -1,8 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { DialogueScore } from '@/components/ui/DialogueScore'
-import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
@@ -21,7 +19,6 @@ export default function AgreementPage() {
   const [currentQuote, setCurrentQuote] = useState<any>(null)
   const [allQuotes, setAllQuotes] = useState<any[]>([])
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
-  const [dialogueScore, setDialogueScore] = useState<any>(null)
   const [scoringDialogue, setScoringDialogue] = useState(false)
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<string|null>(null)
@@ -74,13 +71,6 @@ export default function AgreementPage() {
           setScope(scopeData)
           setScopeVersion(scopeData.version || 1)
           if (scopeData.dialogue_score) {
-            setDialogueScore({
-              overall: scopeData.dialogue_score,
-              dimensions: scopeData.dialogue_breakdown,
-              suggestions: scopeData.dialogue_suggestions,
-              band: scopeData.dialogue_score >= 85 ? 'Excellent' : scopeData.dialogue_score >= 70 ? 'Good' : scopeData.dialogue_score >= 55 ? 'Fair' : 'Low',
-              band_message: scopeData.dialogue_score >= 85 ? 'Both parties have had a thorough, transparent conversation.' : 'Review suggestions before signing.',
-            })
           }
         }
         const { data: msgs } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', jobs[0].id).order('created_at', { ascending: true })
@@ -201,7 +191,7 @@ export default function AgreementPage() {
     setScoringDialogue(true)
     const res = await fetch('/api/dialogue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: job.id }) })
     const data = await res.json()
-    if (!data.error) setDialogueScore(data)
+    if (!data.error)
     setScoringDialogue(false)
   }
 
@@ -339,7 +329,6 @@ export default function AgreementPage() {
 
           {job && user && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
-              <DialogueGuide jobId={job.id} userRole={profile?.role || 'client'} userId={user.id} onComplete={scoreDialogue} />
             </div>
           )}
 
@@ -358,7 +347,6 @@ export default function AgreementPage() {
           {!dialogueScore && (
             <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px' }}>
               <p style={{ fontSize:'12px', fontWeight:500, color:'#6B4FA8', marginBottom:'4px' }}>Dialogue Trust Score</p>
-              <p style={{ fontSize:'11px', color:'#4A5E64', marginBottom:'10px', lineHeight:'1.5' }}>Complete the pre-signing dialogue above to generate your trust score automatically.</p>
             </div>
           )}
 
