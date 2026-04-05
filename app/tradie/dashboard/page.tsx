@@ -97,6 +97,7 @@ export default function TradieDashboard() {
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <span style={{ fontSize:'13px', color:'#4A5E64' }}>Tradie</span>
           <a href="/messages" style={{ fontSize:'13px', color:'rgba(216,228,225,0.6)', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(255,255,255,0.2)', borderRadius:'6px' }}>Messages</a>
+          <a href="/tradie/profile" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>My profile</a>
 <button onClick={signOut} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#1C2B32', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', cursor:'pointer' }}>Sign out</button>
         </div>
       </nav>
@@ -124,6 +125,28 @@ export default function TradieDashboard() {
             </div>
           ))}
         </div>
+
+        {profile?.tradie && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'18px 20px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
+              <div style={{ width:'44px', height:'44px', borderRadius:'10px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)' }}>{profile.tradie.business_name?.charAt(0) || '?'}</span>
+              </div>
+              <div>
+                <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>{profile.tradie.business_name}</p>
+                <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' as const }}>
+                  {profile.tradie.licence_verified && <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'2px 8px' }}>✓ Licence</span>}
+                  {profile.tradie.insurance_verified && <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'2px 8px' }}>✓ Insurance</span>}
+                  {profile.tradie.rating_avg > 0 && <span style={{ fontSize:'11px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'2px 8px' }}>⭐ {Number(profile.tradie.rating_avg).toFixed(1)}</span>}
+                  {!profile.tradie.licence_verified && <span style={{ fontSize:'11px', color:'#C07830', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'2px 8px' }}>Verification pending</span>}
+                </div>
+              </div>
+            </div>
+            <a href="/tradie/profile" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px', whiteSpace:'nowrap' as const }}>
+              Edit profile →
+            </a>
+          </div>
+        )}
 
         {!stripeConnected && (
           <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' as const }}>
