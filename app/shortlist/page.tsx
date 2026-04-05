@@ -117,7 +117,7 @@ export default function ShortlistPage() {
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
         {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Assess',p:'/assess',c:'#9B6B9B'},{n:4,l:'Quote',p:'/quotes',c:'#C07830'},{n:5,l:'Confirm',p:'/agreement',c:'#6B4FA8'},{n:6,l:'Build',p:'/delivery',c:'#C07830'},{n:7,l:'Complete',p:'/signoff',c:'#D4522A'},{n:8,l:'Protect',p:'/warranty',c:'#1A6B5A'}].map(s => {
             const STAGE_ORDER = ['matching','shortlisted','assess','quotes','agreement','delivery','signoff','warranty','complete']
-            const jobIdx = job ? STAGE_ORDER.indexOf(job.status) : -1
+            const jobIdx = selectedJob ? STAGE_ORDER.indexOf(selectedJob.status) : -1
             const pathOrder = ['/request','/shortlist','/assess','/quotes','/agreement','/delivery','/signoff','/warranty','/warranty']
             const isComplete = pathOrder.indexOf(s.p) !== -1 && pathOrder.indexOf(s.p) < pathOrder.indexOf('/shortlist') && pathOrder.indexOf(s.p) <= jobIdx
             const isCurrent = s.p === '/shortlist'
