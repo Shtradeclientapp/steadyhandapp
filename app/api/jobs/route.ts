@@ -75,6 +75,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // Score request completeness
+    await fetch(process.env.NEXT_PUBLIC_APP_URL + '/api/dialogue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'score_stage', stage: 'request', job_id: job.id }),
+    }).catch(() => {})
+
     return NextResponse.json({ job }, { status: 201 })
 
   } catch (err: any) {

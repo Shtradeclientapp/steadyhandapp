@@ -70,6 +70,11 @@ export default function WarrantyPage() {
       client_accepted_at: new Date().toISOString(),
     }).eq('id', issueId)
     setIssues(prev => prev.map(i => i.id === issueId ? { ...i, status: 'resolved', client_accepted_at: new Date().toISOString() } : i))
+    await fetch('/api/dialogue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'score_stage', stage: 'protect', job_id: job?.id }),
+    }).catch(() => {})
     setAcceptingId(null)
   }
 
