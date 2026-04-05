@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         .single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
-      const { decline_reason, decline_note, revision_deadline, tradie_id } = body
+      const { decline_reason, decline_note, revision_deadline, tradie_id } = await request.clone().json()
       const { data: tradieProfile } = await supabase
         .from('tradie_profiles')
         .select('*, profile:profiles(email, full_name)')
