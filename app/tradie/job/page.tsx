@@ -626,6 +626,69 @@ export default function TradieJobPage() {
           </div>
         )}
 
+        {warrantyIssues.length > 0 && (
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#D4522A' }}>
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: 'white', letterSpacing: '0.5px', marginBottom: '2px' }}>WARRANTY ISSUES</p>
+              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>You must respond within 5 business days under Steadyhand warranty terms</p>
+            </div>
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column' as const, gap: '14px' }}>
+              {warrantyIssues.map(issue => {
+                const sevColor: Record<string,string> = { minor:'#7A9098', moderate:'#C07830', serious:'#D4522A', critical:'#6B4FA8' }
+                const color = sevColor[issue.severity] || '#D4522A'
+                const isOverdue = issue.response_due_at && new Date(issue.response_due_at) < new Date() && issue.status === 'open'
+                return (
+                  <div key={issue.id} style={{ background: '#F4F8F7', borderRadius: '10px', padding: '14px 16px', borderLeft: '3px solid ' + color }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' as const }}>
+                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: color + '18', border: '1px solid ' + color + '40', color, fontWeight: 500, textTransform: 'capitalize' as const }}>{issue.severity}</span>
+                      <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: 'rgba(28,43,50,0.06)', color: '#7A9098', textTransform: 'capitalize' as const }}>{issue.status}</span>
+                      {isOverdue && <span style={{ fontSize: '11px', color: '#D4522A', fontWeight: 500 }}>⚠ Response overdue</span>}
+                      <span style={{ fontSize: '11px', color: '#9AA5AA', marginLeft: 'auto' }}>Logged {new Date(issue.created_at).toLocaleDateString('en-AU')}</span>
+                    </div>
+                    <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', marginBottom: '4px' }}>{issue.title}</p>
+                    <p style={{ fontSize: '13px', color: '#4A5E64', lineHeight: '1.55', marginBottom: '10px' }}>{issue.description}</p>
+                    {issue.tradie_response ? (
+                      <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '10px 12px' }}>
+                        <p style={{ fontSize: '11px', fontWeight: 600, color: '#2E7D60', marginBottom: '4px' }}>Your response · {new Date(issue.tradie_responded_at).toLocaleDateString('en-AU')}</p>
+                        <p style={{ fontSize: '13px', color: '#4A5E64', margin: 0 }}>{issue.tradie_response}</p>
+                        {issue.status === 'resolved' && <p style={{ fontSize: '11px', color: '#2E7D60', marginTop: '6px', fontWeight: 500 }}>✓ Client accepted resolution</p>}
+                      </div>
+                    ) : (
+                      <div>
+                        {respondingTo === issue.id ? (
+                          <div>
+                            <textarea
+                              value={responseForm[issue.id] || ''}
+                              onChange={e => setResponseForm(prev => ({ ...prev, [issue.id]: e.target.value }))}
+                              rows={3} placeholder="Describe how you plan to address this issue and your proposed timeline..."
+                              style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', background: 'white', color: '#1C2B32', outline: 'none', resize: 'vertical' as const, lineHeight: '1.5', boxSizing: 'border-box' as const, marginBottom: '8px', fontFamily: 'sans-serif' }}
+                            />
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button type="button" onClick={() => respondToIssue(issue.id)}
+                                style={{ flex: 1, background: '#1C2B32', color: 'white', padding: '9px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                                Submit response →
+                              </button>
+                              <button type="button" onClick={() => setRespondingTo(null)}
+                                style={{ background: 'transparent', color: '#7A9098', padding: '9px 14px', borderRadius: '7px', fontSize: '12px', border: '1px solid rgba(28,43,50,0.15)', cursor: 'pointer' }}>
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button type="button" onClick={() => setRespondingTo(issue.id)}
+                            style={{ background: '#D4522A', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                            Respond to issue →
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         <a href="/messages" style={{ display: 'block', marginBottom: '20px', textDecoration: 'none' }}>
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B32', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

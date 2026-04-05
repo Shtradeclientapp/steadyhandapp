@@ -11,6 +11,7 @@ export default function WarrantyPage() {
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [form, setForm] = useState({ title: '', description: '', severity: 'moderate' })
+  const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
 
   useEffect(() => {
@@ -60,6 +61,17 @@ export default function WarrantyPage() {
         body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
       })
     }}
+
+  const acceptResolution = async (issueId: string) => {
+    setAcceptingId(issueId)
+    const supabase = createClient()
+    await supabase.from('warranty_issues').update({
+      status: 'resolved',
+      client_accepted_at: new Date().toISOString(),
+    }).eq('id', issueId)
+    setIssues(prev => prev.map(i => i.id === issueId ? { ...i, status: 'resolved', client_accepted_at: new Date().toISOString() } : i))
+    setAcceptingId(null)
+  }
 
   const warrantyEnd = job?.warranty_ends_at ? new Date(job.warranty_ends_at) : null
   const daysLeft = warrantyEnd ? Math.max(0, Math.ceil((warrantyEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : 0
@@ -189,11 +201,33 @@ export default function WarrantyPage() {
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
-              {issue.response_due_at && issue.status === 'open' && (
+              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
                 <p style={{ fontSize:'12px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#7A9098' }}>
                   Response due: {new Date(issue.response_due_at).toLocaleDateString('en-AU')}
                   {new Date(issue.response_due_at) < new Date() ? ' — overdue' : ''}
                 </p>
+              )}
+              {issue.tradie_response && (
+                <div style={{ marginTop:'12px', background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'8px', padding:'12px 14px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#2E6A8F', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'6px' }}>
+                    Tradie response · {new Date(issue.tradie_responded_at).toLocaleDateString('en-AU')}
+                  </p>
+                  <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', margin:0 }}>{issue.tradie_response}</p>
+                  {issue.resolution_notes && (
+                    <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px', fontStyle:'italic' }}>Resolution plan: {issue.resolution_notes}</p>
+                  )}
+                  {issue.status !== 'resolved' && (
+                    <button type="button" onClick={() => acceptResolution(issue.id)} disabled={acceptingId === issue.id}
+                      style={{ marginTop:'10px', background:'#2E7D60', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: acceptingId === issue.id ? 0.7 : 1 }}>
+                      {acceptingId === issue.id ? 'Accepting...' : '✓ Accept resolution'}
+                    </button>
+                  )}
+                </div>
+              )}
+              {issue.status === 'resolved' && issue.client_accepted_at && (
+                <div style={{ marginTop:'8px', display:'flex', alignItems:'center', gap:'6px' }}>
+                  <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>✓ Resolution accepted {new Date(issue.client_accepted_at).toLocaleDateString('en-AU')}</span>
+                </div>
               )}
             </div>
           ))}
