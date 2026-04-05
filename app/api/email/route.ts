@@ -168,6 +168,51 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: tradieProfile.profile.email, subject: 'Quote declined — ' + job.title, html })
     }
 
+    if (type === 'quote_declined') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const reqBody = await request.clone().json()
+      const { tradie_id, decline_reason, decline_note, revision_deadline } = reqBody
+
+      const { data: tradieProfile } = await supabase
+        .from('tradie_profiles')
+        .select('*, profile:profiles(email, full_name)')
+        .eq('id', tradie_id)
+        .single()
+      if (!tradieProfile) return NextResponse.json({ error: 'Tradie not found' }, { status: 404 })
+
+      const reasonLabels: Record<string,string> = {
+        too_expensive: 'Too expensive',
+        timeline: "Timeline doesn't work",
+        went_with_other: 'Went with another tradie',
+        scope_mismatch: "Scope didn't match their needs",
+        no_response: 'Tradie did not respond',
+        other: 'Other',
+      }
+
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + tradieProfile.profile.full_name + ',</p>' +
+        '<p style="color:#4A5E64;">Thank you for quoting on the following job. Unfortunately the client has chosen to proceed with another tradie.</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>' +
+          '<p style="color:#4A5E64;margin:0;">Client: ' + job.client.full_name + '</p>',
+          '#7A9098'
+        ) +
+        '<p style="color:#4A5E64;font-weight:500;">Reason: ' + (reasonLabels[decline_reason] || decline_reason) + '</p>' +
+        (decline_note ? '<p style="color:#4A5E64;">Additional feedback: ' + decline_note + '</p>' : '') +
+        '<p style="color:#4A5E64;">You have until <strong>' + new Date(revision_deadline).toLocaleDateString('en-AU') + '</strong> to submit a revised quote if you believe you can better meet the client's needs.</p>' +
+        btn(URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32')
+      )
+
+      await resend.emails.send({ from: FROM, to: tradieProfile.profile.email, subject: 'Quote update — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
