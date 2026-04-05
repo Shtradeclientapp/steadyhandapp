@@ -214,7 +214,7 @@ export default function AgreementPage() {
     const updated = { ...scope, [field]: new Date().toISOString() }
     if (updated.client_signed_at && updated.tradie_signed_at) {
       await supabase.from('jobs').update({ status: 'delivery' }).eq('id', job.id)
-      setTimeout(() => { window.location.href = profile?.role === 'tradie' ? '/tradie/dashboard' : '/delivery' }, 1200)
+      setTimeout(() => { window.location.href = profile?.role === 'tradie' ? '/tradie/job?id=' + job?.id : '/delivery' }, 1200)
     }
   }
 
