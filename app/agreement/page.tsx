@@ -44,7 +44,7 @@ export default function AgreementPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
         .eq(isTradie ? 'tradie_id' : 'client_id', session.user.id)
-        .in('status', ['agreement', 'shortlisted', 'delivery'])
+        .in('status', ['agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
       if (jobs && jobs.length > 0) {
@@ -337,6 +337,19 @@ export default function AgreementPage() {
         </div>
 
         {/* CENTRE — THE DOCUMENT */}
+        {isPastAgreement && (
+          <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'6px' }}>You are reviewing Stage 3 — Scope Agreement</p>
+            <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
+              This job has moved to the <strong>{job?.status}</strong> stage. The scope agreement below is read-only. Both parties signed on {scope?.client_signed_at ? new Date(scope.client_signed_at).toLocaleDateString('en-AU') : '—'}.
+            </p>
+            <a href={job?.status === 'delivery' ? '/delivery' : job?.status === 'signoff' ? '/signoff' : '/warranty'}>
+              <button type="button" style={{ background:'#6B4FA8', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to current stage →
+              </button>
+            </a>
+          </div>
+        )}
         <div>
           {multipleQuotes && !isTradie && allQuotes.length > 0 && !hasAcceptedQuote && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>

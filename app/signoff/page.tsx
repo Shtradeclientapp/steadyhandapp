@@ -29,7 +29,7 @@ export default function SignoffPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id)')
         .eq('client_id', session.user.id)
-        .in('status', ['signoff', 'delivery'])
+        .in('status', ['signoff', 'delivery', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
       if (jobs && jobs.length > 0) setJob(jobs[0])
@@ -127,6 +127,19 @@ export default function SignoffPage() {
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 5</span>
         </div>
+        {isPastSignoff && (
+          <div style={{ background:'rgba(26,107,90,0.06)', border:'1px solid rgba(26,107,90,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#1A6B5A', marginBottom:'6px' }}>You are reviewing Stage 5 — Sign-off</p>
+            <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
+              This job has been signed off and is now under warranty. Below is a record of the sign-off for your reference.
+            </p>
+            <a href="/warranty">
+              <button type="button" style={{ background:'#1A6B5A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to warranty stage →
+              </button>
+            </a>
+          </div>
+        )}
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>FINAL SIGN-OFF</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
           Walk through the completed job against your scope. Take your time — this starts the warranty clock.

@@ -18,7 +18,7 @@ export default function DeliveryPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
         .eq('client_id', session.user.id)
-        .in('status', ['delivery', 'agreement'])
+        .in('status', ['delivery', 'agreement', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
 
@@ -40,13 +40,21 @@ export default function DeliveryPage() {
             .single()
 
           if (scope?.milestones) {
+            const { data: latestQuote } = await supabase
+              .from('quotes')
+              .select('total_price')
+              .eq('job_id', jobs[0].id)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .single()
+            const quoteTotal = latestQuote?.total_price || scope.total_price || 0
             const rows = scope.milestones.map((m: any, i: number) => ({
               job_id: jobs[0].id,
               label: m.label,
               description: m.description,
               order_index: i + 1,
               percent: m.percent,
-              amount: scope.total_price ? (scope.total_price * m.percent / 100) : 0,
+              amount: quoteTotal ? (Number(quoteTotal) * m.percent / 100) : 0,
               status: 'pending',
             }))
             await supabase.from('milestones').insert(rows)
@@ -132,6 +140,19 @@ export default function DeliveryPage() {
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#C07830', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 4</span>
         </div>
+        {isPastDelivery && (
+          <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'6px' }}>You are reviewing Stage 4 — Delivery</p>
+            <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
+              This job has moved to the <strong>{job?.status}</strong> stage. Below is a summary of milestone delivery for your records.
+            </p>
+            <a href={job?.status === 'signoff' ? '/signoff' : '/warranty'}>
+              <button type="button" style={{ background:'#C07830', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to current stage →
+              </button>
+            </a>
+          </div>
+        )}
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DELIVERY TRACKING</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
           You confirm each milestone as it is completed. Payment releases only when you approve.

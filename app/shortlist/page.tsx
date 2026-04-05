@@ -28,7 +28,7 @@ export default function ShortlistPage() {
         .from('jobs')
         .select('*')
         .eq('client_id', session.user.id)
-        .in('status', ['matching', 'shortlisted', 'agreement'])
+        .in('status', ['matching', 'shortlisted', 'agreement', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('created_at', { ascending: false })
       if (!jobsData || jobsData.length === 0) { setLoading(false); return }
       setJobs(jobsData)
@@ -128,6 +128,8 @@ export default function ShortlistPage() {
     </div>
   )
 
+  const isPastStage = selectedJob && ['agreement', 'delivery', 'signoff', 'warranty', 'complete'].includes(selectedJob.status)
+
   if (loading) return (
     <>
       {nav}
@@ -151,12 +153,12 @@ export default function ShortlistPage() {
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR SHORTLIST</h1>
 
-          <HintPanel color="#2E6A8F" hints={[
+          {!isPastStage && <HintPanel color="#2E6A8F" hints={[
             "Best practice is to request quotes from at least 3 tradies so you can compare pricing and approach.",
             "Steadyhand ranks tradies by category fit, location, track record and verification status — not by who pays to be listed.",
             "You can select from Steadyhand matches and invite your own tradie — all quotes are compared in one place.",
             "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials.",
-          ]} />
+          ]} />}
 
           {jobs.length > 1 && (
             <div style={{ marginBottom:'20px' }}>
