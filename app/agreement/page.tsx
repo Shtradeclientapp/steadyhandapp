@@ -324,7 +324,7 @@ export default function AgreementPage() {
             </div>
           </div>
 
-          <a href={"/messages" + (job?.id ? "?job=" + job.id : "")} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'13px 16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', textDecoration:'none', transition:'all 0.15s' }}>
+          <a href="/messages" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'13px 16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', textDecoration:'none', transition:'all 0.15s' }}>
             <span style={{ fontSize:'18px' }}>💬</span>
             <div>
               <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Job messages</p>
