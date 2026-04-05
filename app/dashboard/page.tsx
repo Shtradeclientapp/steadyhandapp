@@ -15,6 +15,7 @@ const STAGES: Record<string, { label: string; path: string; color: string }> = {
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -23,6 +24,8 @@ export default function DashboardPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       setUser(session.user)
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      setProfile(prof)
       const { data } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
@@ -81,6 +84,32 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
+
+        {profile && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'18px 20px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
+              <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)' }}>{profile.full_name?.charAt(0) || '?'}</span>
+              </div>
+              <div>
+                <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{profile.full_name || 'Your name'}</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
+                  {[profile.suburb, profile.property_type, profile.bedrooms ? profile.bedrooms + ' bed' : null].filter(Boolean).join(' · ') || 'Complete your profile →'}
+                </p>
+              </div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+              {(!profile.phone || !profile.suburb || !profile.property_type) && (
+                <span style={{ fontSize:'11px', color:'#C07830', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'3px 10px' }}>
+                  Profile incomplete
+                </span>
+              )}
+              <a href="/profile" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px', whiteSpace:'nowrap' as const }}>
+                Edit profile →
+              </a>
+            </div>
+          </div>
+        )}
 
         <div style={{ background:'#2E7D60', borderRadius:'14px', padding:'24px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'32px' }}>
           <div>
