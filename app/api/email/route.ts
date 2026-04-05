@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
         .single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
-      const { edited_by, field } = body
+      const { edited_by, field } = await request.clone().json()
       const isTradie = job.tradie?.profile?.full_name === edited_by
       const recipientEmail = isTradie ? job.client.email : job.tradie?.profile?.email
       const recipientName = isTradie ? job.client.full_name : job.tradie?.profile?.full_name
