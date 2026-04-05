@@ -107,8 +107,12 @@ export default function AgreementPage() {
     setQuoteRequests(updatedQRs || [])
     setJob({ ...job, tradie_id: quote.tradie_id })
     setCurrentQuote(quote)
-    await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user.id, body: 'Quote from ' + (quote.tradie?.business_name || 'tradie') + ' accepted — $' + Number(quote.total_price).toLocaleString() + '. Proceeding to scope agreement.' })
+    await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user.id, body: 'Quote from ' + (quote.tradie?.business_name || 'tradie') + ' accepted — $' + Number(quote.total_price).toLocaleString() + '. Generating scope agreement.' })
     setAcceptingQuote(false)
+    await draftScope()
+    setTimeout(() => {
+      document.getElementById('scope-document')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 800)
   }
 
   const draftScope = async (suggestion?: string) => {
@@ -356,7 +360,7 @@ export default function AgreementPage() {
                       ))}
                       <button type="button" onClick={() => acceptQuote(q)} disabled={acceptingQuote}
                         style={{ width:'100%', background:'#1C2B32', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', marginTop:'10px', opacity: acceptingQuote ? 0.7 : 1 }}>
-                        Accept this quote →
+                        Select this quote and review scope →
                       </button>
                     </div>
                   )
@@ -373,7 +377,7 @@ export default function AgreementPage() {
           )}
 
           {/* THE DOCUMENT */}
-          <div style={{ background:'white', borderRadius:'16px', boxShadow:'0 4px 40px rgba(28,43,50,0.12), 0 1px 8px rgba(28,43,50,0.08)', overflow:'hidden', marginBottom:'20px' }}>
+          <div id="scope-document" style={{ background:'white', borderRadius:'16px', boxShadow:'0 4px 40px rgba(28,43,50,0.12), 0 1px 8px rgba(28,43,50,0.08)', overflow:'hidden', marginBottom:'20px' }}>
 
             {/* Document header */}
             <div style={{ background:'#1C2B32', padding:'28px 36px', position:'relative', overflow:'hidden' }}>
