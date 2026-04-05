@@ -150,6 +150,24 @@ export default function AgreementPage() {
     const { data: { session } } = await supabase.auth.getSession()
     setScope({ ...scope, ...updates })
     await supabase.from('scope_agreements').update({ ...updates, last_edited_by: session?.user.id, last_edited_at: new Date().toISOString(), client_signed_at: null, tradie_signed_at: null }).eq('id', scope.id)
+
+    const editedField = Object.keys(updates)[0]
+    const fieldLabel: Record<string,string> = { inclusions: 'inclusions', exclusions: 'exclusions', milestones: 'payment milestones' }
+    const label = fieldLabel[editedField] || editedField
+    const editorName = profile?.role === 'tradie' ? job?.tradie?.business_name : job?.client?.full_name
+
+    await supabase.from('job_messages').insert({
+      job_id: job?.id,
+      sender_id: session?.user.id,
+      body: 'Scope updated by ' + editorName + ' — ' + label + ' revised. Both parties will need to re-sign.',
+    })
+
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'scope_edited', job_id: job?.id, edited_by: editorName, field: label }),
+    }).catch(() => {})
+
     setSaving(false)
     setSavedAt(new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' }))
   }
@@ -416,7 +434,16 @@ export default function AgreementPage() {
               </div>
             </div>
 
-                {/* External document upload */}
+                {scope && scope.last_edited_at && scope.last_edited_by && (!scope.client_signed_at || !scope.tradie_signed_at) && (
+              <div style={{ padding:'14px 18px', background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderBottom:'1px solid rgba(107,79,168,0.1)' }}>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'3px' }}>Scope was recently updated</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>
+                  Last edited {new Date(scope.last_edited_at).toLocaleDateString('en-AU')} at {new Date(scope.last_edited_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}. Both parties need to review and re-sign before work can begin.
+                </p>
+              </div>
+            )}
+
+            {/* External document upload */}
                 <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'6px', fontWeight:600 }}>Working in your own system?</p>
                   <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'14px' }}>If you have prepared your agreement or quote in Xero, your CRM, or another tool, upload the signed document here. Steadyhand will store it against this job and warranty tracking will continue from the signing date.</p>

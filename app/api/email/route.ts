@@ -105,6 +105,35 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: issue.job.tradie.profile.email, subject: 'Warranty issue logged — ' + issue.title, html })
     }
 
+    if (type === 'scope_edited') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const { edited_by, field } = body
+      const isTradie = job.tradie?.profile?.full_name === edited_by
+      const recipientEmail = isTradie ? job.client.email : job.tradie?.profile?.email
+      const recipientName = isTradie ? job.client.full_name : job.tradie?.profile?.full_name
+
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + recipientName + ',</p>' +
+        '<p style="color:#4A5E64;"><strong>' + edited_by + '</strong> has updated the scope agreement for:</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>' +
+          '<p style="color:#D4522A;margin:0;font-weight:500;">Changed: ' + field + '</p>',
+          '#6B4FA8'
+        ) +
+        '<p style="color:#4A5E64;">The scope has been updated and signatures have been reset. Please review the changes and re-sign before work begins.</p>' +
+        btn(URL + '/agreement', 'Review scope changes', '#6B4FA8')
+      )
+
+      await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Scope agreement updated — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
