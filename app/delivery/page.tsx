@@ -98,12 +98,12 @@ export default function DeliveryPage() {
       <div style={{ position:'sticky', top:'64px', zIndex:90, background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' }}>
         {[
           { num:1, label:'Request', path:'/request', color:'#2E7D60' },
-          { num:2, label:'Shortlist', path:'/shortlist', color:'#2E6A8F' },
-          { num:3, label:'Quotes', path:'/quotes', color:'#C07830' },
-          { num:4, label:'Agreement', path:'/agreement', color:'#6B4FA8' },
-          { num:5, label:'Delivery', path:'/delivery', color:'#C07830' },
-          { num:6, label:'Sign-off', path:'/signoff', color:'#D4522A' },
-          { num:7, label:'Warranty', path:'/warranty', color:'#1A6B5A' },
+          { num:2, label:'Match', path:'/shortlist', color:'#2E6A8F' },
+          { num:3, label:'Quote', path:'/quotes', color:'#C07830' },
+          { num:4, label:'Confirm', path:'/agreement', color:'#6B4FA8' },
+          { num:5, label:'Build', path:'/delivery', color:'#C07830' },
+          { num:6, label:'Complete', path:'/signoff', color:'#D4522A' },
+          { num:7, label:'Protect', path:'/warranty', color:'#1A6B5A' },
         ].map(s => (
           <a key={s.num} href={s.path} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
             {s.path === '/delivery' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.color }} />}

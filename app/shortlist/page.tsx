@@ -115,7 +115,7 @@ export default function ShortlistPage() {
         <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Back to dashboard</a>
       </nav>
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
-        {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Shortlist',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Quotes',p:'/quotes',c:'#C07830'},{n:4,l:'Agreement',p:'/agreement',c:'#6B4FA8'},{n:5,l:'Delivery',p:'/delivery',c:'#C07830'},{n:6,l:'Sign-off',p:'/signoff',c:'#D4522A'},{n:7,l:'Warranty',p:'/warranty',c:'#1A6B5A'}].map(s => (
+        {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Quote',p:'/quotes',c:'#C07830'},{n:4,l:'Confirm',p:'/agreement',c:'#6B4FA8'},{n:5,l:'Build',p:'/delivery',c:'#C07830'},{n:6,l:'Complete',p:'/signoff',c:'#D4522A'},{n:7,l:'Protect',p:'/warranty',c:'#1A6B5A'}].map(s => (
           <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
             {s.p === '/shortlist' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 2 ? '#2E7D60' : s.p === '/shortlist' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 2 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 2 ? 'white' : s.p === '/shortlist' ? s.c : '#7A9098' }}>
@@ -151,7 +151,7 @@ export default function ShortlistPage() {
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#2E6A8F', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Stage 2</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR SHORTLIST</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR MATCHES</h1>
 
           {!isPastStage && <HintPanel color="#2E6A8F" hints={[
             "Best practice is to request quotes from at least 3 tradies so you can compare pricing and approach.",

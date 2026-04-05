@@ -152,12 +152,12 @@ export default function QuotesPage() {
         <div style={{ maxWidth:'900px', margin:'0 auto', display:'flex', overflowX:'auto' as const }}>
           {[
             {n:1,l:'Request',p:'/request',c:'#2E7D60'},
-            {n:2,l:'Shortlist',p:'/shortlist',c:'#2E6A8F'},
-            {n:3,l:'Quotes',p:'/quotes',c:'#C07830'},
-            {n:4,l:'Agreement',p:'/agreement',c:'#6B4FA8'},
-            {n:5,l:'Delivery',p:'/delivery',c:'#C07830'},
-            {n:6,l:'Sign-off',p:'/signoff',c:'#D4522A'},
-            {n:7,l:'Warranty',p:'/warranty',c:'#1A6B5A'},
+            {n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},
+            {n:3,l:'Quote',p:'/quotes',c:'#C07830'},
+            {n:4,l:'Confirm',p:'/agreement',c:'#6B4FA8'},
+            {n:5,l:'Build',p:'/delivery',c:'#C07830'},
+            {n:6,l:'Complete',p:'/signoff',c:'#D4522A'},
+            {n:7,l:'Protect',p:'/warranty',c:'#1A6B5A'},
           ].map(s => {
             const stageStatus = STAGE_ORDER[s.n - 1]
             const jobIdx = STAGE_ORDER.indexOf(job?.status || 'matching')

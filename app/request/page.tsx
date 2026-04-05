@@ -237,7 +237,7 @@ window.location.href = '/shortlist'
                   { label:'Property', value:form.property_type },
                   { label:'Urgency', value:form.urgency },
                   { label:'Budget', value:form.budget_range || 'Not specified' },
-                  { label:'Warranty', value:form.warranty_period === '90' ? '90 days' : form.warranty_period === '180' ? '6 months' : '12 months' },
+                  { label:'Protect', value:form.warranty_period === '90' ? '90 days' : form.warranty_period === '180' ? '6 months' : '12 months' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:'12px', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                     <span style={{ fontSize:'13px', color:'#7A9098', minWidth:'90px', flexShrink:0, fontFamily:'sans-serif' }}>{item.label}</span>

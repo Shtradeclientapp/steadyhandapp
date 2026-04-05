@@ -4,13 +4,13 @@ import { createClient } from '@/lib/supabase/client'
 
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
   draft:       { label: 'Draft',             path: '/request',   color: '#7A9098' },
-  matching:    { label: 'AI Matching',        path: '/shortlist',  color: '#2E6A8F' },
-  shortlisted: { label: 'Review shortlist',   path: '/shortlist',  color: '#2E6A8F' },
-  agreement:   { label: 'Sign agreement',     path: '/agreement',  color: '#6B4FA8' },
-  delivery:    { label: 'In delivery',        path: '/delivery',   color: '#C07830' },
-  signoff:     { label: 'Ready for sign-off', path: '/signoff',    color: '#D4522A' },
-  warranty:    { label: 'Under warranty',     path: '/warranty',   color: '#1A6B5A' },
-  complete:    { label: 'Complete',           path: '/warranty',   color: '#2E7D60' },
+  matching:    { label: 'Matching',        path: '/shortlist',  color: '#2E6A8F' },
+  shortlisted: { label: 'Match',   path: '/shortlist',  color: '#2E6A8F' },
+  agreement:   { label: 'Confirm',     path: '/agreement',  color: '#6B4FA8' },
+  delivery:    { label: 'Build',        path: '/delivery',   color: '#C07830' },
+  signoff:     { label: 'Done', path: '/signoff',    color: '#D4522A' },
+  warranty:    { label: 'Protect',     path: '/warranty',   color: '#1A6B5A' },
+  complete:    { label: 'Done',           path: '/warranty',   color: '#2E7D60' },
 }
 
 export default function DashboardPage() {

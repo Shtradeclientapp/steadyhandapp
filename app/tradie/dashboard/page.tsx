@@ -5,10 +5,10 @@ import { createClient } from '@/lib/supabase/client'
 
 const STAGE_LABELS: Record<string, { label: string; color: string; action: string }> = {
   agreement:   { label: 'Awaiting signature',  color: '#6B4FA8', action: 'Review scope' },
-  delivery:    { label: 'In delivery',          color: '#C07830', action: 'Update progress' },
+  delivery:    { label: 'Build',          color: '#C07830', action: 'Update progress' },
   signoff:     { label: 'Awaiting sign-off',    color: '#D4522A', action: 'Awaiting client' },
-  warranty:    { label: 'Under warranty',       color: '#1A6B5A', action: 'View issues' },
-  complete:    { label: 'Complete',             color: '#2E7D60', action: 'View' },
+  warranty:    { label: 'Protect',       color: '#1A6B5A', action: 'View issues' },
+  complete:    { label: 'Done',             color: '#2E7D60', action: 'View' },
 }
 
 export default function TradieDashboard() {
