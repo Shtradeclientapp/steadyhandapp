@@ -134,6 +134,40 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Scope agreement updated — ' + job.title, html })
     }
 
+    if (type === 'quote_declined') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const { decline_reason, decline_note, revision_deadline, tradie_id } = body
+      const { data: tradieProfile } = await supabase
+        .from('tradie_profiles')
+        .select('*, profile:profiles(email, full_name)')
+        .eq('id', tradie_id)
+        .single()
+      if (!tradieProfile) return NextResponse.json({ error: 'Tradie not found' }, { status: 404 })
+
+      const revDate = new Date(revision_deadline).toLocaleString('en-AU')
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + tradieProfile.profile.full_name + ',</p>' +
+        '<p style="color:#4A5E64;"><strong>' + job.client.full_name + '</strong> has declined your quote for:</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>' +
+          '<p style="color:#D4522A;margin:0;font-weight:500;">Reason: ' + decline_reason + '</p>' +
+          (decline_note ? '<p style="color:#4A5E64;margin:8px 0 0;">' + decline_note + '</p>' : ''),
+          '#D4522A'
+        ) +
+        '<p style="color:#4A5E64;">You have until <strong>' + revDate + '</strong> to submit a revised quote if you would like to reconsider.</p>' +
+        btn(URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32')
+      )
+
+      await resend.emails.send({ from: FROM, to: tradieProfile.profile.email, subject: 'Quote declined — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
