@@ -28,7 +28,12 @@ export async function POST(request: NextRequest) {
 
     const candidates = tradies.slice(0, 10)
     const descriptions = candidates.map((t: any, i: number) => 'Tradie ' + (i+1) + ': ID: ' + t.id + ', Business: ' + t.business_name + ', Rating: ' + t.rating_avg + ', Bio: ' + (t.bio || 'none')).join('\n')
-    const promptText = 'You are the AI matching engine for Steadyhand WA.\n\nJob: ' + job.title + '\nCategory: ' + job.trade_category + '\nLocation: ' + job.suburb + '\n\nTradies:\n' + descriptions + '\n\nScore each 0-100. Return ONLY this JSON:\n{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2 sentences>","rank":<number>}]}\n\nTop 4 only.'
+    const tradieDescriptions = (tradies || []).map((t: any) => {
+      const trustNote = t.trust_score_composite ? ' Trust score: ' + t.trust_score_composite + '/100.' : ''
+      const ratingNote = t.rating_avg ? ' Rating: ' + Number(t.rating_avg).toFixed(1) + '/5 from ' + t.jobs_completed + ' jobs.' : ''
+      return t.id + ': ' + t.business_name + ' — ' + (t.bio || 'No bio') + ratingNote + trustNote
+    }).join('\n')
+    const promptText = 'You are the AI matching engine for Steadyhand WA.\n\nJob: ' + job.title + '\nCategory: ' + job.trade_category + '\nLocation: ' + job.suburb + '\nDescription: ' + job.description + '\n\nTradies:\n' + tradieDescriptions + '\n\nScore each tradie 0-100 based on category fit, location, experience, rating and trust score. Trust score reflects quality of past client dialogue and should influence your ranking. Return ONLY this JSON:\n{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2 sentences>","rank":<number>}]}\n\nTop 4 only.'
 
     const message = await anthropic.messages.create({ model: 'claude-sonnet-4-6', max_tokens: 1024, messages: [{ role: 'user', content: promptText }] })
     const raw = message.content[0].type === 'text' ? message.content[0].text : ''
