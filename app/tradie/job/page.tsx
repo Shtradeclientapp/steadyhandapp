@@ -54,6 +54,7 @@ export default function TradieJobPage() {
   const [showQuoteForm, setShowQuoteForm] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const [submittingQuote, setSubmittingQuote] = useState(false)
+  const [quoteSubmitted, setQuoteSubmitted] = useState(false)
   const [activeTemplate, setActiveTemplate] = useState<string>('detailed')
   const [quoteForm, setQuoteForm] = useState({
     estimated_start: '',
@@ -164,6 +165,7 @@ export default function TradieJobPage() {
     }
     setShowQuoteForm(false)
     setSubmittingQuote(false)
+    setQuoteSubmitted(true)
   }
 
   const submitMilestone = async (milestone: any) => {
@@ -219,7 +221,42 @@ export default function TradieJobPage() {
             </button>
           </div>
 
-          {currentQuote && !showQuoteForm && (
+          {quoteSubmitted && currentQuote && (
+            <div style={{ padding:'20px' }}>
+              <div style={{ textAlign:'center' as const, padding:'24px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', marginBottom:'16px' }}>
+                <div style={{ fontSize:'36px', marginBottom:'12px' }}>✅</div>
+                <p style={{ fontSize:'16px', fontWeight:500, color:'#2E7D60', marginBottom:'6px' }}>Quote submitted successfully</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6' }}>The client will review your quote and respond by email. This usually takes 1-2 business days.</p>
+              </div>
+              <div style={{ background:'#F4F8F7', borderRadius:'10px', padding:'16px', marginBottom:'16px' }}>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>What happens next</p>
+                {[
+                  { step:'1', text:'The client reviews your quote and may request changes or accept it.' },
+                  { step:'2', text:'If accepted, you will both sign a scope agreement before work begins.' },
+                  { step:'3', text:'Once signed, milestones are set and you can begin work.' },
+                  { step:'4', text:'Payment is released at each milestone when the client approves.' },
+                ].map(s => (
+                  <div key={s.step} style={{ display:'flex', gap:'10px', marginBottom:'8px', alignItems:'flex-start' }}>
+                    <div style={{ width:'20px', height:'20px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', fontWeight:600, flexShrink:0, marginTop:'1px' }}>{s.step}</div>
+                    <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.5', margin:0 }}>{s.text}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:'flex', gap:'10px' }}>
+                <a href="/tradie/dashboard" style={{ flex:1 }}>
+                  <button type="button" style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    Back to dashboard
+                  </button>
+                </a>
+                <button type="button" onClick={() => { setQuoteSubmitted(false); setShowQuoteForm(true) }}
+                  style={{ flex:1, background:'transparent', color:'#2E6A8F', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(46,106,143,0.3)', cursor:'pointer' }}>
+                  Revise quote
+                </button>
+              </div>
+            </div>
+          )}
+
+          {currentQuote && !showQuoteForm && !quoteSubmitted && (
             <div style={{ padding: '16px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '14px' }}>
                 <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '32px', color: '#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
