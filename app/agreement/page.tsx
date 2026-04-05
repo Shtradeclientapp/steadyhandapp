@@ -27,6 +27,7 @@ export default function AgreementPage() {
   const [savedAt, setSavedAt] = useState<string|null>(null)
   const [acceptingQuote, setAcceptingQuote] = useState(false)
   const [showThread, setShowThread] = useState(true)
+  const [showScopeHint, setShowScopeHint] = useState(false)
   const [uploadingDoc, setUploadingDoc] = useState(false)
   const [uploadedDoc, setUploadedDoc] = useState<any>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -70,6 +71,11 @@ export default function AgreementPage() {
         setQuoteRequests(qrs || [])
         if (jobs[0].agreement_document_name) {
           setUploadedDoc({ name: jobs[0].agreement_document_name, path: jobs[0].agreement_document_url })
+        }
+        const hintKey = 'sh_scope_hint_seen_' + jobs[0].id
+        const hintSeen = localStorage.getItem(hintKey)
+        if (!hintSeen && jobs[0].tradie_id && !scopeData) {
+          setTimeout(() => setShowScopeHint(true), 1200)
         }
       }
       setLoading(false)
