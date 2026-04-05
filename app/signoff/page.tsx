@@ -86,6 +86,8 @@ export default function SignoffPage() {
     </div>
   )
 
+  const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
+
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
 
   if (done) return (

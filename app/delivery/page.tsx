@@ -128,6 +128,7 @@ export default function DeliveryPage() {
     </div></>
   )
 
+  const isPastDelivery = job && ['signoff', 'warranty', 'complete'].includes(job.status)
   const done = milestones.filter(m => m.status === 'approved').length
   const total = milestones.length
   const progress = total > 0 ? Math.round((done / total) * 100) : 0
