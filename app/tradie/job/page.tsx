@@ -165,7 +165,7 @@ export default function TradieJobPage() {
     }
     setShowQuoteForm(false)
     setSubmittingQuote(false)
-    setQuoteSubmitted(true)
+    setTimeout(() => setQuoteSubmitted(true), 100)
   }
 
   const submitMilestone = async (milestone: any) => {
