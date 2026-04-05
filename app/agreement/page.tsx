@@ -232,7 +232,7 @@ export default function AgreementPage() {
   }
 
   const isTradie = profile?.role === 'tradie'
-  const STAGE_ORDER = ['matching', 'shortlisted', 'agreement', 'delivery', 'signoff', 'warranty', 'complete']
+  const STAGE_ORDER = ['matching', 'shortlisted', 'quotes', 'agreement', 'delivery', 'signoff', 'warranty', 'complete']
   const jobStageIndex = job ? STAGE_ORDER.indexOf(job.status) : -1
   const isPastAgreement = jobStageIndex > STAGE_ORDER.indexOf('agreement')
   const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
@@ -247,7 +247,7 @@ export default function AgreementPage() {
         <a href={isTradie ? '/tradie/dashboard' : '/dashboard'} style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Back to dashboard</a>
       </nav>
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
-        {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Shortlist',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Agreement',p:'/agreement',c:'#6B4FA8'},{n:4,l:'Delivery',p:'/delivery',c:'#C07830'},{n:5,l:'Sign-off',p:'/signoff',c:'#D4522A'},{n:6,l:'Warranty',p:'/warranty',c:'#1A6B5A'}].map(s => (
+        {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Shortlist',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Quotes',p:'/quotes',c:'#C07830'},{n:4,l:'Agreement',p:'/agreement',c:'#6B4FA8'},{n:5,l:'Delivery',p:'/delivery',c:'#C07830'},{n:6,l:'Sign-off',p:'/signoff',c:'#D4522A'},{n:7,l:'Warranty',p:'/warranty',c:'#1A6B5A'}].map(s => (
           <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
             {s.p === '/agreement' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 3 ? '#2E7D60' : s.p === '/agreement' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 3 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 3 ? 'white' : s.p === '/agreement' ? s.c : '#7A9098' }}>
@@ -362,7 +362,7 @@ export default function AgreementPage() {
         {/* CENTRE — THE DOCUMENT */}
         {isPastAgreement && (
           <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-            <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'6px' }}>You are reviewing Stage 3 — Scope Agreement</p>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'6px' }}>You are reviewing Stage 4 — Scope Agreement</p>
             <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
               This job has moved to the <strong>{job?.status}</strong> stage. The scope agreement below is read-only. Both parties signed on {scope?.client_signed_at ? new Date(scope.client_signed_at).toLocaleDateString('en-AU') : '—'}.
             </p>
