@@ -213,6 +213,36 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: tradieProfile.profile.email, subject: 'Quote update — ' + job.title, html })
     }
 
+    if (type === 'assessment_shared') {
+      const reqBody = await request.clone().json()
+      const { shared_by } = reqBody
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const isTradie = shared_by === 'tradie'
+      const senderName = isTradie ? job.tradie?.business_name : job.client?.full_name
+      const recipientEmail = isTradie ? job.client?.email : job.tradie?.profile?.email
+      const recipientName = isTradie ? job.client?.full_name : job.tradie?.profile?.full_name
+
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + recipientName + ',</p>' +
+        '<p style="color:#4A5E64;"><strong>' + senderName + '</strong> has shared their site assessment notes for:</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>',
+          '#9B6B9B'
+        ) +
+        '<p style="color:#4A5E64;">Please review their notes and acknowledge them before quoting begins. Acknowledging does not mean you agree with everything — it means you have read the record.</p>' +
+        btn(URL + '/assess', 'Review assessment notes', '#9B6B9B')
+      )
+
+      await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Site assessment notes shared — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
