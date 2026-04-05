@@ -18,6 +18,7 @@ export default function ShortlistPage() {
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteSent, setInviteSent] = useState(false)
   const [pendingInvites, setPendingInvites] = useState<any[]>([])
+  const [allQuotes, setAllQuotes] = useState<any[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -68,6 +69,8 @@ export default function ShortlistPage() {
       .eq('job_id', jobId)
     setQuoteRequests(data || [])
     if (data && data.length > 0) { setSent(true); setTab('requested') }
+    const { data: qs } = await supabase.from('quotes').select('id').eq('job_id', jobId)
+    setAllQuotes(qs || [])
   }
 
   const toggleTradie = (tradieId: string) => {
@@ -186,7 +189,7 @@ export default function ShortlistPage() {
                     {sending ? 'Sending...' : 'Request quotes from ' + totalSelected + ' tradie' + (totalSelected > 1 ? 's' : '') + ' →'}
                   </button>
                 )}
-                {sent && (
+                {sent && allQuotes && allQuotes.length > 0 && (
                   <button type="button" onClick={() => window.location.href = '/agreement'}
                     style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     View quotes →
