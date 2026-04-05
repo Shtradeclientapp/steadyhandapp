@@ -173,7 +173,8 @@ export default function TradieDashboard() {
         <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
           {activeJobs.map(job => {
             const stage = STAGE_LABELS[job.status]
-            const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id)
+            const tradieUserId = user?.id
+            const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === tradieUserId)
             const isAssigned = !!job.tradie_id
             const isDeclined = myQR?.status === 'declined'
             if (isDeclined) return null
