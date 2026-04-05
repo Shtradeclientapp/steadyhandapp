@@ -8,7 +8,6 @@ function MessagesPageInner() {
   const [jobs, setJobs] = useState<any[]>([])
   const [selectedJob, setSelectedJob] = useState<any>(null)
   const searchParams = useSearchParams()
-  const searchParams = useSearchParams()
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
