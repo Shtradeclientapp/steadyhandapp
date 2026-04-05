@@ -194,6 +194,7 @@ export default function AdminPage() {
                     { label: 'Rating', value: selectedProfile.rating_avg ? Number(selectedProfile.rating_avg).toFixed(1) + ' ⭐' : '—' },
                     { label: 'Jobs completed', value: String(selectedProfile.jobs_completed || 0) },
                     { label: 'Dialogue score', value: selectedProfile.dialogue_score_avg ? Number(selectedProfile.dialogue_score_avg).toFixed(0) : '—' },
+                    { label: 'Trust score', value: selectedProfile.trust_score_composite ? Number(selectedProfile.trust_score_composite).toFixed(0) : '—' },
                     { label: 'Stripe Connect', value: selectedProfile.stripe_account_id ? '✓ Connected' : 'Not connected' },
                     { label: 'Joined', value: selectedProfile.profile?.created_at ? new Date(selectedProfile.profile.created_at).toLocaleDateString('en-AU') : '—' },
                   ].map(item => (
