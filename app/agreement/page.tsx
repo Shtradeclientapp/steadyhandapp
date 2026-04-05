@@ -19,7 +19,6 @@ export default function AgreementPage() {
   const [currentQuote, setCurrentQuote] = useState<any>(null)
   const [allQuotes, setAllQuotes] = useState<any[]>([])
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
-  const [scoringDialogue, setScoringDialogue] = useState(false)
   const [saving, setSaving] = useState(false)
   const [savedAt, setSavedAt] = useState<string|null>(null)
   const [acceptingQuote, setAcceptingQuote] = useState(false)
@@ -327,28 +326,7 @@ export default function AgreementPage() {
             </div>
           </a>
 
-          {job && user && (
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
-            </div>
-          )}
 
-          {dialogueScore && (
-            <DialogueScore
-              score={dialogueScore.overall}
-              dimensions={dialogueScore.dimensions}
-              suggestions={dialogueScore.suggestions || []}
-              band={dialogueScore.band}
-              bandMessage={dialogueScore.band_message}
-              loading={scoringDialogue}
-              onRefresh={scoreDialogue}
-            />
-          )}
-
-          {!dialogueScore && (
-            <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px' }}>
-              <p style={{ fontSize:'12px', fontWeight:500, color:'#6B4FA8', marginBottom:'4px' }}>Dialogue Trust Score</p>
-            </div>
-          )}
 
         </div>
 
