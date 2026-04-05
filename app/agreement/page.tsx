@@ -212,6 +212,9 @@ export default function AgreementPage() {
   }
 
   const isTradie = profile?.role === 'tradie'
+  const STAGE_ORDER = ['matching', 'shortlisted', 'agreement', 'delivery', 'signoff', 'warranty', 'complete']
+  const jobStageIndex = job ? STAGE_ORDER.indexOf(job.status) : -1
+  const isPastAgreement = jobStageIndex > STAGE_ORDER.indexOf('agreement')
   const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
   const hasAcceptedQuote = quoteRequests.some(qr => qr.status === 'accepted')
   const jobRef = job ? 'SH-' + job.id.slice(0, 8).toUpperCase() : ''
