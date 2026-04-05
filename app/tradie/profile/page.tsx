@@ -1,0 +1,339 @@
+'use client'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+
+const ALL_CATEGORIES = ['Electrical', 'Plumbing & Gas', 'Carpentry & Joinery', 'Painting', 'Tiling', 'Landscaping', 'Building', 'HVAC', 'Air Conditioning', 'Roofing', 'Concreting', 'Fencing', 'Plastering', 'Waterproofing', 'Solar', 'Security', 'Pest Control', 'Cleaning', 'Other']
+const ALL_AREAS = ['Perth CBD', 'Fremantle', 'Subiaco', 'Nedlands', 'Cottesloe', 'Joondalup', 'Rockingham', 'Mandurah', 'Bunbury', 'Busselton', 'Margaret River', 'Augusta', 'Dunsborough', 'Harvey', 'Collie']
+const AVAILABILITY = [
+  { value: 'available', label: 'Available now', color: '#2E7D60' },
+  { value: 'enquiries', label: 'Taking enquiries', color: '#C07830' },
+  { value: 'booked', label: 'Fully booked', color: '#D4522A' },
+]
+const CONTACT_PREFS = ['Email', 'Phone call', 'SMS']
+
+export default function TradieProfilePage() {
+  const [profile, setProfile] = useState<any>(null)
+  const [tradie, setTradie] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [form, setForm] = useState<any>({})
+  const [activeTab, setActiveTab] = useState<'profile'|'business'|'availability'>('profile')
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) { window.location.href = '/login'; return }
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
+      if (prof) setProfile(prof)
+      if (trad) { setTradie(trad); setForm({ ...prof, ...trad }) }
+      setLoading(false)
+    })
+  }, [])
+
+  const setF = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
+
+  const toggleCategory = (cat: string) => {
+    const current = form.trade_categories || []
+    if (current.includes(cat)) {
+      setF('trade_categories', current.filter((c: string) => c !== cat))
+    } else {
+      setF('trade_categories', [...current, cat])
+    }
+  }
+
+  const toggleArea = (area: string) => {
+    const current = form.service_areas || []
+    if (current.includes(area)) {
+      setF('service_areas', current.filter((a: string) => a !== area))
+    } else {
+      setF('service_areas', [...current, area])
+    }
+  }
+
+  const save = async () => {
+    setSaving(true)
+    const supabase = createClient()
+    await supabase.from('profiles').update({
+      full_name: form.full_name,
+      phone: form.phone,
+    }).eq('id', profile.id)
+    await supabase.from('tradie_profiles').update({
+      business_name: form.business_name,
+      bio: form.bio,
+      trade_categories: form.trade_categories,
+      service_areas: form.service_areas,
+      abn: form.abn,
+      licence_number: form.licence_number,
+      licence_type: form.licence_type,
+      years_experience: form.years_experience ? Number(form.years_experience) : null,
+      website: form.website,
+      phone: form.phone,
+      preferred_contact: form.preferred_contact,
+      availability_status: form.availability_status,
+    }).eq('id', profile.id)
+    setSaving(false)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
+  }
+
+  const inp = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'sans-serif' }
+  const lbl = (text: string, sub?: string) => (
+    <div style={{ marginBottom: '6px' }}>
+      <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>{text}</p>
+      {sub && <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>{sub}</p>}
+    </div>
+  )
+
+  if (loading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}>
+      <p style={{ color: '#4A5E64' }}>Loading...</p>
+    </div>
+  )
+
+  const availability = AVAILABILITY.find(a => a.value === form.availability_status) || AVAILABILITY[0]
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
+      <nav style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(200,213,210,0.95)', borderBottom: '1px solid rgba(28,43,50,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
+        <a href="/tradie/dashboard" style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#D4522A', letterSpacing: '2px', textDecoration: 'none' }}>STEADYHAND</a>
+        <a href="/tradie/dashboard" style={{ fontSize: '13px', color: '#4A5E64', textDecoration: 'none' }}>← Back to dashboard</a>
+      </nav>
+
+      {/* PROFILE HEADER CARD */}
+      <div style={{ background: '#1C2B32', padding: '32px 0', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
+        <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' as const }}>
+            <div style={{ width: '72px', height: '72px', borderRadius: '14px', background: 'rgba(216,228,225,0.1)', border: '1.5px solid rgba(216,228,225,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: 'rgba(216,228,225,0.7)' }}>{form.business_name?.charAt(0) || '?'}</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' as const }}>
+                <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: 'rgba(216,228,225,0.9)', letterSpacing: '1px', margin: 0 }}>{form.business_name || 'Your Business'}</h1>
+                <span style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '100px', background: availability.color + '22', border: '1px solid ' + availability.color + '44', color: availability.color, fontWeight: 500 }}>
+                  {availability.label}
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '10px' }}>
+                {(form.trade_categories || []).map((cat: string) => (
+                  <span key={cat} style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '100px', background: 'rgba(216,228,225,0.08)', border: '1px solid rgba(216,228,225,0.15)', color: 'rgba(216,228,225,0.6)' }}>{cat}</span>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' as const }}>
+                {tradie?.licence_verified && (
+                  <span style={{ fontSize: '12px', color: '#2E7D60', display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Licence verified</span>
+                )}
+                {tradie?.insurance_verified && (
+                  <span style={{ fontSize: '12px', color: '#2E7D60', display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Insurance verified</span>
+                )}
+                {tradie?.rating_avg > 0 && (
+                  <span style={{ fontSize: '12px', color: 'rgba(216,228,225,0.6)' }}>⭐ {Number(tradie.rating_avg).toFixed(1)} · {tradie.jobs_completed} jobs</span>
+                )}
+                {tradie?.dialogue_score_avg > 0 && (
+                  <span style={{ fontSize: '12px', color: 'rgba(107,79,168,0.8)' }}>Dialogue score: {Number(tradie.dialogue_score_avg).toFixed(0)}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: '780px', margin: '0 auto', padding: '32px 24px' }}>
+
+        {/* TABS */}
+        <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)', marginBottom: '24px' }}>
+          {([
+            { id: 'profile', label: 'Public profile' },
+            { id: 'business', label: 'Business details' },
+            { id: 'availability', label: 'Availability' },
+          ] as const).map(t => (
+            <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+              style={{ padding: '10px 20px', border: 'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#1C2B32' : '#7A9098' }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'profile' && (
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>YOUR BIO</p>
+              </div>
+              <div style={{ padding: '20px' }}>
+                {lbl('About your business', 'Shown to clients on the shortlist — 2-3 sentences about your experience and approach')}
+                <textarea value={form.bio || ''} onChange={e => setF('bio', e.target.value)}
+                  rows={4} placeholder="e.g. Licensed electrician with 12 years experience across residential and commercial projects in Perth Metro. We specialise in switchboard upgrades, solar installations and new builds."
+                  style={{ ...inp, resize: 'vertical' as const, lineHeight: '1.6' }} />
+              </div>
+            </div>
+
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>TRADE CATEGORIES</p>
+              </div>
+              <div style={{ padding: '20px' }}>
+                {lbl('What trades do you offer?', 'Select all that apply — used to match you with relevant jobs')}
+                <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px', marginTop: '8px' }}>
+                  {ALL_CATEGORIES.map(cat => {
+                    const selected = (form.trade_categories || []).includes(cat)
+                    return (
+                      <button key={cat} type="button" onClick={() => toggleCategory(cat)}
+                        style={{ padding: '7px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 500, border: '1.5px solid ' + (selected ? '#D4522A' : 'rgba(28,43,50,0.15)'), background: selected ? 'rgba(212,82,42,0.08)' : '#F4F8F7', color: selected ? '#D4522A' : '#4A5E64', cursor: 'pointer' }}>
+                        {cat}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>SERVICE AREAS</p>
+              </div>
+              <div style={{ padding: '20px' }}>
+                {lbl('Where do you work?', 'Select all areas you service')}
+                <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px', marginTop: '8px' }}>
+                  {ALL_AREAS.map(area => {
+                    const selected = (form.service_areas || []).includes(area)
+                    return (
+                      <button key={area} type="button" onClick={() => toggleArea(area)}
+                        style={{ padding: '7px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 500, border: '1.5px solid ' + (selected ? '#2E6A8F' : 'rgba(28,43,50,0.15)'), background: selected ? 'rgba(46,106,143,0.08)' : '#F4F8F7', color: selected ? '#2E6A8F' : '#4A5E64', cursor: 'pointer' }}>
+                        {area}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'business' && (
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>BUSINESS DETAILS</p>
+              </div>
+              <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  {lbl('Business name')}
+                  <input type="text" value={form.business_name || ''} onChange={e => setF('business_name', e.target.value)} style={inp} placeholder="Your business name" />
+                </div>
+                <div>
+                  {lbl('ABN')}
+                  <input type="text" value={form.abn || ''} onChange={e => setF('abn', e.target.value)} style={inp} placeholder="12 345 678 901" />
+                </div>
+                <div>
+                  {lbl('Years in business')}
+                  <input type="number" value={form.years_experience || ''} onChange={e => setF('years_experience', e.target.value)} style={inp} placeholder="e.g. 8" min="0" max="50" />
+                </div>
+                <div>
+                  {lbl('Licence number')}
+                  <input type="text" value={form.licence_number || ''} onChange={e => setF('licence_number', e.target.value)} style={inp} placeholder="e.g. EC-12345" />
+                </div>
+                <div>
+                  {lbl('Licence type')}
+                  <input type="text" value={form.licence_type || ''} onChange={e => setF('licence_type', e.target.value)} style={inp} placeholder="e.g. Electrical contractor" />
+                </div>
+                <div>
+                  {lbl('Phone')}
+                  <input type="tel" value={form.phone || ''} onChange={e => setF('phone', e.target.value)} style={inp} placeholder="0400 000 000" />
+                </div>
+                <div>
+                  {lbl('Website')}
+                  <input type="url" value={form.website || ''} onChange={e => setF('website', e.target.value)} style={inp} placeholder="https://yourbusiness.com.au" />
+                </div>
+                <div style={{ gridColumn: '1 / -1' }}>
+                  {lbl('Preferred contact method')}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {CONTACT_PREFS.map(c => (
+                      <button key={c} type="button" onClick={() => setF('preferred_contact', c.toLowerCase())}
+                        style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.preferred_contact === c.toLowerCase() ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.preferred_contact === c.toLowerCase() ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.preferred_contact === c.toLowerCase() ? '#2E7D60' : '#1C2B32', cursor: 'pointer' }}>
+                        {c}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>VERIFICATION STATUS</p>
+              </div>
+              <div style={{ padding: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+                {[
+                  { label: 'Licence', verified: tradie?.licence_verified },
+                  { label: 'Insurance', verified: tradie?.insurance_verified },
+                  { label: 'Subscription', verified: tradie?.subscription_active },
+                ].map(item => (
+                  <div key={item.label} style={{ flex: 1, minWidth: '120px', padding: '14px', background: item.verified ? 'rgba(46,125,96,0.06)' : 'rgba(212,82,42,0.06)', border: '1px solid ' + (item.verified ? 'rgba(46,125,96,0.2)' : 'rgba(212,82,42,0.2)'), borderRadius: '10px', textAlign: 'center' as const }}>
+                    <p style={{ fontSize: '20px', margin: '0 0 4px' }}>{item.verified ? '✓' : '✗'}</p>
+                    <p style={{ fontSize: '12px', fontWeight: 500, color: item.verified ? '#2E7D60' : '#D4522A', margin: 0 }}>{item.label}</p>
+                    <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>{item.verified ? 'Verified' : 'Pending'}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding: '0 20px 16px' }}>
+                <p style={{ fontSize: '12px', color: '#7A9098' }}>Verification is managed by the Steadyhand team. Contact us at support@steadyhanddigital.com to update your credentials.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'availability' && (
+          <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
+            <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+                <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>AVAILABILITY STATUS</p>
+              </div>
+              <div style={{ padding: '20px' }}>
+                {lbl('Current availability', 'Shown to clients on your shortlist card')}
+                <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginTop: '8px' }}>
+                  {AVAILABILITY.map(a => (
+                    <button key={a.value} type="button" onClick={() => setF('availability_status', a.value)}
+                      style={{ padding: '14px 18px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, border: '1.5px solid ' + (form.availability_status === a.value ? a.color : 'rgba(28,43,50,0.15)'), background: form.availability_status === a.value ? a.color + '11' : '#F4F8F7', color: form.availability_status === a.value ? a.color : '#4A5E64', cursor: 'pointer', textAlign: 'left' as const, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: form.availability_status === a.value ? a.color : 'rgba(28,43,50,0.2)', flexShrink: 0 }} />
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '12px', padding: '16px 20px' }}>
+              <p style={{ fontSize: '13px', fontWeight: 500, color: '#2E7D60', marginBottom: '6px' }}>Your Steadyhand stats</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginTop: '12px' }}>
+                {[
+                  { label: 'Jobs completed', value: tradie?.jobs_completed || 0 },
+                  { label: 'Rating', value: tradie?.rating_avg ? Number(tradie.rating_avg).toFixed(1) + ' ⭐' : '—' },
+                  { label: 'Dialogue score', value: tradie?.dialogue_score_avg ? Number(tradie.dialogue_score_avg).toFixed(0) : '—' },
+                ].map(s => (
+                  <div key={s.label} style={{ background: 'white', borderRadius: '8px', padding: '12px', textAlign: 'center' as const }}>
+                    <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#1C2B32', margin: '0 0 4px' }}>{s.value}</p>
+                    <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ marginTop: '28px' }}>
+          <button type="button" onClick={save} disabled={saving}
+            style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+            {saving ? 'Saving...' : saved ? '✓ Profile saved' : 'Save profile →'}
+          </button>
+          {saved && (
+            <p style={{ textAlign: 'center' as const, fontSize: '13px', color: '#2E7D60', marginTop: '12px' }}>✓ Your profile has been updated</p>
+          )}
+        </div>
+
+      </div>
+    </div>
+  )
+}
