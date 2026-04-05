@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
         ) +
         '<p style="color:#4A5E64;font-weight:500;">Reason: ' + (reasonLabels[decline_reason] || decline_reason) + '</p>' +
         (decline_note ? '<p style="color:#4A5E64;">Additional feedback: ' + decline_note + '</p>' : '') +
-        '<p style="color:#4A5E64;">You have until <strong>' + new Date(revision_deadline).toLocaleDateString('en-AU') + '</strong> to submit a revised quote if you believe you can better meet the client's needs.</p>' +
+        '<p style="color:#4A5E64;">You have until <strong>' + new Date(revision_deadline).toLocaleDateString('en-AU') + '</strong> to submit a revised quote if you believe you can better meet the client\'s needs.</p>' +
         btn(URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32')
       )
 
