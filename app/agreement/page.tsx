@@ -185,14 +185,6 @@ export default function AgreementPage() {
     setSavedAt(new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' }))
   }
 
-  const scoreDialogue = async () => {
-    if (!job) return
-    setScoringDialogue(true)
-    const res = await fetch('/api/dialogue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: job.id }) })
-    const data = await res.json()
-    if (!data.error)
-    setScoringDialogue(false)
-  }
 
   const signScope = async () => {
     if (!job || !scope) return
