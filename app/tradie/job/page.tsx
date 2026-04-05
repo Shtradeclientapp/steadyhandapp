@@ -476,37 +476,8 @@ export default function TradieJobPage() {
           </div>
         )}
 
-        {milestones.length > 0 && (
-          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>MILESTONES</p>
-              <p style={{ fontSize: '12px', color: '#7A9098' }}>Submit each milestone when complete — client approves and payment releases</p>
-            </div>
-            <div style={{ padding: '16px 20px' }}>
-              {milestones.map(m => (
-                <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid rgba(28,43,50,0.06)' }}>
-                  <div>
-                    <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', marginBottom: '2px' }}>{m.label}</p>
-                    <p style={{ fontSize: '12px', color: '#7A9098' }}>{m.percent}% · ${Math.round(Number(currentQuote?.total_price || 0) * m.percent / 100).toLocaleString()}</p>
-                  </div>
-                  <div style={{ textAlign: 'right' as const }}>
-                    {m.status === 'approved' && <span style={{ fontSize: '12px', color: '#2E7D60', fontWeight: 500 }}>✓ Approved</span>}
-                    {m.status === 'submitted' && <span style={{ fontSize: '12px', color: '#C07830' }}>⏳ Awaiting approval</span>}
-                    {m.status === 'pending' && (
-                      <button type="button" onClick={() => submitMilestone(m)}
-                        style={{ background: '#1C2B32', color: 'white', padding: '8px 16px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
-                        Mark complete →
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {scope && (
-          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px' }}>
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
               <div style={{ flex: 1, padding: '10px', background: scope.tradie_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.tradie_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
@@ -518,15 +489,154 @@ export default function TradieJobPage() {
                 <p style={{ fontSize: '13px', fontWeight: 500, color: scope.client_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.client_signed_at ? '✓ Signed' : 'Not signed'}</p>
               </div>
             </div>
-            {!scope.tradie_signed_at && (
+            {!scope.tradie_signed_at ? (
               <a href="/agreement">
                 <button type="button" style={{ width: '100%', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                   Go to agreement page to sign →
                 </button>
               </a>
+            ) : scope.client_signed_at ? (
+              <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '10px 14px' }}>
+                <p style={{ fontSize: '12px', color: '#2E7D60', margin: 0 }}>✓ Fully signed — work can begin</p>
+              </div>
+            ) : (
+              <div style={{ background: 'rgba(192,120,48,0.06)', border: '1px solid rgba(192,120,48,0.2)', borderRadius: '8px', padding: '10px 14px' }}>
+                <p style={{ fontSize: '12px', color: '#C07830', margin: 0 }}>⏳ Waiting for client to sign before work begins</p>
+              </div>
             )}
           </div>
         )}
+
+        {milestones.length > 0 && scope?.client_signed_at && scope?.tradie_signed_at && (
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: 'rgba(216,228,225,0.9)', letterSpacing: '0.5px', marginBottom: '4px' }}>DELIVERY</p>
+              <p style={{ fontSize: '12px', color: 'rgba(216,228,225,0.5)', margin: 0 }}>Mark each milestone complete when done — client approves and payment releases automatically</p>
+            </div>
+
+            {(() => {
+              const approved = milestones.filter(m => m.status === 'approved').length
+              const total = milestones.length
+              const pct = Math.round((approved / total) * 100)
+              return (
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '12px', color: '#4A5E64' }}>{approved} of {total} milestones approved</span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>{pct}% complete</span>
+                  </div>
+                  <div style={{ height: '6px', background: 'rgba(28,43,50,0.1)', borderRadius: '100px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: pct + '%', background: pct === 100 ? '#2E7D60' : '#C07830', borderRadius: '100px', transition: 'width 0.3s' }} />
+                  </div>
+                  {currentQuote && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+                      <span style={{ fontSize: '11px', color: '#7A9098' }}>Total contract value</span>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+
+            <div style={{ padding: '16px 20px' }}>
+              {milestones.map((m, i) => {
+                const isActive = m.status === 'pending' && (i === 0 || milestones[i-1]?.status === 'approved')
+                const isLocked = m.status === 'pending' && i > 0 && milestones[i-1]?.status !== 'approved'
+                const payment = currentQuote ? Math.round(Number(currentQuote.total_price) * m.percent / 100) : 0
+                return (
+                  <div key={m.id} style={{ padding: '14px 0', borderBottom: '1px solid rgba(28,43,50,0.06)', opacity: isLocked ? 0.5 : 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                          <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: m.status === 'approved' ? '#2E7D60' : isActive ? '#C07830' : 'rgba(28,43,50,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', flexShrink: 0 }}>
+                            {m.status === 'approved' ? '✓' : i + 1}
+                          </div>
+                          <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>{m.label}</p>
+                        </div>
+                        <p style={{ fontSize: '12px', color: '#7A9098', marginBottom: '4px', paddingLeft: '28px' }}>{m.description}</p>
+                        <p style={{ fontSize: '12px', color: '#4A5E64', paddingLeft: '28px' }}>
+                          {m.percent}% · {payment > 0 ? '$' + payment.toLocaleString() + ' payment' : ''}
+                          {m.status === 'approved' && m.approved_at ? ' · Approved ' + new Date(m.approved_at).toLocaleDateString('en-AU') : ''}
+                          {m.status === 'submitted' && m.submitted_at ? ' · Submitted ' + new Date(m.submitted_at).toLocaleDateString('en-AU') : ''}
+                        </p>
+                      </div>
+                      <div style={{ flexShrink: 0, textAlign: 'right' as const }}>
+                        {m.status === 'approved' && (
+                          <div>
+                            <span style={{ fontSize: '12px', color: '#2E7D60', fontWeight: 500 }}>✓ Approved</span>
+                            <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>Payment released</p>
+                          </div>
+                        )}
+                        {m.status === 'submitted' && (
+                          <div>
+                            <span style={{ fontSize: '11px', color: '#C07830', fontWeight: 500 }}>⏳ Awaiting client approval</span>
+                            <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>Payment pending</p>
+                          </div>
+                        )}
+                        {isActive && (
+                          <button type="button" onClick={() => submitMilestone(m)}
+                            style={{ background: '#2E7D60', color: 'white', padding: '9px 16px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                            Mark complete →
+                          </button>
+                        )}
+                        {isLocked && (
+                          <span style={{ fontSize: '11px', color: '#9AA5AA' }}>Complete previous milestone first</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {milestones.every(m => m.status === 'approved') && (
+              <div style={{ padding: '20px', background: 'rgba(46,125,96,0.06)', borderTop: '1px solid rgba(46,125,96,0.15)' }}>
+                <div style={{ textAlign: 'center' as const, marginBottom: '16px' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '8px' }}>🎉</div>
+                  <p style={{ fontSize: '16px', fontWeight: 500, color: '#2E7D60', marginBottom: '4px' }}>All milestones complete</p>
+                  <p style={{ fontSize: '13px', color: '#4A5E64' }}>The client will now complete a final sign-off. Once signed off, your warranty period begins.</p>
+                </div>
+                <div style={{ background: 'white', borderRadius: '10px', padding: '14px 16px', marginBottom: '12px' }}>
+                  <p style={{ fontSize: '11px', fontWeight: 600, color: '#7A9098', letterSpacing: '0.5px', marginBottom: '8px', textTransform: 'uppercase' as const }}>What happens next</p>
+                  {[
+                    'The client reviews the completed work and signs off',
+                    'Your warranty period begins from the sign-off date',
+                    'Any warranty issues must be responded to within 5 business days',
+                    'Your Steadyhand profile is updated with this completed job',
+                  ].map((step, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '6px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: '#2E7D60', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', color: 'white', fontWeight: 600, flexShrink: 0, marginTop: '1px' }}>{i + 1}</div>
+                      <p style={{ fontSize: '12px', color: '#4A5E64', margin: 0, lineHeight: '1.5' }}>{step}</p>
+                    </div>
+                  ))}
+                </div>
+                <a href="/messages">
+                  <button type="button" style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                    Message the client →
+                  </button>
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+
+        {scope?.client_signed_at && scope?.tradie_signed_at && milestones.length === 0 && (
+          <div style={{ background: 'rgba(192,120,48,0.06)', border: '1px solid rgba(192,120,48,0.2)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
+            <p style={{ fontSize: '13px', color: '#C07830', fontWeight: 500, marginBottom: '4px' }}>⏳ Awaiting milestones</p>
+            <p style={{ fontSize: '12px', color: '#4A5E64', margin: 0 }}>Milestones are set by the client on the agreement page. You will be notified when they are ready.</p>
+          </div>
+        )}
+
+        <a href="/messages" style={{ display: 'block', marginBottom: '20px', textDecoration: 'none' }}>
+          <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B32', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontSize: '16px' }}>💬</span>
+            </div>
+            <div>
+              <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>Messages</p>
+              <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>Chat with the client about this job →</p>
+            </div>
+          </div>
+        </a>
 
       </div>
     </div>
