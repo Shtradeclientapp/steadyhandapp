@@ -1,11 +1,14 @@
 'use client'
 
-const PHASES = [
-  { label: 'Find',    sub: 'Define your job and find the right tradies',          stages: [{ n:1, l:'Request',  p:'/request'  }, { n:2, l:'Match',    p:'/shortlist' }] },
-  { label: 'Assess',  sub: 'Meet tradies on site and compare their quotes',        stages: [{ n:3, l:'Consult',  p:'/assess'   }, { n:4, l:'Compare',  p:'/compare'  }] },
-  { label: 'Agree',   sub: 'Lock in scope and terms before work starts',           stages: [{ n:5, l:'Contract', p:'/agreement'}] },
-  { label: 'Build',   sub: 'Work happens, milestones approved, job signed off',    stages: [{ n:6, l:'Build',    p:'/delivery' }, { n:7, l:'Complete', p:'/signoff'  }] },
-  { label: 'Protect', sub: 'Your warranty period — issues tracked and resolved',   stages: [{ n:8, l:'Protect',  p:'/warranty' }] },
+const STAGES = [
+  { n:1, l:'Request',  p:'/request'  },
+  { n:2, l:'Match',    p:'/shortlist' },
+  { n:3, l:'Consult',  p:'/assess'   },
+  { n:4, l:'Compare',  p:'/compare'  },
+  { n:5, l:'Contract', p:'/agreement'},
+  { n:6, l:'Build',    p:'/delivery' },
+  { n:7, l:'Complete', p:'/signoff'  },
+  { n:8, l:'Protect',  p:'/warranty' },
 ]
 
 const STATUS_TO_STAGE: Record<string,number> = {
@@ -22,49 +25,26 @@ const STAGE_COLOR: Record<number,string> = {
 interface StageRailProps { currentPath: string; jobStatus?: string }
 
 export function StageRail({ currentPath, jobStatus }: StageRailProps) {
-  const allStages = PHASES.flatMap(p => p.stages)
-  const currentN = allStages.find(s => s.p === currentPath)?.n ?? 1
+  const currentN = STAGES.find(s => s.p === currentPath)?.n ?? 1
   const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : currentN
   const completedUpTo = jobStageN - 1
+
   return (
-    <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
-      <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.08)', overflowX:'auto' as const }}>
-        {PHASES.map(phase => {
-          const isActive = phase === activePhase
-          const isComplete = phase.stages.every(s => s.n <= completedUpTo) && completedUpTo > 0
-          return (
-            <div key={phase.label} style={{ flexShrink:0, padding:'6px 16px', borderRight:'1px solid rgba(28,43,50,0.08)', position:'relative' as const, minWidth:'72px', textAlign:'center' as const }}>
-              {isActive && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:'#D4522A' }} />}
-              <p style={{ fontSize:'10px', fontWeight:isActive?700:400, letterSpacing:'0.8px', textTransform:'uppercase' as const, color:isActive?'#1C2B32':isComplete?'#2E7D60':'#9AA5AA', margin:0, whiteSpace:'nowrap' as const }}>
-                {isComplete ? '✓ ' : ''}{phase.label}
-              </p>
+    <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
+      {STAGES.map(s => {
+        const isComplete = s.n <= completedUpTo
+        const isCurrent = s.p === currentPath
+        const color = STAGE_COLOR[s.n] || '#7A9098'
+        return (
+          <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 14px', borderRight:'1px solid rgba(28,43,50,0.08)', textDecoration:'none', position:'relative' as const }}>
+            {isCurrent && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:color }} />}
+            <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid '+(isComplete?'#2E7D60':isCurrent?color:'rgba(28,43,50,0.2)'), background:isComplete?'#2E7D60':isCurrent?color:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:isComplete||isCurrent?'white':'#7A9098' }}>
+              {isComplete ? '✓' : s.n}
             </div>
-          )
-        })}
-      </div>
-      <div style={{ display:'flex', overflowX:'auto' as const }}>
-        {allStages.map(s => {
-          const isComplete = s.n <= completedUpTo
-          const isCurrent = s.p === currentPath
-          const color = STAGE_COLOR[s.n] || '#7A9098'
-          return (
-            <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'8px 14px', borderRight:'1px solid rgba(28,43,50,0.08)', textDecoration:'none', position:'relative' as const }}>
-              {isCurrent && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:color }} />}
-              <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid '+(isComplete?'#2E7D60':isCurrent?color:'rgba(28,43,50,0.2)'), background:isComplete?'#2E7D60':isCurrent?color:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:isComplete||isCurrent?'white':'#7A9098' }}>
-                {isComplete ? '✓' : s.n}
-              </div>
-              <div style={{ fontSize:'11px', color:isCurrent?'#1C2B32':isComplete?'#2E7D60':'#7A9098', fontWeight:isCurrent?600:400, whiteSpace:'nowrap' as const }}>{s.l}</div>
-            </a>
-          )
-        })}
-      </div>
-      {activePhase && (
-        <div style={{ padding:'6px 16px', background:'rgba(28,43,50,0.03)', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
-          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
-            <span style={{ fontWeight:600, color:'#4A5E64' }}>{activePhase.label} phase</span>{' · '}{activePhase.sub}
-          </p>
-        </div>
-      )}
+            <div style={{ fontSize:'11px', color:isCurrent?'#1C2B32':isComplete?'#2E7D60':'#7A9098', fontWeight:isCurrent?600:400, whiteSpace:'nowrap' as const }}>{s.l}</div>
+          </a>
+        )
+      })}
     </div>
   )
 }
