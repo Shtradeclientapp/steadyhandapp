@@ -22,6 +22,12 @@ export default function ShortlistPage() {
   const [inviteSent, setInviteSent] = useState(false)
   const [pendingInvites, setPendingInvites] = useState<any[]>([])
   const [allQuotes, setAllQuotes] = useState<any[]>([])
+  const [directoryTradies, setDirectoryTradies] = useState<any[]>([])
+  const [directoryLoading, setDirectoryLoading] = useState(false)
+  const [directorySearch, setDirectorySearch] = useState('')
+  const [directoryCategory, setDirectoryCategory] = useState('')
+  const [directorySuburb, setDirectorySuburb] = useState('')
+  const [suburbSuggestions, setSuburbSuggestions] = useState<string[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -117,6 +123,30 @@ export default function ShortlistPage() {
   }
 
   const removeInvite = (i: number) => setPendingInvites(prev => prev.filter((_, idx) => idx !== i))
+
+  const searchSuburbs = async (query: string) => {
+    if (query.length < 2) { setSuburbSuggestions([]); return }
+    try {
+      const res = await fetch('/api/places?query=' + encodeURIComponent(query + ' Western Australia'))
+      const data = await res.json()
+      setSuburbSuggestions(data.suggestions || [])
+    } catch { setSuburbSuggestions([]) }
+  }
+
+  const searchDirectory = async () => {
+    setDirectoryLoading(true)
+    const supabase = createClient()
+    let query = supabase
+      .from('tradie_profiles')
+      .select('*, profile:profiles(full_name, email, suburb)')
+      .eq('licence_verified', true)
+    if (directoryCategory) query = query.contains('trade_categories', [directoryCategory])
+    if (directorySuburb) query = query.contains('service_areas', [directorySuburb])
+    if (directorySearch) query = query.ilike('business_name', '%' + directorySearch + '%')
+    const { data } = await query.order('rating_avg', { ascending: false }).limit(20)
+    setDirectoryTradies(data || [])
+    setDirectoryLoading(false)
+  }
 
   const nav = (
     <div>
@@ -221,6 +251,7 @@ export default function ShortlistPage() {
                 { key:'matches', label:'Steadyhand matches', count: shortlist.length },
                 { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
                 { key:'requested', label:'Requested', count: quoteRequests.length },
+                { key:'directory', label:'Directory', count: 0 },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
                   style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
@@ -356,6 +387,92 @@ export default function ShortlistPage() {
                   <p style={{ fontSize:'12px', color:'#7A9098', marginTop:'12px', textAlign:'center' as const }}>
                     Invitations will be sent when you click "Request quotes" above.
                   </p>
+                )}
+              </div>
+            )}
+
+            {tab === 'directory' && (
+              <div style={{ padding:'20px' }}>
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
+                  Browse Steadyhand-vetted trade businesses in Western Australia. All listings have been reviewed by the Steadyhand team.
+                </p>
+
+                {/* Search controls */}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
+                  <div>
+                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name</label>
+                    <input type="text" placeholder="Search by name..." value={directorySearch}
+                      onChange={e => setDirectorySearch(e.target.value)}
+                      style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                  </div>
+                  <div>
+                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Trade category</label>
+                    <select value={directoryCategory} onChange={e => setDirectoryCategory(e.target.value)}
+                      style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }}>
+                      <option value=''>All trades</option>
+                      {['Electrical','Plumbing & Gas','Carpentry & Joinery','Painting','Tiling','Landscaping','Building','HVAC','Roofing','Concreting','Fencing','Plastering','Solar','Security'].map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div style={{ marginBottom:'12px', position:'relative' as const }}>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Suburb</label>
+                  <input type="text" placeholder="e.g. Subiaco, Fremantle..." value={directorySuburb}
+                    onChange={e => { setDirectorySuburb(e.target.value); searchSuburbs(e.target.value) }}
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                  {suburbSuggestions.length > 0 && (
+                    <div style={{ position:'absolute' as const, top:'100%', left:0, right:0, background:'white', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', zIndex:50, overflow:'hidden', marginTop:'2px' }}>
+                      {suburbSuggestions.map((s, i) => (
+                        <div key={i} onClick={() => { setDirectorySuburb(s); setSuburbSuggestions([]) }}
+                          style={{ padding:'9px 12px', fontSize:'13px', color:'#1C2B32', cursor:'pointer', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <button type="button" onClick={searchDirectory} disabled={directoryLoading}
+                  style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', marginBottom:'20px', opacity: directoryLoading ? 0.7 : 1 }}>
+                  {directoryLoading ? 'Searching...' : 'Search directory →'}
+                </button>
+
+                {/* Results */}
+                {directoryTradies.length > 0 && (
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                    {directoryTradies.map(t => (
+                      <div key={t.id} style={{ background:'#C8D5D2', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px' }}>
+                        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'12px', flex:1 }}>
+                            <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'white', flexShrink:0 }}>
+                              {t.business_name?.charAt(0) || '?'}
+                            </div>
+                            <div>
+                              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', marginBottom:'2px' }}>{t.business_name}</p>
+                              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{t.trade_categories?.slice(0,2).join(', ')} · {t.service_areas?.[0]}</p>
+                            </div>
+                          </div>
+                          <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' as const, alignItems:'center' }}>
+                            <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'2px 8px' }}>✓ Steadyhand-vetted</span>
+                            {t.rating_avg > 0 && <span style={{ fontSize:'11px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'2px 8px' }}>⭐ {Number(t.rating_avg).toFixed(1)}</span>}
+                          </div>
+                        </div>
+                        {t.bio && <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.55', marginTop:'10px', marginBottom:'10px' }}>{t.bio}</p>}
+                        <button type="button" onClick={() => {
+                          if (!selectedTradies.includes(t.id)) toggleTradie(t.id)
+                          setTab('matches')
+                        }}
+                          style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>
+                          + Add to quote request
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {directoryTradies.length === 0 && !directoryLoading && (
+                  <div style={{ textAlign:'center' as const, padding:'32px', color:'#7A9098', fontSize:'13px' }}>
+                    Search above to browse Steadyhand-vetted tradies in your area.
+                  </div>
                 )}
               </div>
             )}
