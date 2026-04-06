@@ -249,9 +249,9 @@ export default function ShortlistPage() {
             <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
               {[
                 { key:'matches', label:'Steadyhand matches', count: shortlist.length },
+                { key:'directory', label:'Browse directory', count: 0 },
                 { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
                 { key:'requested', label:'Requested', count: quoteRequests.length },
-                { key:'directory', label:'Directory', count: 0 },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
                   style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
