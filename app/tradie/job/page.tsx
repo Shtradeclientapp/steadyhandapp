@@ -222,6 +222,38 @@ export default function TradieJobPage() {
         <a href="/tradie/dashboard" style={{ fontSize: '13px', color: '#4A5E64', textDecoration: 'none' }}>← Back to dashboard</a>
       </nav>
 
+      {/* TRADIE STAGE RAIL */}
+      {(() => {
+        const TRADIE_STAGES = [
+          {n:1,l:'Assess',p:'assess',statuses:['assess','shortlisted','matching'],c:'#9B6B9B'},
+          {n:2,l:'Quote',p:'quote',statuses:['quotes','shortlisted'],c:'#C07830'},
+          {n:3,l:'Confirm',p:'confirm',statuses:['agreement'],c:'#6B4FA8'},
+          {n:4,l:'Build',p:'build',statuses:['delivery'],c:'#C07830'},
+          {n:5,l:'Complete',p:'complete',statuses:['signoff'],c:'#D4522A'},
+          {n:6,l:'Protect',p:'protect',statuses:['warranty','complete'],c:'#1A6B5A'},
+        ]
+        const STAGE_ORDER = ['shortlisted','assess','quotes','agreement','delivery','signoff','warranty','complete']
+        const jobIdx = STAGE_ORDER.indexOf(job.status)
+        const currentStageN = jobIdx <= 1 ? 1 : jobIdx === 2 ? 2 : jobIdx === 3 ? 3 : jobIdx === 4 ? 4 : jobIdx === 5 ? 5 : 6
+        return (
+          <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
+            {TRADIE_STAGES.map(s => {
+              const isComplete = s.n < currentStageN
+              const isCurrent = s.n === currentStageN
+              return (
+                <div key={s.n} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', position:'relative' as const }}>
+                  {isCurrent && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
+                  <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (isComplete ? '#2E7D60' : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', fontWeight:700, color: isComplete ? 'white' : isCurrent ? s.c : '#7A9098' }}>
+                    {isComplete ? '✓' : s.n}
+                  </div>
+                  <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? '#2E7D60' : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
+                </div>
+              )
+            })}
+          </div>
+        )
+      })()}
+
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '100px', padding: '4px 12px', marginBottom: '12px' }}>
           <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Tradie view</span>
