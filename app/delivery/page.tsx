@@ -81,6 +81,7 @@ export default function DeliveryPage() {
   const [loading, setLoading] = useState(true)
   const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [uploadingPhoto, setUploadingPhoto] = useState<string|null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -141,6 +142,24 @@ export default function DeliveryPage() {
       setLoading(false)
     })
   }, [])
+
+  const uploadPhoto = async (milestoneId: string, file: File) => {
+    setUploadingPhoto(milestoneId)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const ext = file.name.split('.').pop()
+    const filePath = `milestone-photos/${milestoneId}/${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true })
+    if (!error) {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      const url = data.publicUrl
+      const milestone = milestones.find(m => m.id === milestoneId)
+      const existingPhotos = milestone?.photos || []
+      await supabase.from('milestones').update({ photos: [...existingPhotos, url] }).eq('id', milestoneId)
+      setMilestones(ms => ms.map(m => m.id === milestoneId ? { ...m, photos: [...(m.photos || []), url] } : m))
+    }
+    setUploadingPhoto(null)
+  }
 
   const initiatePayment = async (id: string, amount: number) => {
     if (amount <= 0) { approveM(id); return }
