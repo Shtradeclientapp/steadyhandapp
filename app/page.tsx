@@ -69,7 +69,7 @@ export default function Home() {
             THE TRADES PLATFORM THAT STAYS WITH YOU
           </h1>
           <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.55)', lineHeight:'1.7', maxWidth:'520px', margin:'0 auto 40px' }}>
-            Western Australia&apos;s only request-to-warranty platform for homeowners and trade businesses.
+            Most platforms find you a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — so you always know what to do next.
           </p>
           <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
             <Link href="/signup">
@@ -85,10 +85,10 @@ export default function Home() {
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
         <div className="stats-bar stats-inner">
           {[
-            { num:'6', label:'stages from request to warranty' },
+            { num:'8', label:'stages from request to warranty' },
             { num:'100%', label:'verified licence and insurance' },
             { num:'WA only', label:'regional and metro focus' },
-            { num:'0', label:'lead fees or subscription traps' },
+            { num:'0', label:'upfront fees — you pay only on completion' },
           ].map(s => (
             <div key={s.label} style={{ textAlign:'center' }}>
               <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32', letterSpacing:'1px' }}>{s.num}</div>
@@ -102,15 +102,15 @@ export default function Home() {
         <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E7D60', fontWeight:'500', marginBottom:'10px' }}>How it works</p>
         <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST TO WARRANTY</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'520px', marginBottom:'40px' }}>
-          Most platforms connect you with a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — with a documented process that protects both parties.
+          Most platforms find you a tradie and disappear. Steadyhand stays present through every stage — guiding you, protecting you, and making sure you always know what happens next.
         </p>
         <div className="steps-grid">
           {[
             { num:'01', title:'Request', body:'Describe the job, set your budget range and expectations. Steadyhand uses this to match you with the right verified trade businesses in your area.' },
             { num:'02', title:'Match', body:'Review AI-matched tradies based on category, location, experience and trust score. Request quotes from 2–4 for best results, or invite your own.' },
-            { num:'03', title:'Assess', body:'Arrange a site consultation. Both parties document their observations and share notes before quoting begins. This shared record is one of the most important trust moments in any trade relationship.' },
-            { num:'04', title:'Quote', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and select the one that best fits your needs and budget.' },
-            { num:'05', title:'Confirm', body:'Both parties agree on inclusions, exclusions and milestones before work begins. Nothing starts until the scope is signed by both sides.' },
+            { num:'03', title:'Consult', body:'Arrange a site consultation. Both parties document their observations and share notes before quoting begins. This shared record is one of the most important trust moments in any trade relationship.' },
+            { num:'04', title:'Compare', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and select the one that best fits your needs and budget.' },
+            { num:'05', title:'Contract', body:'Both parties agree on inclusions, exclusions and milestones before work begins. Nothing starts until the scope is signed by both sides.' },
             { num:'06', title:'Build', body:'Work is approved and paid in stages. You only release payment when you are satisfied each milestone is complete. The tradie is paid promptly — no chasing invoices.' },
             { num:'07', title:'Complete', body:'A structured final walkthrough confirms the job is done. Your 90-day warranty clock starts from sign-off, not invoice.' },
             { num:'08', title:'Protect', body:'Issues logged within the warranty period are tracked against a response SLA. Both parties have a complete documented record from request to warranty.' },
@@ -159,7 +159,7 @@ export default function Home() {
             {[
               { title:'Dialogue Trust Score', body:'Every job you complete builds your Dialogue Trust Score average. A high score signals to future clients that you engage transparently on pricing, compliance and risk — before work begins.' },
               { title:'Digital scope agreements', body:'Your scope agreement is stored permanently against every job. No more disputes over what was agreed. No more chasing signed documents.' },
-              { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.3.5% — only when you get paid.' },
+              { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.5% — only when you get paid.' },
             ].map(s => (
               <div key={s.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
                 <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'10px' }}>{s.title}</h3>
