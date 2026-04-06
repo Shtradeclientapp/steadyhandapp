@@ -232,9 +232,13 @@ export default function TradieJobPage() {
           {n:5,l:'Complete',p:'complete',statuses:['signoff'],c:'#D4522A'},
           {n:6,l:'Protect',p:'protect',statuses:['warranty','complete'],c:'#1A6B5A'},
         ]
-        const STAGE_ORDER = ['shortlisted','assess','quotes','agreement','delivery','signoff','warranty','complete']
-        const jobIdx = STAGE_ORDER.indexOf(job.status)
-        const currentStageN = jobIdx <= 1 ? 1 : jobIdx === 2 ? 2 : jobIdx === 3 ? 3 : jobIdx === 4 ? 4 : jobIdx === 5 ? 5 : 6
+        // Determine tradie's actual stage based on their actions
+        const hasQuote = quotes && quotes.length > 0
+        const scopeSigned = scope && scope.tradie_signed_at
+        const allMilestonesApproved = milestones.length > 0 && milestones.every((m: any) => m.status === 'approved')
+        const inWarranty = ['warranty', 'complete'].includes(job.status)
+        const inSignoff = job.status === 'signoff'
+        const currentStageN = inWarranty ? 6 : inSignoff ? 5 : allMilestonesApproved ? 5 : job.status === 'delivery' ? 4 : scopeSigned ? 3 : hasQuote ? 3 : ['assess', 'shortlisted', 'matching'].includes(job.status) ? 1 : 2
         return (
           <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
             {TRADIE_STAGES.map(s => {
