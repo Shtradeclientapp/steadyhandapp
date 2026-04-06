@@ -198,6 +198,19 @@ export default function TradieJobPage() {
     setResponseForm(prev => ({ ...prev, [issueId]: '' }))
   }
 
+  // Derive tradie's current stage at component level
+  const hasQuote = quotes && quotes.length > 0
+  const scopeSigned = scope && scope.tradie_signed_at
+  const allMilestonesApproved = milestones.length > 0 && milestones.every((m: any) => m.status === 'approved')
+  const inWarranty = job && ['warranty', 'complete'].includes(job.status)
+  const currentStageN = !job ? 1 : inWarranty ? 6
+    : allMilestonesApproved && job.status === 'signoff' ? 5
+    : milestones.length > 0 && job.status === 'delivery' ? 4
+    : scopeSigned && job.status === 'delivery' ? 4
+    : scopeSigned ? 3
+    : hasQuote ? 2
+    : 1
+
   const submitMilestone = async (milestone: any) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'submitted', submitted_at: new Date().toISOString() }).eq('id', milestone.id)
