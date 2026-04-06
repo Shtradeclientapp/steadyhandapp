@@ -231,7 +231,6 @@ export default function SignoffPage() {
 
       </div>
     </div>
-    </div>
   )
 
   if (!job) return (
@@ -242,11 +241,13 @@ export default function SignoffPage() {
         <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job ready for sign-off.</p>
         <a href="/delivery"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to delivery</button></a>
       </div>
-    </div></>
+    </div>
+    </div>
   )
 
   return (
-    <>{renderNav()}
+    <div>
+      {renderNav()}
     <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
       <div style={{ maxWidth:'600px', margin:'0 auto' }}>
 
