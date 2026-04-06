@@ -249,9 +249,7 @@ export default function AssessPage() {
       <NavHeader profile={profile} isTradie={false}   />
 
       {/* STAGE RAIL */}
-      <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', background:'rgba(200,213,210,0.95)', padding:'0 24px' }}>
-        <div style={{ maxWidth:'900px', margin:'0 auto', display:'flex', overflowX:'auto' as const }}>
-          <StageRail currentPath="/assess" jobStatus={job?.status} />
+      <StageRail currentPath="/assess" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'780px', margin:'0 auto', padding:'32px 24px' }}>
 

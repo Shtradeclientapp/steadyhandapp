@@ -112,9 +112,5 @@ export default function SignoffPage() {
 
   const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
 
-  const StageRail = () => (
-    <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
-      <StageRail currentPath="/signoff" jobStatus={job?.status} />
-    </div>
-  )
+
 }
