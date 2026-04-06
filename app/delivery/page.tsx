@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function DeliveryPage() {
   const [job, setJob] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -14,6 +15,8 @@ export default function DeliveryPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+      setProfile(prof)
 
       const { data: jobs } = await supabase
         .from('jobs')

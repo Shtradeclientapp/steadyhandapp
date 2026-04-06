@@ -15,6 +15,7 @@ const CHECKS = [
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [checks, setChecks] = useState<Record<string, boolean>>({})
   const [rating, setRating] = useState(0)
@@ -26,6 +27,8 @@ export default function SignoffPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+      setProfile(prof)
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id)')
