@@ -63,6 +63,18 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                     onClick={() => setDropdownOpen(false)}>
                     Trust score
                   </a>
+                  {profile?.org_id && (
+                    <a href="/org/dashboard" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
+                      onClick={() => setDropdownOpen(false)}>
+                      Organisation dashboard
+                    </a>
+                  )}
+                  {!profile?.org_id && (
+                    <a href="/org/setup" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#2E6A8F', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
+                      onClick={() => setDropdownOpen(false)}>
+                      Set up organisation →
+                    </a>
+                  )}
                   <a href="/messages" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
                     onClick={() => setDropdownOpen(false)}>
                     Messages
