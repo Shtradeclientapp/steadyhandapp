@@ -309,6 +309,100 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Reminder: site assessment notes needed — ' + job.title, html })
     }
 
+    if (type === 'assess_ready') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const { data: qrs } = await supabase
+        .from('quote_requests')
+        .select('*, tradie:tradie_profiles(business_name, profile:profiles(email, full_name))')
+        .eq('job_id', job_id)
+
+      const jobCard = card(
+        '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+        '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>',
+        '#9B6B9B'
+      )
+
+      // Email to client
+      const clientHtml = wrap(
+        '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+        '<p style="color:#4A5E64;">Your quote requests have been sent. Before quoting begins, Steadyhand recommends a site consultation with each tradie.</p>' +
+        jobCard +
+        '<p style="color:#4A5E64;">Once you have had the consultation, record your observations and share them with your tradie. Both records become part of the job file before any quote is accepted.</p>' +
+        btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+      )
+      await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Site assessment stage — ' + job.title, html: clientHtml })
+
+      // Email to each tradie
+      if (qrs) {
+        for (const qr of qrs) {
+          const tradieEmail = qr.tradie?.profile?.email
+          const tradieName = qr.tradie?.profile?.full_name
+          if (!tradieEmail) continue
+          const tradieHtml = wrap(
+            '<p style="color:#4A5E64;">Hi ' + tradieName + ',</p>' +
+            '<p style="color:#4A5E64;">You have been invited to quote on the following job. Before submitting a quote, Steadyhand recommends a site consultation with the client.</p>' +
+            jobCard +
+            '<p style="color:#4A5E64;">Arrange a time to visit the site, then record your observations in the Assess stage. Share your notes with the client before quoting begins.</p>' +
+            btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+          )
+          await resend.emails.send({ from: FROM, to: tradieEmail, subject: 'Site consultation requested — ' + job.title, html: tradieHtml })
+        }
+      }
+    }
+
+    if (type === 'assess_ready') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const { data: qrs } = await supabase
+        .from('quote_requests')
+        .select('*, tradie:tradie_profiles(business_name, profile:profiles(email, full_name))')
+        .eq('job_id', job_id)
+
+      const jobCard = card(
+        '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+        '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>',
+        '#9B6B9B'
+      )
+
+      // Email to client
+      const clientHtml = wrap(
+        '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+        '<p style="color:#4A5E64;">Your quote requests have been sent. Before quoting begins, Steadyhand recommends a site consultation with each tradie.</p>' +
+        jobCard +
+        '<p style="color:#4A5E64;">Once you have had the consultation, record your observations and share them with your tradie. Both records become part of the job file before any quote is accepted.</p>' +
+        btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+      )
+      await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Site assessment stage — ' + job.title, html: clientHtml })
+
+      // Email to each tradie
+      if (qrs) {
+        for (const qr of qrs) {
+          const tradieEmail = qr.tradie?.profile?.email
+          const tradieName = qr.tradie?.profile?.full_name
+          if (!tradieEmail) continue
+          const tradieHtml = wrap(
+            '<p style="color:#4A5E64;">Hi ' + tradieName + ',</p>' +
+            '<p style="color:#4A5E64;">You have been invited to quote on the following job. Before submitting a quote, Steadyhand recommends a site consultation with the client.</p>' +
+            jobCard +
+            '<p style="color:#4A5E64;">Arrange a time to visit the site, then record your observations in the Assess stage. Share your notes with the client before quoting begins.</p>' +
+            btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+          )
+          await resend.emails.send({ from: FROM, to: tradieEmail, subject: 'Site consultation requested — ' + job.title, html: tradieHtml })
+        }
+      }
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
