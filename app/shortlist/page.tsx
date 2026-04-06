@@ -401,10 +401,39 @@ export default function ShortlistPage() {
                         </div>
                       ))}
                     </div>
-                    <button type="button" onClick={() => window.location.href = '/agreement'}
+                    <button type="button" onClick={() => window.location.href = '/quotes'}
                       style={{ width:'100%', background:'#2E6A8F', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                      Go to agreement page →
+                      Review and compare quotes →
                     </button>
+
+                    {selectedJob?.status === 'assess' && (
+                      <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+                        <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'8px' }}>
+                          Steadyhand recommends a site consultation before quotes are submitted — it creates a shared record that protects both parties. If a visit is not possible, you can proceed directly to quoting.
+                        </p>
+                        <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'8px' }}>
+                          Skipping the assessment means your job will not have a shared site record. This may affect the trust score and could increase the likelihood of scope disputes later.
+                        </p>
+                        <button type="button" onClick={async () => {
+                          const supabase = createClient()
+                          const { data: { session } } = await supabase.auth.getSession()
+                          await supabase.from('site_assessments').upsert({
+                            job_id: selectedJob.id,
+                            client_what_discussed: 'Assessment skipped by client — proceeded directly to quoting.',
+                          }, { onConflict: 'job_id' })
+                          await supabase.from('jobs').update({ status: 'quotes' }).eq('id', selectedJob.id)
+                          await supabase.from('job_messages').insert({
+                            job_id: selectedJob.id,
+                            sender_id: session?.user.id,
+                            body: '⚠ Site assessment skipped — client has proceeded directly to quoting without a site visit.',
+                          })
+                          window.location.href = '/quotes'
+                        }}
+                          style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
+                          Proceed without site assessment
+                        </button>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
