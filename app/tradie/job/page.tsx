@@ -267,6 +267,40 @@ export default function TradieJobPage() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '100px', padding: '4px 12px', marginBottom: '12px' }}>
           <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Tradie view</span>
         </div>
+
+        {/* ASSESS STAGE GUIDANCE */}
+        {currentStageN === 1 && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(155,107,155,0.2)', borderLeft:'3px solid #9B6B9B', borderRadius:'10px', padding:'16px 18px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#9B6B9B', letterSpacing:'0.5px', marginBottom:'8px' }}>SITE ASSESSMENT STAGE</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
+              {job.client?.full_name} has invited you to quote on this job. Before submitting a quote, Steadyhand asks both parties to complete a site assessment.
+            </p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
+              Arrange a time to visit the site, then record your observations using the assessment form. Share your notes with the client — they will share theirs with you. Once both parties have acknowledged each other&apos;s records, quoting can begin.
+            </p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'12px' }}>
+              This exchange is one of the most important trust moments in any trade relationship. Your assessment notes become part of the permanent job record.
+            </p>
+            <a href="/assess">
+              <button type="button" style={{ background:'#9B6B9B', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to site assessment →
+              </button>
+            </a>
+          </div>
+        )}
+
+        {/* QUOTE STAGE GUIDANCE */}
+        {currentStageN === 2 && !currentQuote && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(192,120,48,0.2)', borderLeft:'3px solid #C07830', borderRadius:'10px', padding:'16px 18px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#C07830', letterSpacing:'0.5px', marginBottom:'8px' }}>QUOTE STAGE</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
+              The site assessment is complete. You can now build and submit your quote based on what you observed on site.
+            </p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7' }}>
+              A detailed breakdown helps the client understand your pricing and reduces scope disputes later. The client will compare your quote with others before making a decision — you will be notified by email when they respond.
+            </p>
+          </div>
+        )}
         <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '24px', color: '#1C2B32', letterSpacing: '1.5px', marginBottom: '4px' }}>{job.title}</h1>
         <p style={{ fontSize: '14px', color: '#7A9098', marginBottom: '24px' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</p>
 
