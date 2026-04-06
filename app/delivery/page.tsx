@@ -1,16 +1,88 @@
 'use client'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { HintPanel } from '@/components/ui/HintPanel'
-
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
+// ── Payment form component ────────────────────────────────────────────────────
+function MilestonePaymentForm({ milestoneId, amount, jobId, onSuccess, onCancel }: {
+  milestoneId: string
+  amount: number
+  jobId: string
+  onSuccess: () => void
+  onCancel: () => void
+}) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [paying, setPaying] = useState(false)
+  const [error, setError] = useState<string|null>(null)
+
+  const handlePay = async () => {
+    if (!stripe || !elements) return
+    setPaying(true)
+    setError(null)
+    const { error: submitError } = await elements.submit()
+    if (submitError) { setError(submitError.message || 'Payment failed'); setPaying(false); return }
+    const res = await fetch('/api/stripe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create_payment_intent', job_id: jobId, milestone_id: milestoneId }),
+    })
+    const { client_secret, error: apiError } = await res.json()
+    if (apiError || !client_secret) { setError(apiError || 'Could not create payment'); setPaying(false); return }
+    const { error: confirmError } = await stripe.confirmPayment({
+      elements,
+      clientSecret: client_secret,
+      confirmParams: { return_url: window.location.href },
+      redirect: 'if_required',
+    })
+    if (confirmError) { setError(confirmError.message || 'Payment failed'); setPaying(false); return }
+    // Payment succeeded — release milestone
+    await fetch('/api/stripe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'release_milestone', milestone_id: milestoneId }),
+    })
+    onSuccess()
+    setPaying(false)
+  }
+
+  return (
+    <div style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'12px', padding:'20px', marginTop:'12px' }}>
+      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>RELEASE PAYMENT</p>
+      <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'16px' }}>
+        ${Number(amount).toLocaleString()} will be transferred to the tradie upon payment confirmation.
+      </p>
+      <PaymentElement options={{ layout: 'tabs' }} />
+      {error && <p style={{ fontSize:'12px', color:'#D4522A', marginTop:'10px' }}>{error}</p>}
+      <div style={{ display:'flex', gap:'10px', marginTop:'16px' }}>
+        <button type="button" onClick={handlePay} disabled={paying || !stripe}
+          style={{ flex:1, background:'#2E7D60', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: paying || !stripe ? 0.7 : 1 }}>
+          {paying ? 'Processing...' : `Pay $${Number(amount).toLocaleString()} →`}
+        </button>
+        <button type="button" onClick={onCancel} disabled={paying}
+          style={{ background:'transparent', color:'#7A9098', padding:'12px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function DeliveryPage() {
   const [job, setJob] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
+  const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
+  const [clientSecret, setClientSecret] = useState<string|null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -211,17 +283,28 @@ export default function DeliveryPage() {
                     {m.percent}% of total{m.amount > 0 ? ' · $' + Number(m.amount).toLocaleString() : ''}
                     {isDone && m.approved_at ? ' · Approved ' + new Date(m.approved_at).toLocaleDateString('en-AU') : ''}
                   </p>
-                  {isActive && !isDone && (
+                  {isActive && !isDone && payingMilestone !== m.id && (
                     <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
-                      <button type="button" onClick={() => approveM(m.id, m.amount || 0)}
+                      <button type="button" onClick={() => initiatePayment(m.id, m.amount || 0)}
                         style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
-                        Approve milestone →
+                        {m.amount > 0 ? `Approve & pay $${Number(m.amount).toLocaleString()} →` : 'Approve milestone →'}
                       </button>
                       <button type="button"
                         style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
                         Flag an issue
                       </button>
                     </div>
+                  )}
+                  {isActive && !isDone && payingMilestone === m.id && clientSecret && (
+                    <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'flat', variables: { colorPrimary: '#2E7D60', colorBackground: '#F4F8F7', borderRadius: '8px' } } }}>
+                      <MilestonePaymentForm
+                        milestoneId={m.id}
+                        amount={m.amount || 0}
+                        jobId={job.id}
+                        onSuccess={() => approveM(m.id)}
+                        onCancel={() => { setPayingMilestone(null); setClientSecret(null) }}
+                      />
+                    </Elements>
                   )}
                 </div>
               </div>
