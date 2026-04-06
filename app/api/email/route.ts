@@ -403,6 +403,33 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (type === 'contribution_received') {
+      const reqBody = await request.clone().json()
+      const { amount, message } = reqBody
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + job.tradie.profile.full_name + ',</p>' +
+        '<p style="color:#4A5E64;"><strong>' + job.client.full_name + '</strong> has added a voluntary contribution to recognise your work on:</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>' +
+          '<p style="font-size:24px;font-weight:600;color:#2E7D60;margin:8px 0 0;">$' + amount + '</p>' +
+          (message ? '<p style="color:#4A5E64;margin:8px 0 0;font-style:italic;">"' + message + '"</p>' : ''),
+          '#2E7D60'
+        ) +
+        '<p style="color:#4A5E64;">This contribution has been sent directly to your Stripe account with no platform fee deducted. It reflects the quality of your communication and service throughout this job.</p>' +
+        btn(URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32')
+      )
+
+      await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: 'You received a contribution — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {

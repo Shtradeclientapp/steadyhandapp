@@ -189,6 +189,13 @@ export default function AssessPage() {
     }).catch(() => {})
 
     setAssessment((a: any) => ({ ...a, [field]: new Date().toISOString() }))
+    // Post encouragement message
+    const supabase2 = createClient()
+    await supabase2.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: profile.id,
+      body: '📋 ' + (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their site assessment notes. Taking time to document observations before quoting begins is one of the most important trust acts in any trade relationship.',
+    })
     setSharing(false)
   }
 

@@ -22,6 +22,12 @@ export default function SignoffPage() {
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [showContribution, setShowContribution] = useState(false)
+  const [contributionAmount, setContributionAmount] = useState(0)
+  const [contributionMessage, setContributionMessage] = useState('')
+  const [contributionSending, setContributionSending] = useState(false)
+  const [contributionDone, setContributionDone] = useState(false)
+  const [done, setDone] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -66,8 +72,47 @@ export default function SignoffPage() {
       })
     }
 
+    await fetch('/api/dialogue', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'score_stage', stage: 'complete', job_id: job.id }),
+    }).catch(() => {})
     setDone(true)
+    setShowContribution(true)
     setSubmitting(false)
+  }
+
+  const sendContribution = async () => {
+    if (!contributionAmount || !job) return
+    setContributionSending(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch('/api/contribution', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        job_id: job.id,
+        amount: contributionAmount,
+        message: contributionMessage,
+        client_id: session?.user.id,
+      }),
+    })
+    const data = await res.json()
+    if (data.client_secret) {
+      await fetch('/api/contribution', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contribution_id: data.contribution_id,
+          job_id: job.id,
+          tradie_id: job.tradie_id,
+          amount: contributionAmount,
+          message: contributionMessage,
+        }),
+      })
+    }
+    setContributionDone(true)
+    setContributionSending(false)
   }
 
   const nav = (
@@ -100,21 +145,90 @@ export default function SignoffPage() {
 
   if (done) return (
     <>{nav}
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
-      <div style={{ textAlign:'center', maxWidth:'480px' }}>
-        <div style={{ fontSize:'56px', marginBottom:'16px' }}>✅</div>
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>JOB SIGNED OFF</h2>
-        <p style={{ fontSize:'15px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'28px' }}>Your 90-day warranty period has started. Any defects can be logged in the warranty stage.</p>
-        <a href="/warranty">
-          <button style={{ background:'#1A6B5A', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', marginRight:'12px' }}>
-            Go to warranty →
-          </button>
-        </a>
-        <a href="/dashboard">
-          <button style={{ background:'transparent', color:'#1C2B32', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>
-            Dashboard
-          </button>
-        </a>
+    <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px', display:'flex', alignItems:'flex-start', justifyContent:'center' }}>
+      <div style={{ maxWidth:'520px', width:'100%' }}>
+
+        {/* COMPLETION CARD */}
+        <div style={{ textAlign:'center' as const, marginBottom:'24px' }}>
+          <div style={{ fontSize:'56px', marginBottom:'16px' }}>✅</div>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>JOB SIGNED OFF</h2>
+          <p style={{ fontSize:'15px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>Your 90-day warranty period has started.</p>
+          <p style={{ fontSize:'13px', color:'#7A9098' }}>Both parties now have a complete documented record from request to warranty. That matters.</p>
+        </div>
+
+        {/* CONTRIBUTION PROMPT */}
+        {showContribution && !contributionDone && job?.tradie && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'16px' }}>
+            <div style={{ background:'#1C2B32', padding:'16px 20px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 4px' }}>RECOGNISE THE EFFORT</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', margin:0 }}>Optional — 100% goes directly to {job.tradie.business_name}</p>
+            </div>
+            <div style={{ padding:'20px' }}>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
+                {job.tradie.dialogue_score_avg >= 85
+                  ? job.tradie.business_name + ' communicated exceptionally throughout this job — thorough assessment notes, clear updates and prompt responses. Would you like to add a voluntary contribution to recognise that effort?'
+                  : job.tradie.dialogue_score_avg >= 70
+                  ? job.tradie.business_name + ' engaged well throughout this job. If you'd like to add something to say thank you, you can do that here.'
+                  : 'If you'd like to add a voluntary contribution to recognise ' + job.tradie.business_name + ''s work on this job, you can do that here.'}
+              </p>
+              <div style={{ display:'flex', gap:'8px', marginBottom:'16px', flexWrap:'wrap' as const }}>
+                {[20, 50, 100].map(amt => (
+                  <button key={amt} type="button" onClick={() => setContributionAmount(contributionAmount === amt ? 0 : amt)}
+                    style={{ flex:1, padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'1.5px solid ' + (contributionAmount === amt ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: contributionAmount === amt ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: contributionAmount === amt ? '#2E7D60' : '#1C2B32', cursor:'pointer' }}>
+                    ${amt}
+                  </button>
+                ))}
+                <button type="button" onClick={() => setContributionAmount(contributionAmount === 200 ? 0 : 200)}
+                  style={{ flex:1, padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'1.5px solid ' + (contributionAmount === 200 ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: contributionAmount === 200 ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: contributionAmount === 200 ? '#2E7D60' : '#1C2B32', cursor:'pointer' }}>
+                  $200
+                </button>
+              </div>
+              {contributionAmount > 0 && (
+                <div style={{ marginBottom:'12px' }}>
+                  <textarea value={contributionMessage} onChange={e => setContributionMessage(e.target.value)}
+                    placeholder="Add a personal note (optional)..."
+                    rows={2}
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'white', color:'#1C2B32', outline:'none', resize:'none' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                </div>
+              )}
+              <div style={{ display:'flex', gap:'10px' }}>
+                {contributionAmount > 0 && (
+                  <button type="button" onClick={sendContribution} disabled={contributionSending}
+                    style={{ flex:2, background:'#2E7D60', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: contributionSending ? 0.7 : 1 }}>
+                    {contributionSending ? 'Sending...' : 'Send $' + contributionAmount + ' to ' + job.tradie.business_name + ' →'}
+                  </button>
+                )}
+                <button type="button" onClick={() => setShowContribution(false)}
+                  style={{ flex:1, background:'transparent', color:'#7A9098', padding:'12px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                  No thanks
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CONTRIBUTION DONE */}
+        {contributionDone && (
+          <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px', textAlign:'center' as const }}>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>✓ Contribution sent</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>${contributionAmount} has been sent directly to {job?.tradie?.business_name} — no platform fee deducted.</p>
+          </div>
+        )}
+
+        {/* NAVIGATION */}
+        <div style={{ display:'flex', gap:'10px' }}>
+          <a href="/warranty" style={{ flex:2 }}>
+            <button type="button" style={{ width:'100%', background:'#1A6B5A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer' }}>
+              Go to warranty →
+            </button>
+          </a>
+          <a href="/dashboard" style={{ flex:1 }}>
+            <button type="button" style={{ width:'100%', background:'transparent', color:'#1C2B32', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>
+              Dashboard
+            </button>
+          </a>
+        </div>
+
       </div>
     </div></>
   )

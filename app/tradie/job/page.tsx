@@ -180,6 +180,19 @@ export default function TradieJobPage() {
       tradie_responded_at: new Date().toISOString(),
       status: 'in_progress',
     }).eq('id', issueId)
+    // Check if response was within 24 hours and add encouragement
+    const issue = warrantyIssues.find((i: any) => i.id === issueId)
+    if (issue) {
+      const hrs = (Date.now() - new Date(issue.created_at).getTime()) / (1000 * 60 * 60)
+      if (hrs < 24) {
+        const supabase2 = createClient()
+        await supabase2.from('job_messages').insert({
+          job_id: job.id,
+          sender_id: user.id,
+          body: '⚡ ' + (profile?.tradie?.business_name || 'The tradie') + ' responded to this warranty issue within 24 hours — above the Steadyhand standard. This has been recorded in their trust score.',
+        })
+      }
+    }
     setWarrantyIssues(prev => prev.map((i: any) => i.id === issueId ? { ...i, tradie_response: response, tradie_responded_at: new Date().toISOString(), status: 'in_progress' } : i))
     setRespondingTo(null)
     setResponseForm(prev => ({ ...prev, [issueId]: '' }))
