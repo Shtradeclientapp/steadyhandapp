@@ -220,9 +220,6 @@ export default function AgreementPage() {
   }
 
   const isTradie = profile?.role === 'tradie'
-  const STAGE_ORDER = ['matching', 'shortlisted', 'quotes', 'agreement', 'delivery', 'signoff', 'warranty', 'complete']
-  const jobStageIndex = job ? STAGE_ORDER.indexOf(job.status) : -1
-  const isPastAgreement = jobStageIndex > STAGE_ORDER.indexOf('agreement')
   const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
   const hasAcceptedQuote = quoteRequests.some(qr => qr.status === 'accepted')
   const jobRef = job ? 'SH-' + job.id.slice(0, 8).toUpperCase() : ''
@@ -231,25 +228,7 @@ export default function AgreementPage() {
   const nav = (
     <div>
       <NavHeader profile={profile} isTradie={false}   />
-      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
-        {[{n:1,l:'Request',p:'/request',c:'#2E7D60'},{n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},{n:3,l:'Assess',p:'/assess',c:'#9B6B9B'},{n:4,l:'Quote',p:'/quotes',c:'#C07830'},{n:5,l:'Confirm',p:'/agreement',c:'#6B4FA8'},{n:6,l:'Build',p:'/delivery',c:'#C07830'},{n:7,l:'Complete',p:'/signoff',c:'#D4522A'},{n:8,l:'Protect',p:'/warranty',c:'#1A6B5A'}].map(s => {
-            const STAGE_ORDER = ['matching','shortlisted','assess','quotes','agreement','delivery','signoff','warranty','complete']
-            const jobIdx = job ? STAGE_ORDER.indexOf(job.status) : -1
-            const pathOrder = ['/request','/shortlist','/assess','/quotes','/agreement','/delivery','/signoff','/warranty','/warranty']
-            const isComplete = pathOrder.indexOf(s.p) !== -1 && pathOrder.indexOf(s.p) < pathOrder.indexOf('/agreement') && pathOrder.indexOf(s.p) <= jobIdx
-            const isCurrent = s.p === '/agreement'
-            return (
-          <a key={s.n} href={s.p} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
-            {s.p === '/agreement' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.c }} />}
-            <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 3 ? '#2E7D60' : s.p === '/agreement' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 3 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 3 ? 'white' : s.p === '/agreement' ? s.c : '#7A9098' }}>
-              {s.n < 3 ? '✓' : s.n}
-            </div>
-            <div style={{ fontSize:'12px', color: s.p === '/agreement' ? '#1C2B32' : s.n < 3 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/agreement' ? 600 : 400 }}>{s.l}</div>
-          </a>
-            )
-        })}
-      </div>
-    </div>
+      <StageRail currentPath="/agreement" jobStatus={job?.status} />
   )
 
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 110px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p></div></>

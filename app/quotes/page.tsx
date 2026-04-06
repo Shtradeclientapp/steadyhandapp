@@ -146,35 +146,7 @@ export default function QuotesPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={false}   />
 
-      {/* STAGE RAIL */}
-      <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', background:'rgba(200,213,210,0.95)', padding:'0 24px' }}>
-        <div style={{ maxWidth:'900px', margin:'0 auto', display:'flex', overflowX:'auto' as const }}>
-          {[
-            {n:1,l:'Request',p:'/request',c:'#2E7D60'},
-            {n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},
-            {n:3,l:'Assess',p:'/assess',c:'#9B6B9B'},
-            {n:4,l:'Quote',p:'/quotes',c:'#C07830'},
-            {n:5,l:'Confirm',p:'/agreement',c:'#6B4FA8'},
-            {n:6,l:'Build',p:'/delivery',c:'#C07830'},
-            {n:7,l:'Complete',p:'/signoff',c:'#D4522A'},
-            {n:8,l:'Protect',p:'/warranty',c:'#1A6B5A'},
-          ].map(s => {
-            const stageStatus = STAGE_ORDER[s.n - 1]
-            const jobIdx = STAGE_ORDER.indexOf(job?.status || 'matching')
-            const isComplete = jobIdx > s.n - 1
-            const isCurrent = s.p === '/quotes'
-            return (
-              <a key={s.n} href={s.p} style={{ textDecoration:'none', display:'flex', flexDirection:'column' as const, alignItems:'center', padding:'10px 16px', position:'relative', flexShrink:0, minWidth:'80px' }}>
-                {isCurrent && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:'#1C2B32' }} />}
-                <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (isComplete ? s.c : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? s.c : '#C8D5D2', color: isComplete ? 'white' : isCurrent ? 'white' : '#7A9098', marginBottom:'4px' }}>
-                  {isComplete ? '✓' : s.n}
-                </div>
-                <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
-              </a>
-            )
-          })}
-        </div>
-      </div>
+      <StageRail currentPath="/quotes" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
 
