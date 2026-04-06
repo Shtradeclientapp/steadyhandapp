@@ -129,11 +129,11 @@ export default function Home() {
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>Why Steadyhand is different</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>A DIFFERENT KIND OF PLATFORM</h2>
           <p style={{ fontSize:'16px', color:'rgba(216,228,225,0.5)', fontWeight:'300', lineHeight:'1.7', maxWidth:'580px', marginBottom:'48px' }}>
-            There is no shortage of platforms that will sell a trade business access to your job request. Steadyhand does not work that way. Trade businesses on Steadyhand are verified, not purchased. Jobs are awarded through structured dialogue, not to the fastest bidder. And Steadyhand earns only when work is completed and approved — not when a lead is clicked.
+            There is no shortage of platforms that will sell a trade business access to your job request. Steadyhand does not work that way. Trade businesses on Steadyhand are verified, not purchased. Jobs are awarded through structured dialogue, not to the fastest bidder. And Steadyhand earns only when work is completed and approved. Founding members pay just 3% — lock it in by joining now..
           </p>
           <div className="values-grid">
             {[
-              { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. Our 5% milestone fee aligns our success with yours — not with the volume of leads we sell.' },
+              { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. Our 3.5% completion fee aligns our success with yours — not with the volume of leads we sell.' },
               { icon:'📋', title:'Dialogue Trust Score', body:'Every job includes a pre-signing dialogue scored across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
               { icon:'🔒', title:'Your workflow, your tools', body:'Steadyhand respects how trade businesses already operate. Use Xero for invoicing or your own CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
               { icon:'✅', title:'Verified, not just listed', body:'Every trade business on Steadyhand has their licence and insurance verified before they appear in any shortlist. Verification is not a badge — it is a requirement.' },
@@ -159,7 +159,7 @@ export default function Home() {
             {[
               { title:'Dialogue Trust Score', body:'Every job you complete builds your Dialogue Trust Score average. A high score signals to future clients that you engage transparently on pricing, compliance and risk — before work begins.' },
               { title:'Digital scope agreements', body:'Your scope agreement is stored permanently against every job. No more disputes over what was agreed. No more chasing signed documents.' },
-              { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 5% — only when you get paid.' },
+              { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.3.5% — only when you get paid.' },
             ].map(s => (
               <div key={s.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
                 <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'10px' }}>{s.title}</h3>

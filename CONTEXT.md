@@ -116,8 +116,9 @@ Paste this file at the start of every new Claude session to get up to speed inst
 - **No localhost** — always test against the live Vercel URL
 - **Tradie dashboard** is a `'use client'` component (uses `createClient` from supabase/client)
 - **Client dashboard** is a server component (uses `createClient` from supabase/server)
-- **Milestone payments** release through Stripe Connect; Steadyhand takes 5%
-- **Tradie subscriptions** are separate from milestone fees
+- **Milestone payments** release through Stripe Connect
+- **Fee structure:** 3% for founding members, 3.5% standard — no subscription, no upfront cost
+- **Founding member flag:** `tradie_profiles.founding_member` boolean — set manually by admin
 - **Trust Dialogue Score** is passive and automatic — calculated across all 8 stages
 - **Contribution/tip** is voluntary, 0% platform fee, Stripe
 - **Email sender** switches to `notifications@steadyhanddigital.com` on April 15

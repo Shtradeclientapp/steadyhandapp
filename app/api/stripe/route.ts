@@ -48,7 +48,9 @@ export async function POST(request: NextRequest) {
       const tradieAccountId = job.tradie?.profile?.stripe_account_id
       if (!tradieAccountId) return NextResponse.json({ error: 'Tradie has not connected Stripe yet' }, { status: 400 })
       const amountCents = Math.round(Number(quote.total_price) * 100)
-      const platformFeeCents = Math.round(amountCents * 0.05)
+      const foundingMember = job.tradie?.founding_member === true
+      const feeRate = foundingMember ? 0.03 : 0.035
+      const platformFeeCents = Math.round(amountCents * feeRate)
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountCents,
         currency: 'aud',
@@ -68,8 +70,12 @@ export async function POST(request: NextRequest) {
       if (!tradieAccountId) return NextResponse.json({ error: 'Tradie not connected to Stripe' }, { status: 400 })
       if (!milestone.amount || milestone.amount <= 0) return NextResponse.json({ error: 'No amount set for this milestone' }, { status: 400 })
       const amountCents = Math.round(Number(milestone.amount) * 100)
+      const foundingMember = milestone.job?.tradie?.founding_member === true
+      const feeRate = foundingMember ? 0.03 : 0.035
+      const platformFee = Math.round(amountCents * feeRate)
+      const transferAmount = amountCents - platformFee
       const transfer = await stripe.transfers.create({
-        amount: amountCents,
+        amount: transferAmount,
         currency: 'aud',
         destination: tradieAccountId,
         metadata: { milestone_id, job_id: milestone.job_id },
