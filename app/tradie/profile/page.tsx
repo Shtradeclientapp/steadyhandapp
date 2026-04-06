@@ -20,6 +20,8 @@ export default function TradieProfilePage() {
   const [saved, setSaved] = useState(false)
   const [form, setForm] = useState<any>({})
   const [activeTab, setActiveTab] = useState<'profile'|'business'|'availability'>('profile')
+  const [logoUrl, setLogoUrl] = useState<string|null>(null)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -28,7 +30,7 @@ export default function TradieProfilePage() {
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
       if (prof) setProfile(prof)
-      if (trad) { setTradie(trad); setForm({ ...prof, ...trad }) }
+      if (trad) { setTradie(trad); setForm({ ...prof, ...trad }); setLogoUrl(trad.logo_url || null) }
       setLoading(false)
     })
   }, [])
@@ -51,6 +53,22 @@ export default function TradieProfilePage() {
     } else {
       setF('service_areas', [...current, area])
     }
+  }
+
+  const uploadLogo = async (file: File) => {
+    if (!profile) return
+    setUploadingLogo(true)
+    const supabase = createClient()
+    const ext = file.name.split('.').pop()
+    const path = `logos/${profile.id}.${ext}`
+    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+    if (!error) {
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+      const url = data.publicUrl
+      setLogoUrl(url)
+      await supabase.from('tradie_profiles').update({ logo_url: url }).eq('id', profile.id)
+    }
+    setUploadingLogo(false)
   }
 
   const save = async () => {
@@ -107,9 +125,22 @@ export default function TradieProfilePage() {
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' as const }}>
-            <div style={{ width: '72px', height: '72px', borderRadius: '14px', background: 'rgba(216,228,225,0.1)', border: '1.5px solid rgba(216,228,225,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: 'rgba(216,228,225,0.7)' }}>{form.business_name?.charAt(0) || '?'}</span>
-            </div>
+            <label style={{ width: '72px', height: '72px', borderRadius: '14px', background: 'rgba(216,228,225,0.1)', border: '1.5px solid rgba(216,228,225,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', overflow: 'hidden', position: 'relative' as const }}>
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { if (e.target.files?.[0]) uploadLogo(e.target.files[0]) }} />
+              {logoUrl ? (
+                <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' as const }} />
+              ) : (
+                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: 'rgba(216,228,225,0.7)' }}>{form.business_name?.charAt(0) || '?'}</span>
+              )}
+              {uploadingLogo && (
+                <div style={{ position: 'absolute' as const, inset: 0, background: 'rgba(28,43,50,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: '10px', color: 'white' }}>...</span>
+                </div>
+              )}
+              <div style={{ position: 'absolute' as const, bottom: 0, left: 0, right: 0, background: 'rgba(28,43,50,0.5)', padding: '3px 0', textAlign: 'center' as const }}>
+                <span style={{ fontSize: '9px', color: 'white', letterSpacing: '0.5px' }}>LOGO</span>
+              </div>
+            </label>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' as const }}>
                 <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: 'rgba(216,228,225,0.9)', letterSpacing: '1px', margin: 0 }}>{form.business_name || 'Your Business'}</h1>
