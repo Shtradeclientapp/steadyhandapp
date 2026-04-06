@@ -229,6 +229,7 @@ export default function AgreementPage() {
     <div>
       <NavHeader profile={profile} isTradie={false}   />
       <StageRail currentPath="/agreement" jobStatus={job?.status} />
+    </div>
   )
 
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 110px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p></div></>
