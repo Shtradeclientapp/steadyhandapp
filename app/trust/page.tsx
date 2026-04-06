@@ -186,7 +186,7 @@ export default function TrustPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
                         <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:info.color, flexShrink:0 }} />
                         <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{info.label}</span>
-                        <span style={{ fontSize:'11px', color:'#9AA5AA' }}>{info.weight}% weight</span>
+                        <span style={{ fontSize:'11px', color:'#7A9098' }}>{info.weight}% weight</span>
                       </div>
                       <span style={{ fontSize:'13px', fontWeight:600, color:getScoreColor(stageScore) }}>{stageScore}/100</span>
                     </div>
@@ -213,7 +213,7 @@ export default function TrustPage() {
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'10px' }}>{info.description}</p>
                 <ul style={{ margin:0, paddingLeft:'16px' }}>
                   {info.tips.map((tip, i) => (
-                    <li key={i} style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'4px' }}>{tip}</li>
+                    <li key={i} style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'4px' }}>{tip}</li>
                   ))}
                 </ul>
               </div>

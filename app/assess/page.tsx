@@ -205,7 +205,7 @@ export default function AssessPage() {
                 <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (isComplete ? s.c : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? s.c : '#C8D5D2', color: isComplete ? 'white' : isCurrent ? s.c : '#7A9098', marginBottom:'4px' }}>
                   {isComplete ? '✓' : s.n}
                 </div>
-                <div style={{ fontSize:'10px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
+                <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
               </a>
             )
           })}
@@ -363,7 +363,7 @@ export default function AssessPage() {
             </div>
             <div>
               <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Continue the conversation</p>
-              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Message {theirLabel} about the assessment →</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Message {theirLabel} about the assessment →</p>
             </div>
           </div>
         </a>

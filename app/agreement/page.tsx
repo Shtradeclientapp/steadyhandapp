@@ -243,7 +243,7 @@ export default function AgreementPage() {
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 3 ? '#2E7D60' : s.p === '/agreement' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 3 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 3 ? 'white' : s.p === '/agreement' ? s.c : '#7A9098' }}>
               {s.n < 3 ? '✓' : s.n}
             </div>
-            <div style={{ fontSize:'10px', color: s.p === '/agreement' ? '#1C2B32' : s.n < 3 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/agreement' ? 600 : 400 }}>{s.l}</div>
+            <div style={{ fontSize:'12px', color: s.p === '/agreement' ? '#1C2B32' : s.n < 3 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/agreement' ? 600 : 400 }}>{s.l}</div>
           </a>
             )
         })}
@@ -288,7 +288,7 @@ export default function AgreementPage() {
                   <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginTop:'1px' }}>{item.value}</span>
                 </div>
               ))}
-              {saving && <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px' }}>Saving...</p>}
+              {saving && <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px' }}>Saving...</p>}
               {savedAt && !saving && <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'8px' }}>✓ Saved {savedAt}</p>}
             </div>
           </div>
@@ -319,7 +319,7 @@ export default function AgreementPage() {
             <span style={{ fontSize:'18px' }}>💬</span>
             <div>
               <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Job messages</p>
-              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Continue the conversation →</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Continue the conversation →</p>
             </div>
           </a>
 
@@ -409,13 +409,13 @@ export default function AgreementPage() {
             {/* Parties */}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom:'1px solid #F0F0F0' }}>
               <div style={{ padding:'24px 32px', borderRight:'1px solid #F0F0F0' }}>
-                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'10px', fontWeight:600 }}>Client</p>
+                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'10px', fontWeight:600 }}>Client</p>
                 <p style={{ fontSize:'16px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{job.client?.full_name}</p>
                 <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.client?.suburb || job.suburb}</p>
                 <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.client?.email}</p>
               </div>
               <div style={{ padding:'24px 32px' }}>
-                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'10px', fontWeight:600 }}>Tradie</p>
+                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'10px', fontWeight:600 }}>Tradie</p>
                 {job.tradie ? (
                   <>
                     <p style={{ fontSize:'16px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{job.tradie.business_name}</p>
@@ -431,7 +431,7 @@ export default function AgreementPage() {
 
             {/* Job summary */}
             <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
-              <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'12px', fontWeight:600 }}>Job description</p>
+              <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:600 }}>Job description</p>
               <p style={{ fontSize:'17px', fontWeight:600, color:'#1C2B32', marginBottom:'6px' }}>{job.title}</p>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'10px' }}>{job.description}</p>
               <div style={{ display:'flex', gap:'16px', flexWrap:'wrap' as const }}>
@@ -453,7 +453,7 @@ export default function AgreementPage() {
 
             {/* External document upload */}
                 <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'6px', fontWeight:600 }}>Working in your own system?</p>
+                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'6px', fontWeight:600 }}>Working in your own system?</p>
                   <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'14px' }}>If you have prepared your agreement or quote in Xero, your CRM, or another tool, upload the signed document here. Steadyhand will store it against this job and warranty tracking will continue from the signing date.</p>
                   {uploadedDoc ? (
                     <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px' }}>
@@ -472,7 +472,7 @@ export default function AgreementPage() {
                       <span style={{ fontSize:'20px' }}>📎</span>
                       <div style={{ textAlign:'center' as const }}>
                         <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadingDoc ? 'Uploading...' : 'Upload signed agreement or quote'}</p>
-                        <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'2px' }}>PDF, Word or image · Max 10MB</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>PDF, Word or image · Max 10MB</p>
                       </div>
                       <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} disabled={uploadingDoc} />
                     </label>
@@ -482,26 +482,26 @@ export default function AgreementPage() {
                             {/* Quote details */}
             {currentQuote && (
               <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
-                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'16px', fontWeight:600 }}>Agreed price</p>
+                <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'16px', fontWeight:600 }}>Agreed price</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginBottom:'16px' }}>
                   <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'40px', color:'#1C2B32', letterSpacing:'1px' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
-                  <span style={{ fontSize:'14px', color:'#9AA5AA' }}>AUD inc. GST</span>
+                  <span style={{ fontSize:'14px', color:'#7A9098' }}>AUD inc. GST</span>
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(3, auto)', gap:'20px', marginBottom: currentQuote.breakdown?.length > 0 ? '20px' : '0' }}>
                   {currentQuote.estimated_start && (
                     <div>
-                      <p style={{ fontSize:'10px', color:'#9AA5AA', letterSpacing:'0.5px', marginBottom:'3px' }}>START DATE</p>
+                      <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>START DATE</p>
                       <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>
                     </div>
                   )}
                   {currentQuote.estimated_days && (
                     <div>
-                      <p style={{ fontSize:'10px', color:'#9AA5AA', letterSpacing:'0.5px', marginBottom:'3px' }}>DURATION</p>
+                      <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>DURATION</p>
                       <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{currentQuote.estimated_days} days</p>
                     </div>
                   )}
                   <div>
-                    <p style={{ fontSize:'10px', color:'#9AA5AA', letterSpacing:'0.5px', marginBottom:'3px' }}>QUOTE VERSION</p>
+                    <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>QUOTE VERSION</p>
                     <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>v{currentQuote.version}</p>
                   </div>
                 </div>
@@ -534,7 +534,7 @@ export default function AgreementPage() {
             {!currentQuote && job.tradie_id && (
               <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', textAlign:'center' as const, background:'#FAFBFB' }}>
                 <p style={{ fontSize:'14px', color:'#C07830', marginBottom:'4px' }}>⏳ Awaiting quote from tradie</p>
-                <p style={{ fontSize:'13px', color:'#9AA5AA' }}>The tradie will submit their quote through the platform. It will appear here automatically.</p>
+                <p style={{ fontSize:'13px', color:'#7A9098' }}>The tradie will submit their quote through the platform. It will appear here automatically.</p>
               </div>
             )}
 
@@ -551,7 +551,7 @@ export default function AgreementPage() {
                   <div key={q.id} style={{ marginBottom: i < allQuotes.length - 1 ? '16px' : 0 }}>
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-                        <div style={{ background: i === 0 ? '#2E7D60' : 'rgba(28,43,50,0.1)', color: i === 0 ? 'white' : '#7A9098', fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>
+                        <div style={{ background: i === 0 ? '#2E7D60' : 'rgba(28,43,50,0.1)', color: i === 0 ? 'white' : '#7A9098', fontSize:'11px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>
                           {i === 0 ? 'CURRENT · v' + q.version : 'v' + q.version}
                         </div>
                         <span style={{ fontSize:'12px', color:'#7A9098' }}>{new Date(q.created_at).toLocaleDateString('en-AU')} at {new Date(q.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</span>
@@ -583,14 +583,14 @@ export default function AgreementPage() {
                     )}
                     {q.conditions && i > 0 && q.conditions !== allQuotes[i-1]?.conditions && (
                       <div style={{ background:'rgba(192,120,48,0.04)', border:'1px solid rgba(192,120,48,0.15)', borderRadius:'6px', padding:'8px 10px' }}>
-                        <p style={{ fontSize:'10px', fontWeight:600, color:'#C07830', margin:'0 0 3px', letterSpacing:'0.5px' }}>TERMS UPDATED</p>
+                        <p style={{ fontSize:'11px', fontWeight:600, color:'#C07830', margin:'0 0 3px', letterSpacing:'0.5px' }}>TERMS UPDATED</p>
                         <p style={{ fontSize:'11px', color:'#4A5E64', margin:0 }}>Conditions were revised in this version.</p>
                       </div>
                     )}
                     {i < allQuotes.length - 1 && (
                       <div style={{ display:'flex', alignItems:'center', gap:'8px', margin:'12px 0 0' }}>
                         <div style={{ flex:1, height:'1px', background:'rgba(28,43,50,0.08)' }} />
-                        <span style={{ fontSize:'10px', color:'#9AA5AA' }}>previous version</span>
+                        <span style={{ fontSize:'10px', color:'#7A9098' }}>previous version</span>
                         <div style={{ flex:1, height:'1px', background:'rgba(28,43,50,0.08)' }} />
                       </div>
                     )}
@@ -614,7 +614,7 @@ export default function AgreementPage() {
               <>
                 {scope.inclusions?.length > 0 && (
                   <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
-                    <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'14px', fontWeight:600 }}>Inclusions</p>
+                    <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'14px', fontWeight:600 }}>Inclusions</p>
                     {scope.inclusions.map((item: string, i: number) => (
                       <div key={i} style={{ display:'flex', gap:'12px', padding:'6px 0', borderBottom:'1px solid #F8F8F8', alignItems:'center' }}>
                         <span style={{ color:'#2E7D60', fontSize:'14px', flexShrink:0 }}>✓</span>
@@ -636,7 +636,7 @@ export default function AgreementPage() {
 
                 {scope.exclusions?.length > 0 && (
                   <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
-                    <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'14px', fontWeight:600 }}>Exclusions</p>
+                    <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'14px', fontWeight:600 }}>Exclusions</p>
                     {scope.exclusions.map((item: string, i: number) => (
                       <div key={i} style={{ display:'flex', gap:'12px', padding:'6px 0', borderBottom:'1px solid #F8F8F8', alignItems:'center' }}>
                         <span style={{ color:'#D4522A', fontSize:'14px', flexShrink:0 }}>×</span>
@@ -659,7 +659,7 @@ export default function AgreementPage() {
                 <MilestoneEditor scope={scope} currentQuote={currentQuote} onSave={(milestones: any) => saveEdit({ milestones })} />
 
                 <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'14px', fontWeight:600 }}>Warranty terms</p>
+                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'14px', fontWeight:600 }}>Warranty terms</p>
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'16px' }}>
                     {[
                       { label:'Warranty period', value: (scope.warranty_days || 90) + ' days' },
@@ -667,7 +667,7 @@ export default function AgreementPage() {
                       { label:'Remediation', value: (scope.remediation_days || 14) + ' days' },
                     ].map(item => (
                       <div key={item.label} style={{ padding:'12px', background:'#F0F4F3', borderRadius:'8px' }}>
-                        <p style={{ fontSize:'10px', color:'#9AA5AA', marginBottom:'4px', letterSpacing:'0.5px' }}>{item.label.toUpperCase()}</p>
+                        <p style={{ fontSize:'10px', color:'#7A9098', marginBottom:'4px', letterSpacing:'0.5px' }}>{item.label.toUpperCase()}</p>
                         <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32' }}>{item.value}</p>
                       </div>
                     ))}
@@ -676,7 +676,7 @@ export default function AgreementPage() {
 
                 {/* Signature blocks */}
                 <div style={{ padding:'32px', background:'#FAFBFB' }}>
-                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', marginBottom:'20px', fontWeight:600 }}>Signatures</p>
+                  <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'20px', fontWeight:600 }}>Signatures</p>
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', marginBottom:'24px' }}>
                     {[
                       { label:'Client', name: job.client?.full_name, signed: scope.client_signed_at, role:'client' },
@@ -684,14 +684,14 @@ export default function AgreementPage() {
                     ].map(party => (
                       <div key={party.label} style={{ border:'1px solid ' + (party.signed ? '#2E7D60' : '#E0E8E6'), borderRadius:'10px', overflow:'hidden' }}>
                         <div style={{ padding:'12px 16px', background: party.signed ? 'rgba(46,125,96,0.06)' : '#F8FAFA', borderBottom:'1px solid ' + (party.signed ? 'rgba(46,125,96,0.15)' : '#EEF0F0') }}>
-                          <p style={{ fontSize:'10px', color:'#9AA5AA', letterSpacing:'0.5px', marginBottom:'2px' }}>{party.label.toUpperCase()}</p>
+                          <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'2px' }}>{party.label.toUpperCase()}</p>
                           <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32' }}>{party.name || 'Not assigned'}</p>
                         </div>
                         <div style={{ padding:'16px', minHeight:'60px', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {party.signed ? (
                             <div style={{ textAlign:'center' as const }}>
                               <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, marginBottom:'2px' }}>✓ Signed</p>
-                              <p style={{ fontSize:'11px', color:'#9AA5AA' }}>{new Date(party.signed).toLocaleDateString('en-AU')} at {new Date(party.signed).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</p>
+                              <p style={{ fontSize:'11px', color:'#7A9098' }}>{new Date(party.signed).toLocaleDateString('en-AU')} at {new Date(party.signed).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</p>
                             </div>
                           ) : (
                             <p style={{ fontSize:'12px', color:'#BBBEC0', fontStyle:'italic' }}>Awaiting signature</p>

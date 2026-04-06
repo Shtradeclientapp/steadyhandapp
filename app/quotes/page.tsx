@@ -167,7 +167,7 @@ export default function QuotesPage() {
                 <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (isComplete ? s.c : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? s.c : '#C8D5D2', color: isComplete ? 'white' : isCurrent ? s.c : '#7A9098', marginBottom:'4px' }}>
                   {isComplete ? '✓' : s.n}
                 </div>
-                <div style={{ fontSize:'10px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
+                <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
               </a>
             )
           })}
@@ -252,7 +252,7 @@ export default function QuotesPage() {
                   </div>
                   <div style={{ textAlign:'right' as const, flexShrink:0 }}>
                     <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', margin:'0 0 4px', letterSpacing:'0.5px' }}>${Number(quote.total_price).toLocaleString()}</p>
-                    <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>AUD inc. GST</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>AUD inc. GST</p>
                   </div>
                 </div>
 
@@ -376,7 +376,7 @@ export default function QuotesPage() {
             </div>
             <div>
               <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Questions about a quote?</p>
-              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Message any tradie directly →</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Message any tradie directly →</p>
             </div>
           </div>
         </a>

@@ -128,7 +128,7 @@ export default function ShortlistPage() {
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (isComplete ? '#2E7D60' : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: isComplete ? 'white' : isCurrent ? s.c : '#7A9098' }}>
               {isComplete ? '✓' : s.n}
             </div>
-            <div style={{ fontSize:'10px', color: isCurrent ? '#1C2B32' : isComplete ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/shortlist' ? 600 : 400 }}>{s.l}</div>
+            <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/shortlist' ? 600 : 400 }}>{s.l}</div>
           </a>
             )
         })}
@@ -262,7 +262,7 @@ export default function ShortlistPage() {
                             style={{ border:'2px solid ' + (isSelected ? '#2E6A8F' : hasRequest ? '#2E7D60' : i === 0 ? 'rgba(212,82,42,0.3)' : 'rgba(28,43,50,0.1)'), borderRadius:'12px', padding:'18px', cursor: sent || hasRequest ? 'default' : 'pointer', background: isSelected ? 'rgba(46,106,143,0.04)' : hasRequest ? 'rgba(46,125,96,0.04)' : '#E8F0EE', transition:'all 0.15s', position:'relative' as const }}>
                             <div style={{ position:'absolute', top:'12px', right:'12px', display:'flex', gap:'6px', alignItems:'flex-end', flexDirection:'column' as const }}>
                               {i === 0 && !hasRequest && <span style={{ background:'#D4522A', color:'white', fontSize:'9px', fontWeight:700, padding:'2px 8px', borderRadius:'100px' }}>TOP PICK</span>}
-                              {hasRequest && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', color:'#2E7D60', fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>✓ Requested</span>}
+                              {hasRequest && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', color:'#2E7D60', fontSize:'11px', fontWeight:600, padding:'2px 8px', borderRadius:'100px' }}>✓ Requested</span>}
                               {!sent && !hasRequest && (
                                 <div style={{ width:'20px', height:'20px', borderRadius:'50%', border:'2px solid ' + (isSelected ? '#2E6A8F' : 'rgba(28,43,50,0.2)'), background: isSelected ? '#2E6A8F' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', color:'white' }}>
                                   {isSelected ? '✓' : ''}

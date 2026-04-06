@@ -112,7 +112,7 @@ export default function DeliveryPage() {
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (s.num < 6 ? s.color : s.path === '/delivery' ? s.color : 'rgba(28,43,50,0.2)'), background: s.num < 6 ? s.color : '#C8D5D2', color: s.num < 6 ? 'white' : s.path === '/delivery' ? s.color : '#7A9098' }}>
               {s.num < 6 ? '✓' : s.num}
             </div>
-            <div style={{ fontSize:'10px', color: s.path === '/delivery' ? '#1C2B32' : s.num < 4 ? s.color : '#7A9098', fontWeight: s.path === '/delivery' ? 600 : 400 }}>{s.label}</div>
+            <div style={{ fontSize:'12px', color: s.path === '/delivery' ? '#1C2B32' : s.num < 4 ? s.color : '#7A9098', fontWeight: s.path === '/delivery' ? 600 : 400 }}>{s.label}</div>
           </a>
         ))}
       </div>
@@ -170,7 +170,7 @@ export default function DeliveryPage() {
             </div>
             <div style={{ textAlign:'right' }}>
               <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32' }}>{progress}%</div>
-              <div style={{ fontSize:'11px', color:'#7A9098' }}>{done}/{total} milestones</div>
+              <div style={{ fontSize:'12px', color:'#4A5E64' }}>{done}/{total} milestones</div>
             </div>
           </div>
           <div style={{ height:'6px', background:'rgba(28,43,50,0.1)', borderRadius:'3px', overflow:'hidden' }}>

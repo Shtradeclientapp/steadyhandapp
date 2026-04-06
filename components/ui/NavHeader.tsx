@@ -53,7 +53,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                 <div style={{ position:'absolute', top:'42px', right:0, background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', boxShadow:'0 4px 20px rgba(28,43,50,0.12)', minWidth:'180px', zIndex:200, overflow:'hidden' }}>
                   <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                     <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{profile.tradie?.business_name || profile.full_name}</p>
-                    <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{profile.email}</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>{profile.email}</p>
                   </div>
                   <a href={profileHref} style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
                     onClick={() => setDropdownOpen(false)}>

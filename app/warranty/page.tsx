@@ -105,7 +105,7 @@ export default function WarrantyPage() {
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (s.n < 6 ? '#2E7D60' : s.p === '/warranty' ? s.c : 'rgba(28,43,50,0.2)'), background: s.n < 6 ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, color: s.n < 6 ? 'white' : s.p === '/warranty' ? s.c : '#7A9098' }}>
               {s.n < 6 ? '✓' : s.n}
             </div>
-            <div style={{ fontSize:'10px', color: s.p === '/warranty' ? '#1C2B32' : s.n < 6 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/warranty' ? 600 : 400 }}>{s.l}</div>
+            <div style={{ fontSize:'12px', color: s.p === '/warranty' ? '#1C2B32' : s.n < 6 ? '#2E7D60' : '#7A9098', fontWeight: s.p === '/warranty' ? 600 : 400 }}>{s.l}</div>
           </a>
             )
         })}
@@ -209,7 +209,7 @@ export default function WarrantyPage() {
             <div key={issue.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + (statusColor[issue.status] || '#7A9098'), borderRadius:'11px', padding:'18px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px', flexWrap:'wrap' }}>
                 <span style={{ background: (statusColor[issue.status] || '#7A9098') + '18', border:'1px solid ' + (statusColor[issue.status] || '#7A9098') + '40', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', fontWeight:'500', color: statusColor[issue.status] || '#7A9098', textTransform:'capitalize' }}>{issue.status}</span>
-                <span style={{ background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#7A9098', textTransform:'capitalize' }}>{issue.severity}</span>
+                <span style={{ background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'3px 10px', fontSize:'12px', color:'#4A5E64', textTransform:'capitalize' }}>{issue.severity}</span>
                 <span style={{ fontSize:'12px', color:'#7A9098', marginLeft:'auto' }}>Logged {new Date(issue.created_at).toLocaleDateString('en-AU')}</span>
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
