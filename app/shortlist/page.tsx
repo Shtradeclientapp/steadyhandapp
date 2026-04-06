@@ -16,7 +16,7 @@ export default function ShortlistPage() {
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
-  const [tab, setTab] = useState<'matches'|'invite'|'requested'>('matches')
+  const [tab, setTab] = useState<'matches'|'invite'|'requested'|'directory'>('matches')
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteSent, setInviteSent] = useState(false)
