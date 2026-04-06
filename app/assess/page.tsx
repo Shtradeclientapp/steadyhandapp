@@ -39,6 +39,9 @@ export default function AssessPage() {
   const [sharing, setSharing] = useState(false)
   const [acknowledging, setAcknowledging] = useState(false)
   const [form, setForm] = useState<any>({})
+  const [uploadingPhotos, setUploadingPhotos] = useState(false)
+  const [clientPhotos, setClientPhotos] = useState<string[]>([])
+  const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
   const [proposingDate, setProposingDate] = useState(false)
   const [proposedDate, setProposedDate] = useState('')
   const [savingDate, setSavingDate] = useState(false)
@@ -74,6 +77,8 @@ export default function AssessPage() {
         if (assess) {
           setAssessment(assess)
           setForm(assess)
+          setClientPhotos(assess.client_photo_urls || [])
+          setTradiePhotos(assess.tradie_photo_urls || [])
         } else {
           const { data: newAssess } = await supabase
             .from('site_assessments')
@@ -88,6 +93,37 @@ export default function AssessPage() {
   }, [])
 
   const setF = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
+
+  const uploadPhoto = async (file: File) => {
+    if (!assessment) return
+    setUploadingPhotos(true)
+    const supabase = createClient()
+    const ext = file.name.split('.').pop()
+    const path = 'assessments/' + assessment.id + '/' + Date.now() + '.' + ext
+    const { error } = await supabase.storage.from('job-photos').upload(path, file)
+    if (!error) {
+      const { data: urlData } = supabase.storage.from('job-photos').getPublicUrl(path)
+      const url = urlData.publicUrl
+      const field = isTradie ? 'tradie_photo_urls' : 'client_photo_urls'
+      const current = isTradie ? tradiePhotos : clientPhotos
+      const updated = [...current, url]
+      await supabase.from('site_assessments').update({ [field]: updated }).eq('id', assessment.id)
+      if (isTradie) setTradiePhotos(updated)
+      else setClientPhotos(updated)
+    }
+    setUploadingPhotos(false)
+  }
+
+  const removePhoto = async (url: string) => {
+    if (!assessment) return
+    const supabase = createClient()
+    const field = isTradie ? 'tradie_photo_urls' : 'client_photo_urls'
+    const current = isTradie ? tradiePhotos : clientPhotos
+    const updated = current.filter(p => p !== url)
+    await supabase.from('site_assessments').update({ [field]: updated }).eq('id', assessment.id)
+    if (isTradie) setTradiePhotos(updated)
+    else setClientPhotos(updated)
+  }
 
   const proposeConsultDate = async () => {
     if (!proposedDate || !assessment || !job) return
@@ -336,6 +372,50 @@ export default function AssessPage() {
               </div>
             </div>
 
+            {/* PHOTO UPLOAD */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'16px' }}>
+              <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>SITE PHOTOS</p>
+              </div>
+              <div style={{ padding:'16px' }}>
+                <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
+                  Upload photos from the site visit — existing conditions, areas of concern, access points. Photos are shared with your notes.
+                </p>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'8px', marginBottom:'12px' }}>
+                  {(isTradie ? tradiePhotos : clientPhotos).map((url, i) => (
+                    <div key={i} style={{ position:'relative', aspectRatio:'1', borderRadius:'8px', overflow:'hidden', background:'rgba(28,43,50,0.06)' }}>
+                      <img src={url} alt={'Photo ' + (i+1)} style={{ width:'100%', height:'100%', objectFit:'cover' as const }} />
+                      {!myShared && (
+                        <button type="button" onClick={() => removePhoto(url)}
+                          style={{ position:'absolute', top:'4px', right:'4px', background:'rgba(28,43,50,0.7)', color:'white', border:'none', borderRadius:'50%', width:'20px', height:'20px', fontSize:'12px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {!myShared && (
+                    <label style={{ aspectRatio:'1', borderRadius:'8px', border:'1.5px dashed rgba(28,43,50,0.2)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', cursor:'pointer', background:'#F4F8F7' }}>
+                      <input type="file" accept="image/*" multiple style={{ display:'none' }}
+                        onChange={async e => {
+                          const files = Array.from(e.target.files || [])
+                          for (const file of files) await uploadPhoto(file)
+                          e.target.value = ''
+                        }}
+                      />
+                      {uploadingPhotos ? (
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Uploading...</p>
+                      ) : (
+                        <>
+                          <span style={{ fontSize:'20px', marginBottom:'4px', opacity:0.4 }}>📷</span>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Add photos</p>
+                        </>
+                      )}
+                    </label>
+                  )}
+                </div>
+              </div>
+            </div>
+
             {!myShared ? (
               <div style={{ display:'flex', gap:'10px' }}>
                 <button type="button" onClick={save} disabled={saving}
@@ -385,7 +465,21 @@ export default function AssessPage() {
                   <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:0 }}>Shared {new Date(theirShared).toLocaleDateString('en-AU')}</p>
                 </div>
                 <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
-                  {(isTradie ? CLIENT_PROMPTS : TRADIE_PROMPTS).map(prompt => {
+                  {/* THEIR PHOTOS */}
+                {(isTradie ? clientPhotos : tradiePhotos).length > 0 && (
+                  <div style={{ marginBottom:'16px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'8px' }}>Site photos</p>
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'8px' }}>
+                      {(isTradie ? clientPhotos : tradiePhotos).map((url, i) => (
+                        <div key={i} style={{ aspectRatio:'1', borderRadius:'8px', overflow:'hidden', background:'rgba(28,43,50,0.06)' }}>
+                          <img src={url} alt={'Photo ' + (i+1)} style={{ width:'100%', height:'100%', objectFit:'cover' as const }} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(isTradie ? CLIENT_PROMPTS : TRADIE_PROMPTS).map(prompt => {
                     const value = form[prompt.key]
                     if (!value) return null
                     return (
