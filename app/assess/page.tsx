@@ -222,7 +222,7 @@ export default function AssessPage() {
   const myAcknowledged = isTradie ? assessment?.tradie_acknowledged_at : assessment?.client_acknowledged_at
   const theirAcknowledged = isTradie ? assessment?.client_acknowledged_at : assessment?.tradie_acknowledged_at
   const myPrompts = isTradie ? TRADIE_PROMPTS : CLIENT_PROMPTS
-  const theirLabel = isTradie ? job?.client?.full_name : job?.tradie?.business_name
+  const theirLabel = isTradie ? (job?.client?.full_name || 'the client') : (job?.tradie?.business_name || 'your tradie')
 
   const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif', lineHeight:'1.6' }
 

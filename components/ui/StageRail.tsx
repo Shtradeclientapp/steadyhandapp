@@ -27,7 +27,7 @@ interface StageRailProps { currentPath: string; jobStatus?: string }
 export function StageRail({ currentPath, jobStatus }: StageRailProps) {
   const currentN = STAGES.find(s => s.p === currentPath)?.n ?? 1
   const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : currentN
-  const completedUpTo = jobStageN - 1
+  const completedUpTo = Math.max(jobStageN - 1, currentN - 1)
 
   return (
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
