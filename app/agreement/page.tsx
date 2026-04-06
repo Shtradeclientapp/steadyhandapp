@@ -312,7 +312,7 @@ export default function AgreementPage() {
         {/* CENTRE — THE DOCUMENT */}
         {isPastAgreement && (
           <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-            <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'6px' }}>You are reviewing Stage 4 — Scope Agreement</p>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', marginBottom:'6px' }}>You are reviewing the Contract stage</p>
             <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
               This job has moved to the <strong>{job?.status}</strong> stage. The scope agreement below is read-only. Both parties signed on {scope?.client_signed_at ? new Date(scope.client_signed_at).toLocaleDateString('en-AU') : '—'}.
             </p>

@@ -115,7 +115,7 @@ export default function WarrantyPage() {
       <div style={{ maxWidth:'780px', margin:'0 auto' }}>
 
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(26,107,90,0.08)', border:'1px solid rgba(26,107,90,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
-          <span style={{ fontSize:'11px', color:'#1A6B5A', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 6</span>
+          <span style={{ fontSize:'11px', color:'#1A6B5A', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>You're covered</span>
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>WARRANTY PERIOD</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>

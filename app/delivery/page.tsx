@@ -346,11 +346,11 @@ export default function DeliveryPage() {
       <div style={{ maxWidth:'780px', margin:'0 auto' }}>
 
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
-          <span style={{ fontSize:'11px', color:'#C07830', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 4</span>
+          <span style={{ fontSize:'11px', color:'#C07830', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Watch it happen</span>
         </div>
         {isPastDelivery && (
           <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-            <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'6px' }}>You are reviewing Stage 4 — Delivery</p>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'6px' }}>You are reviewing the Build stage</p>
             <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
               This job has moved to the <strong>{job?.status}</strong> stage. Below is a summary of milestone delivery for your records.
             </p>

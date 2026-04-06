@@ -152,7 +152,7 @@ export default function QuotesPage() {
         {/* PAST STAGE BANNER */}
         {isPastQuotes && (
           <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-            <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'6px' }}>You are reviewing Stage 3 — Quotes</p>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'6px' }}>You are reviewing the Compare stage</p>
             <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
               This job has moved to the <strong>{job.status}</strong> stage. {acceptedQR && 'You selected ' + acceptedQR.tradie?.business_name + '.'}
             </p>
@@ -165,7 +165,7 @@ export default function QuotesPage() {
         )}
 
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
-          <span style={{ fontSize:'11px', color:'#C07830', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Stage 3</span>
+          <span style={{ fontSize:'11px', color:'#C07830', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Choose with confidence</span>
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>COMPARE QUOTES</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'8px' }}>{job.title}</p>

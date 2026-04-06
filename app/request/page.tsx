@@ -118,7 +118,7 @@ window.location.href = '/shortlist'
       <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
         <div style={{ maxWidth:'600px', margin:'0 auto' }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
-            <span style={{ fontSize:'11px', color:'#2E7D60', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Stage 1</span>
+            <span style={{ fontSize:'11px', color:'#2E7D60', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Tell us what you need</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
 
