@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState, useCallback } from 'react'
@@ -70,6 +71,46 @@ function MilestonePaymentForm({ milestoneId, amount, jobId, onSuccess, onCancel 
           Cancel
         </button>
       </div>
+    </div>
+  )
+}
+
+// ── Variation card with local response state ─────────────────────────────────
+function VariationCard({ v, isTradie, onRespond }: { v: any, isTradie: boolean, onRespond: (id: string, approved: boolean, response: string) => void }) {
+  const [responseText, setResponseText] = React.useState('')
+  const statusColor = v.status === 'approved' ? '#2E7D60' : v.status === 'rejected' ? '#D4522A' : '#C07830'
+  return (
+    <div style={{ background:'#F4F8F7', borderRadius:'10px', padding:'14px 16px', borderLeft:'3px solid ' + statusColor }}>
+      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', marginBottom:'6px' }}>
+        <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:0 }}>{v.title}</p>
+        <span style={{ fontSize:'11px', padding:'2px 8px', borderRadius:'100px', background: statusColor + '18', border:'1px solid ' + statusColor + '40', color:statusColor, fontWeight:500, flexShrink:0, textTransform:'capitalize' as const }}>{v.status}</span>
+      </div>
+      {v.description && <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{v.description}</p>}
+      <div style={{ display:'flex', gap:'16px', marginBottom: v.status === 'pending' && !isTradie ? '10px' : 0 }}>
+        {v.cost_impact !== 0 && <span style={{ fontSize:'12px', color:'#C07830', fontWeight:500 }}>+${Number(v.cost_impact).toLocaleString()} cost</span>}
+        {v.time_impact_days !== 0 && <span style={{ fontSize:'12px', color:'#C07830', fontWeight:500 }}>+{v.time_impact_days} days</span>}
+        <span style={{ fontSize:'11px', color:'#9AA5AA' }}>{new Date(v.created_at).toLocaleDateString('en-AU')}</span>
+      </div>
+      {v.status === 'pending' && !isTradie && (
+        <div style={{ marginTop:'10px' }}>
+          <textarea placeholder="Add a note (optional)..." rows={2}
+            onChange={e => setResponseText(e.target.value)}
+            style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'white', color:'#1C2B32', outline:'none', resize:'vertical' as const, boxSizing:'border-box' as const, marginBottom:'8px', fontFamily:'sans-serif' }} />
+          <div style={{ display:'flex', gap:'8px' }}>
+            <button type="button" onClick={() => onRespond(v.id, true, responseText)}
+              style={{ flex:1, background:'#2E7D60', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+              ✓ Approve variation
+            </button>
+            <button type="button" onClick={() => onRespond(v.id, false, responseText)}
+              style={{ flex:1, background:'transparent', color:'#D4522A', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
+              ✗ Reject
+            </button>
+          </div>
+        </div>
+      )}
+      {v.client_response && (
+        <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px', fontStyle:'italic' as const }}>"{v.client_response}"</p>
+      )}
     </div>
   )
 }
