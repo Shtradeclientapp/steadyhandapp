@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
         '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
         '<p style="color:#4A5E64;">Your tradies have been notified and are ready to arrange a site consultation for:</p>' +
         jobCard +
-        '<p style="color:#4A5E64;">Once you've had the consultation, record your notes and observations in the Assess stage. Share them with your tradie before quoting begins.</p>' +
+        '<p style="color:#4A5E64;">Once you have had the consultation, record your notes and observations in the Assess stage. Share them with your tradie before quoting begins.</p>' +
         btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
       )
       await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Site assessment ready — ' + job.title, html: clientHtml })
