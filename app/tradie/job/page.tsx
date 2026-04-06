@@ -189,7 +189,7 @@ export default function TradieJobPage() {
         await supabase2.from('job_messages').insert({
           job_id: job.id,
           sender_id: user.id,
-          body: '⚡ ' + (profile?.tradie?.business_name || 'The tradie') + ' responded to this warranty issue within 24 hours — above the Steadyhand standard. This has been recorded in their trust score.',
+          body: '⚡ The tradie responded to this warranty issue within 24 hours — above the Steadyhand standard. This has been recorded in their trust score.',
         })
       }
     }
