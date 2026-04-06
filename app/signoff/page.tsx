@@ -115,7 +115,7 @@ export default function SignoffPage() {
     setContributionSending(false)
   }
 
-  const nav = (
+  const renderNav = () => (
     <div>
       <NavHeader profile={profile} isTradie={false}   />
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
@@ -141,11 +141,11 @@ export default function SignoffPage() {
 
   const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
 
-  if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
+  if (loading) return <>{renderNav()}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
 
   if (done) return (
     <>
-      {nav}
+      {renderNav()}
       <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px', display:'flex', alignItems:'flex-start', justifyContent:'center' }}>
       <div style={{ maxWidth:'520px', width:'100%' }}>
 
@@ -235,7 +235,7 @@ export default function SignoffPage() {
   )
 
   if (!job) return (
-    <>{nav}
+    <>{renderNav()}
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center' }}>
         <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job ready for sign-off.</p>
@@ -245,7 +245,7 @@ export default function SignoffPage() {
   )
 
   return (
-    <>{nav}
+    <>{renderNav()}
     <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
       <div style={{ maxWidth:'600px', margin:'0 auto' }}>
 
