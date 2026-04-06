@@ -118,8 +118,7 @@ export default function QuotesPage() {
     setSubmitting(false)
   }
 
-  const STAGE_ORDER = ['matching', 'shortlisted', 'assess', 'quotes', 'agreement', 'delivery', 'signoff', 'warranty', 'complete']
-  const isPastQuotes = job ? STAGE_ORDER.indexOf(job.status) > STAGE_ORDER.indexOf('quotes') : false
+  const isPastQuotes = job ? ['agreement','delivery','signoff','warranty','complete'].includes(job.status) : false
 
   const receivedQuotes = quoteRequests.filter(qr => getLatestQuote(qr.tradie_id))
   const awaitingQuotes = quoteRequests.filter(qr => !getLatestQuote(qr.tradie_id) && qr.status === 'requested')
