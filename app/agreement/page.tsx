@@ -223,6 +223,7 @@ export default function AgreementPage() {
   const multipleQuotes = allQuotes.length > 1 || quoteRequests.length > 1
   const hasAcceptedQuote = quoteRequests.some(qr => qr.status === 'accepted')
   const jobRef = job ? 'SH-' + job.id.slice(0, 8).toUpperCase() : ''
+  const isPastAgreement = job ? ['delivery','signoff','warranty','complete'].includes(job.status) : false
   const today = new Date().toLocaleDateString('en-AU', { day:'numeric', month:'long', year:'numeric' })
 
   const nav = (
