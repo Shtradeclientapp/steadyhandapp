@@ -168,8 +168,8 @@ export default function SignoffPage() {
                 {job.tradie.dialogue_score_avg >= 85
                   ? job.tradie.business_name + ' communicated exceptionally throughout this job — thorough assessment notes, clear updates and prompt responses. Would you like to add a voluntary contribution to recognise that effort?'
                   : job.tradie.dialogue_score_avg >= 70
-                  ? job.tradie.business_name + ' engaged well throughout this job. If you'd like to add something to say thank you, you can do that here.'
-                  : 'If you'd like to add a voluntary contribution to recognise ' + job.tradie.business_name + ''s work on this job, you can do that here.'}
+                  ? job.tradie.business_name + ' engaged well throughout this job. If you would like to add something to say thank you, you can do that here.'
+                  : 'If you would like to add a voluntary contribution to recognise ' + job.tradie.business_name + ', you can do that here.'}
               </p>
               <div style={{ display:'flex', gap:'8px', marginBottom:'16px', flexWrap:'wrap' as const }}>
                 {[20, 50, 100].map(amt => (
@@ -230,12 +230,14 @@ export default function SignoffPage() {
         </div>
 
       </div>
-    </div></>
+    </div>
+    </div>
   )
 
   if (!job) return (
-    <>{renderNav()}
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
+    <div>
+      {renderNav()}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center' }}>
         <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job ready for sign-off.</p>
         <a href="/delivery"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to delivery</button></a>
