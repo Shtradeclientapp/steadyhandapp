@@ -151,11 +151,12 @@ export default function QuotesPage() {
           {[
             {n:1,l:'Request',p:'/request',c:'#2E7D60'},
             {n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},
-            {n:3,l:'Quote',p:'/quotes',c:'#C07830'},
-            {n:4,l:'Confirm',p:'/agreement',c:'#6B4FA8'},
-            {n:5,l:'Build',p:'/delivery',c:'#C07830'},
-            {n:6,l:'Complete',p:'/signoff',c:'#D4522A'},
-            {n:7,l:'Protect',p:'/warranty',c:'#1A6B5A'},
+            {n:3,l:'Assess',p:'/assess',c:'#9B6B9B'},
+            {n:4,l:'Quote',p:'/quotes',c:'#C07830'},
+            {n:5,l:'Confirm',p:'/agreement',c:'#6B4FA8'},
+            {n:6,l:'Build',p:'/delivery',c:'#C07830'},
+            {n:7,l:'Complete',p:'/signoff',c:'#D4522A'},
+            {n:8,l:'Protect',p:'/warranty',c:'#1A6B5A'},
           ].map(s => {
             const stageStatus = STAGE_ORDER[s.n - 1]
             const jobIdx = STAGE_ORDER.indexOf(job?.status || 'matching')
