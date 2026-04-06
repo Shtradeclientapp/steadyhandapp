@@ -251,21 +251,7 @@ export default function AssessPage() {
       {/* STAGE RAIL */}
       <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', background:'rgba(200,213,210,0.95)', padding:'0 24px' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', display:'flex', overflowX:'auto' as const }}>
-          {STAGE_RAIL.map(s => {
-            const isComplete = jobIdx > s.n - 1
-            const isCurrent = s.p === '/assess'
-            return (
-              <a key={s.n} href={s.p} style={{ textDecoration:'none', display:'flex', flexDirection:'column' as const, alignItems:'center', padding:'10px 16px', position:'relative', flexShrink:0, minWidth:'70px' }}>
-                {isCurrent && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:'#1C2B32' }} />}
-                <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (isComplete ? s.c : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? s.c : '#C8D5D2', color: isComplete ? 'white' : isCurrent ? 'white' : '#7A9098', marginBottom:'4px' }}>
-                  {isComplete ? '✓' : s.n}
-                </div>
-                <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? s.c : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
-              </a>
-            )
-          })}
-        </div>
-      </div>
+          <StageRail currentPath="/assess" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'780px', margin:'0 auto', padding:'32px 24px' }}>
 
