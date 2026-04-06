@@ -299,6 +299,32 @@ export default function TradieJobPage() {
                 Go to site assessment →
               </button>
             </a>
+            <div style={{ marginTop:'12px', paddingTop:'12px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+              <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'6px' }}>
+                In some circumstances a site visit may not be possible. Skipping the assessment means your quote will not have a shared site record — this may affect your trust score and could increase the likelihood of scope disputes later.
+              </p>
+              <button type="button" onClick={async () => {
+                const supabase = createClient()
+                await supabase.from('site_assessments').upsert({
+                  job_id: job.id,
+                  client_shared_at: null,
+                  tradie_shared_at: null,
+                  client_acknowledged_at: null,
+                  tradie_acknowledged_at: null,
+                  tradie_observations: 'Assessment skipped — quote submitted without site visit.',
+                }, { onConflict: 'job_id' })
+                await supabase.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+                await supabase.from('job_messages').insert({
+                  job_id: job.id,
+                  sender_id: user.id,
+                  body: '⚠ Site assessment skipped — ' + (job.tradie?.business_name || 'Tradie') + ' has proceeded directly to quoting without a site visit.',
+                })
+                window.location.reload()
+              }}
+                style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
+                Proceed without site assessment
+              </button>
+            </div>
           </div>
         )}
 
