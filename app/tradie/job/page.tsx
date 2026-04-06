@@ -251,11 +251,10 @@ export default function TradieJobPage() {
         const allMilestonesApproved = milestones.length > 0 && milestones.every((m: any) => m.status === 'approved')
         const inWarranty = ['warranty', 'complete'].includes(job.status)
         const currentStageN = inWarranty ? 6
-          : allMilestonesApproved && job.status === 'signoff' ? 5
-          : milestones.length > 0 && job.status === 'delivery' ? 4
-          : scopeSigned && job.status === 'delivery' ? 4
-          : scopeSigned ? 3
-          : hasQuote ? 2
+          : (allMilestonesApproved || job.status === 'signoff') ? 5
+          : (milestones.length > 0 || (scopeSigned && job.status === 'delivery')) ? 4
+          : (scopeSigned || job.status === 'agreement') ? 3
+          : (hasQuote || job.status === 'quote') ? 2
           : 1
         return (
           <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>

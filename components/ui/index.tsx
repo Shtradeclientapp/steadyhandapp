@@ -242,3 +242,5 @@ export function StepDots({ total, current }: { total: number; current: number })
     </div>
   )
 }
+
+export { StageRail } from './StageRail'

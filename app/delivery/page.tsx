@@ -4,6 +4,7 @@ import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 
 export default function DeliveryPage() {
   const [job, setJob] = useState<any>(null)

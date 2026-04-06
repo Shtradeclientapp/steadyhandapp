@@ -2,6 +2,7 @@
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 

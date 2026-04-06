@@ -11,16 +11,6 @@ const CHECKS = [
   { id:'cert', label:'Any required certificates provided', sub:'Compliance certificates, warranty documents' },
 ]
 
-const STAGE_RAIL = [
-  {n:1,l:'Request',p:'/request',c:'#2E7D60'},
-  {n:2,l:'Match',p:'/shortlist',c:'#2E6A8F'},
-  {n:3,l:'Assess',p:'/assess',c:'#9B6B9B'},
-  {n:4,l:'Quote',p:'/quotes',c:'#C07830'},
-  {n:5,l:'Confirm',p:'/agreement',c:'#6B4FA8'},
-  {n:6,l:'Build',p:'/delivery',c:'#C07830'},
-  {n:7,l:'Complete',p:'/signoff',c:'#D4522A'},
-  {n:8,l:'Protect',p:'/warranty',c:'#1A6B5A'},
-]
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
@@ -146,7 +136,7 @@ export default function SignoffPage() {
   if (loading) return (
     <div>
       <NavHeader profile={profile} isTradie={false} />
-      <StageRail />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} />
       <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 120px)', background:'#C8D5D2' }}>
         <p style={{ color:'#4A5E64' }}>Loading...</p>
       </div>
@@ -156,7 +146,7 @@ export default function SignoffPage() {
   if (done) return (
     <div>
       <NavHeader profile={profile} isTradie={false} />
-      <StageRail />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} />
       <div style={{ minHeight:'calc(100vh - 120px)', background:'#C8D5D2', padding:'40px 24px', display:'flex', alignItems:'flex-start', justifyContent:'center' }}>
         <div style={{ maxWidth:'520px', width:'100%' }}>
           <div style={{ textAlign:'center' as const, marginBottom:'24px' }}>
@@ -239,7 +229,7 @@ export default function SignoffPage() {
   if (!job) return (
     <div>
       <NavHeader profile={profile} isTradie={false} />
-      <StageRail />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} />
       <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 120px)', background:'#C8D5D2' }}>
         <div style={{ textAlign:'center' as const }}>
           <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job ready for sign-off.</p>
@@ -252,7 +242,7 @@ export default function SignoffPage() {
   return (
     <div>
       <NavHeader profile={profile} isTradie={false} />
-      <StageRail />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} />
       <div style={{ minHeight:'calc(100vh - 120px)', background:'#C8D5D2', padding:'40px 24px' }}>
         <div style={{ maxWidth:'600px', margin:'0 auto' }}>
 

@@ -2,6 +2,7 @@
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 
 const DECLINE_REASONS = [
   { value: 'too_expensive', label: 'Too expensive' },

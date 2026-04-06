@@ -4,6 +4,7 @@ import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 
 const TRADES = [
   'Plumbing & Gas', 'Electrical', 'Carpentry & Joinery', 'Tiling',

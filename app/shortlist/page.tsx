@@ -2,6 +2,7 @@
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 import { HintPanel } from '@/components/ui/HintPanel'
 
 export default function ShortlistPage() {
