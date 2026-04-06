@@ -7,6 +7,7 @@ import { HintPanel } from '@/components/ui/HintPanel'
 export default function ShortlistPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [selectedJob, setSelectedJob] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
   const [shortlist, setShortlist] = useState<any[]>([])
   const [matching, setMatching] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -25,6 +26,8 @@ export default function ShortlistPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+      setProfile(prof)
       const { data: jobsData } = await supabase
         .from('jobs')
         .select('*')
