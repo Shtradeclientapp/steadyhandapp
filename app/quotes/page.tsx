@@ -180,6 +180,82 @@ export default function QuotesPage() {
           </div>
         )}
 
+        {/* SIDE-BY-SIDE COMPARISON TABLE */}
+        {receivedQuotes.length >= 2 && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'24px' }}>
+            <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>SIDE-BY-SIDE COMPARISON</p>
+              <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)' }}>{receivedQuotes.length} quotes received</span>
+            </div>
+            <div style={{ overflowX:'auto' as const }}>
+              <table style={{ width:'100%', borderCollapse:'collapse' as const, fontSize:'13px' }}>
+                <thead>
+                  <tr style={{ borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                    <th style={{ padding:'12px 16px', textAlign:'left' as const, fontSize:'11px', color:'#7A9098', fontWeight:500, width:'160px' }}>Line item</th>
+                    {receivedQuotes.map(qr => (
+                      <th key={qr.tradie_id} style={{ padding:'12px 16px', textAlign:'right' as const, fontSize:'12px', color:'#1C2B32', fontWeight:600, minWidth:'140px' }}>
+                        {qr.tradie?.business_name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Collect all unique line item labels */}
+                  {(() => {
+                    const allLabels = Array.from(new Set(
+                      receivedQuotes.flatMap(qr => {
+                        const q = getLatestQuote(qr.tradie_id)
+                        return (q?.breakdown || []).map((b: any) => b.label)
+                      })
+                    ))
+                    return allLabels.map(label => (
+                      <tr key={label} style={{ borderBottom:'1px solid rgba(28,43,50,0.05)' }}>
+                        <td style={{ padding:'9px 16px', color:'#4A5E64', fontSize:'12px' }}>{label}</td>
+                        {receivedQuotes.map(qr => {
+                          const q = getLatestQuote(qr.tradie_id)
+                          const item = (q?.breakdown || []).find((b: any) => b.label === label)
+                          return (
+                            <td key={qr.tradie_id} style={{ padding:'9px 16px', textAlign:'right' as const, color: item ? '#1C2B32' : '#C8D5D2', fontWeight: item ? 500 : 400 }}>
+                              {item ? '$' + Number(item.amount).toLocaleString() : '—'}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))
+                  })()}
+                  {/* Timeline row */}
+                  <tr style={{ borderBottom:'1px solid rgba(28,43,50,0.05)', background:'rgba(28,43,50,0.02)' }}>
+                    <td style={{ padding:'9px 16px', color:'#7A9098', fontSize:'12px', fontWeight:500 }}>Duration</td>
+                    {receivedQuotes.map(qr => {
+                      const q = getLatestQuote(qr.tradie_id)
+                      return (
+                        <td key={qr.tradie_id} style={{ padding:'9px 16px', textAlign:'right' as const, color:'#4A5E64' }}>
+                          {q?.estimated_days ? q.estimated_days + ' days' : '—'}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                  {/* Total row */}
+                  <tr style={{ background:'rgba(28,43,50,0.04)' }}>
+                    <td style={{ padding:'12px 16px', color:'#1C2B32', fontSize:'13px', fontWeight:700 }}>TOTAL</td>
+                    {receivedQuotes.map(qr => {
+                      const q = getLatestQuote(qr.tradie_id)
+                      const allPrices = receivedQuotes.map(r => Number(getLatestQuote(r.tradie_id)?.total_price || 0)).filter(p => p > 0)
+                      const isLowest = allPrices.length > 1 && Number(q?.total_price) === Math.min(...allPrices)
+                      return (
+                        <td key={qr.tradie_id} style={{ padding:'12px 16px', textAlign:'right' as const, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color: isLowest ? '#2E7D60' : '#1C2B32' }}>
+                          ${Number(q?.total_price || 0).toLocaleString()}
+                          {isLowest && <span style={{ display:'block', fontSize:'10px', color:'#2E7D60', fontFamily:'sans-serif' }}>LOWEST</span>}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* QUOTE CARDS */}
         {receivedQuotes.length === 0 && !isPastQuotes && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'48px', textAlign:'center' as const }}>
