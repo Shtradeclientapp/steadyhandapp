@@ -106,12 +106,14 @@ export default function Home() {
         </p>
         <div className="steps-grid">
           {[
-            { num:'01', title:'Define your request', body:'Describe the job, set your budget range and warranty expectations. Steadyhand uses this to match you with the right trade businesses.' },
-            { num:'02', title:'Compare quotes', body:'Request quotes from multiple verified tradies at once. Review them side by side and select the one that best fits your needs and budget.' },
-            { num:'03', title:'Negotiate and sign the scope', body:'Both parties agree on inclusions, exclusions and milestones before work begins. The Dialogue Trust Score encourages transparent, thorough pre-work conversation.' },
-            { num:'04', title:'Milestone delivery', body:'Work is approved and paid in stages. You only release payment when you are satisfied each milestone is complete.' },
-            { num:'05', title:'Sign off', body:'A structured final walkthrough confirms the job is complete. Your warranty clock starts from sign-off, not invoice.' },
-            { num:'06', title:'Warranty', body:'Issues logged within the warranty period are tracked against a response SLA. If the tradie does not respond, Steadyhand mediates.' },
+            { num:'01', title:'Request', body:'Describe the job, set your budget range and expectations. Steadyhand uses this to match you with the right verified trade businesses in your area.' },
+            { num:'02', title:'Match', body:'Review AI-matched tradies based on category, location, experience and trust score. Request quotes from 2–4 for best results, or invite your own.' },
+            { num:'03', title:'Assess', body:'Arrange a site consultation. Both parties document their observations and share notes before quoting begins. This shared record is one of the most important trust moments in any trade relationship.' },
+            { num:'04', title:'Quote', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and select the one that best fits your needs and budget.' },
+            { num:'05', title:'Confirm', body:'Both parties agree on inclusions, exclusions and milestones before work begins. Nothing starts until the scope is signed by both sides.' },
+            { num:'06', title:'Build', body:'Work is approved and paid in stages. You only release payment when you are satisfied each milestone is complete. The tradie is paid promptly — no chasing invoices.' },
+            { num:'07', title:'Complete', body:'A structured final walkthrough confirms the job is done. Your 90-day warranty clock starts from sign-off, not invoice.' },
+            { num:'08', title:'Protect', body:'Issues logged within the warranty period are tracked against a response SLA. Both parties have a complete documented record from request to warranty.' },
           ].map(s => (
             <div key={s.num} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
               <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#D4522A', letterSpacing:'1px', marginBottom:'14px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', display:'inline-block', padding:'4px 10px', borderRadius:'6px' }}>{s.num}</div>
