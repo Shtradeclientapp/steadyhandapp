@@ -95,7 +95,12 @@ export default function ShortlistPage() {
     for (const invite of pendingInvites) {
       await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite }) })
     }
-    await supabase.from('jobs').update({ status: 'agreement', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
+    await supabase.from('jobs').update({ status: 'assess', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'assess_ready', job_id: selectedJob.id }),
+    }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
     setSending(false)

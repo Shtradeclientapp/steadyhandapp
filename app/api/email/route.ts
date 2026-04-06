@@ -243,6 +243,72 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Site assessment notes shared — ' + job.title, html })
     }
 
+    if (type === 'assess_ready') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const jobCard = card(
+        '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+        '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>',
+        '#9B6B9B'
+      )
+
+      // Email to client
+      const clientHtml = wrap(
+        '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+        '<p style="color:#4A5E64;">Your tradies have been notified and are ready to arrange a site consultation for:</p>' +
+        jobCard +
+        '<p style="color:#4A5E64;">Once you've had the consultation, record your notes and observations in the Assess stage. Share them with your tradie before quoting begins.</p>' +
+        btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+      )
+      await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Site assessment ready — ' + job.title, html: clientHtml })
+
+      // Email to each tradie
+      if (job.tradie?.profile?.email) {
+        const tradieHtml = wrap(
+          '<p style="color:#4A5E64;">Hi ' + job.tradie.profile.full_name + ',</p>' +
+          '<p style="color:#4A5E64;"><strong>' + job.client.full_name + '</strong> has requested a site consultation for:</p>' +
+          jobCard +
+          '<p style="color:#4A5E64;">Please arrange a convenient time to visit the site. After the consultation, record your observations and share your assessment notes before submitting a quote.</p>' +
+          btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+        )
+        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: 'Site consultation requested — ' + job.title, html: tradieHtml })
+      }
+    }
+
+    if (type === 'assess_reminder') {
+      const reqBody = await request.clone().json()
+      const { remind_party } = reqBody
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id)
+        .single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+
+      const recipientEmail = remind_party === 'tradie' ? job.tradie?.profile?.email : job.client?.email
+      const recipientName = remind_party === 'tradie' ? job.tradie?.profile?.full_name : job.client?.full_name
+      const otherName = remind_party === 'tradie' ? job.client?.full_name : job.tradie?.business_name
+
+      const html = wrap(
+        '<p style="color:#4A5E64;">Hi ' + recipientName + ',</p>' +
+        '<p style="color:#4A5E64;">A gentle reminder that <strong>' + otherName + '</strong> is waiting for you to share your site assessment notes for:</p>' +
+        card(
+          '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
+          '<p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>',
+          '#9B6B9B'
+        ) +
+        '<p style="color:#4A5E64;">Sharing your notes before quoting begins helps build a clear record that protects both parties.</p>' +
+        btn(URL + '/assess', 'Go to site assessment', '#9B6B9B')
+      )
+
+      await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Reminder: site assessment notes needed — ' + job.title, html })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {

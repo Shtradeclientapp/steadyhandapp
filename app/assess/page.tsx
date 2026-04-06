@@ -39,6 +39,9 @@ export default function AssessPage() {
   const [sharing, setSharing] = useState(false)
   const [acknowledging, setAcknowledging] = useState(false)
   const [form, setForm] = useState<any>({})
+  const [proposingDate, setProposingDate] = useState(false)
+  const [proposedDate, setProposedDate] = useState('')
+  const [savingDate, setSavingDate] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
 
   useEffect(() => {
@@ -56,7 +59,7 @@ export default function AssessPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
         .eq(col, session.user.id)
-        .in('status', ['assess', 'quotes', 'agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
+        .in('status', ['assess', 'quotes', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
 
@@ -85,6 +88,24 @@ export default function AssessPage() {
   }, [])
 
   const setF = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }))
+
+  const proposeConsultDate = async () => {
+    if (!proposedDate || !assessment || !job) return
+    setSavingDate(true)
+    const supabase = createClient()
+    await supabase.from('site_assessments').update({
+      consult_date: proposedDate,
+    }).eq('id', assessment.id)
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: profile.id,
+      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has proposed a consultation date: ' + new Date(proposedDate).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+    })
+    setAssessment((a: any) => ({ ...a, consult_date: proposedDate }))
+    setForm((f: any) => ({ ...f, consult_date: proposedDate }))
+    setProposingDate(false)
+    setSavingDate(false)
+  }
 
   const save = async () => {
     if (!assessment) return
@@ -224,20 +245,62 @@ export default function AssessPage() {
           Record your notes from the site consultation. Share them with {theirLabel} and acknowledge theirs before quoting begins. Both records become part of the job file.
         </p>
 
-        {/* CONSULT DETAILS */}
+        {/* CONSULT DATE */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
-          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>CONSULTATION DETAILS</p>
+          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>CONSULTATION DATE</p>
+            {assessment?.consult_date && !proposingDate && (
+              <button type="button" onClick={() => setProposingDate(true)}
+                style={{ fontSize:'11px', color:'rgba(216,228,225,0.5)', background:'none', border:'1px solid rgba(216,228,225,0.15)', borderRadius:'6px', padding:'3px 8px', cursor:'pointer' }}>
+                Change date
+              </button>
+            )}
           </div>
-          <div style={{ padding:'20px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Date of site visit</p>
-              <input type="date" value={form.consult_date ? new Date(form.consult_date).toISOString().split('T')[0] : ''} onChange={e => setF('consult_date', e.target.value)} style={inp} />
-            </div>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Who attended</p>
-              <input type="text" value={form.consult_attendees || ''} onChange={e => setF('consult_attendees', e.target.value)} style={inp} placeholder="e.g. Homeowner + lead electrician" />
-            </div>
+          <div style={{ padding:'20px' }}>
+            {assessment?.consult_date && !proposingDate ? (
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'rgba(155,107,155,0.1)', border:'1px solid rgba(155,107,155,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <span style={{ fontSize:'18px' }}>📅</span>
+                </div>
+                <div>
+                  <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>
+                    {new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
+                  </p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Agreed consultation date</p>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
+                  {assessment?.consult_date ? 'Propose a new date:' : 'Propose a consultation date to ' + theirLabel + '. They will be notified via the job message thread.'}
+                </p>
+                <div style={{ display:'flex', gap:'10px', alignItems:'flex-end' }}>
+                  <div style={{ flex:1 }}>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Proposed date</p>
+                    <input type="date" value={proposedDate} onChange={e => setProposedDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      style={inp} />
+                  </div>
+                  <button type="button" onClick={proposeConsultDate} disabled={!proposedDate || savingDate}
+                    style={{ background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedDate || savingDate ? 0.5 : 1, flexShrink:0 }}>
+                    {savingDate ? 'Saving...' : 'Propose date →'}
+                  </button>
+                </div>
+                {proposingDate && (
+                  <button type="button" onClick={() => setProposingDate(false)}
+                    style={{ marginTop:'8px', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer' }}>
+                    Cancel
+                  </button>
+                )}
+              </div>
+            )}
+            {assessment?.consult_date && (
+              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Who attended</p>
+                <input type="text" value={form.consult_attendees || ''} onChange={e => setF('consult_attendees', e.target.value)}
+                  style={inp} placeholder="e.g. Homeowner + lead electrician" />
+              </div>
+            )}
           </div>
         </div>
 
@@ -301,7 +364,19 @@ export default function AssessPage() {
                 <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>📋</div>
                 <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>{theirLabel} hasn&apos;t shared their notes yet</p>
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>You&apos;ll be notified by email when they share their assessment.</p>
-                <a href="/messages" style={{ color:'#2E6A8F', textDecoration:'none', fontSize:'13px' }}>Send a reminder via messages →</a>
+                <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+                  <a href="/messages" style={{ color:'#2E6A8F', textDecoration:'none', fontSize:'13px', padding:'8px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'7px' }}>Message {theirLabel} →</a>
+                  <button type="button" onClick={async () => {
+                    await fetch('/api/email', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ type: 'assess_reminder', job_id: job.id, remind_party: isTradie ? 'client' : 'tradie' }),
+                    })
+                    alert('Reminder sent to ' + theirLabel)
+                  }} style={{ fontSize:'13px', color:'#9B6B9B', background:'none', border:'1px solid rgba(155,107,155,0.3)', borderRadius:'7px', padding:'8px 14px', cursor:'pointer' }}>
+                    Send email reminder
+                  </button>
+                </div>
               </div>
             ) : (
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>

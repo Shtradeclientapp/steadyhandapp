@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const STAGE_LABELS: Record<string, { label: string; color: string; action: string }> = {
+  assess:      { label: 'Site assessment',    color: '#9B6B9B', action: 'Record your notes' },
   agreement:   { label: 'Awaiting signature',  color: '#6B4FA8', action: 'Review scope' },
   delivery:    { label: 'Build',          color: '#C07830', action: 'Update progress' },
   signoff:     { label: 'Awaiting sign-off',    color: '#D4522A', action: 'Awaiting client' },
