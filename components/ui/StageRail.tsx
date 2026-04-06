@@ -26,7 +26,6 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
   const currentN = allStages.find(s => s.p === currentPath)?.n ?? 1
   const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : currentN
   const completedUpTo = jobStageN - 1
-  const activePhase = PHASES.find(p => p.stages.some(s => s.p === currentPath))
   return (
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
       <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.08)', overflowX:'auto' as const }}>
