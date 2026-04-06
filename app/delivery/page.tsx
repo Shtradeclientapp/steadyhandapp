@@ -142,25 +142,32 @@ export default function DeliveryPage() {
     })
   }, [])
 
- const approveM = async (id: string, amount: number) => {
+  const initiatePayment = async (id: string, amount: number) => {
+    if (amount <= 0) { approveM(id); return }
+    const res = await fetch('/api/stripe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create_payment_intent', job_id: job.id, milestone_id: id }),
+    })
+    const { client_secret } = await res.json()
+    if (client_secret) { setClientSecret(client_secret); setPayingMilestone(id) }
+  }
+
+  const approveM = async (id: string) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id)
     setMilestones(ms => ms.map(m => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString() } : m))
-    if (amount > 0) {
-      await fetch('/api/stripe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'release_milestone', milestone_id: id }),
-      })
+    setPayingMilestone(null)
+    setClientSecret(null)
     await fetch('/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'milestone_approved', milestone_id: id }),
     }).catch(() => {})
-    }
     const allDone = milestones.every(m => m.id === id ? true : m.status === 'approved')
     if (allDone && job) {
-      await supabase.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
+      const supabase2 = createClient()
+      await supabase2.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
     }
   }
 
