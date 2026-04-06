@@ -82,6 +82,11 @@ export default function DeliveryPage() {
   const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
   const [uploadingPhoto, setUploadingPhoto] = useState<string|null>(null)
+  const [variations, setVariations] = useState<any[]>([])
+  const [showVariationForm, setShowVariationForm] = useState(false)
+  const [variationForm, setVariationForm] = useState({ title: '', description: '', cost_impact: '', time_impact_days: '' })
+  const [submittingVariation, setSubmittingVariation] = useState(false)
+  const [isTradie, setIsTradie] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -139,6 +144,24 @@ export default function DeliveryPage() {
           }
         }
       }
+      // Load variations
+      if (jobs && jobs.length > 0) {
+        const { data: vars } = await supabase
+          .from('variations')
+          .select('*, requested_by_profile:profiles!variations_requested_by_fkey(full_name)')
+          .eq('job_id', jobs[0].id)
+          .order('created_at', { ascending: false })
+        setVariations(vars || [])
+      }
+
+      // Detect if user is tradie
+      const { data: tradieCheck } = await supabase
+        .from('tradie_profiles')
+        .select('id')
+        .eq('id', session.user.id)
+        .single()
+      setIsTradie(!!tradieCheck)
+
       setLoading(false)
     })
   }, [])
@@ -159,6 +182,49 @@ export default function DeliveryPage() {
       setMilestones(ms => ms.map(m => m.id === milestoneId ? { ...m, photos: [...(m.photos || []), url] } : m))
     }
     setUploadingPhoto(null)
+  }
+
+  const submitVariation = async () => {
+    if (!variationForm.title || !job) return
+    setSubmittingVariation(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const { data: variation } = await supabase.from('variations').insert({
+      job_id: job.id,
+      requested_by: session?.user.id,
+      title: variationForm.title,
+      description: variationForm.description,
+      cost_impact: parseFloat(variationForm.cost_impact) || 0,
+      time_impact_days: parseInt(variationForm.time_impact_days) || 0,
+      status: 'pending',
+    }).select().single()
+    if (variation) {
+      setVariations(prev => [variation, ...prev])
+      await supabase.from('job_messages').insert({
+        job_id: job.id,
+        sender_id: session?.user.id,
+        body: '⚠ Variation requested: ' + variationForm.title + (variationForm.cost_impact ? ' · Cost impact: +$' + Number(variationForm.cost_impact).toLocaleString() : '') + (variationForm.time_impact_days ? ' · Time impact: +' + variationForm.time_impact_days + ' days' : ''),
+      })
+    }
+    setVariationForm({ title: '', description: '', cost_impact: '', time_impact_days: '' })
+    setShowVariationForm(false)
+    setSubmittingVariation(false)
+  }
+
+  const respondToVariation = async (variationId: string, approved: boolean, response: string) => {
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    await supabase.from('variations').update({
+      status: approved ? 'approved' : 'rejected',
+      client_response: response,
+      responded_at: new Date().toISOString(),
+    }).eq('id', variationId)
+    setVariations(prev => prev.map(v => v.id === variationId ? { ...v, status: approved ? 'approved' : 'rejected', client_response: response } : v))
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: session?.user.id,
+      body: (approved ? '✅ Variation approved' : '❌ Variation rejected') + ': ' + variations.find(v => v.id === variationId)?.title,
+    })
   }
 
   const initiatePayment = async (id: string, amount: number) => {
