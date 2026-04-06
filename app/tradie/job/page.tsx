@@ -225,12 +225,12 @@ export default function TradieJobPage() {
       {/* TRADIE STAGE RAIL */}
       {(() => {
         const TRADIE_STAGES = [
-          {n:1,l:'Assess',p:'assess',statuses:['assess','shortlisted','matching'],c:'#9B6B9B'},
-          {n:2,l:'Quote',p:'quote',statuses:['quotes','shortlisted'],c:'#C07830'},
-          {n:3,l:'Confirm',p:'confirm',statuses:['agreement'],c:'#6B4FA8'},
-          {n:4,l:'Build',p:'build',statuses:['delivery'],c:'#C07830'},
-          {n:5,l:'Complete',p:'complete',statuses:['signoff'],c:'#D4522A'},
-          {n:6,l:'Protect',p:'protect',statuses:['warranty','complete'],c:'#1A6B5A'},
+          {n:1,l:'Assess',p:'assess',c:'#9B6B9B'},
+          {n:2,l:'Quote',p:'quote',c:'#C07830'},
+          {n:3,l:'Confirm',p:'confirm',c:'#6B4FA8'},
+          {n:4,l:'Build',p:'build',c:'#C07830'},
+          {n:5,l:'Complete',p:'complete',c:'#D4522A'},
+          {n:6,l:'Protect',p:'protect',c:'#D4522A'},
         ]
         // Determine tradie's actual stage based on their actions (not job status)
         const hasQuote = quotes && quotes.length > 0
