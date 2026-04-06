@@ -81,8 +81,6 @@ export default function DeliveryPage() {
   const [loading, setLoading] = useState(true)
   const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
-  const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
-  const [clientSecret, setClientSecret] = useState<string|null>(null)
 
   useEffect(() => {
     const supabase = createClient()
