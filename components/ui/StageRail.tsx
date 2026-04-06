@@ -25,14 +25,14 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
   const allStages = PHASES.flatMap(p => p.stages)
   const currentN = allStages.find(s => s.p === currentPath)?.n ?? 1
   const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : currentN
-  const completedUpTo = Math.max(jobStageN - 1, currentN - 1)
+  const completedUpTo = jobStageN - 1
   const activePhase = PHASES.find(p => p.stages.some(s => s.p === currentPath))
   return (
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
       <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.08)', overflowX:'auto' as const }}>
         {PHASES.map(phase => {
           const isActive = phase === activePhase
-          const isComplete = phase.stages.every(s => s.n <= completedUpTo)
+          const isComplete = phase.stages.every(s => s.n <= completedUpTo) && completedUpTo > 0
           return (
             <div key={phase.label} style={{ flexShrink:0, padding:'6px 16px', borderRight:'1px solid rgba(28,43,50,0.08)', position:'relative' as const, minWidth:'72px', textAlign:'center' as const }}>
               {isActive && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:'#D4522A' }} />}
