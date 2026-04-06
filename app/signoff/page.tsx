@@ -140,10 +140,10 @@ export default function SignoffPage() {
 
   const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
 
-  if (loading) return <>{renderNav()}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
+  if (loading) return <div><div>{renderNav()}</div><div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></div>
 
   if (done) return (
-    <>
+    <div>
       {renderNav()}
       <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px', display:'flex', alignItems:'flex-start', justifyContent:'center' }}>
       <div style={{ maxWidth:'520px', width:'100%' }}>
