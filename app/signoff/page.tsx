@@ -27,7 +27,6 @@ export default function SignoffPage() {
   const [contributionMessage, setContributionMessage] = useState('')
   const [contributionSending, setContributionSending] = useState(false)
   const [contributionDone, setContributionDone] = useState(false)
-  const [done, setDone] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
