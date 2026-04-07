@@ -97,6 +97,27 @@ export default function Home() {
         </div>
       </div>
 
+      {/* DATA STRIP */}
+      <div style={{ background:'#1C2B32', borderBottom:'1px solid rgba(28,43,50,0.2)' }}>
+        <div className="stats-bar stats-inner">
+          {[
+            { num:'<19%', label:'of small trade businesses use digital tools like CRMs for daily operations' },
+            { num:'28%', label:'use pen and paper alone for their core admin purposes' },
+            { num:'8%', label:'of sole traders use specialised job management software' },
+            { num:'58%', label:'use generic software like Microsoft Word for core admin' },
+          ].map(s => (
+            <div key={s.label} style={{ textAlign:'center' as const, maxWidth:'200px' }}>
+              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#D4522A', letterSpacing:'1px', marginBottom:'6px' }}>{s.num}</div>
+              <div style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', lineHeight:'1.5' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ textAlign:'center', fontSize:'11px', color:'rgba(216,228,225,0.25)', paddingBottom:'16px', letterSpacing:'0.5px' }}>
+          Source: Australian Bureau of Statistics / Digital Inclusion Index — trade SMEs, 2024
+        </p>
+      </div>
+
+      {/* REASSURANCE BAR */}
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
         <div className="stats-bar stats-inner">
           {[
@@ -201,13 +222,16 @@ export default function Home() {
               </cite>
             </div>
             <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
-              <div style={{ fontSize:'24px', marginBottom:'16px', opacity:0.4 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
-                I recommend Steadyhand wholeheartedly. The platform supports trade businesses to become more professional and more digitally capable without disrupting how we already work.
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'16px' }}>
+                <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Case study — Trade business</span>
+              </div>
+              <div style={{ fontSize:'24px', marginBottom:'12px', opacity:0.4 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
+                Steadyhand oversaw a structural transformation in operations for my business over six months. That transformation took Margaret River Re-Gutters from a solid owner-operator-run business with two-to-three sub-contractors toward a small business with two teams of three workers. The roadmap Steadyhand designed for us meant the ride was controlled, data-driven and milestoned along the way. Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective &mdash; less on the tools and more in a position of strategic leadership.
               </blockquote>
               <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
               <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
-                Cullum Creevey<br />Small Business Owner<br />Margaret River and Busselton Re-Gutters
+                Cullum Creevey<br />Small Business Owner &amp; Roofing Specialist<br />Margaret River Regutters / Busselton Regutters
               </cite>
             </div>
           </div>
