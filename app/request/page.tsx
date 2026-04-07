@@ -2,7 +2,7 @@
 'use client'
 import { HintPanel } from '@/components/ui/HintPanel'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
 
@@ -60,7 +60,7 @@ export default function RequestPage() {
   })
 
   // Load org_id from profile and property_id from URL params
-  useState(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const pid = params.get('property_id')
     if (pid) setPropertyId(pid)
@@ -70,7 +70,7 @@ export default function RequestPage() {
       const { data: prof } = await supabase.from('profiles').select('org_id').eq('id', session.user.id).single()
       if (prof?.org_id) setOrgId(prof.org_id)
     })
-  })
+  }, [])
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }))
