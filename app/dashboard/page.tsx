@@ -1,4 +1,5 @@
 'use client'
+import React from 'react'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -48,6 +49,7 @@ export default function DashboardPage() {
     </div>
   )
 
+  const [dropdownOpen, setDropdownOpen] = React.useState(false)
   const activeJobs = jobs.filter(j => j.status !== 'complete')
   const doneJobs = jobs.filter(j => j.status === 'complete')
 
@@ -57,8 +59,36 @@ export default function DashboardPage() {
         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>Messages</a>
-<span style={{ fontSize:'13px', color:'#4A5E64' }} className="hide-mobile">{user?.email}</span>
-          <button onClick={signOut} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#1C2B32', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', cursor:'pointer' }}>Sign out</button>
+          <div style={{ position:'relative' as const }}>
+            <div onClick={() => setDropdownOpen(!dropdownOpen)}
+              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
+              {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'A'}
+            </div>
+            {dropdownOpen && (
+              <div style={{ position:'absolute' as const, right:0, top:'44px', background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'10px', boxShadow:'0 8px 24px rgba(28,43,50,0.12)', minWidth:'200px', zIndex:200, overflow:'hidden' }}>
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#F4F8F7' }}>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{profile?.full_name || 'My account'}</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{user?.email}</p>
+                </div>
+                {[
+                  { label:'Dashboard', href:'/dashboard' },
+                  { label:'Steadyhand Home', href:'/home-plan' },
+                  { label:'Build Journal', href:'/diy' },
+                  { label:'Messages', href:'/messages' },
+                  { label:'Organisation dashboard', href:'/org/dashboard' },
+                ].map(item => (
+                  <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
+                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                    {item.label}
+                  </a>
+                ))}
+                <button onClick={() => { setDropdownOpen(false); signOut() }}
+                  style={{ display:'block', width:'100%', padding:'10px 14px', fontSize:'13px', color:'#D4522A', textAlign:'left' as const, background:'none', border:'none', cursor:'pointer' }}>
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
