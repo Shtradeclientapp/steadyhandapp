@@ -99,9 +99,6 @@ export default function Home() {
 
       {/* DATA STRIP */}
       <div style={{ background:'#1C2B32', borderBottom:'1px solid rgba(28,43,50,0.2)' }}>
-        <p style={{ textAlign:'center', fontSize:'15px', fontWeight:'300', color:'rgba(216,228,225,0.6)', lineHeight:'1.7', maxWidth:'580px', margin:'0 auto', padding:'32px 24px 0' }}>
-          Steadyhand was built for the space between a handshake and a warranty &mdash; the part of a trade transaction that has always been the hardest to get right.
-        </p>
         <div className="stats-bar stats-inner">
           {[
             { num:'<19%', label:'of small trade businesses use digital tools like CRMs for daily operations' },
