@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -49,7 +48,7 @@ export default function DashboardPage() {
     </div>
   )
 
-  const [dropdownOpen, setDropdownOpen] = React.useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const activeJobs = jobs.filter(j => j.status !== 'complete')
   const doneJobs = jobs.filter(j => j.status === 'complete')
 
