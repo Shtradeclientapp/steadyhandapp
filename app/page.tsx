@@ -100,14 +100,15 @@ export default function Home() {
       <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
         <div className="stats-bar stats-inner">
           {[
-            { num:'8', label:'stages from request to warranty' },
-            { num:'100%', label:'verified licence and insurance' },
-            { num:'WA only', label:'regional and metro focus' },
-            { num:'0', label:'upfront fees. You pay only when the job is done.' },
+            { icon:'🧭', title:'Guided', label:'We stay with you through every stage' },
+            { icon:'✅', title:'Verified', label:"Every tradie's licence and insurance checked" },
+            { icon:'✍️', title:'Protected', label:'Nothing starts until you sign the scope' },
+            { icon:'💳', title:'No upfront cost', label:'You pay only when work is approved' },
           ].map(s => (
-            <div key={s.label} style={{ textAlign:'center' }}>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32', letterSpacing:'1px' }}>{s.num}</div>
-              <div style={{ fontSize:'12px', color:'#4A5E64', marginTop:'3px' }}>{s.label}</div>
+            <div key={s.label} style={{ textAlign:'center' as const }}>
+              <div style={{ fontSize:'24px', marginBottom:'6px' }}>{s.icon}</div>
+              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'3px' }}>{s.title}</div>
+              <div style={{ fontSize:'12px', color:'#4A5E64', maxWidth:'160px', margin:'0 auto', lineHeight:'1.4' }}>{s.label}</div>
             </div>
           ))}
         </div>
@@ -185,18 +186,54 @@ export default function Home() {
         </div>
       </div>
 
+      <div style={{ background:'#E8F0EE' }}>
+        <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'64px 48px' }}>
+          <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, marginBottom:'32px', textAlign:'center' as const }}>From the field</p>
+          <div className="values-grid">
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
+              <div style={{ fontSize:'24px', marginBottom:'16px', opacity:0.4 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
+                The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.
+              </blockquote>
+              <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
+              <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
+                Emma T.<br />Homeowner, Subiaco WA
+              </cite>
+            </div>
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
+              <div style={{ fontSize:'24px', marginBottom:'16px', opacity:0.4 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
+                I recommend Steadyhand wholeheartedly. The platform supports trade businesses to become more professional and more digitally capable without disrupting how we already work.
+              </blockquote>
+              <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
+              <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
+                Cullum Creevey<br />Small Business Owner<br />Margaret River and Busselton Re-Gutters
+              </cite>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
       <div style={{ background:'#1C2B32' }}>
-        <div className="testimonial-inner">
-          <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'24px' }}>From the field</p>
-          <blockquote style={{ fontSize:'22px', fontStyle:'italic', fontWeight:'300', color:'rgba(216,228,225,0.85)', lineHeight:'1.7', marginBottom:'28px' }}>
-            &ldquo;I recommend Steadyhand wholeheartedly as digital operations professionals.&rdquo;
-          </blockquote>
-          <div style={{ width:'40px', height:'1px', background:'rgba(212,82,42,0.5)', margin:'0 auto 20px' }} />
-          <cite style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
-            Cullum Creevey<br />
-            Small Business Owner<br />
-            Margaret River and Busselton Re-Gutters
-          </cite>
+        <div className="section-inner">
+          <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', fontWeight:500, marginBottom:'10px' }}>Common questions</p>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'40px' }}>GOOD QUESTIONS.</h2>
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+            {[
+              { q:'Is this just another HiPages?', a:'No. HiPages sells your job request to tradies as a lead. Steadyhand does not sell leads. Tradies are invited based on verified fit — and we stay with you through every stage from scope to warranty. HiPages steps back after the match. We do not.' },
+              { q:'What does the 3.5% completion fee mean?', a:'When a milestone payment is released through Steadyhand, we take 3.5% of that payment. No subscription fees, no lead fees, no upfront costs for clients. Founding member tradies pay 3% — locked in for life.' },
+              { q:'Do I have to use Steadyhand for payments?', a:'Milestone payments are processed through Steadyhand via Stripe. This is what makes warranty and milestone tracking work — each payment is tied to an approved stage of work. You cannot release payment for work you have not seen.' },
+              { q:'What if my tradie is not on Steadyhand?', a:'You can invite any tradie by email. They create a free account and join your job. They do not need an existing profile to be invited.' },
+              { q:'Is Steadyhand available outside Western Australia?', a:'Not yet. We are building specifically for WA — metro Perth, the South West, and regional areas. Geographic focus means better tradie verification, better local matching, and a platform that understands WA compliance.' },
+              { q:'What happens if something goes wrong after sign-off?', a:'Any issue logged within the warranty period is tracked against a response SLA. You have a complete documented record — signed scope, milestone photos, variation approvals — to stand on.' },
+            ].map((item, i) => (
+              <div key={i} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px', padding:'20px 24px' }}>
+                <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.85)', marginBottom:'8px' }}>{item.q}</p>
+                <p style={{ fontSize:'14px', color:'rgba(216,228,225,0.5)', lineHeight:'1.7', margin:0 }}>{item.a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
