@@ -202,10 +202,10 @@ export default function Home() {
       <div style={{ background:'#E8F0EE' }}>
         <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'64px 48px' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, marginBottom:'32px', textAlign:'center' as const }}>From the field</p>
-          <div className="values-grid">
-            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
-              <div style={{ fontSize:'24px', marginBottom:'16px', opacity:0.4 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
+          <div className="values-grid" style={{ alignItems:'stretch' }}>
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
+              <div style={{ fontSize:'18px', marginBottom:'12px', opacity:0.3, fontFamily:'Georgia, serif', lineHeight:1 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px', flex:1 }}>
                 The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.
               </blockquote>
               <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
@@ -213,12 +213,12 @@ export default function Home() {
                 Emma T.<br />Homeowner, Subiaco WA
               </cite>
             </div>
-            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'16px' }}>
                 <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Case study — Trade business</span>
               </div>
-              <div style={{ fontSize:'24px', marginBottom:'12px', opacity:0.4 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px' }}>
+              <div style={{ fontSize:'18px', marginBottom:'12px', opacity:0.3, fontFamily:'Georgia, serif', lineHeight:1 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px', flex:1 }}>
                 Steadyhand oversaw a structural transformation in operations for my business over six months. That transformation took Margaret River Re-Gutters from a solid owner-operator-run business with two-to-three sub-contractors toward a small business with two teams of three workers. The roadmap Steadyhand designed for us meant the ride was controlled, data-driven and milestoned along the way. Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective &mdash; less on the tools and more in a position of strategic leadership.
               </blockquote>
               <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
