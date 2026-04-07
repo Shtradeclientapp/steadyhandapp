@@ -19,8 +19,12 @@ export default function OrgDashboardPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [jobs, setJobs] = useState<any[]>([])
   const [members, setMembers] = useState<any[]>([])
+  const [preferredTradies, setPreferredTradies] = useState<any[]>([])
+  const [showAddTradie, setShowAddTradie] = useState(false)
+  const [tradieSearch, setTradieSearch] = useState('')
+  const [tradieResults, setTradieResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'jobs'|'properties'|'members'>('jobs')
+  const [activeTab, setActiveTab] = useState<'jobs'|'properties'|'members'|'preferred'|'reports'>('jobs')
   const [filterStatus, setFilterStatus] = useState('')
   const [filterProperty, setFilterProperty] = useState('')
 
@@ -46,9 +50,67 @@ export default function OrgDashboardPage() {
         .select('*, profile:profiles(full_name, email)')
         .eq('org_id', prof.org_id)
       setMembers(mems || [])
+
+      const { data: preferred } = await supabase
+        .from('org_preferred_tradies')
+        .select('*, tradie:tradie_profiles(business_name, trade_categories, suburb, rating_avg, jobs_completed, licence_verified)')
+        .eq('org_id', prof.org_id)
+      setPreferredTradies(preferred || [])
       setLoading(false)
     })
   }, [])
+
+  const searchTradies = async (q: string) => {
+    setTradieSearch(q)
+    if (q.length < 2) { setTradieResults([]); return }
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('tradie_profiles')
+      .select('id, business_name, trade_categories, suburb, rating_avg, licence_verified')
+      .ilike('business_name', '%' + q + '%')
+      .limit(8)
+    setTradieResults(data || [])
+  }
+
+  const addPreferredTradie = async (tradieId: string) => {
+    const supabase = createClient()
+    await supabase.from('org_preferred_tradies').insert({ org_id: org.id, tradie_id: tradieId, added_by: profile.id })
+    const { data: preferred } = await supabase
+      .from('org_preferred_tradies')
+      .select('*, tradie:tradie_profiles(business_name, trade_categories, suburb, rating_avg, jobs_completed, licence_verified)')
+      .eq('org_id', org.id)
+    setPreferredTradies(preferred || [])
+    setShowAddTradie(false)
+    setTradieSearch('')
+    setTradieResults([])
+  }
+
+  const removePreferredTradie = async (id: string) => {
+    const supabase = createClient()
+    await supabase.from('org_preferred_tradies').delete().eq('id', id)
+    setPreferredTradies(prev => prev.filter(p => p.id !== id))
+  }
+
+  const exportJobsCSV = () => {
+    const headers = ['Job title', 'Trade', 'Property', 'Tradie', 'Status', 'Value', 'Updated']
+    const rows = jobs.map(j => [
+      j.title,
+      j.trade_category,
+      j.property?.address || j.suburb || '',
+      j.tradie?.business_name || '',
+      STATUS_LABEL[j.status] || j.status,
+      j.agreed_price ? '$' + Number(j.agreed_price).toLocaleString() : '',
+      new Date(j.updated_at).toLocaleDateString('en-AU'),
+    ])
+    const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = (org?.name || 'org') + '-jobs-' + new Date().toISOString().split('T')[0] + '.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
 
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
@@ -104,6 +166,8 @@ export default function OrgDashboardPage() {
             { id:'jobs', label:'All jobs', count: jobs.length },
             { id:'properties', label:'Properties', count: properties.length },
             { id:'members', label:'Team', count: members.length },
+            { id:'preferred', label:'Preferred tradies', count: preferredTradies.length },
+            { id:'reports', label:'Reports', count: undefined },
           ] as const).map(t => (
             <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
               style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#1C2B32' : '#7A9098', display:'flex', alignItems:'center', gap:'6px' }}>
@@ -232,6 +296,149 @@ export default function OrgDashboardPage() {
             </div>
           </div>
         )}
+
+        {/* Preferred tradies tab */}
+        {activeTab === 'preferred' && (
+          <div>
+            <div style={{ background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+              <p style={{ fontSize:'13px', color:'#2E6A8F', fontWeight:500, marginBottom:'4px' }}>Preferred tradie network</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
+                Preferred tradies appear first in your shortlist when creating job requests. Add trusted trade businesses you have worked with before.
+              </p>
+            </div>
+            <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'16px' }}>
+              <button type="button" onClick={() => setShowAddTradie(!showAddTradie)}
+                style={{ background: showAddTradie ? 'rgba(28,43,50,0.08)' : '#1C2B32', color: showAddTradie ? '#1C2B32' : 'white', padding:'9px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                {showAddTradie ? 'Cancel' : '+ Add preferred tradie'}
+              </button>
+            </div>
+            {showAddTradie && (
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', marginBottom:'16px' }}>
+                <input type="text" placeholder="Search by business name..." value={tradieSearch}
+                  onChange={e => searchTradies(e.target.value)}
+                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                {tradieResults.length > 0 && (
+                  <div style={{ marginTop:'8px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', overflow:'hidden' }}>
+                    {tradieResults.map(t => (
+                      <div key={t.id} onClick={() => addPreferredTradie(t.id)}
+                        style={{ padding:'11px 14px', borderBottom:'1px solid rgba(28,43,50,0.06)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                        <div>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{t.business_name}</p>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{(t.trade_categories || []).slice(0,2).join(', ')} · {t.suburb}</p>
+                        </div>
+                        <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>+ Add</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+            {preferredTradies.length === 0 && !showAddTradie ? (
+              <div style={{ textAlign:'center' as const, padding:'40px', background:'#E8F0EE', borderRadius:'12px' }}>
+                <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>⭐</div>
+                <p style={{ fontSize:'14px', color:'#4A5E64' }}>No preferred tradies yet</p>
+                <p style={{ fontSize:'13px', color:'#7A9098', marginTop:'4px' }}>Add trusted trade businesses to see them first in your shortlist.</p>
+              </div>
+            ) : (
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                {preferredTradies.map(pt => (
+                  <div key={pt.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'11px', padding:'16px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                    <div>
+                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', margin:'0 0 3px' }}>{pt.tradie?.business_name}</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
+                        {(pt.tradie?.trade_categories || []).slice(0,2).join(', ')}
+                        {pt.tradie?.suburb ? ' · ' + pt.tradie.suburb : ''}
+                        {pt.tradie?.rating_avg > 0 ? ' · ⭐ ' + Number(pt.tradie.rating_avg).toFixed(1) : ''}
+                        {pt.tradie?.licence_verified ? ' · ✓ Verified' : ''}
+                      </p>
+                    </div>
+                    <button type="button" onClick={() => removePreferredTradie(pt.id)}
+                      style={{ background:'transparent', color:'rgba(212,82,42,0.5)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'6px', padding:'5px 10px', fontSize:'12px', cursor:'pointer' }}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Reports tab */}
+        {activeTab === 'reports' && (
+          <div>
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'16px' }}>
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>EXPORT REPORTS</p>
+              </div>
+              <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                  <div>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>All jobs — CSV</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Job title, trade, property, tradie, status, value and date for all {jobs.length} jobs</p>
+                  </div>
+                  <button type="button" onClick={exportJobsCSV}
+                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    Download CSV →
+                  </button>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                  <div>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>Spend by property — CSV</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Total spend per property across all completed jobs</p>
+                  </div>
+                  <button type="button" onClick={() => {
+                    const rows = properties.map(p => {
+                      const propJobs = jobs.filter(j => j.property_id === p.id && j.agreed_price)
+                      const total = propJobs.reduce((s, j) => s + Number(j.agreed_price), 0)
+                      return [p.address, p.suburb || '', propJobs.length, '$' + total.toLocaleString()]
+                    })
+                    const csv = [['Address','Suburb','Jobs','Total spend'], ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n')
+                    const blob = new Blob([csv], { type:'text/csv' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = (org?.name||'org') + '-spend-by-property-' + new Date().toISOString().split('T')[0] + '.csv'
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    Download CSV →
+                  </button>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                  <div>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>Warranty tracking — CSV</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Jobs in warranty period with tradie details and expiry dates</p>
+                  </div>
+                  <button type="button" onClick={() => {
+                    const warrantyJobs = jobs.filter(j => j.status === 'warranty' || j.status === 'signoff')
+                    const rows = warrantyJobs.map(j => [
+                      j.title, j.trade_category,
+                      j.property?.address || j.suburb || '',
+                      j.tradie?.business_name || '',
+                      STATUS_LABEL[j.status] || j.status,
+                    ])
+                    const csv = [['Job','Trade','Property','Tradie','Status'], ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n')
+                    const blob = new Blob([csv], { type:'text/csv' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = (org?.name||'org') + '-warranty-' + new Date().toISOString().split('T')[0] + '.csv'
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    Download CSV →
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
+              <p style={{ fontSize:'12px', color:'#C07830', margin:0 }}>PDF reports and GST-ready payment summaries coming soon for Steadyhand Business accounts.</p>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )
