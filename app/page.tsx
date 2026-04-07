@@ -97,41 +97,33 @@ export default function Home() {
         </div>
       </div>
 
-      {/* DATA STRIP */}
+      {/* PROBLEM / RESPONSE STRIP */}
       <div style={{ background:'#1C2B32', borderBottom:'1px solid rgba(28,43,50,0.2)' }}>
-        <div className="stats-bar stats-inner">
-          {[
-            { num:'<19%', label:'of small trade businesses use digital tools like CRMs for daily operations' },
-            { num:'28%', label:'use pen and paper alone for their core admin purposes' },
-            { num:'8%', label:'of sole traders use specialised job management software' },
-            { num:'58%', label:'use generic software like Microsoft Word for core admin' },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign:'center' as const, maxWidth:'200px' }}>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#D4522A', letterSpacing:'1px', marginBottom:'6px' }}>{s.num}</div>
-              <div style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', lineHeight:'1.5' }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-        <p style={{ textAlign:'center', fontSize:'11px', color:'rgba(216,228,225,0.25)', paddingBottom:'16px', letterSpacing:'0.5px' }}>
-          Source: Australian Bureau of Statistics / Digital Inclusion Index — trade SMEs, 2024
-        </p>
-      </div>
-
-      {/* REASSURANCE BAR */}
-      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
-        <div className="stats-bar stats-inner">
-          {[
-            { icon:'🧭', title:'Guided', label:'We stay with you through every stage' },
-            { icon:'✅', title:'Verified', label:"Every tradie's licence and insurance checked" },
-            { icon:'✍️', title:'Protected', label:'Nothing starts until you sign the scope' },
-            { icon:'💳', title:'No upfront cost', label:'You pay only when work is approved' },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign:'center' as const }}>
-              <div style={{ fontSize:'24px', marginBottom:'6px' }}>{s.icon}</div>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'3px' }}>{s.title}</div>
-              <div style={{ fontSize:'12px', color:'#4A5E64', maxWidth:'160px', margin:'0 auto', lineHeight:'1.4' }}>{s.label}</div>
-            </div>
-          ))}
+        <div style={{ maxWidth:'900px', margin:'0 auto', padding:'40px 48px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'0' }}>
+            {[
+              { num:'<19%', problem:'of small trade businesses use digital tools for daily operations', response:'Every job creates a complete digital record — automatically' },
+              { num:'28%', problem:'use pen and paper alone for their core admin', response:'Scope agreements, milestones and warranties — all documented' },
+              { num:'8%', problem:'of sole traders use specialised job management software', response:'No special software needed — Steadyhand guides both parties through every stage' },
+              { num:'58%', problem:'use generic software like Microsoft Word for core admin', response:'A structured process that works for everyone in the transaction' },
+            ].map((s, i) => (
+              <div key={i} style={{ padding:'0 24px', borderRight: i < 3 ? '1px solid rgba(216,228,225,0.08)' : 'none' }}>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:'#D4522A', letterSpacing:'1px', marginBottom:'10px' }}>{s.num}</div>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', lineHeight:'1.6', marginBottom:'16px', minHeight:'48px' }}>{s.problem}</p>
+                <div style={{ width:'24px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'12px' }} />
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.75)', lineHeight:'1.6', fontWeight:500 }}>{s.response}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:'28px', paddingTop:'24px', borderTop:'1px solid rgba(216,228,225,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap' as const, gap:'12px' }}>
+            <p style={{ fontSize:'14px', color:'rgba(216,228,225,0.55)', lineHeight:'1.6', maxWidth:'640px', fontWeight:300 }}>
+              <span style={{ color:'#D4522A', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', marginRight:'10px' }}>20.6%</span>
+              of Australians describe themselves as excluded from digital platforms. Steadyhand is designed to work for everyone — regardless of where they start.
+            </p>
+            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.2)', letterSpacing:'0.5px', flexShrink:0 }}>
+              Source: ABS / Digital Inclusion Index — trade SMEs, 2024
+            </p>
+          </div>
         </div>
       </div>
 
