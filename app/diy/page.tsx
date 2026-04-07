@@ -187,7 +187,7 @@ export default function DIYPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <a href="/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>OWNER-BUILDER HUB</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>BUILD JOURNAL</div>
         <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
@@ -229,7 +229,7 @@ export default function DIYPage() {
               <div style={{ textAlign:'center' as const, padding:'32px 16px', background:'#E8F0EE', borderRadius:'12px', border:'1px solid rgba(28,43,50,0.1)' }}>
                 <div style={{ fontSize:'32px', marginBottom:'8px', opacity:0.4 }}>🏗</div>
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'4px' }}>No builds yet</p>
-                <p style={{ fontSize:'12px', color:'#9AA5AA' }}>Click + New to start tracking your owner-builder project</p>
+                <p style={{ fontSize:'12px', color:'#9AA5AA' }}>Click + New to start tracking your build project</p>
               </div>
             )}
             {projects.map(proj => {
@@ -264,7 +264,7 @@ export default function DIYPage() {
             <div style={{ textAlign:'center' as const, padding:'64px', background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)' }}>
               <div style={{ fontSize:'48px', marginBottom:'16px', opacity:0.3 }}>🏗</div>
               <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:500, marginBottom:'8px' }}>Select or create a build</p>
-              <p style={{ fontSize:'13px', color:'#7A9098' }}>Track your owner-builder project from permit to completion — all your trades, costs, tasks and compliance in one place.</p>
+              <p style={{ fontSize:'13px', color:'#7A9098' }}>Track your build project from permit to completion — all your trades, costs, tasks and compliance in one place.</p>
             </div>
           ) : (
             <>
@@ -479,7 +479,7 @@ export default function DIYPage() {
                   </div>
                   {projChecklist.length === 0 ? (
                     <div style={{ textAlign:'center' as const, padding:'32px', background:'#E8F0EE', borderRadius:'12px', color:'#7A9098', fontSize:'13px' }}>
-                      Compliance checklist is pre-populated for owner-builder projects when you create them.
+                      Compliance checklist is pre-populated for build projects when you create them.
                     </div>
                   ) : (
                     WA_CHECKLIST.map(cat => {
