@@ -45,6 +45,7 @@ export default function Home() {
           <div className="nav-links">
             <a href="#how-it-works" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For homeowners</a>
             <a href="#for-trade-businesses" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For trade businesses</a>
+            <a href="#for-organisations" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For organisations</a>
             <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>About</a>
           </div>
           <div className="nav-buttons" style={{ display:'flex', gap:'10px' }}>
