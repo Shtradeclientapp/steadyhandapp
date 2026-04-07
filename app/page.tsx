@@ -77,12 +77,21 @@ export default function Home() {
           <p style={{ fontSize:'18px', fontWeight:'300', color:'rgba(216,228,225,0.55)', lineHeight:'1.7', maxWidth:'520px', margin:'0 auto 40px' }}>
             Most platforms find you a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — so you always know what to do next.
           </p>
-          <div style={{ display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
+          <div className="hero-buttons" style={{ display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }}>
             <Link href="/signup">
-              <button style={{ background:'#D4522A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', fontWeight:'500', border:'none', cursor:'pointer' }}>Start a job request</button>
+              <button style={{ background:'#D4522A', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer' }}>
+                I&apos;m a homeowner &rarr;
+              </button>
             </Link>
             <Link href="/signup">
-              <button style={{ background:'transparent', color:'rgba(216,228,225,0.8)', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', border:'1px solid rgba(216,228,225,0.2)', cursor:'pointer' }}>Get started as a tradie</button>
+              <button style={{ background:'transparent', color:'rgba(216,228,225,0.8)', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(216,228,225,0.2)', cursor:'pointer' }}>
+                I&apos;m a trade business &rarr;
+              </button>
+            </Link>
+            <Link href="/org/setup">
+              <button style={{ background:'rgba(107,79,168,0.3)', color:'rgba(216,228,225,0.9)', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(107,79,168,0.4)', cursor:'pointer' }}>
+                I manage properties &rarr;
+              </button>
             </Link>
           </div>
         </div>
