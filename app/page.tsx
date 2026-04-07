@@ -88,7 +88,7 @@ export default function Home() {
             { num:'8', label:'stages from request to warranty' },
             { num:'100%', label:'verified licence and insurance' },
             { num:'WA only', label:'regional and metro focus' },
-            { num:'0', label:'upfront fees — you pay only on completion' },
+            { num:'0', label:'upfront fees. You pay only when the job is done.' },
           ].map(s => (
             <div key={s.label} style={{ textAlign:'center' }}>
               <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32', letterSpacing:'1px' }}>{s.num}</div>
@@ -108,8 +108,8 @@ export default function Home() {
           {[
             { num:'01', title:'Request', body:'Describe the job, set your budget range and expectations. Steadyhand uses this to match you with the right verified trade businesses in your area.' },
             { num:'02', title:'Match', body:'Review AI-matched tradies based on category, location, experience and trust score. Request quotes from 2–4 for best results, or invite your own.' },
-            { num:'03', title:'Consult', body:'Arrange a site consultation. Both parties document their observations and share notes before quoting begins. This shared record is one of the most important trust moments in any trade relationship.' },
-            { num:'04', title:'Compare', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and select the one that best fits your needs and budget.' },
+            { num:'03', title:'Consult', body:'Meet your tradies on site before quoting begins. Both parties document their observations — creating a shared record that protects everyone.' },
+            { num:'04', title:'Compare', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and choose with confidence.' },
             { num:'05', title:'Contract', body:'Both parties agree on inclusions, exclusions and milestones before work begins. Nothing starts until the scope is signed by both sides.' },
             { num:'06', title:'Build', body:'Work is approved and paid in stages. You only release payment when you are satisfied each milestone is complete. The tradie is paid promptly — no chasing invoices.' },
             { num:'07', title:'Complete', body:'A structured final walkthrough confirms the job is done. Your 90-day warranty clock starts from sign-off, not invoice.' },
@@ -129,11 +129,11 @@ export default function Home() {
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>Why Steadyhand is different</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>A DIFFERENT KIND OF PLATFORM</h2>
           <p style={{ fontSize:'16px', color:'rgba(216,228,225,0.5)', fontWeight:'300', lineHeight:'1.7', maxWidth:'580px', marginBottom:'48px' }}>
-            There is no shortage of platforms that will sell a trade business access to your job request. Steadyhand does not work that way. Trade businesses on Steadyhand are verified, not purchased. Jobs are awarded through structured dialogue, not to the fastest bidder. And Steadyhand earns only when work is completed and approved. Founding members pay just 3% — lock it in by joining now..
+            Every other trades platform was built around the tradie — to help them find leads. Steadyhand was built around the client. The one who needs to understand what they&apos;re agreeing to, and feel confident doing it.
           </p>
           <div className="values-grid">
             {[
-              { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. Our 3.5% completion fee aligns our success with yours — not with the volume of leads we sell.' },
+              { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. We have no incentive to fill your shortlist with the highest bidder or rush you through a quote.' },
               { icon:'📋', title:'Dialogue Trust Score', body:'Every job includes a pre-signing dialogue scored across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
               { icon:'🔒', title:'Your workflow, your tools', body:'Steadyhand respects how trade businesses already operate. Use Xero for invoicing or your own CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
               { icon:'✅', title:'Verified, not just listed', body:'Every trade business on Steadyhand has their licence and insurance verified before they appear in any shortlist. Verification is not a badge — it is a requirement.' },
