@@ -50,11 +50,26 @@ export default function RequestPage() {
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [jobId, setJobId] = useState<string | null>(null)
+  const [orgId, setOrgId] = useState<string | null>(null)
+  const [propertyId, setPropertyId] = useState<string | null>(null)
   const [form, setForm] = useState({
     trade_category: '', title: '', description: '',
     suburb: '', property_type: 'Residential house',
     urgency: 'Within 2 weeks', budget_range: '',
     warranty_period: '90', preferred_start: ''
+  })
+
+  // Load org_id from profile and property_id from URL params
+  useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    const pid = params.get('property_id')
+    if (pid) setPropertyId(pid)
+    const supabase = createClient()
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return
+      const { data: prof } = await supabase.from('profiles').select('org_id').eq('id', session.user.id).single()
+      if (prof?.org_id) setOrgId(prof.org_id)
+    })
   })
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -72,7 +87,7 @@ const submitJob = async () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ ...form, warranty_period: Number(form.warranty_period) }),
+      body: JSON.stringify({ ...form, warranty_period: Number(form.warranty_period), org_id: orgId, property_id: propertyId }),
     })
 
     const { job, error } = await res.json()

@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
     const {
       title, description, trade_category, suburb,
       property_type, urgency, budget_range,
-      warranty_period, preferred_start
+      warranty_period, preferred_start,
+      org_id, property_id
     } = body
 
     if (!title || !description || !trade_category || !suburb) {
@@ -67,6 +68,8 @@ export async function POST(request: NextRequest) {
         warranty_period: warranty_period || 90,
         preferred_start,
         status: 'matching',
+        org_id: org_id || null,
+        property_id: property_id || null,
       })
       .select()
       .single()
