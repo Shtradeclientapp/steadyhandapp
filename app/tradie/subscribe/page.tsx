@@ -131,7 +131,7 @@ export default function TradieSubscribePage() {
           {isFounding && (
             <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', marginTop:'16px', background:'rgba(212,82,42,0.15)', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'100px', padding:'6px 14px' }}>
               <div style={{ width:'6px', height:'6px', background:'#D4522A', borderRadius:'50%' }} />
-              <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500 }}>Founding member — your reduced rates are locked in</span>
+              <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500 }}>Founding member — your reduced rates are guaranteed permanently</span>
             </div>
           )}
         </div>
@@ -216,7 +216,7 @@ export default function TradieSubscribePage() {
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>COMMON QUESTIONS</p>
           {[
             { q:'When do I get charged the completion fee?', a:'Only when a job is fully completed and the client has approved the final milestone. Never upfront.' },
-            { q:'What is a founding member?', a:'Tradies who join Steadyhand during our launch period are locked in at a reduced rate permanently — even if standard rates increase later.' },
+            { q:'What is a founding member?', a:'Tradies who join Steadyhand during our launch period receive a permanently reduced completion fee — 3% instead of 3.5%. That rate is yours to keep and never increases, regardless of what standard rates do later.' },
             { q:'When will Business and Pro be available?', a:'We are finalising these plans now. Register your interest and we will contact you directly before they launch.' },
             { q:'Can I switch plans later?', a:'Yes — you can upgrade or downgrade at any time. Your founding member rate stays with you regardless of which plan you are on.' },
           ].map((item, i) => (

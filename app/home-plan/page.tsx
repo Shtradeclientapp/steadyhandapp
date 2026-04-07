@@ -106,7 +106,7 @@ export default function HomePlanPage() {
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'36px', color:'rgba(216,228,225,0.9)' }}>$19</p>
                 <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)' }}>/month</p>
               </div>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', marginBottom:'24px' }}>Founding member rate — locked in for life</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', marginBottom:'24px' }}>Founding member rate — yours to keep, permanently</p>
               <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'28px' }}>
                 {FEATURES_HOME.map(f => (
                   <div key={f} style={{ display:'flex', alignItems:'flex-start', gap:'10px' }}>
