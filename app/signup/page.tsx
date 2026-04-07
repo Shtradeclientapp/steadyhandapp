@@ -24,7 +24,7 @@ const SUBURBS = [
 const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', display:'block' }
 const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }
 export default function SignupPage() {
-  const [role, setRole] = useState<'client'|'tradie'>('client')
+  const [role, setRole] = useState<'client'|'tradie'|'org'>('client')
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -40,7 +40,7 @@ export default function SignupPage() {
     if (role === 'tradie') {
       await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, subscription_active: false })
     }
-    window.location.href = role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
+    window.location.href = role === 'tradie' ? '/tradie/dashboard' : role === 'org' ? '/org/setup' : '/dashboard'
   }
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', flexDirection:'column' }}>
@@ -55,12 +55,17 @@ export default function SignupPage() {
             {step === 1 && <>
               <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>CREATE ACCOUNT</h1>
               <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>What best describes you?</p>
-              <div className="rb" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'24px' }}>
-                {(['client','tradie'] as const).map(r => (
-                  <button key={r} type="button" onClick={() => setRole(r)} style={{ padding:'16px 12px', border:'1.5px solid ' + (role===r ? '#D4522A' : 'rgba(28,43,50,0.15)'), borderRadius:'12px', background: role===r ? 'rgba(212,82,42,0.05)' : '#E8F0EE', cursor:'pointer', textAlign:'center' as const }}>
-                    <div style={{ fontSize:'24px', marginBottom:'8px' }}>{r==='client' ? '🏠' : '🔧'}</div>
-                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px' }}>{r==='client' ? 'HOMEOWNER' : 'TRADE BIZ'}</div>
-                    <div style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px' }}>{r==='client' ? 'Post jobs' : 'Receive leads'}</div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px', marginBottom:'24px' }}>
+                {([
+                  { id:'client', icon:'🏠', label:'HOMEOWNER', sub:'Post job requests' },
+                  { id:'tradie', icon:'🔧', label:'TRADE BIZ', sub:'Receive verified jobs' },
+                  { id:'org', icon:'🏢', label:'ORGANISATION', sub:'Manage properties' },
+                ] as const).map(r => (
+                  <button key={r.id} type="button" onClick={() => setRole(r.id)}
+                    style={{ padding:'14px 8px', border:'1.5px solid ' + (role===r.id ? (r.id==='org' ? '#6B4FA8' : '#D4522A') : 'rgba(28,43,50,0.15)'), borderRadius:'12px', background: role===r.id ? (r.id==='org' ? 'rgba(107,79,168,0.06)' : 'rgba(212,82,42,0.05)') : '#E8F0EE', cursor:'pointer', textAlign:'center' as const }}>
+                    <div style={{ fontSize:'22px', marginBottom:'6px' }}>{r.icon}</div>
+                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'10px', color:'#1C2B32', letterSpacing:'0.5px' }}>{r.label}</div>
+                    <div style={{ fontSize:'10px', color:'#7A9098', marginTop:'3px' }}>{r.sub}</div>
                   </button>
                 ))}
               </div>
@@ -70,6 +75,8 @@ export default function SignupPage() {
               <div style={{ marginBottom:'20px' }}><label style={lbl}>Suburb</label><select style={inp} value={form.suburb} onChange={set('suburb')}><option value="">Select...</option>{SUBURBS.map(s => <option key={s}>{s}</option>)}</select></div>
               {role === 'tradie' ? (
                 <button type="button" onClick={() => setStep(2)} disabled={!form.fullName||!form.email||!form.password} style={{ width:'100%', background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', opacity: !form.fullName||!form.email||!form.password ? 0.5 : 1 }}>Continue — trade details →</button>
+              ) : role === 'org' ? (
+                <button type="button" onClick={handleSignup} disabled={loading||!form.fullName||!form.email||!form.password} style={{ width:'100%', background:'#6B4FA8', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', opacity: loading||!form.fullName||!form.email||!form.password ? 0.5 : 1 }}>{loading ? 'Creating...' : 'Create account — set up organisation →'}</button>
               ) : (
                 <button type="button" onClick={handleSignup} disabled={loading||!form.fullName||!form.email||!form.password} style={{ width:'100%', background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', opacity: loading||!form.fullName||!form.email||!form.password ? 0.5 : 1 }}>{loading ? 'Creating...' : 'Create account →'}</button>
               )}
