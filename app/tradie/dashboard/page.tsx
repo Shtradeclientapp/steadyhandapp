@@ -123,6 +123,7 @@ export default function TradieDashboard() {
   const [user, setUser]       = useState<any>(null)
   const [jobs, setJobs]       = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
 
   useEffect(() => {
@@ -212,10 +213,35 @@ export default function TradieDashboard() {
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <span style={{ fontSize:'13px', color:'#4A5E64' }}>Tradie</span>
           <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>Messages</a>
-          <a href="/tradie/profile" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>My profile</a>
-          <a href="/tradie/subscribe" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px' }}>Plans</a>
-          <a href="/tradie/subscribe" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px' }}>Plans</a>
-          <button onClick={signOut} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#1C2B32', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', cursor:'pointer' }}>Sign out</button>
+          <div style={{ position:'relative' as const }}>
+            <div onClick={() => setDropdownOpen(!dropdownOpen)}
+              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
+              {profile?.tradie?.business_name?.charAt(0)?.toUpperCase() || 'T'}
+            </div>
+            {dropdownOpen && (
+              <div style={{ position:'absolute' as const, right:0, top:'44px', background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'10px', boxShadow:'0 8px 24px rgba(28,43,50,0.12)', minWidth:'200px', zIndex:200, overflow:'hidden' }}>
+                <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#F4F8F7' }}>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{profile?.tradie?.business_name || 'My business'}</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Tradie account</p>
+                </div>
+                {[
+                  { label:'Dashboard', href:'/tradie/dashboard' },
+                  { label:'My profile', href:'/tradie/profile' },
+                  { label:'Messages', href:'/messages' },
+                  { label:'Subscription plans', href:'/tradie/subscribe' },
+                ].map(item => (
+                  <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
+                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                    {item.label}
+                  </a>
+                ))}
+                <button onClick={() => { setDropdownOpen(false); signOut() }}
+                  style={{ display:'block', width:'100%', padding:'10px 14px', fontSize:'13px', color:'#D4522A', textAlign:'left' as const, background:'none', border:'none', cursor:'pointer' }}>
+                  Sign out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -416,8 +442,8 @@ export default function TradieDashboard() {
         {/* BUILD YOUR CAPABILITY */}
         <div style={{ marginTop:'32px', paddingTop:'28px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.6)', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
-            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>About our approach →</a>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>About our approach →</a>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'10px' }}>
             {[
@@ -427,10 +453,10 @@ export default function TradieDashboard() {
               { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty, your existing CRM for quoting. Build a simple digital stack that saves you time.', href:'https://www.steadyhanddigital.com', label:'Steadyhand Digital →' },
             ].map(c => (
               <a key={c.title} href={c.href} target="_blank" style={{ textDecoration:'none' }}>
-                <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px', padding:'16px', cursor:'pointer' }}>
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px', cursor:'pointer' }}>
                   <div style={{ fontSize:'20px', marginBottom:'8px' }}>{c.icon}</div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'rgba(216,228,225,0.85)', marginBottom:'4px' }}>{c.title}</p>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', lineHeight:'1.6', marginBottom:'8px' }}>{c.body}</p>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>{c.title}</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'8px' }}>{c.body}</p>
                   <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{c.label}</p>
                 </div>
               </a>
