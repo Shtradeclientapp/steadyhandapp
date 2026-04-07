@@ -2,30 +2,25 @@
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { StageRail } from '@/components/ui'
 
-const CHECKS = [
-  { id:'scope', label:'All scope items completed as described', sub:'Everything in the agreement has been done' },
-  { id:'tested', label:'All fixtures, taps and fittings tested', sub:'No leaks, no faults, everything works correctly' },
-  { id:'defects', label:'No visible defects in workmanship', sub:'No cracks, gaps, or unfinished surfaces' },
-  { id:'clean', label:'Site left clean and tidy', sub:'All rubbish removed, surfaces wiped down' },
-  { id:'cert', label:'Any required certificates provided', sub:'Compliance certificates, warranty documents' },
+const BASE_CHECKS = [
+  { id:'defects', label:'No visible defects in workmanship', sub:'No cracks, gaps, unfinished surfaces or loose fittings' },
+  { id:'clean', label:'Site left clean and tidy', sub:'All rubbish removed, surfaces wiped down, tools cleared' },
+  { id:'cert', label:'Any required certificates provided', sub:'Compliance certificates, warranty documents, permits' },
 ]
-
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
+  const [milestones, setMilestones] = useState<any[]>([])
+  const [dynamicChecks, setDynamicChecks] = useState<{id:string,label:string,sub:string}[]>([])
   const [loading, setLoading] = useState(true)
   const [checks, setChecks] = useState<Record<string, boolean>>({})
   const [rating, setRating] = useState(0)
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
-  const [showContribution, setShowContribution] = useState(false)
-  const [contributionAmount, setContributionAmount] = useState(0)
-  const [contributionMessage, setContributionMessage] = useState('')
-  const [contributionSending, setContributionSending] = useState(false)
-  const [contributionDone, setContributionDone] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -35,17 +30,38 @@ export default function SignoffPage() {
       setProfile(prof)
       const { data: jobs } = await supabase
         .from('jobs')
-        .select('*, tradie:tradie_profiles(business_name, id, dialogue_score_avg, stripe_account_id)')
+        .select('*, tradie:tradie_profiles(business_name, id, dialogue_score_avg)')
         .eq('client_id', session.user.id)
         .in('status', ['signoff', 'delivery', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
-      if (jobs && jobs.length > 0) setJob(jobs[0])
+      if (jobs && jobs.length > 0) {
+        setJob(jobs[0])
+        const { data: ms } = await supabase
+          .from('milestones')
+          .select('*')
+          .eq('job_id', jobs[0].id)
+          .order('position', { ascending: true })
+        setMilestones(ms || [])
+
+        const milestoneChecks = (ms || []).map((m: any) => ({
+          id: 'milestone_' + m.id,
+          label: m.title + ' — completed and approved',
+          sub: m.description || 'Milestone signed off by client',
+        }))
+        const scopeCheck = jobs[0].description ? [{
+          id: 'scope',
+          label: 'All scope items completed as described',
+          sub: jobs[0].description.slice(0, 100) + (jobs[0].description.length > 100 ? '...' : ''),
+        }] : []
+        setDynamicChecks([...scopeCheck, ...milestoneChecks])
+      }
       setLoading(false)
     })
   }, [])
 
-  const allChecked = CHECKS.every(c => checks[c.id])
+  const allChecks = [...dynamicChecks, ...BASE_CHECKS]
+  const allChecked = allChecks.every(c => checks[c.id])
 
   const submitSignoff = async () => {
     if (!job || !allChecked || rating === 0) return
@@ -73,44 +89,167 @@ export default function SignoffPage() {
       body: JSON.stringify({ action: 'score_stage', stage: 'complete', job_id: job.id }),
     }).catch(() => {})
     setDone(true)
-    setShowContribution(true)
     setSubmitting(false)
-  }
-
-  const sendContribution = async () => {
-    if (!contributionAmount || !job) return
-    setContributionSending(true)
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('/api/contribution', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        job_id: job.id,
-        amount: contributionAmount,
-        message: contributionMessage,
-        client_id: session?.user.id,
-      }),
-    })
-    const data = await res.json()
-    if (data.contribution_id) {
-      await fetch('/api/contribution', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contribution_id: data.contribution_id,
-          job_id: job.id,
-          tradie_id: job.tradie_id,
-          amount: contributionAmount,
-          message: contributionMessage,
-        }),
-      })
-    }
-    setContributionDone(true)
-    setContributionSending(false)
   }
 
   const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
 
+  if (loading) return (
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
+      <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p>
+    </div>
+  )
 
+  if (!job) return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center' }}>
+      <div style={{ textAlign:'center' as const }}>
+        <p style={{ color:'#4A5E64', fontFamily:'sans-serif', marginBottom:'16px' }}>No job ready for sign-off.</p>
+        <a href="/dashboard" style={{ color:'#2E6A8F', textDecoration:'none', fontSize:'14px' }}>← Back to dashboard</a>
+      </div>
+    </div>
+  )
+
+  return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
+      <NavHeader profile={profile} isTradie={false} />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} />
+
+      <div style={{ maxWidth:'680px', margin:'0 auto', padding:'32px 24px' }}>
+
+        {/* Stage badge */}
+        <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
+          <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Sign off</span>
+        </div>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>SIGN OFF</h1>
+        <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
+        <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'32px' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name}</p>
+
+        {/* Past signoff banner */}
+        {isPastSignoff && (
+          <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>This job has been signed off</p>
+            <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px' }}>Your 90-day warranty period is now active.</p>
+            <a href="/warranty">
+              <button type="button" style={{ background:'#2E7D60', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to warranty →
+              </button>
+            </a>
+          </div>
+        )}
+
+        {/* Success state */}
+        {done && (
+          <div style={{ background:'rgba(46,125,96,0.08)', border:'2px solid #2E7D60', borderRadius:'14px', padding:'28px', textAlign:'center' as const, marginBottom:'20px' }}>
+            <div style={{ fontSize:'48px', marginBottom:'12px' }}>✅</div>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#2E7D60', letterSpacing:'1px', marginBottom:'8px' }}>JOB SIGNED OFF</h2>
+            <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>Your 90-day warranty period has started. Any issues logged within this period will be tracked and responded to.</p>
+            <a href="/warranty">
+              <button type="button" style={{ background:'#2E7D60', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                View warranty →
+              </button>
+            </a>
+          </div>
+        )}
+
+        {!done && !isPastSignoff && (
+          <>
+            {/* Checklist */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 4px' }}>SIGN-OFF CHECKLIST</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
+                  {dynamicChecks.length > 0
+                    ? 'Generated from your job scope and milestones — tick each item to confirm completion'
+                    : 'Confirm each item before signing off'}
+                </p>
+              </div>
+
+              {/* Dynamic checks from scope + milestones */}
+              {allChecks.map((c, i) => {
+                const isMilestone = c.id.startsWith('milestone_')
+                const isScope = c.id === 'scope'
+                const accentColor = isMilestone ? '#2E6A8F' : isScope ? '#6B4FA8' : '#2E7D60'
+                return (
+                  <div key={c.id} onClick={() => setChecks(prev => ({ ...prev, [c.id]: !prev[c.id] }))}
+                    style={{ display:'flex', alignItems:'flex-start', gap:'14px', padding:'14px 20px', borderBottom: i < allChecks.length - 1 ? '1px solid rgba(28,43,50,0.06)' : 'none', cursor:'pointer', background: checks[c.id] ? 'rgba(46,125,96,0.03)' : 'transparent' }}>
+                    <div style={{ width:'22px', height:'22px', borderRadius:'6px', border:'2px solid ' + (checks[c.id] ? '#2E7D60' : 'rgba(28,43,50,0.2)'), background: checks[c.id] ? '#2E7D60' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'1px', fontSize:'13px', color:'white', transition:'all 0.15s' }}>
+                      {checks[c.id] ? '✓' : ''}
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
+                        {isMilestone && <span style={{ fontSize:'10px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', color:'#2E6A8F', borderRadius:'4px', padding:'1px 6px', fontWeight:500 }}>MILESTONE</span>}
+                        {isScope && <span style={{ fontSize:'10px', background:'rgba(107,79,168,0.1)', border:'1px solid rgba(107,79,168,0.2)', color:'#6B4FA8', borderRadius:'4px', padding:'1px 6px', fontWeight:500 }}>SCOPE</span>}
+                        <p style={{ fontSize:'13px', fontWeight:500, color: checks[c.id] ? '#2E7D60' : '#1C2B32', margin:0, textDecoration: checks[c.id] ? 'line-through' : 'none' }}>{c.label}</p>
+                      </div>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{c.sub}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Progress indicator */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px', marginBottom:'20px' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginBottom:'6px' }}>
+                <span style={{ color:'#4A5E64' }}>Checklist progress</span>
+                <span style={{ color:'#1C2B32', fontWeight:500 }}>{Object.values(checks).filter(Boolean).length} of {allChecks.length} items</span>
+              </div>
+              <div style={{ height:'4px', background:'rgba(28,43,50,0.1)', borderRadius:'2px', overflow:'hidden' }}>
+                <div style={{ height:'100%', width: (Object.values(checks).filter(Boolean).length / Math.max(allChecks.length, 1) * 100) + '%', background:'#2E7D60', borderRadius:'2px', transition:'width 0.3s' }} />
+              </div>
+            </div>
+
+            {/* Rating */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'12px' }}>RATE YOUR TRADIE</p>
+              <div style={{ display:'flex', gap:'8px', marginBottom:'16px' }}>
+                {[1,2,3,4,5].map(s => (
+                  <button key={s} type="button" onClick={() => setRating(s)}
+                    style={{ fontSize:'28px', background:'none', border:'none', cursor:'pointer', opacity: s <= rating ? 1 : 0.25, transition:'opacity 0.15s' }}>
+                    ⭐
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={review}
+                onChange={e => setReview(e.target.value)}
+                placeholder="How did the job go? Your review helps other clients and builds the tradie's trust score. (optional)"
+                rows={3}
+                style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, fontFamily:'sans-serif' }}
+              />
+            </div>
+
+            {/* Submit */}
+            <div style={{ background: !allChecked || rating === 0 ? 'rgba(28,43,50,0.04)' : 'rgba(46,125,96,0.06)', border:'1px solid ' + (!allChecked || rating === 0 ? 'rgba(28,43,50,0.1)' : 'rgba(46,125,96,0.2)'), borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+              {!allChecked && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Complete all checklist items before signing off</p>}
+              {rating === 0 && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Please rate your tradie before signing off</p>}
+              {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your 90-day warranty starts from this moment</p>}
+              <button type="button" onClick={submitSignoff} disabled={!allChecked || rating === 0 || submitting}
+                style={{ width:'100%', background: allChecked && rating > 0 ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s' }}>
+                {submitting ? 'Signing off...' : 'Sign off and start warranty →'}
+              </button>
+            </div>
+
+            <p style={{ fontSize:'12px', color:'#7A9098', textAlign:'center' as const, lineHeight:'1.6' }}>
+              By signing off you confirm the work is complete to your satisfaction. Your 90-day warranty period begins immediately.
+            </p>
+          </>
+        )}
+
+        {/* Messages link */}
+        <a href="/messages" style={{ display:'block', marginTop:'24px', textDecoration:'none' }}>
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
+            <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <span style={{ fontSize:'16px' }}>💬</span>
+            </div>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Questions before signing off?</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Message your tradie directly →</p>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  )
 }
