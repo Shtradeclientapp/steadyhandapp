@@ -18,6 +18,7 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -48,7 +49,6 @@ export default function DashboardPage() {
     </div>
   )
 
-  const [dropdownOpen, setDropdownOpen] = useState(false)
   const activeJobs = jobs.filter(j => j.status !== 'complete')
   const doneJobs = jobs.filter(j => j.status === 'complete')
 
