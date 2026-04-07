@@ -113,67 +113,6 @@ export default function DashboardPage() {
       </div>
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
-        {/* SUBSCRIPTION CARD */}
-        <Link href="/home-plan" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
-          <div style={{ background: profile?.subscription_plan === 'home' ? '#1C2B32' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-              <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>
-                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
-                </p>
-                <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
-                  {profile?.subscription_plan === 'home' ? 'Extended warranty · Document vault · Priority matching' : 'Unlimited jobs · 180-day warranty · Document vault · $19/month'}
-                </p>
-              </div>
-            </div>
-            <span style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? '#2E7D60' : '#D4522A', fontWeight:500, flexShrink:0 }}>
-              {profile?.subscription_plan === 'home' ? '✓ Active' : profile?.subscription_plan === 'home_interest' ? 'Interest logged' : 'Learn more →'}
-            </span>
-          </div>
-        </Link>
-
-        {/* BUILD JOURNAL CARD */}
-        {builds && builds.length > 0 && (
-          <div style={{ marginBottom:'12px' }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
-              <p style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500, margin:0 }}>Build Journal</p>
-              <Link href="/diy" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>View all →</Link>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:`repeat(${Math.min(builds.length, 3)}, 1fr)`, gap:'10px' }}>
-              {builds.map((build: any) => {
-                const pct = build.budget_estimate && build.budget_actual ? Math.min(Math.round((Number(build.budget_actual)/Number(build.budget_estimate))*100),100) : 0
-                return (
-                  <Link key={build.id} href="/diy" style={{ textDecoration:'none' }}>
-                    <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'16px', position:'relative', overflow:'hidden', cursor:'pointer' }}>
-                      <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.2), transparent 60%)' }} />
-                      <div style={{ position:'relative', zIndex:1 }}>
-                        <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>{build.project_type?.replace('_',' ') || 'Build'}</p>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>{build.title}</p>
-                        {build.address && <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>📍 {build.address}</p>}
-                        <div style={{ height:'3px', background:'rgba(216,228,225,0.1)', borderRadius:'2px', overflow:'hidden' }}>
-                          <div style={{ height:'100%', width:pct+'%', background:'#D4522A', borderRadius:'2px' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
-        {(!builds || builds.length === 0) && (
-          <Link href="/diy" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
-            <div style={{ background:'rgba(28,43,50,0.04)', border:'1px dashed rgba(28,43,50,0.15)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Build Journal</p>
-                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Track your owner-builder project — trades, budget, compliance</p>
-              </div>
-              <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
-            </div>
-          </Link>
-        )}
-
         <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'28px' }}>
           {[
             { label:'Active jobs', value: activeJobs.length },
@@ -280,7 +219,68 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* BUILD YOUR CAPABILITY */}
+        {/* SUBSCRIPTION CARD */}
+        <Link href="/home-plan" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
+          <div style={{ background: profile?.subscription_plan === 'home' ? '#1C2B32' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+              <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>
+                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
+                </p>
+                <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
+                  {profile?.subscription_plan === 'home' ? 'Extended warranty · Document vault · Priority matching' : 'Unlimited jobs · 180-day warranty · Document vault · $19/month'}
+                </p>
+              </div>
+            </div>
+            <span style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? '#2E7D60' : '#D4522A', fontWeight:500, flexShrink:0 }}>
+              {profile?.subscription_plan === 'home' ? '✓ Active' : profile?.subscription_plan === 'home_interest' ? 'Interest logged' : 'Learn more →'}
+            </span>
+          </div>
+        </Link>
+
+        {/* BUILD JOURNAL CARD */}
+        {builds && builds.length > 0 && (
+          <div style={{ marginBottom:'12px' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
+              <p style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500, margin:0 }}>Build Journal</p>
+              <Link href="/diy" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>View all →</Link>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:`repeat(${Math.min(builds.length, 3)}, 1fr)`, gap:'10px' }}>
+              {builds.map((build: any) => {
+                const pct = build.budget_estimate && build.budget_actual ? Math.min(Math.round((Number(build.budget_actual)/Number(build.budget_estimate))*100),100) : 0
+                return (
+                  <Link key={build.id} href="/diy" style={{ textDecoration:'none' }}>
+                    <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'16px', position:'relative', overflow:'hidden', cursor:'pointer' }}>
+                      <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.2), transparent 60%)' }} />
+                      <div style={{ position:'relative', zIndex:1 }}>
+                        <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>{build.project_type?.replace('_',' ') || 'Build'}</p>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>{build.title}</p>
+                        {build.address && <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>📍 {build.address}</p>}
+                        <div style={{ height:'3px', background:'rgba(216,228,225,0.1)', borderRadius:'2px', overflow:'hidden' }}>
+                          <div style={{ height:'100%', width:pct+'%', background:'#D4522A', borderRadius:'2px' }} />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        )}
+        {(!builds || builds.length === 0) && (
+          <Link href="/diy" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
+            <div style={{ background:'rgba(28,43,50,0.04)', border:'1px dashed rgba(28,43,50,0.15)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Build Journal</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Track your owner-builder project — trades, budget, compliance</p>
+              </div>
+              <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
+            </div>
+          </Link>
+        )}
+
+                {/* BUILD YOUR CAPABILITY */}
         <div style={{ marginTop:'32px', marginBottom:'28px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
