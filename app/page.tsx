@@ -272,7 +272,7 @@ export default function Home() {
         <div className="footer-inner footer-pad">
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.7)', letterSpacing:'2px' }}>STEADYHAND</div>
           <div className="footer-links">
-            {['About', 'For homeowners', 'For trade businesses', 'Privacy'].map(l => (
+            {['About', 'For homeowners', 'For trade businesses', 'For organisations', 'Privacy'].map(l => (
               <span key={l} style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', cursor:'pointer' }}>{l}</span>
             ))}
           </div>
