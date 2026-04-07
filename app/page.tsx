@@ -19,6 +19,7 @@ export default function Home() {
         .footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
         .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
         .footer-pad { padding: 32px 48px; }
+        .mobile-nav { display: none; }
         * { box-sizing: border-box; }
         html, body { overflow-x: hidden; max-width: 100vw; }
         @media (max-width: 768px) {
@@ -26,7 +27,10 @@ export default function Home() {
           .nav-inner { padding: 0 16px !important; height: 52px !important; }
           .nav-buttons { display: flex !important; gap: 8px !important; align-items: center !important; }
           .nav-buttons a button { padding: 6px 12px !important; font-size: 12px !important; }
-          .hero-inner { padding: 60px 24px !important; }
+          .hero-inner { padding: 48px 20px !important; }
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; max-width: 320px !important; margin: 0 auto !important; }
+          .hero-buttons a { width: 100% !important; }
+          .hero-buttons button { width: 100% !important; text-align: center !important; }
           .stats-bar { gap: 20px !important; }
           .stats-inner { padding: 20px !important; }
           .steps-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
@@ -36,6 +40,7 @@ export default function Home() {
           .cta-inner { padding: 48px 24px !important; }
           .footer-pad { padding: 24px 20px !important; }
           .footer-links { gap: 12px !important; }
+          .mobile-nav { display: flex !important; }
         }
       `}</style>
 
