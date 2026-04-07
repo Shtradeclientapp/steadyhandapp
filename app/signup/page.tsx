@@ -69,6 +69,9 @@ export default function SignupPage() {
                   </button>
                 ))}
               </div>
+              <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'11px 14px', marginBottom:'20px' }}>
+                <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>Steadyhand is built to support you — not just through this job, but in how you approach every one that follows.</p>
+              </div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Full name</label><input style={inp} placeholder="Sarah Mitchell" value={form.fullName} onChange={set('fullName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Email</label><input style={inp} type="email" placeholder="you@example.com" value={form.email} onChange={set('email')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Password</label><input style={inp} type="password" placeholder="At least 8 characters" value={form.password} onChange={set('password')} /></div>

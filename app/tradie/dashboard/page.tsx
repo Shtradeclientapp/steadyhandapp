@@ -413,6 +413,31 @@ export default function TradieDashboard() {
           </>
         )}
 
+        {/* BUILD YOUR CAPABILITY */}
+        <div style={{ marginTop:'32px', paddingTop:'28px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.6)', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>About our approach →</a>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'10px' }}>
+            {[
+              { icon:'⭐', title:'Improve your Trust Score', body:'Your Dialogue Trust Score is built through how you communicate before signing. Pricing transparency and risk disclosure matter most.', href:'https://www.steadyhanddigital.com', label:'How scoring works →' },
+              { icon:'📄', title:'Writing better scope agreements', body:'Clear inclusions and exclusions protect you from scope creep and disputes. A well-written scope is your best legal protection.', href:'https://www.steadyhanddigital.com', label:'Scope writing guide →' },
+              { icon:'✅', title:'Licence and compliance — WA', body:'The WA Building Commission sets compliance requirements for licensed trades. Stay current with the standards that apply to your category.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
+              { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty, your existing CRM for quoting. Build a simple digital stack that saves you time.', href:'https://www.steadyhanddigital.com', label:'Steadyhand Digital →' },
+            ].map(c => (
+              <a key={c.title} href={c.href} target="_blank" style={{ textDecoration:'none' }}>
+                <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px', padding:'16px', cursor:'pointer' }}>
+                  <div style={{ fontSize:'20px', marginBottom:'8px' }}>{c.icon}</div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'rgba(216,228,225,0.85)', marginBottom:'4px' }}>{c.title}</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', lineHeight:'1.6', marginBottom:'8px' }}>{c.body}</p>
+                  <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{c.label}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   )

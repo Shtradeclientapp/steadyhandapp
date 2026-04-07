@@ -280,6 +280,31 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* BUILD YOUR CAPABILITY */}
+        <div style={{ marginTop:'32px', marginBottom:'28px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>About our approach →</a>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:'12px' }}>
+            {[
+              { icon:'📋', title:'Understanding your rights', body:'Consumer Protection WA outlines your rights when hiring a licensed tradie. Know what you are entitled to before you sign anything.', href:'https://www.commerce.wa.gov.au/consumer-protection', label:'Consumer Protection WA →' },
+              { icon:'💬', title:'How to read a trade quote', body:'A good quote itemises labour, materials and conditions separately. Learn what to look for — and what missing information signals.', href:'https://www.steadyhanddigital.com', label:'Steadyhand guide →' },
+              { icon:'🔒', title:'What a scope agreement means', body:'A signed scope is your most important protection. It defines what is included, what is not, and what happens if something changes.', href:'https://www.steadyhanddigital.com', label:'Learn more →' },
+              { icon:'🏗', title:'WA Building Commission', body:'If your job requires a building permit or involves licensed trades, the Building Commission sets the compliance standards that apply.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
+            ].map(c => (
+              <a key={c.title} href={c.href} target="_blank" style={{ textDecoration:'none' }}>
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', height:'100%', cursor:'pointer' }}>
+                  <div style={{ fontSize:'22px', marginBottom:'8px' }}>{c.icon}</div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>{c.title}</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'10px' }}>{c.body}</p>
+                  <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{c.label}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
         <div style={{ marginTop:'32px' }}>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>HOME HUB</h2>
           <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'12px' }}>
