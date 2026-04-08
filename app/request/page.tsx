@@ -150,7 +150,7 @@ window.location.href = '/shortlist'
                   'Include the age of your property, any access constraints, and relevant history — tradies use this to price accurately.',
                   'A clear title helps Steadyhand match you faster. Include the trade and location: "Full bathroom retile — Subiaco".',
                   'Setting a realistic budget range helps match you with tradies who are right for your job size.',
-                  'Warranty periods are written into your scope agreement — the tradie's formal obligation after completion.',
+                  'Warranty periods are written into your scope agreement — the tradie\'s formal obligation after completion.',
                 ].map((tip, i) => (
                   <p key={i} style={{ fontSize:'12px', color:'#2E7D60', margin:0, lineHeight:'1.6' }}>• {tip}</p>
                 ))}
