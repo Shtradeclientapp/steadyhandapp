@@ -3,7 +3,7 @@
 const STAGES = [
   { n:1, l:'Request',   p:'/request'  },
   { n:2, l:'Match',     p:'/shortlist' },
-  { n:3, l:'Consult',   p:'/assess'   },
+  { n:3, l:'Consult',   p:'/consult'  },
   { n:4, l:'Compare',   p:'/compare'  },
   { n:5, l:'Contract',  p:'/agreement'},
   { n:6, l:'Build',     p:'/delivery' },
@@ -12,7 +12,7 @@ const STAGES = [
 ]
 
 const STATUS_TO_STAGE: Record<string,number> = {
-  draft:1, matching:1, shortlisted:2, assess:3, consult:3,
+  draft:1, matching:1, shortlisted:2, assess:3, consult:3, shortlisted:3,
   compare:4, quote:5, agreement:5, contract:5,
   delivery:6, signoff:7, warranty:8, complete:8,
 }

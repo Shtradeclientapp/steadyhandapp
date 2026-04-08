@@ -273,7 +273,7 @@ export default function AssessPage() {
       <NavHeader profile={profile} isTradie={false}   />
 
       {/* STAGE RAIL */}
-      <StageRail currentPath="/assess" jobStatus={job?.status} />
+      <StageRail currentPath="/consult" jobStatus={job?.status} />
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'16px 24px 0' }}>
           <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={async (id) => {
