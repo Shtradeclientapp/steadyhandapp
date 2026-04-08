@@ -66,6 +66,8 @@ export default function RequestPage() {
     const pid = params.get('property_id')
     if (pid) setPropertyId(pid)
     // Pre-fill from Build Journal trade package
+    const diyProjectId = params.get('diy_project_id')
+    if (diyProjectId) sessionStorage.setItem('diy_project_id', diyProjectId)
     const titleParam = params.get('title')
     const descParam = params.get('description')
     const addrParam = params.get('address')
