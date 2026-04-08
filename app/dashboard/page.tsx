@@ -72,8 +72,17 @@ export default function DashboardPage() {
   }
 
   if (loading) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
-      <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p>
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
+      <div style={{ height:'64px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)' }} />
+      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
+        <style>{`@keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }`}</style>
+        {[1,2,3].map(i => (
+          <div key={i} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px', marginBottom:'12px' }}>
+            <div style={{ width:'60%', height:'16px', borderRadius:'6px', background:'linear-gradient(90deg, rgba(28,43,50,0.06) 25%, rgba(28,43,50,0.1) 50%, rgba(28,43,50,0.06) 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite', marginBottom:'10px' }} />
+            <div style={{ width:'40%', height:'12px', borderRadius:'6px', background:'linear-gradient(90deg, rgba(28,43,50,0.06) 25%, rgba(28,43,50,0.1) 50%, rgba(28,43,50,0.06) 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.5s infinite' }} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 

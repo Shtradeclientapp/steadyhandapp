@@ -282,7 +282,7 @@ export default function ShortlistPage() {
                 { key:'matches', label:'Steadyhand matches', count: shortlist.length },
                 { key:'directory', label:'Browse directory', count: directoryTradies.length },
                 { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
-                { key:'requested', label:'Requested', count: quoteRequests.length },
+                { key:'requested', label: pendingConfirm ? 'Review & confirm' : sent ? 'Sent' : 'Requested', count: pendingConfirm ? selectedTradies.length : quoteRequests.length },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
                   style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
@@ -510,33 +510,43 @@ export default function ShortlistPage() {
 
             {tab === 'requested' && (
               <div style={{ padding:'20px' }}>
-                {pendingConfirm && selectedTradies.length > 0 && (
-                  <div style={{ background:'rgba(212,82,42,0.04)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
-                    <p style={{ fontSize:'12px', fontWeight:600, color:'#D4522A', marginBottom:'8px' }}>Review your selections before sending</p>
-                    {selectedTradies.map(id => {
-                      const entry = shortlist.find(e => e.tradie?.id === id)
-                      if (!entry) return null
-                      return (
-                        <div key={id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                            <div style={{ width:'28px', height:'28px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
-                              {entry.tradie?.business_name?.charAt(0) || '?'}
+
+                {/* PENDING CONFIRM STATE */}
+                {pendingConfirm && !sent && (
+                  <div>
+                    <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'12px' }}>Review your selections before sending. You can remove tradies below.</p>
+                    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', overflow:'hidden', marginBottom:'12px' }}>
+                      {selectedTradies.map((id, idx) => {
+                        const entry = shortlist.find(e => e.tradie?.id === id)
+                        if (!entry) return null
+                        return (
+                          <div key={id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 16px', borderBottom: idx < selectedTradies.length - 1 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                              <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                                {entry.tradie?.business_name?.charAt(0) || '?'}
+                              </div>
+                              <div>
+                                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{entry.tradie?.business_name}</p>
+                                <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{entry.tradie?.trade_categories?.slice(0,1).join(', ')} · {entry.tradie?.service_areas?.[0]}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{entry.tradie?.business_name}</p>
-                              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{entry.tradie?.trade_categories?.slice(0,1).join(', ')} · {entry.tradie?.service_areas?.[0]}</p>
-                            </div>
+                            <button type="button" onClick={() => { toggleTradie(id); if (selectedTradies.length <= 1) setPendingConfirm(false) }}
+                              style={{ fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+                              Remove
+                            </button>
                           </div>
-                          <button type="button" onClick={() => toggleTradie(id)}
-                            style={{ fontSize:'11px', color:'#D4522A', background:'none', border:'none', cursor:'pointer' }}>
-                            Remove
-                          </button>
-                        </div>
-                      )
-                    })}
+                        )
+                      })}
+                    </div>
+                    <button type="button" onClick={() => setPendingConfirm(false)}
+                      style={{ fontSize:'13px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
+                      ← Back to matches
+                    </button>
                   </div>
                 )}
-                {quoteRequests.length === 0 ? (
+
+                {/* EMPTY / NOT YET SENT */}
+                {!pendingConfirm && quoteRequests.length === 0 ? (
                   <div style={{ textAlign:'center', padding:'32px', color:'#7A9098', fontSize:'14px' }}>
                     No quote requests sent yet. Select tradies from the Steadyhand matches tab or invite your own.
                   </div>

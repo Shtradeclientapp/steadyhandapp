@@ -432,6 +432,28 @@ export default function DeliveryPage() {
                       </button>
                     </div>
                   )}
+                  {isTradie && !isDone && milestones.length > 1 && (
+                    <div style={{ display:'flex', gap:'6px', marginBottom:'8px' }}>
+                      <button type="button" onClick={async () => {
+                        const idx = milestones.findIndex((x:any) => x.id === m.id)
+                        if (idx <= 0) return
+                        const supabase = createClient()
+                        const prev = milestones[idx - 1]
+                        await supabase.from('milestones').update({ order_index: idx }).eq('id', prev.id)
+                        await supabase.from('milestones').update({ order_index: idx - 1 }).eq('id', m.id)
+                        window.location.reload()
+                      }} style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'4px', padding:'3px 8px', cursor:'pointer' }}>↑ Move up</button>
+                      <button type="button" onClick={async () => {
+                        const idx = milestones.findIndex((x:any) => x.id === m.id)
+                        if (idx >= milestones.length - 1) return
+                        const supabase = createClient()
+                        const next = milestones[idx + 1]
+                        await supabase.from('milestones').update({ order_index: idx }).eq('id', next.id)
+                        await supabase.from('milestones').update({ order_index: idx + 1 }).eq('id', m.id)
+                        window.location.reload()
+                      }} style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'4px', padding:'3px 8px', cursor:'pointer' }}>↓ Move down</button>
+                    </div>
+                  )}
                   {isActive && !isDone && isTradie && (
                     <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px' }}>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Waiting for client to approve this milestone and release payment.</p>
