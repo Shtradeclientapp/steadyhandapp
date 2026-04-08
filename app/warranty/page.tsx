@@ -54,18 +54,18 @@ export default function WarrantyPage() {
       status: 'open',
       response_due_at: responseDue,
     }).select().single()
-    if (issue) setIssues(prev => [issue, ...prev])
-    setForm({ title: '', description: '', severity: 'moderate' })
-    setShowForm(false)
-    setSubmitting(false)
-  if (issue) {
+    if (issue) {
       setIssues(prev => [issue, ...prev])
       await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
       })
-    }}
+    }
+    setForm({ title: '', description: '', severity: 'moderate' })
+    setShowForm(false)
+    setSubmitting(false)
+  }
 
   const acceptResolution = async (issueId: string) => {
     setAcceptingId(issueId)
