@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { JobSelector } from '@/components/ui/JobSelector'
 import { TradieQuoteCard } from '@/components/ui/TradieQuoteCard'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
@@ -10,6 +11,7 @@ export default function AgreementPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [scope, setScope] = useState<any>(null)
   const [messages, setMessages] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
@@ -239,6 +241,11 @@ export default function AgreementPage() {
     <div>
       <NavHeader profile={profile} isTradie={false}   />
       <StageRail currentPath="/agreement" jobStatus={job?.status} />
+      {allJobs.length > 1 && (
+        <div style={{ maxWidth:'800px', margin:'0 auto', padding:'16px 24px 0' }}>
+          <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={id => setJob(allJobs.find(j => j.id === id))} />
+        </div>
+      )}
     </div>
   )
 

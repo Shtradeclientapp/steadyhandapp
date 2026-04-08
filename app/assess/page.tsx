@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { JobSelector } from '@/components/ui/JobSelector'
 
 
 const CLIENT_PROMPTS = [
@@ -22,6 +23,7 @@ const TRADIE_PROMPTS = [
 
 export default function AssessPage() {
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isTradie, setIsTradie] = useState(false)
@@ -57,7 +59,7 @@ export default function AssessPage() {
         .eq(col, session.user.id)
         .in('status', ['assess', 'quotes', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
-        .limit(1)
+        
 
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
@@ -272,6 +274,18 @@ export default function AssessPage() {
 
       {/* STAGE RAIL */}
       <StageRail currentPath="/assess" jobStatus={job?.status} />
+      {allJobs.length > 1 && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'16px 24px 0' }}>
+          <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={async (id) => {
+            const selected = allJobs.find(j => j.id === id)
+            setJob(selected)
+            // Reload assessment for selected job
+            const supabase = (await import('@/lib/supabase/client')).createClient()
+            const { data: assess } = await supabase.from('site_assessments').select('*').eq('job_id', id).single()
+            if (assess) { setAssessment(assess); setForm(assess) }
+          }} />
+        </div>
+      )}
 
       <div style={{ maxWidth:'780px', margin:'0 auto', padding:'32px 24px' }}>
 

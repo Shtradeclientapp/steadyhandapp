@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { JobSelector } from '@/components/ui/JobSelector'
 
 const BASE_CHECKS = [
   { id:'defects', label:'No visible defects in workmanship', sub:'No cracks, gaps, unfinished surfaces or loose fittings' },
@@ -12,6 +13,7 @@ const BASE_CHECKS = [
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
   const [dynamicChecks, setDynamicChecks] = useState<{id:string,label:string,sub:string}[]>([])
@@ -34,7 +36,7 @@ export default function SignoffPage() {
         .eq('client_id', session.user.id)
         .in('status', ['signoff', 'delivery', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
-        .limit(1)
+        
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
         const { data: ms } = await supabase
@@ -113,6 +115,11 @@ export default function SignoffPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={false} />
       <StageRail currentPath="/signoff" jobStatus={job?.status} />
+      {allJobs.length > 1 && (
+        <div style={{ maxWidth:'680px', margin:'0 auto', padding:'16px 24px 0' }}>
+          <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={id => setJob(allJobs.find(j => j.id === id))} />
+        </div>
+      )}
 
       <div style={{ maxWidth:'680px', margin:'0 auto', padding:'32px 24px' }}>
 

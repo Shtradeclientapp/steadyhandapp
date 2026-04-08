@@ -5,9 +5,11 @@ import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { JobSelector } from '@/components/ui/JobSelector'
 
 export default function WarrantyPage() {
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [issues, setIssues] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +31,7 @@ export default function WarrantyPage() {
         .eq('client_id', session.user.id)
         .eq('status', 'warranty')
         .order('updated_at', { ascending: false })
-        .limit(1)
+        
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
         const { data: iss } = await supabase.from('warranty_issues').select('*').eq('job_id', jobs[0].id).order('created_at', { ascending: false })

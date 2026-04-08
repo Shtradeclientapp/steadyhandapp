@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { JobSelector } from '@/components/ui/JobSelector'
 
 const DECLINE_REASONS = [
   { value: 'too_expensive', label: 'Too expensive' },
@@ -15,6 +16,7 @@ const DECLINE_REASONS = [
 
 export default function QuotesPage() {
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [quotes, setQuotes] = useState<any[]>([])
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
@@ -38,7 +40,7 @@ export default function QuotesPage() {
         .eq('client_id', session.user.id)
         .in('status', ['shortlisted', 'agreement', 'quotes', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
-        .limit(1)
+        
 
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])
