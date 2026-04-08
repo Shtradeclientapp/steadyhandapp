@@ -198,12 +198,17 @@ export default function WarrantyPage() {
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
-              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
-                <p style={{ fontSize:'12px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#7A9098' }}>
-                  Response due: {new Date(issue.response_due_at).toLocaleDateString('en-AU')}
-                  {new Date(issue.response_due_at) < new Date() ? ' — overdue' : ''}
-                </p>
-              )}
+              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (() => {
+                const due = new Date(issue.response_due_at)
+                const overdue = due < new Date()
+                return (
+                  <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', padding:'4px 10px', borderRadius:'6px', background: overdue ? 'rgba(212,82,42,0.08)' : 'rgba(28,43,50,0.04)', border:'1px solid ' + (overdue ? 'rgba(212,82,42,0.25)' : 'rgba(28,43,50,0.1)'), marginBottom:'4px' }}>
+                    <span style={{ fontSize:'11px', color: overdue ? '#D4522A' : '#7A9098', fontWeight: overdue ? 600 : 400 }}>
+                      {overdue ? '⚠ Overdue — ' : '⏱ Response due '}{due.toLocaleDateString('en-AU')}
+                    </span>
+                  </div>
+                )
+              })()}
               {issue.tradie_response && (
                 <div style={{ marginTop:'12px', background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'8px', padding:'12px 14px' }}>
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#2E6A8F', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'6px' }}>

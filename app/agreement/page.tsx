@@ -131,13 +131,22 @@ export default function AgreementPage() {
     setDrafting(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    const res = await fetch('/api/scope', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
-      body: JSON.stringify({ job_id: job.id, suggestion }),
-    })
-    const data = await res.json()
-    if (data.scope) { setScope(data.scope); setScopeVersion(v => v + 1) }
+    try {
+      const res = await fetch('/api/scope', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session?.access_token },
+        body: JSON.stringify({ job_id: job.id, suggestion }),
+      })
+      const data = await res.json()
+      if (data.scope) {
+        setScope(data.scope)
+        setScopeVersion(v => v + 1)
+      } else {
+        alert('Could not generate scope — please try again or write it manually.')
+      }
+    } catch (e) {
+      alert('Connection error — please check your internet and try again.')
+    }
     setDrafting(false)
   }
 
