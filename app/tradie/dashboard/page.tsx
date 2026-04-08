@@ -263,18 +263,56 @@ export default function TradieDashboard() {
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
 
-        {/* ── Stats ── */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'28px' }}>
-          {[
-            { label:'Active jobs',     value: activeJobs.length },
-            { label:'In delivery',     value: jobs.filter(j => j.status === 'delivery').length },
-            { label:'Under warranty',  value: jobs.filter(j => j.status === 'warranty').length },
-          ].map(s => (
-            <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px' }}>
-              <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'6px' }}>{s.label}</p>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:'#1C2B32', letterSpacing:'1px' }}>{s.value}</p>
-            </div>
-          ))}
+        {/* ── Analytics ── */}
+        <div style={{ marginBottom:'28px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>YOUR PERFORMANCE</h2>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'12px' }}>
+            {[
+              { label:'Active jobs', value: activeJobs.length, sub: jobs.filter(j => j.status === 'delivery').length + ' in delivery', color:'#2E7D60' },
+              { label:'Jobs completed', value: profile?.tradie?.jobs_completed || 0, sub: jobs.filter(j => j.status === 'warranty').length + ' under warranty', color:'#2E6A8F' },
+              { label:'Dialogue Rating', value: profile?.tradie?.dialogue_score_avg ? Number(profile.tradie.dialogue_score_avg).toFixed(0) : '—', sub: 'based on communication quality', color:'#6B4FA8' },
+            ].map(s => (
+              <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
+                <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', letterSpacing:'0.3px' }}>{s.label}</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
+                <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>{s.sub}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px' }}>
+            {[
+              {
+                label:'Quote acceptance',
+                value: (() => {
+                  const sent = jobs.filter(j => ['shortlisted','quotes','agreement','delivery','signoff','warranty','complete'].includes(j.status)).length
+                  const accepted = jobs.filter(j => ['agreement','delivery','signoff','warranty','complete'].includes(j.status)).length
+                  return sent > 0 ? Math.round(accepted/sent*100) + '%' : '—'
+                })(),
+                sub:'quotes accepted vs sent',
+                color:'#C07830'
+              },
+              {
+                label:'Avg rating',
+                value: profile?.tradie?.rating_avg ? Number(profile.tradie.rating_avg).toFixed(1) + ' ⭐' : '—',
+                sub: 'from completed jobs',
+                color:'#D4522A'
+              },
+              {
+                label:'Warranty issues',
+                value: jobs.filter(j => j.status === 'warranty').length,
+                sub:'jobs currently protected',
+                color:'#9B6B9B'
+              },
+            ].map(s => (
+              <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
+                <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', letterSpacing:'0.3px' }}>{s.label}</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
+                <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>{s.sub}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* ── Profile card ── */}

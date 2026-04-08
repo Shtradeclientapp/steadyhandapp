@@ -23,7 +23,14 @@ export async function POST(request: NextRequest) {
     const { data: job, error: jobError } = await supabase.from('jobs').select('*').eq('id', job_id).single()
     if (jobError || !job) return NextResponse.json({ error: 'Job not found', job_id_received: job_id, db_error: jobError?.message, all_jobs: allJobs }, { status: 404 })
 
-    const { data: tradies } = await supabase.from('tradie_profiles').select('*, profile:profiles(*)').eq('subscription_active', true).contains('trade_categories', [job.trade_category])
+    const { data: tradies } = await supabase
+      .from('tradie_profiles')
+      .select('*, profile:profiles(*)')
+      .eq('subscription_active', true)
+      .eq('licence_verified', true)
+      .contains('trade_categories', [job.trade_category])
+      .not('business_name', 'is', null)
+      .not('bio', 'is', null)
     if (!tradies || tradies.length === 0) return NextResponse.json({ error: 'No tradies found for: ' + job.trade_category }, { status: 404 })
 
     const candidates = tradies.slice(0, 10)
@@ -33,7 +40,7 @@ export async function POST(request: NextRequest) {
       const ratingNote = t.rating_avg ? ' Rating: ' + Number(t.rating_avg).toFixed(1) + '/5 from ' + t.jobs_completed + ' jobs.' : ''
       return t.id + ': ' + t.business_name + ' — ' + (t.bio || 'No bio') + ratingNote + trustNote
     }).join('\n')
-    const promptText = 'You are the AI matching engine for Steadyhand WA.\n\nJob: ' + job.title + '\nCategory: ' + job.trade_category + '\nLocation: ' + job.suburb + '\nDescription: ' + job.description + '\n\nTradies:\n' + tradieDescriptions + '\n\nScore each tradie 0-100 based on category fit, location, experience, rating and trust score. Trust score reflects quality of past client dialogue and should influence your ranking. Return ONLY this JSON:\n{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2 sentences>","rank":<number>}]}\n\nTop 4 only.'
+    const promptText = 'You are the AI matching engine for Steadyhand WA.\n\nJob: ' + job.title + '\nCategory: ' + job.trade_category + '\nLocation: ' + job.suburb + '\nDescription: ' + job.description + '\n\nTradies:\n' + tradieDescriptions + '\n\nScore each tradie 0-100 based on category fit, location, experience, rating and Dialogue Rating. Dialogue Rating reflects quality of past client communication and should influence your ranking. Return ONLY this JSON:\n{"results":[{"tradie_id":"<uuid>","score":<number>,"reasoning":"<2 sentences>","rank":<number>}]}\n\nTop 4 only.'
 
     const message = await anthropic.messages.create({ model: 'claude-sonnet-4-6', max_tokens: 1024, messages: [{ role: 'user', content: promptText }] })
     const raw = message.content[0].type === 'text' ? message.content[0].text : ''

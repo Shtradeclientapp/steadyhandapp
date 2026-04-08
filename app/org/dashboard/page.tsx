@@ -25,6 +25,11 @@ export default function OrgDashboardPage() {
   const [tradieResults, setTradieResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'jobs'|'properties'|'members'|'preferred'|'reports'>('jobs')
+  const [showInvite, setShowInvite] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState('member')
+  const [inviting, setInviting] = useState(false)
+  const [inviteSent, setInviteSent] = useState(false)
   const [filterStatus, setFilterStatus] = useState('')
   const [filterProperty, setFilterProperty] = useState('')
 
@@ -110,6 +115,38 @@ export default function OrgDashboardPage() {
     a.download = (org?.name || 'org') + '-jobs-' + new Date().toISOString().split('T')[0] + '.csv'
     a.click()
     URL.revokeObjectURL(url)
+  }
+
+  const sendInvite = async () => {
+    if (!inviteEmail.trim() || !org) return
+    setInviting(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    try {
+      await supabase.from('org_memberships').insert({
+        org_id: org.id,
+        role: inviteRole,
+        invited_email: inviteEmail.trim(),
+        invited_at: new Date().toISOString(),
+        invited_by: session?.user.id,
+        status: 'pending',
+      })
+    } catch { /* non-critical */ }
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'org_invite',
+        to: inviteEmail.trim(),
+        org_name: org.name,
+        org_id: org.id,
+        role: inviteRole,
+      }),
+    }).catch(() => {})
+    setInviteSent(true)
+    setInviting(false)
+    setInviteEmail('')
+    setTimeout(() => { setInviteSent(false); setShowInvite(false) }, 2000)
   }
 
   if (loading) return (
@@ -273,8 +310,37 @@ export default function OrgDashboardPage() {
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>TEAM MEMBERS</p>
-                <button type="button" style={{ background:'#1C2B32', color:'white', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Invite member</button>
+                <button type="button" onClick={() => setShowInvite(!showInvite)}
+                  style={{ background:'#1C2B32', color:'white', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  + Invite member
+                </button>
               </div>
+              {showInvite && (
+                <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(46,106,143,0.04)' }}>
+                  {inviteSent ? (
+                    <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:0 }}>✓ Invite sent to {inviteEmail || 'member'}</p>
+                  ) : (
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                      <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', margin:0 }}>Invite a team member by email</p>
+                      <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+                        <input type="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)}
+                          placeholder="colleague@company.com.au"
+                          style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'200px' }} />
+                        <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}
+                          style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }}>
+                          <option value="member">Member</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        <button type="button" onClick={sendInvite} disabled={!inviteEmail.trim() || inviting}
+                          style={{ background:'#2E6A8F', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity:!inviteEmail.trim() || inviting ? 0.5 : 1 }}>
+                          {inviting ? 'Sending...' : 'Send invite'}
+                        </button>
+                      </div>
+                      <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>They will receive an email with a link to join your organisation.</p>
+                    </div>
+                  )}
+                </div>
+              )}
               <div style={{ padding:'16px 20px' }}>
                 {members.map(m => (
                   <div key={m.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
