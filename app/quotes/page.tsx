@@ -151,7 +151,7 @@ export default function QuotesPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={false}   />
 
-      <StageRail currentPath="/quotes" jobStatus={job?.status} />
+      <StageRail currentPath="/compare" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
         {/* Minimum 3 quotes nudge */}
