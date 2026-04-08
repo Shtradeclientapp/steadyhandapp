@@ -103,7 +103,38 @@ export default function VaultPage() {
               <span style={{ fontSize:'11px', color:'#6B4FA8', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Home vault</span>
             </div>
             <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'4px' }}>DOCUMENT VAULT</h1>
-            <p style={{ fontSize:'14px', color:'#4A5E64', fontWeight:300 }}>Your permanent home record — scope agreements, warranties, certificates and receipts.</p>
+            <p style={{ fontSize:'14px', color:'#4A5E64', fontWeight:300, lineHeight:'1.7', marginBottom:'20px' }}>Your permanent home record — scope agreements, warranties, certificates and receipts.</p>
+
+            {/* Explainer */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'8px' }}>
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>WHAT GETS STORED HERE</p>
+              </div>
+              <div style={{ padding:'16px 20px' }}>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
+                  Every Steadyhand job generates a set of documents — the written record of what was agreed, inspected, built and warranted. These aren&apos;t just files. They are the lasting evidence of the dialogue that happened before, during and after the work: the consult notes both parties signed off on, the scope agreement that defined what was included, the milestone records that confirmed completion, and the warranty certificate that protects you after the tradie leaves.
+                </p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
+                  Most homeowners lose this paper trail. It gets emailed once and never filed. When something goes wrong — or when you sell the property — there is nothing to show. The Document Vault changes that. It accumulates automatically as you use Steadyhand, and you can add your own documents from jobs done outside the platform too.
+                </p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+                  {[
+                    { icon:'📋', stage:'Consult', desc:'Site visit notes — what was observed, agreed and flagged before quoting began.' },
+                    { icon:'📄', stage:'Contract', desc:'Signed scope agreement — the written record of what the tradie committed to deliver.' },
+                    { icon:'✅', stage:'Build', desc:'Milestone records — completion confirmed at each stage of the work.' },
+                    { icon:'🛡', stage:'Protected', desc:'Warranty certificate — your formal protection after the job is signed off.' },
+                  ].map(item => (
+                    <div key={item.stage} style={{ display:'flex', gap:'10px', alignItems:'flex-start', padding:'10px', background:'rgba(28,43,50,0.03)', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.06)' }}>
+                      <span style={{ fontSize:'18px', flexShrink:0 }}>{item.icon}</span>
+                      <div>
+                        <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{item.stage}</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
           <button type="button" onClick={() => setShowUpload(!showUpload)}
             style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
