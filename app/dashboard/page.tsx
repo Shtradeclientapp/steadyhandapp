@@ -248,46 +248,7 @@ export default function DashboardPage() {
           </div>
         </Link>
 
-        {/* BUILD JOURNAL CARD */}
-        {builds && builds.length > 0 && (
-          <div style={{ marginBottom:'12px' }}>
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
-              <p style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'#7A9098', fontWeight:500, margin:0 }}>Build Journal</p>
-              <Link href="/diy" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>View all →</Link>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:`repeat(${Math.min(builds.length, 3)}, 1fr)`, gap:'10px' }}>
-              {builds.map((build: any) => {
-                const pct = build.budget_estimate && build.budget_actual ? Math.min(Math.round((Number(build.budget_actual)/Number(build.budget_estimate))*100),100) : 0
-                return (
-                  <Link key={build.id} href="/diy" style={{ textDecoration:'none' }}>
-                    <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'16px', position:'relative', overflow:'hidden', cursor:'pointer' }}>
-                      <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.2), transparent 60%)' }} />
-                      <div style={{ position:'relative', zIndex:1 }}>
-                        <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>{build.project_type?.replace('_',' ') || 'Build'}</p>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>{build.title}</p>
-                        {build.address && <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>📍 {build.address}</p>}
-                        <div style={{ height:'3px', background:'rgba(216,228,225,0.1)', borderRadius:'2px', overflow:'hidden' }}>
-                          <div style={{ height:'100%', width:pct+'%', background:'#D4522A', borderRadius:'2px' }} />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-        )}
-        {(!builds || builds.length === 0) && (
-          <Link href="/diy" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
-            <div style={{ background:'rgba(28,43,50,0.04)', border:'1px dashed rgba(28,43,50,0.15)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Build Journal</p>
-                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Track your owner-builder project — trades, budget, compliance</p>
-              </div>
-              <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
-            </div>
-          </Link>
-        )}
+
 
                 {/* BUILD YOUR CAPABILITY */}
         <div style={{ marginTop:'32px', marginBottom:'28px' }}>
@@ -316,19 +277,26 @@ export default function DashboardPage() {
 
         <div style={{ marginTop:'32px' }}>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>HOME HUB</h2>
-          <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'12px' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px' }}>
             <a href="/wallet" style={{ textDecoration:'none' }}>
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer' }}>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer', height:'100%' }}>
                 <div style={{ fontSize:'28px', marginBottom:'10px' }}>💰</div>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>WALLET</div>
-                <div style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>FINANCE</div>
+                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Track quotes, milestone payments and invoice history across all your jobs.</div>
               </div>
             </a>
             <a href="/diy" style={{ textDecoration:'none' }}>
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer' }}>
-                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🏠</div>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>DIY PROJECTS</div>
-                <div style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.5' }}>Manage your own home improvement projects with tasks, budgets and expenses.</div>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer', height:'100%' }}>
+                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🏗</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>BUILD JOURNAL</div>
+                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Manage your owner-builder projects — trades, tasks, budget and compliance.</div>
+              </div>
+            </a>
+            <a href="/vault" style={{ textDecoration:'none' }}>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', cursor:'pointer', height:'100%' }}>
+                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🗄</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>DOCUMENT VAULT</div>
+                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Your permanent home record — scope agreements, warranties and certificates.</div>
               </div>
             </a>
           </div>
