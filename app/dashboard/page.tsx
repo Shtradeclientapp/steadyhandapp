@@ -161,6 +161,26 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* SUBSCRIPTION CARD */}
+        <Link href="/home-plan" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
+          <div style={{ background: profile?.subscription_plan === 'home' ? '#1C2B32' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+              <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>
+                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
+                </p>
+                <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
+                  {profile?.subscription_plan === 'home' ? 'Extended warranty · Document vault · Priority matching' : 'Unlimited jobs · 180-day warranty · Document vault · $19/month'}
+                </p>
+              </div>
+            </div>
+            <span style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? '#2E7D60' : '#D4522A', fontWeight:500, flexShrink:0 }}>
+              {profile?.subscription_plan === 'home' ? '✓ Active' : profile?.subscription_plan === 'home_interest' ? 'Interest logged' : 'Learn more →'}
+            </span>
+          </div>
+        </Link>
+
         <div style={{ background:'#2E7D60', borderRadius:'14px', padding:'24px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'32px' }}>
           <div>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'white', letterSpacing:'1px', marginBottom:'4px' }}>START A NEW REQUEST</h2>
@@ -228,25 +248,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* SUBSCRIPTION CARD */}
-        <Link href="/home-plan" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
-          <div style={{ background: profile?.subscription_plan === 'home' ? '#1C2B32' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-              <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>
-                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
-                </p>
-                <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
-                  {profile?.subscription_plan === 'home' ? 'Extended warranty · Document vault · Priority matching' : 'Unlimited jobs · 180-day warranty · Document vault · $19/month'}
-                </p>
-              </div>
-            </div>
-            <span style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? '#2E7D60' : '#D4522A', fontWeight:500, flexShrink:0 }}>
-              {profile?.subscription_plan === 'home' ? '✓ Active' : profile?.subscription_plan === 'home_interest' ? 'Interest logged' : 'Learn more →'}
-            </span>
-          </div>
-        </Link>
+
 
 
 
