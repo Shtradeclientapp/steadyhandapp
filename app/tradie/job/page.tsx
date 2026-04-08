@@ -302,7 +302,7 @@ export default function TradieJobPage() {
               <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'6px' }}>
                 In some circumstances a site visit may not be possible. Skipping the assessment means your quote will not have a shared site record — this may affect your trust score and could increase the likelihood of scope disputes later.
               </p>
-              <button type="button" style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px', padding:'7px 14px', cursor:'pointer', marginTop:'4px' }} onClick={async () => {
+              <button type="button" onClick={async () => {
                 const supabase = createClient()
                 await supabase.from('site_assessments').upsert({
                   job_id: job.id,
@@ -320,8 +320,8 @@ export default function TradieJobPage() {
                 })
                 window.location.reload()
               }}
-                style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
-                Proceed without consult
+                style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px', padding:'7px 14px', cursor:'pointer', marginTop:'4px' }}>
+                Skip consult — go straight to quoting
               </button>
             </div>
           </div>
