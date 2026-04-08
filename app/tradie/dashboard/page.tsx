@@ -439,6 +439,37 @@ export default function TradieDashboard() {
           </>
         )}
 
+        {/* TRADIE BUILD JOURNAL EXPLAINER */}
+        <div style={{ marginTop:'32px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>SOURCING QUOTES FROM SUPPLIERS?</p>
+            <a href="/diy" style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', textDecoration:'none' }}>Open Build Journal →</a>
+          </div>
+          <div style={{ padding:'16px 20px' }}>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'14px' }}>
+              As a trade business, you&apos;re often a quote-seeker too — sourcing materials, subcontractors or specialist services for your projects. Use the Build Journal to manage these requests, group them under a project name, and track costs and scope agreements in one place.
+            </p>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'14px' }}>
+              {[
+                { icon:'🔍', text:'Request quotes from suppliers and subcontractors through Steadyhand' },
+                { icon:'📁', text:'Group all trade packages under a single project name' },
+                { icon:'💰', text:'Track costs, variations and budget across the full project' },
+                { icon:'📋', text:'Store scope agreements and compliance records per project' },
+              ].map((item, i) => (
+                <div key={i} style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                  <span style={{ fontSize:'14px', flexShrink:0 }}>{item.icon}</span>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{item.text}</p>
+                </div>
+              ))}
+            </div>
+            <a href="/diy">
+              <button type="button" style={{ background:'#1C2B32', color:'white', border:'none', borderRadius:'8px', padding:'9px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
+                Open Build Journal →
+              </button>
+            </a>
+          </div>
+        </div>
+
         {/* BUILD YOUR CAPABILITY */}
         <div style={{ marginTop:'32px', paddingTop:'28px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
