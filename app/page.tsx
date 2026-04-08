@@ -137,7 +137,7 @@ export default function Home() {
             },
             {
               icon:'🛡',
-              phase:'After it's done',
+              phase:'After it is done',
               stages:'Complete · Protect',
               body:'A structured sign-off starts your 90-day warranty from the moment you are satisfied — not from the invoice date. Any issues logged in the warranty period are tracked and responded to.'
             },
