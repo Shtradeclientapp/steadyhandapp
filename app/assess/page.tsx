@@ -193,7 +193,7 @@ export default function AssessPage() {
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
-      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their site assessment notes. Please review and acknowledge before quoting begins.',
+      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their consult notes. Please review and acknowledge before quoting begins.',
     })
 
     await fetch('/api/email', {
@@ -208,7 +208,7 @@ export default function AssessPage() {
     await supabase2.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
-      body: '📋 ' + (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their site assessment notes. Taking time to document observations before quoting begins is one of the most important trust acts in any trade relationship.',
+      body: '📋 ' + (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their consult notes. Taking time to document observations before quoting begins is one of the most important trust acts in any trade relationship.',
     })
     setSharing(false)
   }
@@ -225,7 +225,7 @@ export default function AssessPage() {
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
-      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has acknowledged the site assessment notes. The assessment stage is complete.',
+      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has acknowledged the consult notes. The consult stage is complete.',
     })
 
     setAssessment((a: any) => ({ ...a, [field]: new Date().toISOString() }))
@@ -270,14 +270,14 @@ export default function AssessPage() {
       <NavHeader profile={profile} isTradie={false}   />
 
       {/* STAGE RAIL */}
-      <StageRail currentPath="/assess" jobStatus={job?.status} />
+      <StageRail currentPath="/consult" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'780px', margin:'0 auto', padding:'32px 24px' }}>
 
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#9B6B9B', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>See what they find</span>
         </div>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>SEE WHAT THEY FIND</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'8px' }}>{job.trade_category} · {job.suburb}</p>
         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'32px' }}>
@@ -366,7 +366,7 @@ export default function AssessPage() {
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'16px' }}>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>YOUR ASSESSMENT NOTES</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>YOUR CONSULT NOTES</p>
               </div>
               <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
                 {myPrompts.map(prompt => (
@@ -496,7 +496,7 @@ export default function AssessPage() {
                 )}
 
                 {(isTradie ? CLIENT_PROMPTS : TRADIE_PROMPTS).map(prompt => {
-                    const value = form[prompt.key]
+                    const value = assessment?.[prompt.key]
                     if (!value) return null
                     return (
                       <div key={prompt.key} style={{ padding:'14px 16px', background:'#F4F8F7', borderRadius:'10px' }}>
@@ -528,7 +528,7 @@ export default function AssessPage() {
             {myAcknowledged && theirAcknowledged && (
               <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'20px', textAlign:'center' as const }}>
                 <div style={{ fontSize:'32px', marginBottom:'8px' }}>✓</div>
-                <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Assessment complete</p>
+                <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Consult complete</p>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>Both parties have acknowledged each other&apos;s notes. You&apos;re ready to compare quotes.</p>
                 <a href={isTradie ? '/tradie/dashboard' : '/compare'}>
                   <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
