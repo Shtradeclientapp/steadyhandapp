@@ -176,6 +176,7 @@ export default function DIYPage() {
       description: project.description || '',
       address: project.address || '',
     })
+    params.set('diy_project_id', project.id)
     window.location.href = '/request?' + params.toString()
   }
 

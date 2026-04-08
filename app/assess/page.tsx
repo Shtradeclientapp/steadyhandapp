@@ -366,6 +366,33 @@ export default function AssessPage() {
         </div>
 
         {/* TABS */}
+        {/* STATUS STRIP */}
+        <div style={{ marginBottom:'16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px' }}>
+          <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'8px' }}>Consult status</p>
+          <div style={{ display:'flex', gap:'16px', flexWrap:'wrap' as const }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+              <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: myShared ? '#2E7D60' : '#C07830', flexShrink:0 }} />
+              <span style={{ fontSize:'12px', color: myShared ? '#2E7D60' : '#C07830', fontWeight:500 }}>
+                {myShared ? 'Your notes shared' : 'Your notes not yet shared'}
+              </span>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+              <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: theirShared ? '#2E7D60' : '#9AA5AA', flexShrink:0 }} />
+              <span style={{ fontSize:'12px', color: theirShared ? '#2E7D60' : '#9AA5AA', fontWeight:500 }}>
+                {theirShared ? (theirLabel + ' notes shared') : ('Waiting for ' + theirLabel)}
+              </span>
+            </div>
+            {myShared && theirShared && (
+              <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                <div style={{ width:'8px', height:'8px', borderRadius:'50%', background: (myAcknowledged && theirAcknowledged) ? '#2E7D60' : '#C07830', flexShrink:0 }} />
+                <span style={{ fontSize:'12px', color: (myAcknowledged && theirAcknowledged) ? '#2E7D60' : '#C07830', fontWeight:500 }}>
+                  {(myAcknowledged && theirAcknowledged) ? 'Both acknowledged — ready to quote' : myAcknowledged ? ('Waiting for ' + theirLabel + ' to acknowledge') : ('Acknowledge ' + theirLabel + '’s notes to proceed')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
         <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'20px' }}>
           <button type="button" onClick={() => setActiveTab('mine')}
             style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'mine' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'mine' ? 600 : 400, color: activeTab === 'mine' ? '#1C2B32' : '#7A9098' }}>
