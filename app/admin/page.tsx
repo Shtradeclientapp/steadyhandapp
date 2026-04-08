@@ -205,13 +205,17 @@ export default function AdminPage() {
                   ))
                 ) : (
                   [
+                    { label: 'Full name', value: selectedProfile.full_name || '—' },
                     { label: 'Email', value: selectedProfile.email },
                     { label: 'Suburb', value: selectedProfile.suburb || '—' },
+                    { label: 'Phone', value: selectedProfile.phone || '—' },
+                    { label: 'Org', value: selectedProfile.org_id ? 'Organisation member' : 'Individual' },
+                    { label: 'Subscription', value: selectedProfile.subscription_plan || 'free' },
                     { label: 'Joined', value: new Date(selectedProfile.created_at).toLocaleDateString('en-AU') },
                   ].map(item => (
                     <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid rgba(28,43,50,0.06)', gap: '8px' }}>
                       <span style={{ fontSize: '11px', color: '#7A9098', flexShrink: 0 }}>{item.label}</span>
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>{item.value}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>{String(item.value)}</span>
                     </div>
                   ))
                 )}
