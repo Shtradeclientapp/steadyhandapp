@@ -13,6 +13,8 @@ function MessagesPageInner() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [lastMessages, setLastMessages] = useState<Record<string, any>>({})
+  const [unread, setUnread] = useState<Record<string, number>>({})
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -37,6 +39,24 @@ function MessagesPageInner() {
         .order('updated_at', { ascending: false })
 
       setJobs(jobData || [])
+
+      // Load last message preview for each job
+      if (jobData && jobData.length > 0) {
+        const supabase2 = createClient()
+        const previews: Record<string, any> = {}
+        await Promise.all((jobData || []).map(async (j: any) => {
+          const { data: lastMsg } = await supabase2
+            .from('job_messages')
+            .select('body, created_at, sender_id')
+            .eq('job_id', j.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single()
+          if (lastMsg) previews[j.id] = lastMsg
+        }))
+        setLastMessages(previews)
+      }
+
       if (jobData && jobData.length > 0) {
         const jobParam = searchParams.get('job')
         const selected = jobParam ? (jobData.find((j: any) => j.id === jobParam) || jobData[0]) : jobData[0]
@@ -114,6 +134,12 @@ function MessagesPageInner() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif', display:'flex', flexDirection:'column' }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .messages-grid { grid-template-columns: 1fr !important; grid-template-rows: auto 1fr; }
+          .messages-sidebar { max-height: 200px; }
+        }
+      `}</style>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100, flexShrink:0 }}>
         <a href={dashboardPath} style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>MESSAGES</div>
@@ -122,9 +148,9 @@ function MessagesPageInner() {
 
       <div style={{ flex:1, display:'grid', gridTemplateColumns:'300px 1fr', overflow:'hidden', height:'calc(100vh - 64px)' }} className="messages-grid">
 
-        <div style={{ borderRight:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE', overflowY:'auto' }}>
+        <div className="messages-sidebar" style={{ borderRight:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE', overflowY:'auto' }}>
           <div style={{ padding:'16px', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
-            <p style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', fontWeight:500 }}>Job threads ({jobs.length})</p>
+            <p style={{ fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, margin:0 }}>Job threads ({jobs.filter((j:any) => !['complete','cancelled'].includes(j.status)).length} active)</p>
           </div>
           {jobs.length === 0 && (
             <div style={{ padding:'24px', textAlign:'center' }}>
@@ -141,7 +167,14 @@ function MessagesPageInner() {
                 <div style={{ fontSize:'11px', color:'#4A5E64' }}>
                   {isTradie ? job.client?.full_name : job.tradie?.business_name || 'No tradie yet'}
                 </div>
-                <div style={{ marginTop:'6px', display:'inline-block', background:'rgba(28,43,50,0.06)', borderRadius:'4px', padding:'2px 8px', fontSize:'10px', color:'#7A9098', textTransform:'capitalize' }}>{job.status}</div>
+                <div style={{ marginTop:'4px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'8px' }}>
+                  <span style={{ display:'inline-block', background:'rgba(28,43,50,0.06)', borderRadius:'4px', padding:'2px 8px', fontSize:'10px', color:'#7A9098', textTransform:'capitalize' }}>{job.status}</span>
+                </div>
+                {lastMessages[job.id] && (
+                  <p style={{ fontSize:'11px', color:'#9AA5AA', margin:'4px 0 0', lineHeight:'1.4', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:1, WebkitBoxOrient:'vertical' as any }}>
+                    {lastMessages[job.id].body.length > 50 ? lastMessages[job.id].body.slice(0,50) + '…' : lastMessages[job.id].body}
+                  </p>
+                )}
               </div>
             )
           })}
@@ -167,24 +200,46 @@ function MessagesPageInner() {
                     No messages yet. Start the conversation below.
                   </div>
                 )}
-                {messages.map(msg => {
+                {messages.map((msg, idx) => {
                   const isMine = msg.sender_id === user?.id
+                  const isSystem = !msg.sender_id || msg.body.startsWith('⚠') || msg.body.startsWith('✍') || msg.body.startsWith('✅') || msg.body.startsWith('📋') || msg.body.includes('has signed') || msg.body.includes('Scope updated') || msg.body.includes('milestone') || msg.body.includes('skipped')
+                  // Date separator
+                  const msgDate = new Date(msg.created_at).toDateString()
+                  const prevDate = idx > 0 ? new Date(messages[idx-1].created_at).toDateString() : null
+                  const showDate = msgDate !== prevDate
                   return (
-                    <div key={msg.id} style={{ display:'flex', flexDirection:'column', alignItems: isMine ? 'flex-end' : 'flex-start' }}>
-                      <div style={{ fontSize:'11px', color:'#7A9098', marginBottom:'3px' }}>
-                        {msg.sender?.full_name} · {new Date(msg.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
-                      </div>
-                      <div style={{
-                        maxWidth:'70%', padding:'10px 14px', borderRadius:'12px',
-                        background: isMine ? '#1C2B32' : '#E8F0EE',
-                        color: isMine ? 'rgba(216,228,225,0.9)' : '#1C2B32',
-                        border: isMine ? 'none' : '1px solid rgba(28,43,50,0.1)',
-                        fontSize:'14px', lineHeight:'1.5',
-                        borderBottomRightRadius: isMine ? '4px' : '12px',
-                        borderBottomLeftRadius: isMine ? '12px' : '4px',
-                      }}>
-                        {msg.body}
-                      </div>
+                    <div key={msg.id}>
+                      {showDate && (
+                        <div style={{ textAlign:'center', margin:'12px 0' }}>
+                          <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', borderRadius:'100px', padding:'3px 10px' }}>
+                            {new Date(msg.created_at).toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' })}
+                          </span>
+                        </div>
+                      )}
+                      {isSystem ? (
+                        <div style={{ textAlign:'center', margin:'4px 0' }}>
+                          <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'5px 12px', display:'inline-block', lineHeight:'1.5' }}>
+                            {msg.body}
+                          </span>
+                        </div>
+                      ) : (
+                        <div style={{ display:'flex', flexDirection:'column', alignItems: isMine ? 'flex-end' : 'flex-start' }}>
+                          <div style={{ fontSize:'11px', color:'#7A9098', marginBottom:'3px' }}>
+                            {msg.sender?.full_name} · {new Date(msg.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
+                          </div>
+                          <div style={{
+                            maxWidth:'70%', padding:'10px 14px', borderRadius:'12px',
+                            background: isMine ? '#1C2B32' : '#E8F0EE',
+                            color: isMine ? 'rgba(216,228,225,0.9)' : '#1C2B32',
+                            border: isMine ? 'none' : '1px solid rgba(28,43,50,0.1)',
+                            fontSize:'14px', lineHeight:'1.5',
+                            borderBottomRightRadius: isMine ? '4px' : '12px',
+                            borderBottomLeftRadius: isMine ? '12px' : '4px',
+                          }}>
+                            {msg.body}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )
                 })}

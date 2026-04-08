@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [builds, setBuilds] = useState<any[]>([])
 
@@ -44,6 +45,14 @@ export default function DashboardPage() {
         .order('created_at', { ascending: false })
         .limit(3)
       setBuilds(buildsData || [])
+
+      // Count recent messages not sent by this user across active jobs
+      const { data: recentMsgs } = await supabase
+        .from('job_messages')
+        .select('id')
+        .neq('sender_id', session.user.id)
+        .gte('created_at', new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
+      setUnreadCount(recentMsgs?.length || 0)
 
       setLoading(false)
     })
@@ -77,7 +86,10 @@ export default function DashboardPage() {
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>Messages</a>
+          <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px', display:'inline-flex', alignItems:'center', gap:'6px' }}>
+            Messages
+            {unreadCount > 0 && <span style={{ background:'#D4522A', color:'white', borderRadius:'100px', fontSize:'10px', fontWeight:700, padding:'1px 6px', lineHeight:'1.4' }}>{unreadCount}</span>}
+          </a>
           <div style={{ position:'relative' as const }}>
             <div onClick={() => setDropdownOpen(!dropdownOpen)}
               style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
