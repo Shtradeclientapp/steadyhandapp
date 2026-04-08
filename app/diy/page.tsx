@@ -244,10 +244,32 @@ export default function DIYPage() {
 
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
             {projects.length === 0 && !showNewProject && (
-              <div style={{ textAlign:'center' as const, padding:'32px 16px', background:'#E8F0EE', borderRadius:'12px', border:'1px solid rgba(28,43,50,0.1)' }}>
-                <div style={{ fontSize:'32px', marginBottom:'8px', opacity:0.4 }}>🏗</div>
-                <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'4px' }}>No builds yet</p>
-                <p style={{ fontSize:'12px', color:'#9AA5AA' }}>Click + New to start tracking your build project</p>
+              <div style={{ background:'#E8F0EE', borderRadius:'12px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
+                <div style={{ padding:'20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 6px' }}>BUILD JOURNAL</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', margin:0, lineHeight:'1.6' }}>Track every trade, cost, task and compliance item for your build project — all in one place.</p>
+                </div>
+                <div style={{ padding:'16px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>Example projects</p>
+                  {[
+                    { icon:'🏠', title:'Second storey addition', type:'Owner builder', desc:'Managing trades, permits and compliance for a major home extension' },
+                    { icon:'🔧', title:'Kitchen renovation', type:'Home project', desc:'Coordinating plumber, electrician and tiler for a full kitchen refit' },
+                    { icon:'🌿', title:'Landscaping and fencing', type:'Home project', desc:'Multiple trade packages across a large outdoor renovation' },
+                  ].map((ex, i) => (
+                    <div key={i} style={{ padding:'10px 12px', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.08)', marginBottom:'8px', background:'white', opacity:0.7 }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
+                        <span style={{ fontSize:'16px' }}>{ex.icon}</span>
+                        <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{ex.title}</span>
+                        <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.08)', color:'#D4522A', padding:'1px 6px', borderRadius:'4px' }}>{ex.type}</span>
+                      </div>
+                      <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 0 24px', lineHeight:'1.5' }}>{ex.desc}</p>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => setShowNewProject(true)}
+                    style={{ width:'100%', marginTop:'8px', background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
+                    + Start your first build journal
+                  </button>
+                </div>
               </div>
             )}
             {projects.map(proj => {
@@ -279,10 +301,31 @@ export default function DIYPage() {
         {/* RIGHT — Project detail */}
         <div>
           {!activeProj ? (
-            <div style={{ textAlign:'center' as const, padding:'64px', background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)' }}>
-              <div style={{ fontSize:'48px', marginBottom:'16px', opacity:0.3 }}>🏗</div>
-              <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:500, marginBottom:'8px' }}>Select or create a build</p>
-              <p style={{ fontSize:'13px', color:'#7A9098' }}>Track your build project from permit to completion — all your trades, costs, tasks and compliance in one place.</p>
+            <div style={{ background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
+              <div style={{ padding:'24px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                <div style={{ fontSize:'36px', marginBottom:'12px' }}>🏗</div>
+                <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'8px' }}>YOUR BUILD JOURNAL</h2>
+                <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:0 }}>
+                  The Build Journal is for homeowners and owner-builders managing complex projects with multiple trades. Create a project to track your permits, tasks, budget, compliance requirements and trade packages — all in one place.
+                </p>
+              </div>
+              <div style={{ padding:'20px' }}>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'12px' }}>What you can track</p>
+                {[
+                  { icon:'📋', title:'Trade packages', desc:'Convert any trade into a Steadyhand job request — get quotes, sign a scope, and track milestones.' },
+                  { icon:'✅', title:'Tasks and compliance', desc:'WA owner-builder compliance checklist pre-populated. Tick off items as you go.' },
+                  { icon:'💰', title:'Budget and expenses', desc:'Log every expense and see your budget at a glance. Alerts when you go over.' },
+                  { icon:'📄', title:'Permit and registration', desc:'Store your permit number, builder registration and key dates in one place.' },
+                ].map((item, i) => (
+                  <div key={i} style={{ display:'flex', gap:'12px', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                    <span style={{ fontSize:'20px', flexShrink:0 }}>{item.icon}</span>
+                    <div>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{item.title}</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <>
