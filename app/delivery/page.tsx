@@ -304,6 +304,7 @@ export default function DeliveryPage() {
   const nav = (
     <div>
       <NavHeader profile={profile} isTradie={false}   />
+      <StageRail currentPath="/delivery" jobStatus={job?.status} />
       <div style={{ position:'sticky', top:'64px', zIndex:90, background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' }}>
         {[
           { num:1, label:'Request', path:'/request', color:'#2E7D60' },
