@@ -35,7 +35,9 @@ export default function AssessPage() {
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
   const [proposingDate, setProposingDate] = useState(false)
   const [proposedDate, setProposedDate] = useState('')
+  const [proposedSlots, setProposedSlots] = useState(['','',''])
   const [savingDate, setSavingDate] = useState(false)
+  const [confirmingSlot, setConfirmingSlot] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
 
   useEffect(() => {
@@ -117,21 +119,42 @@ export default function AssessPage() {
   }
 
   const proposeConsultDate = async () => {
-    if (!proposedDate || !assessment || !job) return
+    const filled = proposedSlots.filter(s => s.trim())
+    if (!filled.length || !assessment || !job) return
     setSavingDate(true)
     const supabase = createClient()
-    await supabase.from('site_assessments').update({
-      consult_date: proposedDate,
-    }).eq('id', assessment.id)
+    const senderName = isTradie ? profile.tradie?.business_name : profile.full_name
+    const slotLines = filled.map((s, i) => 'Option ' + (i+1) + ': ' + new Date(s).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' })).join('\n')
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
-      body: (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has proposed a consultation date: ' + new Date(proposedDate).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+      body: senderName + ' has proposed ' + filled.length + ' consultation time' + (filled.length > 1 ? 's' : '') + ':\n' + slotLines + '\n\nPlease confirm which time works for you.',
     })
-    setAssessment((a: any) => ({ ...a, consult_date: proposedDate }))
-    setForm((f: any) => ({ ...f, consult_date: proposedDate }))
+    // Store proposed slots in assessment
+    await supabase.from('site_assessments').update({
+      consult_date: filled[0],
+    }).eq('id', assessment.id)
+    setAssessment((a: any) => ({ ...a, consult_date: filled[0], proposed_slots: filled }))
+    setForm((f: any) => ({ ...f, consult_date: filled[0] }))
     setProposingDate(false)
+    setProposedSlots(['','',''])
     setSavingDate(false)
+  }
+
+  const confirmSlot = async (slot: string) => {
+    if (!assessment || !job) return
+    setConfirmingSlot(true)
+    const supabase = createClient()
+    await supabase.from('site_assessments').update({ consult_date: slot }).eq('id', assessment.id)
+    const senderName = isTradie ? profile.tradie?.business_name : profile.full_name
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: profile.id,
+      body: senderName + ' has confirmed the consultation: ' + new Date(slot).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' }),
+    })
+    setAssessment((a: any) => ({ ...a, consult_date: slot }))
+    setForm((f: any) => ({ ...f, consult_date: slot }))
+    setConfirmingSlot(false)
   }
 
   const save = async () => {
@@ -287,27 +310,34 @@ export default function AssessPage() {
               </div>
             ) : (
               <div>
-                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'12px', lineHeight:'1.6' }}>
-                  {assessment?.consult_date ? 'Propose a new date:' : 'Propose a consultation date to ' + theirLabel + '. They will be notified via the job message thread.'}
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
+                  {assessment?.consult_date ? 'Propose new times:' : 'Suggest up to 3 times that work for you. ' + theirLabel + ' will confirm which suits them.'}
                 </p>
-                <div style={{ display:'flex', gap:'10px', alignItems:'flex-end' }}>
-                  <div style={{ flex:1 }}>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Proposed date</p>
-                    <input type="date" value={proposedDate} onChange={e => setProposedDate(e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
-                      style={inp} />
-                  </div>
-                  <button type="button" onClick={proposeConsultDate} disabled={!proposedDate || savingDate}
-                    style={{ background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedDate || savingDate ? 0.5 : 1, flexShrink:0 }}>
-                    {savingDate ? 'Saving...' : 'Propose date →'}
-                  </button>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'14px' }}>
+                  {[0,1,2].map(i => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <span style={{ fontSize:'12px', fontWeight:600, color:'#7A9098', width:'60px', flexShrink:0 }}>Option {i+1}{i === 0 ? ' *' : ''}</span>
+                      <input type="datetime-local" value={proposedSlots[i]}
+                        onChange={e => { const s = [...proposedSlots]; s[i] = e.target.value; setProposedSlots(s) }}
+                        min={new Date().toISOString().slice(0,16)}
+                        style={{ ...inp, flex:1 }} />
+                    </div>
+                  ))}
                 </div>
-                {proposingDate && (
-                  <button type="button" onClick={() => setProposingDate(false)}
-                    style={{ marginTop:'8px', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer' }}>
-                    Cancel
+                <div style={{ display:'flex', gap:'10px' }}>
+                  <button type="button" onClick={proposeConsultDate}
+                    disabled={!proposedSlots[0] || savingDate}
+                    style={{ flex:1, background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedSlots[0] || savingDate ? 0.5 : 1 }}>
+                    {savingDate ? 'Sending...' : 'Send times to ' + theirLabel + ' →'}
                   </button>
-                )}
+                  {proposingDate && (
+                    <button type="button" onClick={() => setProposingDate(false)}
+                      style={{ fontSize:'13px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', padding:'10px 14px', cursor:'pointer' }}>
+                      Cancel
+                    </button>
+                  )}
+                </div>
+                <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px' }}>* At least one time required. Options 2 and 3 are optional.</p>
               </div>
             )}
             {assessment?.consult_date && (
