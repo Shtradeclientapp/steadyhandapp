@@ -57,6 +57,7 @@ export default function TradieJobPage() {
   const [quoteSubmitted, setQuoteSubmitted] = useState(false)
   const [warrantyIssues, setWarrantyIssues] = useState<any[]>([])
   const [respondingTo, setRespondingTo] = useState<string|null>(null)
+  const [guideSlide, setGuideSlide] = useState(0)
   const [responseForm, setResponseForm] = useState<Record<string,string>>({})
   const [activeTemplate, setActiveTemplate] = useState<string>('detailed')
   const [quoteForm, setQuoteForm] = useState({
@@ -280,52 +281,94 @@ export default function TradieJobPage() {
           <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Tradie view</span>
         </div>
 
-        {/* ASSESS STAGE GUIDANCE */}
-        {currentStageN === 1 && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(155,107,155,0.2)', borderLeft:'3px solid #9B6B9B', borderRadius:'10px', padding:'16px 18px', marginBottom:'20px' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#9B6B9B', letterSpacing:'0.5px', marginBottom:'8px' }}>CONSULT STAGE</p>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
-              {job.client?.full_name} has invited you to quote on this job. Before submitting a quote, Steadyhand asks both parties to complete a consult.
-            </p>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
-              Arrange a time to visit the site, then record your observations. Share your notes with the client — they will share theirs with you. Once both parties have acknowledged each other&apos;s records, quoting can begin.
-            </p>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'12px' }}>
-              This exchange is one of the most important trust moments in any trade relationship. Your consult notes become part of the permanent job record.
-            </p>
-            <a href="/assess">
-              <button type="button" style={{ background:'#9B6B9B', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                Go to consult →
-              </button>
-            </a>
-            <div style={{ marginTop:'12px', paddingTop:'12px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'6px' }}>
-                In some circumstances a site visit may not be possible. Skipping the assessment means your quote will not have a shared site record — this may affect your trust score and could increase the likelihood of scope disputes later.
-              </p>
-              <button type="button" onClick={async () => {
-                const supabase = createClient()
-                await supabase.from('site_assessments').upsert({
-                  job_id: job.id,
-                  client_shared_at: null,
-                  tradie_shared_at: null,
-                  client_acknowledged_at: null,
-                  tradie_acknowledged_at: null,
-                  tradie_observations: 'Consult skipped — quote submitted without site visit.',
-                }, { onConflict: 'job_id' })
-                await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
-                await supabase.from('job_messages').insert({
-                  job_id: job.id,
-                  sender_id: user.id,
-                  body: '⚠ Consult skipped — ' + (job.tradie?.business_name || 'Tradie') + ' has proceeded directly to quoting without a site consult.',
-                })
-                window.location.reload()
-              }}
-                style={{ fontSize:'12px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px', padding:'7px 14px', cursor:'pointer', marginTop:'4px' }}>
-                Skip consult — go straight to quoting
-              </button>
+        {/* CONSULT STAGE GUIDANCE — SLIDER */}
+        {currentStageN === 1 && (() => {
+          const slides = [
+            {
+              icon: '👋',
+              title: 'You have been invited to quote',
+              body: job.client?.full_name + ' has asked Steadyhand to match them with a trade business for this job. Before submitting a quote, both parties complete a site consult.',
+              action: null,
+            },
+            {
+              icon: '📋',
+              title: 'How the consult works',
+              body: 'Arrange a time to visit the site. Record your observations in the consult form — what you saw, scope considerations, and your quote assumptions. Share your notes with the client and acknowledge theirs.',
+              action: null,
+            },
+            {
+              icon: '🛡',
+              title: 'Why it matters',
+              body: 'Your consult notes become part of the permanent job record. They protect you from scope creep and disputes later — and build your Dialogue Trust Score.',
+              action: null,
+            },
+          ]
+          const slide = slides[guideSlide]
+          return (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
+              <div style={{ background:'#9B6B9B', padding:'10px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'white', letterSpacing:'0.5px', margin:0 }}>CONSULT STAGE</p>
+                <div style={{ display:'flex', gap:'5px' }}>
+                  {slides.map((_, i) => (
+                    <div key={i} onClick={() => setGuideSlide(i)}
+                      style={{ width: i === guideSlide ? '18px' : '6px', height:'6px', borderRadius:'3px', background: i === guideSlide ? 'white' : 'rgba(255,255,255,0.35)', cursor:'pointer', transition:'all 0.2s' }} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ padding:'20px' }}>
+                <div style={{ fontSize:'28px', marginBottom:'10px' }}>{slide.icon}</div>
+                <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>{slide.title}</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>{slide.body}</p>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    {guideSlide > 0 && (
+                      <button type="button" onClick={() => setGuideSlide(g => g - 1)}
+                        style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>
+                        ← Back
+                      </button>
+                    )}
+                    {guideSlide < slides.length - 1 && (
+                      <button type="button" onClick={() => setGuideSlide(g => g + 1)}
+                        style={{ fontSize:'12px', color:'#9B6B9B', background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer', fontWeight:500 }}>
+                        Next →
+                      </button>
+                    )}
+                  </div>
+                  {guideSlide === slides.length - 1 && (
+                    <a href="/assess">
+                      <button type="button" style={{ background:'#9B6B9B', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                        Book a consult time →
+                      </button>
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div style={{ padding:'10px 16px 14px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
+                <button type="button" onClick={async () => {
+                  const supabase = createClient()
+                  await supabase.from('site_assessments').upsert({
+                    job_id: job.id,
+                    client_shared_at: null,
+                    tradie_shared_at: null,
+                    client_acknowledged_at: null,
+                    tradie_acknowledged_at: null,
+                    tradie_observations: 'Consult skipped — quote submitted without site visit.',
+                  }, { onConflict: 'job_id' })
+                  await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
+                  await supabase.from('job_messages').insert({
+                    job_id: job.id,
+                    sender_id: user.id,
+                    body: '⚠ Consult skipped — ' + (job.tradie?.business_name || 'Tradie') + ' has proceeded directly to quoting without a site consult.',
+                  })
+                  window.location.reload()
+                }}
+                  style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
+                  Skip consult and go straight to quoting
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* QUOTE STAGE GUIDANCE */}
         {currentStageN === 2 && !currentQuote && (
