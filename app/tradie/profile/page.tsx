@@ -113,8 +113,34 @@ export default function TradieProfilePage() {
 
   const availability = AVAILABILITY.find(a => a.value === form.availability_status) || AVAILABILITY[0]
 
+  const completionItems = [
+    { label: 'Business name', done: !!form.business_name },
+    { label: 'Bio (50+ chars)', done: !!form.bio && form.bio.length > 50 },
+    { label: 'Trade categories', done: (form.trade_categories || []).length > 0 },
+    { label: 'Service areas', done: (form.service_areas || []).length > 0 },
+    { label: 'ABN', done: !!form.abn },
+    { label: 'Licence number', done: !!form.licence_number },
+    { label: 'Logo', done: !!logoUrl },
+  ]
+  const completionPct = Math.round(completionItems.filter(i => i.done).length / completionItems.length * 100)
+
   return (
     <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
+      {completionPct < 100 && (
+        <div style={{ background: completionPct < 60 ? 'rgba(212,82,42,0.06)' : 'rgba(192,120,48,0.06)', borderBottom: '1px solid ' + (completionPct < 60 ? 'rgba(212,82,42,0.2)' : 'rgba(192,120,48,0.2)'), padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' as const }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '80px', height: '6px', background: 'rgba(28,43,50,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: completionPct + '%', background: completionPct < 60 ? '#D4522A' : '#C07830', borderRadius: '3px' }} />
+            </div>
+            <span style={{ fontSize: '12px', color: completionPct < 60 ? '#D4522A' : '#C07830', fontWeight: 500 }}>{completionPct}% profile complete</span>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
+            {completionItems.filter(i => !i.done).slice(0, 3).map(i => (
+              <span key={i.label} style={{ fontSize: '11px', color: '#7A9098', background: 'rgba(28,43,50,0.06)', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '4px', padding: '2px 8px' }}>Missing: {i.label}</span>
+            ))}
+          </div>
+        </div>
+      )}
       <nav style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', background: 'rgba(200,213,210,0.95)', borderBottom: '1px solid rgba(28,43,50,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
         <a href="/tradie/dashboard" style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#D4522A', letterSpacing: '2px', textDecoration: 'none' }}>STEADYHAND</a>
         <a href="/tradie/dashboard" style={{ fontSize: '13px', color: '#4A5E64', textDecoration: 'none' }}>← Back to dashboard</a>

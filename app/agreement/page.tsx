@@ -205,6 +205,15 @@ export default function AgreementPage() {
     const field = profile?.role === 'tradie' ? 'tradie_signed_at' : 'client_signed_at'
     await supabase.from('scope_agreements').update({ [field]: new Date().toISOString() }).eq('id', scope.id)
     setScope({ ...scope, [field]: new Date().toISOString() })
+
+    // Notify via message thread
+    const signerName = profile?.role === 'tradie' ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: user?.id,
+      body: signerName + ' has signed the scope agreement.',
+    }).catch(() => {})
+
     const updated = { ...scope, [field]: new Date().toISOString() }
     if (updated.client_signed_at && updated.tradie_signed_at) {
       await supabase.from('jobs').update({ status: 'delivery' }).eq('id', job.id)
