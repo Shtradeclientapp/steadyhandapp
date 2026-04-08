@@ -104,7 +104,7 @@ const submitJob = async () => {
 
     const { job, error } = await res.json()
     if (error) { alert(error); setSubmitting(false); return }
-window.location.href = '/shortlist'
+window.location.href = '/shortlist?submitted=true'
   }
 
   const nav = (

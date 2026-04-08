@@ -390,6 +390,7 @@ export default function TradieJobPage() {
           <p style={{ fontSize: '14px', color: '#1C2B32', lineHeight: '1.65', marginBottom: '12px' }}>{job.description}</p>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
             {job.budget_range && <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>Budget: {job.budget_range}</span>}
+            {job.urgency && <span style={{ fontSize: '12px', color: '#C07830', background: 'rgba(192,120,48,0.08)', border: '1px solid rgba(192,120,48,0.2)', padding: '3px 10px', borderRadius: '6px' }}>⏱ {job.urgency}</span>}
             {job.property_type && <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>{job.property_type}</span>}
             <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>{job.suburb}</span>
           </div>
