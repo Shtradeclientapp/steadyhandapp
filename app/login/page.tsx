@@ -8,6 +8,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showForgot, setShowForgot] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [resetSent, setResetSent] = useState(false)
+  const [resetting, setResetting] = useState(false)
+
+  const handleReset = async () => {
+    if (!resetEmail.trim()) return
+    setResetting(true)
+    const supabase = createClient()
+    await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
+      redirectTo: window.location.origin + '/reset-password',
+    })
+    setResetSent(true)
+    setResetting(false)
+  }
 
   const handleLogin = async () => {
     setLoading(true)
@@ -66,6 +81,31 @@ export default function LoginPage() {
               style={{ width:'100%', background:'#1C2B32', color:'white', padding:'13px', borderRadius:'8px', border:'none', cursor:'pointer', fontSize:'15px', fontWeight:'500', fontFamily:'sans-serif', marginBottom:'20px' }}>
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
+
+            <div style={{ textAlign:'center', marginBottom:'16px' }}>
+              <button type="button" onClick={() => setShowForgot(!showForgot)}
+                style={{ fontSize:'13px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', textDecoration:'underline' }}>
+                Forgot your password?
+              </button>
+            </div>
+
+            {showForgot && (
+              <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'16px', marginBottom:'16px' }}>
+                {resetSent ? (
+                  <p style={{ fontSize:'13px', color:'#2E7D60', margin:0 }}>✓ Reset link sent — check your email.</p>
+                ) : (
+                  <>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'8px', fontFamily:'sans-serif' }}>Reset your password</p>
+                    <input type="email" placeholder="your@email.com" value={resetEmail} onChange={e => setResetEmail(e.target.value)}
+                      style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', marginBottom:'8px', fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                    <button type="button" onClick={handleReset} disabled={!resetEmail.trim() || resetting}
+                      style={{ width:'100%', background:'#2E6A8F', color:'white', padding:'9px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity:!resetEmail.trim() || resetting ? 0.5 : 1, fontFamily:'sans-serif' }}>
+                      {resetting ? 'Sending...' : 'Send reset link'}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
 
             <p style={{ fontSize:'13px', color:'#4A5E64', textAlign:'center', fontFamily:'sans-serif' }}>
               Don't have an account? <a href="/signup" style={{ color:'#D4522A', fontWeight:'500' }}>Sign up</a>

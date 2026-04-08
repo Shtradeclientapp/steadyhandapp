@@ -27,6 +27,13 @@ export default function DashboardPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
+
+      // Handle session expiry
+      supabase.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          if (event === 'SIGNED_OUT') window.location.href = '/login'
+        }
+      })
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)

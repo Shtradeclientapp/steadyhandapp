@@ -58,11 +58,17 @@ export default function WarrantyPage() {
     }).select().single()
     if (issue) {
       setIssues(prev => [issue, ...prev])
+      // Notify tradie via message thread
+      await supabase.from('job_messages').insert({
+        job_id: job.id,
+        sender_id: session?.user.id,
+        body: '⚠ Warranty issue logged: "' + form.title + '" — ' + form.severity + ' severity. Response required within 5 business days.',
+      })
       await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
-      })
+      }).catch(() => {})
     }
     setForm({ title: '', description: '', severity: 'moderate' })
     setShowForm(false)

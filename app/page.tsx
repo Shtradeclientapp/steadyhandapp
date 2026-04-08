@@ -20,6 +20,7 @@ export default function Home() {
         .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
         .footer-pad { padding: 32px 48px; }
         .mobile-nav { display: none; }
+        .hamburger { display: none !important; }
         * { box-sizing: border-box; }
         html, body { overflow-x: hidden; max-width: 100vw; }
         @media (max-width: 768px) {
@@ -41,6 +42,9 @@ export default function Home() {
           .footer-pad { padding: 24px 20px !important; }
           .footer-links { gap: 12px !important; }
           .mobile-nav { display: flex !important; }
+          .hamburger { display: flex !important; }
+          .nav-links { display: none !important; }
+          .nav-buttons { display: none !important; }
         }
       `}</style>
 
@@ -61,7 +65,29 @@ export default function Home() {
               <button style={{ background:'#1C2B32', color:'white', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer', border:'none' }}>Get started</button>
             </Link>
           </div>
+          <button type="button" className="hamburger" onClick={() => setMenuOpen(o => !o)}
+            style={{ display:'none', flexDirection:'column' as const, gap:'5px', background:'none', border:'none', cursor:'pointer', padding:'8px' }}>
+            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
+            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
+            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
+          </button>
         </div>
+        {menuOpen && (
+          <div style={{ borderTop:'1px solid rgba(28,43,50,0.1)', background:'rgba(200,213,210,0.98)', padding:'16px 24px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
+            <a href="#how-it-works" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For homeowners</a>
+            <a href="#for-trade-businesses" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For trade businesses</a>
+            <a href="#for-organisations" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For organisations</a>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>About</a>
+            <div style={{ display:'flex', gap:'10px', paddingTop:'8px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+              <Link href="/login" style={{ flex:1 }}>
+                <button style={{ width:'100%', background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#1C2B32', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer' }}>Log in</button>
+              </Link>
+              <Link href="/signup" style={{ flex:1 }}>
+                <button style={{ width:'100%', background:'#1C2B32', color:'white', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer', border:'none' }}>Get started</button>
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
 
       <div style={{ background:'#1C2B32', position:'relative', overflow:'hidden', textAlign:'center' }}>

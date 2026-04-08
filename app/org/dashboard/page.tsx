@@ -353,9 +353,14 @@ export default function OrgDashboardPage() {
                         <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{m.profile?.email}</p>
                       </div>
                     </div>
-                    <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: m.role==='admin'?'rgba(212,82,42,0.1)':'rgba(28,43,50,0.06)', border:'1px solid '+(m.role==='admin'?'rgba(212,82,42,0.2)':'rgba(28,43,50,0.1)'), color: m.role==='admin'?'#D4522A':'#4A5E64', fontWeight:500, textTransform:'capitalize' as const }}>
-                      {m.role}
-                    </span>
+                    <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
+                      {m.status === 'pending' && (
+                        <span style={{ fontSize:'10px', padding:'2px 8px', borderRadius:'100px', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', color:'#C07830', fontWeight:500 }}>Pending</span>
+                      )}
+                      <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: m.role==='admin'?'rgba(212,82,42,0.1)':'rgba(28,43,50,0.06)', border:'1px solid '+(m.role==='admin'?'rgba(212,82,42,0.2)':'rgba(28,43,50,0.1)'), color: m.role==='admin'?'#D4522A':'#4A5E64', fontWeight:500, textTransform:'capitalize' as const }}>
+                        {m.role}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -123,6 +123,7 @@ export default function TradieDashboard() {
   const [user, setUser]       = useState<any>(null)
   const [jobs, setJobs]       = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
 
@@ -177,6 +178,14 @@ export default function TradieDashboard() {
       const assignedIds = new Set((assignedJobs || []).map((j: any) => j.id))
       const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
       setJobs(merged)
+      // Count unread messages
+      const { count: unreadTotal } = await supabase
+        .from('job_messages')
+        .select('id', { count: 'exact', head: true })
+        .neq('sender_id', session.user.id)
+        .not('read_by', 'cs', JSON.stringify([session.user.id]))
+      setUnreadCount(unreadTotal || 0)
+
       setLoading(false)
     })
   }, [])
@@ -214,6 +223,7 @@ export default function TradieDashboard() {
           <span style={{ fontSize:'13px', color:'#4A5E64' }}>Tradie</span>
           <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px', display:'inline-flex', alignItems:'center', gap:'6px' }}>
             Messages
+            {unreadCount > 0 && <span style={{ background:'#D4522A', color:'white', borderRadius:'100px', fontSize:'10px', fontWeight:700, padding:'1px 6px', lineHeight:'1.4' }}>{unreadCount}</span>}
           </a>
           <div style={{ position:'relative' as const }}>
             <div onClick={() => setDropdownOpen(!dropdownOpen)}
