@@ -190,7 +190,7 @@ export default function TradieJobPage() {
         await supabase2.from('job_messages').insert({
           job_id: job.id,
           sender_id: user.id,
-          body: '⚡ The tradie responded to this warranty issue within 24 hours — above the Steadyhand standard. This has been recorded in their trust score.',
+          body: '⚡ The tradie responded to this warranty issue within 24 hours — above the Steadyhand standard. This has been recorded in their Dialogue Rating.',
         })
       }
     }
@@ -299,7 +299,7 @@ export default function TradieJobPage() {
             {
               icon: '🛡',
               title: 'Why it matters',
-              body: 'Your consult notes become part of the permanent job record. They protect you from scope creep and disputes later — and build your Dialogue Trust Score.',
+              body: 'Your consult notes become part of the permanent job record. They protect you from scope creep and disputes later — and build your Dialogue Rating.',
               action: null,
             },
           ]

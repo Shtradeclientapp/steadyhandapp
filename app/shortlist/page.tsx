@@ -587,7 +587,7 @@ export default function ShortlistPage() {
                           Steadyhand recommends a consult before quotes are submitted — it creates a shared record that protects both parties. If a visit is not possible, you can proceed directly to quoting.
                         </p>
                         <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'8px' }}>
-                          Skipping the consult means your job will not have a shared record. This may affect the trust score and could increase the likelihood of scope disputes later.
+                          Skipping the consult means your job will not have a shared record. This may affect the Dialogue Rating and could increase the likelihood of scope disputes later.
                         </p>
                         <button type="button" onClick={async () => {
                           const supabase = createClient()

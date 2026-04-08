@@ -190,7 +190,7 @@ export default function TradieProfilePage() {
                   <span style={{ fontSize: '12px', color: 'rgba(216,228,225,0.6)' }}>⭐ {Number(tradie.rating_avg).toFixed(1)} · {tradie.jobs_completed} jobs</span>
                 )}
                 {tradie?.dialogue_score_avg > 0 && (
-                  <span style={{ fontSize: '12px', color: 'rgba(107,79,168,0.8)' }}>Dialogue score: {Number(tradie.dialogue_score_avg).toFixed(0)}</span>
+                  <span style={{ fontSize: '12px', color: 'rgba(107,79,168,0.8)' }}>Dialogue Rating: {Number(tradie.dialogue_score_avg).toFixed(0)}</span>
                 )}
               </div>
             </div>
@@ -369,7 +369,7 @@ export default function TradieProfilePage() {
                 {[
                   { label: 'Jobs completed', value: tradie?.jobs_completed || 0 },
                   { label: 'Rating', value: tradie?.rating_avg ? Number(tradie.rating_avg).toFixed(1) + ' ⭐' : '—' },
-                  { label: 'Dialogue score', value: tradie?.dialogue_score_avg ? Number(tradie.dialogue_score_avg).toFixed(0) : '—' },
+                  { label: 'Dialogue Rating', value: tradie?.dialogue_score_avg ? Number(tradie.dialogue_score_avg).toFixed(0) : '—' },
                 ].map(s => (
                   <div key={s.label} style={{ background: 'white', borderRadius: '8px', padding: '12px', textAlign: 'center' as const }}>
                     <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#1C2B32', margin: '0 0 4px' }}>{s.value}</p>

@@ -120,7 +120,7 @@ export default function TrustPage() {
     if (s >= 85) return { label: 'Excellent', message: 'You consistently communicate with clarity and respect throughout the trade relationship.' }
     if (s >= 70) return { label: 'Good', message: 'You engage well with the process. A few areas where more thoroughness would help.' }
     if (s >= 50) return { label: 'Developing', message: 'You\'re building good habits. Focus on the assessment and confirm stages for the biggest improvement.' }
-    return { label: 'Early', message: 'Complete more jobs on Steadyhand to build your trust score.' }
+    return { label: 'Early', message: 'Complete more jobs on Steadyhand to build your Dialogue Rating.' }
   }
 
   if (loading) return (
@@ -139,7 +139,7 @@ export default function TrustPage() {
 
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>TRUST SCORE</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'32px', lineHeight:'1.6' }}>
-          Your trust score reflects the quality of your communication across the full request-to-warranty cycle. It is built from behavioural signals at each stage — not self-assessment.
+          Your Dialogue Rating reflects the quality of your communication across the full request-to-warranty cycle. It is built from behavioural signals at each stage — not self-assessment.
         </p>
 
         {/* SCORE CARD */}
@@ -166,7 +166,7 @@ export default function TrustPage() {
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'32px', textAlign:'center' as const, marginBottom:'24px' }}>
             <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>📊</div>
             <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>No score yet</p>
-            <p style={{ fontSize:'13px', color:'#7A9098' }}>Complete your first job on Steadyhand to start building your trust score.</p>
+            <p style={{ fontSize:'13px', color:'#7A9098' }}>Complete your first job on Steadyhand to start building your Dialogue Rating.</p>
           </div>
         )}
 
@@ -223,7 +223,7 @@ export default function TrustPage() {
 
         <div style={{ marginTop:'24px', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 20px' }}>
           <p style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.6', margin:0 }}>
-            Your trust score is calculated automatically from your behaviour across each stage. It is never based on self-assessment. Scores improve over multiple completed jobs as Steadyhand builds a richer picture of how you engage in trade relationships.
+            Your Dialogue Rating is calculated automatically from your behaviour across each stage. It is never based on self-assessment. Scores improve over multiple completed jobs as Steadyhand builds a richer picture of how you engage in trade relationships.
           </p>
         </div>
 

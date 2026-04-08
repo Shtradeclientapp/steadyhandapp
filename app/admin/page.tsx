@@ -126,7 +126,7 @@ export default function AdminPage() {
                         ].map(badge => (
                           <span key={badge.label} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: badge.ok ? 'rgba(46,125,96,0.1)' : 'rgba(212,82,42,0.1)', color: badge.ok ? '#2E7D60' : '#D4522A', border: '1px solid ' + (badge.ok ? 'rgba(46,125,96,0.3)' : 'rgba(212,82,42,0.3)') }}>{badge.label}</span>
                         ))}
-                        {t.dialogue_score_avg > 0 && <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: 'rgba(107,79,168,0.1)', color: '#6B4FA8', border: '1px solid rgba(107,79,168,0.3)' }}>Dialogue: {Number(t.dialogue_score_avg).toFixed(0)}</span>}
+                        {t.dialogue_score_avg > 0 && <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '100px', background: 'rgba(107,79,168,0.1)', color: '#6B4FA8', border: '1px solid rgba(107,79,168,0.3)' }}>Rating: {Number(t.dialogue_score_avg).toFixed(0)}</span>}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' as const, flexShrink: 0 }}>
@@ -193,7 +193,7 @@ export default function AdminPage() {
                     { label: 'Service areas', value: selectedProfile.service_areas?.join(', ') || '—' },
                     { label: 'Rating', value: selectedProfile.rating_avg ? Number(selectedProfile.rating_avg).toFixed(1) + ' ⭐' : '—' },
                     { label: 'Jobs completed', value: String(selectedProfile.jobs_completed || 0) },
-                    { label: 'Dialogue score', value: selectedProfile.dialogue_score_avg ? Number(selectedProfile.dialogue_score_avg).toFixed(0) : '—' },
+                    { label: 'Dialogue Rating', value: selectedProfile.dialogue_score_avg ? Number(selectedProfile.dialogue_score_avg).toFixed(0) : '—' },
                     { label: 'Trust score', value: selectedProfile.trust_score_composite ? Number(selectedProfile.trust_score_composite).toFixed(0) : '—' },
                     { label: 'Stripe Connect', value: selectedProfile.stripe_account_id ? '✓ Connected' : 'Not connected' },
                     { label: 'Joined', value: selectedProfile.profile?.created_at ? new Date(selectedProfile.profile.created_at).toLocaleDateString('en-AU') : '—' },

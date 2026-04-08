@@ -105,7 +105,7 @@ export default function JoinPage() {
                 'Structured scope agreement protects you legally',
                 'Milestone payments released on client approval',
                 'Digital warranty tracking — no more phone chasing',
-                'Dialogue Trust Score builds your professional reputation',
+                'Dialogue Rating builds your professional reputation',
               ].map((item, i) => (
                 <div key={i} style={{ display:'flex', gap:'10px', fontSize:'13px', color:'#1C2B32' }}>
                   <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>{item}

@@ -478,7 +478,7 @@ export default function TradieDashboard() {
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'10px' }}>
             {[
-              { icon:'⭐', title:'Improve your Trust Score', body:'Your Dialogue Trust Score is built through how you communicate before signing. Pricing transparency and risk disclosure matter most.', href:'https://www.steadyhanddigital.com', label:'How scoring works →' },
+              { icon:'⭐', title:'Improve your Dialogue Rating', body:'Your Dialogue Rating is built through how you communicate before signing. Pricing transparency and risk disclosure matter most.', href:'https://www.steadyhanddigital.com', label:'How scoring works →' },
               { icon:'📄', title:'Writing better scope agreements', body:'Clear inclusions and exclusions protect you from scope creep and disputes. A well-written scope is your best legal protection.', href:'https://www.steadyhanddigital.com', label:'Scope writing guide →' },
               { icon:'✅', title:'Licence and compliance — WA', body:'The WA Building Commission sets compliance requirements for licensed trades. Stay current with the standards that apply to your category.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
               { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty, your existing CRM for quoting. Build a simple digital stack that saves you time.', href:'https://www.steadyhanddigital.com', label:'Steadyhand Digital →' },

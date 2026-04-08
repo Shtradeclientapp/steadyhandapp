@@ -237,7 +237,7 @@ export default function SignoffPage() {
               <textarea
                 value={review}
                 onChange={e => setReview(e.target.value)}
-                placeholder="How did the job go? Your review helps other clients and builds the tradie's trust score. (optional)"
+                placeholder="How did the job go? Your review helps other clients and builds the tradie's Dialogue Rating. (optional)"
                 rows={3}
                 style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, fontFamily:'sans-serif' }}
               />

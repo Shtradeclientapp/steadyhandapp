@@ -165,7 +165,7 @@ export default function Home() {
           <div className="values-grid" style={{ alignItems:'stretch' }}>
             {[
               { icon:'🤝', title:'Trust over transactions', body:'Steadyhand earns only when work is completed and approved. We have no incentive to fill your shortlist with the highest bidder or rush you through a quote.' },
-              { icon:'📋', title:'Dialogue Trust Score', body:'Every job includes a pre-signing dialogue scored across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
+              { icon:'📋', title:'Dialogue Rating', body:'Every job includes a pre-signing Dialogue Ratingd across six dimensions — pricing transparency, compliance, risk, timeline and more. Good conversations lead to good outcomes.' },
               { icon:'🔒', title:'Your workflow, your tools', body:'Steadyhand respects how trade businesses already operate. Use Xero for invoicing or your own CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
               { icon:'✅', title:'Verified, not just listed', body:'Every trade business on Steadyhand has their licence and insurance verified before they appear in any shortlist. Verification is not a badge — it is a requirement.' },
             ].map(v => (
@@ -188,7 +188,7 @@ export default function Home() {
           </p>
           <div className="steps-grid">
             {[
-              { title:'Dialogue Trust Score', body:'Every job you complete builds your Dialogue Trust Score average. A high score signals to future clients that you engage transparently on pricing, compliance and risk — before work begins.' },
+              { title:'Dialogue Rating', body:'Every job you complete builds your Dialogue Rating average. A high score signals to future clients that you engage transparently on pricing, compliance and risk — before work begins.' },
               { title:'Digital scope agreements', body:'Your scope agreement is stored permanently against every job. No more disputes over what was agreed. No more chasing signed documents.' },
               { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.5% — only when you get paid.' },
             ].map(s => (
