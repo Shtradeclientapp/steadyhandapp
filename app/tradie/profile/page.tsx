@@ -61,9 +61,9 @@ export default function TradieProfilePage() {
     const supabase = createClient()
     const ext = file.name.split('.').pop()
     const path = `logos/${profile.id}.${ext}`
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
+    const { error } = await supabase.storage.from('Job Photos').upload(path, file, { upsert: true })
     if (!error) {
-      const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+      const { data } = supabase.storage.from('Job Photos').getPublicUrl(path)
       const url = data.publicUrl
       setLogoUrl(url)
       await supabase.from('tradie_profiles').update({ logo_url: url }).eq('id', profile.id)

@@ -65,6 +65,17 @@ export default function RequestPage() {
     const params = new URLSearchParams(window.location.search)
     const pid = params.get('property_id')
     if (pid) setPropertyId(pid)
+    // Pre-fill from Build Journal trade package
+    const titleParam = params.get('title')
+    const descParam = params.get('description')
+    const addrParam = params.get('address')
+    if (titleParam || descParam) {
+      setForm(f => ({
+        ...f,
+        title: titleParam || f.title,
+        description: descParam ? descParam + (addrParam ? '\n\nAddress: ' + addrParam : '') : f.description,
+      }))
+    }
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) return

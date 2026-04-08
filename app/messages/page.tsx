@@ -39,19 +39,9 @@ function MessagesPageInner() {
       setJobs(jobData || [])
       if (jobData && jobData.length > 0) {
         const jobParam = searchParams.get('job')
-        if (jobParam) {
-          const match = jobData.find((j: any) => j.id === jobParam)
-          setSelectedJob(match || jobData[0])
-        } else {
-          const jobParam = searchParams.get('job')
-        if (jobParam) {
-          const match = jobData.find((j: any) => j.id === jobParam)
-          setSelectedJob(match || jobData[0])
-        } else {
-          setSelectedJob(jobData[0])
-        }
-        }
-        await loadMessages(jobData[0].id)
+        const selected = jobParam ? (jobData.find((j: any) => j.id === jobParam) || jobData[0]) : jobData[0]
+        setSelectedJob(selected)
+        await loadMessages(selected.id)
       }
       setLoading(false)
     })

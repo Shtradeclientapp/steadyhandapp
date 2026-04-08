@@ -48,7 +48,7 @@ export default function SignoffPage() {
 
         const milestoneChecks = (ms || []).map((m: any) => ({
           id: 'milestone_' + m.id,
-          label: m.title + ' — completed and approved',
+          label: m.label + ' — completed and approved',
           sub: m.description || 'Milestone signed off by client',
         }))
         const scopeCheck = jobs[0].description ? [{
