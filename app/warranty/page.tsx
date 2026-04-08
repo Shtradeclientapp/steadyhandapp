@@ -208,6 +208,9 @@ export default function WarrantyPage() {
                     <span style={{ fontSize:'11px', color: overdue ? '#D4522A' : '#7A9098', fontWeight: overdue ? 600 : 400 }}>
                       {overdue ? '⚠ Overdue — ' : '⏱ Response due '}{due.toLocaleDateString('en-AU')}
                     </span>
+                  <a href="/messages" style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, marginLeft:'8px', textDecoration:'none' }}>
+                      Message tradie →
+                    </a>
                   </div>
                 )
               })()}
@@ -243,6 +246,7 @@ export default function WarrantyPage() {
             {[
               { label:'Period', value:'90 days from sign-off' },
               { label:'Response SLA', value:'5 business days' },
+              { label:'Escalation', value:'Contact Steadyhand if no response after SLA' },
               { label:'Remediation', value:'14 days or Steadyhand mediates' },
               { label:'Mediation', value:'Steadyhand facilitates' },
             ].map(t => (

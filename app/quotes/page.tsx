@@ -150,6 +150,18 @@ export default function QuotesPage() {
       <StageRail currentPath="/quotes" jobStatus={job?.status} />
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
+        {/* Minimum 3 quotes nudge */}
+        {quoteRequests.length > 0 && quoteRequests.length < 3 && !isPastQuotes && (
+          <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'10px', padding:'14px 18px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', marginBottom:'3px' }}>You have {quoteRequests.length} quote{quoteRequests.length > 1 ? 's' : ''} — Steadyhand recommends at least 3</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64' }}>More quotes give you better pricing insight and protection. Go back to matches to invite more tradies.</p>
+            </div>
+            <a href="/shortlist" style={{ fontSize:'13px', color:'#C07830', fontWeight:500, textDecoration:'none', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'7px', padding:'7px 14px', flexShrink:0 }}>
+              Invite more tradies →
+            </a>
+          </div>
+        )}
 
         {/* PAST STAGE BANNER */}
         {isPastQuotes && (
