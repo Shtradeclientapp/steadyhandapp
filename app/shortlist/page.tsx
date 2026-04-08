@@ -206,25 +206,44 @@ export default function ShortlistPage() {
           )}
 
           {selectedJob && (
-            <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'18px 20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
+            <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
-              <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+              <div style={{ position:'relative', zIndex:1 }}>
+                <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'3px' }}>{selectedJob.title}</h3>
+                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
+              </div>
+            </div>
+          )}
+
+          {/* REQUEST CARD — shown when tradies are selected */}
+          {selectedJob && totalSelected > 0 && !sent && (
+            <div style={{ background:'#E8F0EE', border:'2px solid #D4522A', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
                 <div>
-                  <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'3px' }}>{selectedJob.title}</h3>
-                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098' }}>Steadyhand recommends requesting 2–4 quotes for best results.</p>
                 </div>
-                {totalSelected > 0 && !sent && (
-                  <button type="button" onClick={sendQuoteRequests} disabled={sending}
-                    style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
-                    {sending ? 'Sending...' : 'Request quotes from ' + totalSelected + ' tradie' + (totalSelected > 1 ? 's' : '') + ' →'}
+                <button type="button" onClick={sendQuoteRequests} disabled={sending}
+                  style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
+                  {sending ? 'Sending...' : 'Request quotes →'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SENT CONFIRMATION CARD */}
+          {selectedJob && sent && (
+            <div style={{ background:'rgba(46,125,96,0.06)', border:'2px solid #2E7D60', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', marginBottom:'3px' }}>✓ Quote requests sent</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies will be notified. Next step: book a consult time to visit the site before quoting begins.</p>
+                </div>
+                <a href="/assess">
+                  <button type="button" style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    Book consult time →
                   </button>
-                )}
-                {sent && allQuotes && allQuotes.length > 0 && (
-                  <button type="button" onClick={() => window.location.href = '/assess'}
-                    style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-                    Review quotes →
-                  </button>
-                )}
+                </a>
               </div>
             </div>
           )}

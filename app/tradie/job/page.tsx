@@ -375,10 +375,10 @@ export default function TradieJobPage() {
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(192,120,48,0.2)', borderLeft:'3px solid #C07830', borderRadius:'10px', padding:'16px 18px', marginBottom:'20px' }}>
             <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#C07830', letterSpacing:'0.5px', marginBottom:'8px' }}>QUOTE STAGE</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
-              The consult is complete. You can now build and submit your quote based on what you observed on site.
+              You are ready to build and submit your quote. Use the builder below to itemise your pricing — labour, materials, and any other costs.
             </p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7' }}>
-              A detailed breakdown helps the client understand your pricing and reduces scope disputes later. The client will compare your quote with others before making a decision — you will be notified by email when they respond.
+              A detailed breakdown helps the client understand your pricing and reduces scope disputes later. The client will compare your quote with others — you will be notified when they respond.
             </p>
           </div>
         )}
