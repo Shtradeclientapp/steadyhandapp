@@ -121,24 +121,38 @@ export default function Home() {
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'520px', marginBottom:'40px' }}>
           Most platforms find you a tradie and disappear. Steadyhand stays present through every stage — guiding you, protecting you, and making sure you always know what happens next.
         </p>
-        <div className="steps-grid">
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px' }} className="steps-grid">
           {[
-            { num:'01', title:'Request', body:'Describe the job, set your budget range and expectations. Steadyhand uses this to match you with the right verified trade businesses in your area.' },
-            { num:'02', title:'Match', body:'Review AI-matched tradies based on category, location, experience and trust score. Request quotes from 2–4 for best results, or invite your own.' },
-            { num:'03', title:'Consult', body:'Meet your tradies on site before quoting begins. Both parties document their observations — creating a shared record that protects everyone.' },
-            { num:'04', title:'Compare', body:'Tradies submit detailed quotes. Review them side by side — line items, conditions and assumptions — and choose with confidence.' },
-            { num:'05', title:'Contract', body:'Both parties agree on inclusions, exclusions and milestones before work begins. Nothing starts until the scope is signed by both sides.' },
-            { num:'06', title:'Build', body:'Work is approved and paid in stages. You only release payment when you are satisfied each milestone is complete. The tradie is paid promptly — no chasing invoices.' },
-            { num:'07', title:'Complete', body:'A structured final walkthrough confirms the job is done. Your 90-day warranty clock starts from sign-off, not invoice.' },
-            { num:'08', title:'Protect', body:'Issues logged within the warranty period are tracked against a response SLA. Both parties have a complete documented record from request to warranty.' },
+            {
+              icon:'📋',
+              phase:'Before work starts',
+              stages:'Request · Match · Consult · Compare · Contract',
+              body:'You find the right tradie, understand what you are being quoted, and agree on every detail before work begins. Nothing starts until both parties have signed the scope.'
+            },
+            {
+              icon:'🔧',
+              phase:'During the job',
+              stages:'Build',
+              body:'Work happens in approved stages. You release payment only when each milestone is complete. Progress photos keep you informed. Any scope changes are agreed in writing before they happen.'
+            },
+            {
+              icon:'🛡',
+              phase:'After it's done',
+              stages:'Complete · Protect',
+              body:'A structured sign-off starts your 90-day warranty from the moment you are satisfied — not from the invoice date. Any issues logged in the warranty period are tracked and responded to.'
+            },
           ].map(s => (
-            <div key={s.num} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#D4522A', letterSpacing:'1px', marginBottom:'14px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', display:'inline-block', padding:'4px 10px', borderRadius:'6px' }}>{s.num}</div>
-              <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'8px' }}>{s.title}</h3>
-              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.6' }}>{s.body}</p>
+            <div key={s.phase} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
+              <div style={{ fontSize:'32px', marginBottom:'16px' }}>{s.icon}</div>
+              <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'1px', textTransform:'uppercase' as const, marginBottom:'8px' }}>{s.phase}</p>
+              <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'8px' }}>{s.stages}</h3>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65' }}>{s.body}</p>
             </div>
           ))}
         </div>
+        <p style={{ fontSize:'13px', color:'#7A9098', marginTop:'20px', textAlign:'center' as const }}>
+          Eight stages in total — <a href="/signup" style={{ color:'#2E6A8F', textDecoration:'none' }}>sign up to see the full pipeline →</a>
+        </p>
       </div>
 
       <div style={{ background:'#1C2B32' }}>
