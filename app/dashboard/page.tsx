@@ -46,13 +46,13 @@ export default function DashboardPage() {
         .limit(3)
       setBuilds(buildsData || [])
 
-      // Count recent messages not sent by this user across active jobs
-      const { data: recentMsgs } = await supabase
+      // Count unread messages using read_by tracking
+      const { count: unreadTotal } = await supabase
         .from('job_messages')
-        .select('id')
+        .select('id', { count: 'exact', head: true })
         .neq('sender_id', session.user.id)
-        .gte('created_at', new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
-      setUnreadCount(recentMsgs?.length || 0)
+        .not('read_by', 'cs', JSON.stringify([session.user.id]))
+      setUnreadCount(unreadTotal || 0)
 
       setLoading(false)
     })

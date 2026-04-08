@@ -14,7 +14,7 @@ function MessagesPageInner() {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [lastMessages, setLastMessages] = useState<Record<string, any>>({})
-  const [unread, setUnread] = useState<Record<string, number>>({})
+  const [unread, setUnread] = useState<Record<string, number>>({})  // per-job unread counts
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -44,6 +44,9 @@ function MessagesPageInner() {
       if (jobData && jobData.length > 0) {
         const supabase2 = createClient()
         const previews: Record<string, any> = {}
+        const unreadCounts: Record<string, number> = {}
+        const { data: { session: sess } } = await supabase2.auth.getSession()
+        const uid = sess?.user.id
         await Promise.all((jobData || []).map(async (j: any) => {
           const { data: lastMsg } = await supabase2
             .from('job_messages')
@@ -53,8 +56,20 @@ function MessagesPageInner() {
             .limit(1)
             .single()
           if (lastMsg) previews[j.id] = lastMsg
+
+          // Count unread messages for this job
+          if (uid) {
+            const { count } = await supabase2
+              .from('job_messages')
+              .select('id', { count: 'exact', head: true })
+              .eq('job_id', j.id)
+              .neq('sender_id', uid)
+              .not('read_by', 'cs', JSON.stringify([uid]))
+            unreadCounts[j.id] = count || 0
+          }
         }))
         setLastMessages(previews)
+        setUnread(unreadCounts)
       }
 
       if (jobData && jobData.length > 0) {
@@ -83,7 +98,15 @@ function MessagesPageInner() {
           .select('*, sender:profiles(full_name, role)')
           .eq('id', payload.new.id)
           .single()
-        if (msg) setMessages(prev => [...prev, msg])
+        if (msg) {
+          setMessages(prev => [...prev, msg])
+          // Mark as read immediately if it's not mine
+          const session = await supabase.auth.getSession()
+          const userId = session.data.session?.user.id
+          if (userId && msg.sender_id !== userId) {
+            await supabase.rpc('append_read_by', { message_id: msg.id, user_id: userId })
+          }
+        }
       })
       .subscribe()
 
@@ -102,6 +125,19 @@ function MessagesPageInner() {
       .eq('job_id', jobId)
       .order('created_at', { ascending: true })
     setMessages(data || [])
+
+    // Mark unread messages as read
+    const session = await supabase.auth.getSession()
+    const userId = session.data.session?.user.id
+    if (!userId || !data) return
+    const unreadIds = data
+      .filter(m => m.sender_id !== userId && !(m.read_by || []).includes(userId))
+      .map(m => m.id)
+    if (unreadIds.length > 0) {
+      await Promise.all(unreadIds.map(id =>
+        supabase.rpc('append_read_by', { message_id: id, user_id: userId })
+      ))
+    }
   }
 
   const sendMessage = async () => {
@@ -120,6 +156,7 @@ function MessagesPageInner() {
   const selectJob = async (job: any) => {
     setSelectedJob(job)
     setMessages([])
+    setUnread(prev => ({ ...prev, [job.id]: 0 }))
     await loadMessages(job.id)
   }
 
@@ -169,6 +206,9 @@ function MessagesPageInner() {
                 </div>
                 <div style={{ marginTop:'4px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'8px' }}>
                   <span style={{ display:'inline-block', background:'rgba(28,43,50,0.06)', borderRadius:'4px', padding:'2px 8px', fontSize:'10px', color:'#7A9098', textTransform:'capitalize' }}>{job.status}</span>
+                  {unread[job.id] > 0 && (
+                    <span style={{ background:'#D4522A', color:'white', borderRadius:'100px', fontSize:'10px', fontWeight:700, padding:'1px 6px', lineHeight:'1.4', flexShrink:0 }}>{unread[job.id]}</span>
+                  )}
                 </div>
                 {lastMessages[job.id] && (
                   <p style={{ fontSize:'11px', color:'#9AA5AA', margin:'4px 0 0', lineHeight:'1.4', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:1, WebkitBoxOrient:'vertical' as any }}>
