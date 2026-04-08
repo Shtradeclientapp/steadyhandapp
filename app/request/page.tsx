@@ -48,6 +48,7 @@ const labelStyle = {
 
 export default function RequestPage() {
   const [step, setStep] = useState(0)
+  const [showHints, setShowHints] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [jobId, setJobId] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<string | null>(null)
@@ -137,12 +138,25 @@ window.location.href = '/shortlist'
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
 
-          <HintPanel color="#2E7D60" hints={[
-            "The more detail you provide, the better your Steadyhand shortlist will be. Include property age, access constraints and any relevant history.",
-            "Photos help tradies understand the scope before they quote. Upload as many as you can.",
-            "Setting a realistic budget range helps Steadyhand match you with tradies who are right for your job size.",
-            "Warranty periods are written into your scope agreement. Think about how long you want coverage before submitting.",
-          ]} />
+          <div style={{ marginBottom:'20px' }}>
+            <button type="button" onClick={() => setShowHints(h => !h)}
+              style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'8px 14px', cursor:'pointer', fontSize:'12px', color:'#2E7D60', fontWeight:500, width:'100%', justifyContent:'space-between' }}>
+              <span>💡 Tips for a great request</span>
+              <span>{showHints ? 'Hide ↑' : 'Show ↓'}</span>
+            </button>
+            {showHints && (
+              <div style={{ background:'rgba(46,125,96,0.05)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'0 0 8px 8px', padding:'14px 16px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                {[
+                  'Include the age of your property, any access constraints, and relevant history — tradies use this to price accurately.',
+                  'A clear title helps Steadyhand match you faster. Include the trade and location: "Full bathroom retile — Subiaco".',
+                  'Setting a realistic budget range helps match you with tradies who are right for your job size.',
+                  'Warranty periods are written into your scope agreement — the tradie's formal obligation after completion.',
+                ].map((tip, i) => (
+                  <p key={i} style={{ fontSize:'12px', color:'#2E7D60', margin:0, lineHeight:'1.6' }}>• {tip}</p>
+                ))}
+              </div>
+            )}
+          </div>
           <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
             You set the brief. The more detail you give, the better your AI-matched shortlist.
           </p>
@@ -160,16 +174,20 @@ window.location.href = '/shortlist'
               </label>
               <label style={labelStyle}>
                 Request title
-                <input type="text" placeholder="e.g. Full bathroom renovation — Subiaco" value={form.title} onChange={set('title')} style={inputStyle} />
+                <input type="text" placeholder="e.g. Full bathroom retile and fixture replacement — Subiaco" value={form.title} onChange={set('title')} style={inputStyle} />
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Include the trade type and your suburb — e.g. "Electrical switchboard upgrade — Mount Lawley"</span>
               </label>
               <label style={labelStyle}>
                 Describe what you need
                 <textarea
-                  placeholder="What needs doing? Include property age, access issues, materials preference, anything the tradie should know upfront."
+                  placeholder="e.g. We need our main bathroom fully retiled — floor and walls. The house was built in 1978 and the existing tiles are coming away. Access is straightforward through the back door. We prefer a neutral grey tone. No asbestos that we know of but the house is pre-1990 so worth checking."
                   value={form.description} onChange={set('description')}
-                  style={{ ...inputStyle, minHeight:'100px', resize:'vertical' as const }}
+                  style={{ ...inputStyle, minHeight:'120px', resize:'vertical' as const }}
                 />
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Tip: mention your home's age and any access constraints</span>
+                <div style={{ marginTop:'6px', background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'6px', padding:'8px 12px' }}>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px', fontWeight:600 }}>A good description includes:</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.6' }}>What needs doing · Property age · Access constraints · Material preferences · Any known issues (asbestos, heritage listing, existing damage)</p>
+                </div>
               </label>
               <button
                 onClick={() => setStep(1)}
@@ -227,7 +245,7 @@ window.location.href = '/shortlist'
                   <option value="180">Extended — 6 months</option>
                   <option value="365">Full — 12 months</option>
                 </select>
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Written into the scope agreement — the tradie's obligation after completion</span>
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Written into the scope agreement. 90 days is standard for most trade work. Choose longer for complex or high-value jobs.</span>
               </label>
               <div style={{ display:'flex', gap:'10px', marginTop:'8px' }}>
                 {btn('← Back', () => setStep(0), 'ghost')}
