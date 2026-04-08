@@ -133,6 +133,13 @@ export default function ShortlistPage() {
     } catch { setSuburbSuggestions([]) }
   }
 
+  // Auto-load directory when tab opens
+  useEffect(() => {
+    if (tab === 'directory' && directoryTradies.length === 0) {
+      searchDirectory()
+    }
+  }, [tab])
+
   const searchDirectory = async () => {
     setDirectoryLoading(true)
     const supabase = createClient()
@@ -140,8 +147,8 @@ export default function ShortlistPage() {
       .from('tradie_profiles')
       .select('*, profile:profiles(full_name, email, suburb)')
       .eq('licence_verified', true)
-    if (directoryCategory) query = query.contains('trade_categories', [directoryCategory])
-    if (directorySuburb) query = query.contains('service_areas', [directorySuburb])
+    if (directoryCategory) query = query.ilike('trade_categories', '%' + directoryCategory + '%')
+    if (directorySuburb) query = query.ilike('service_areas', '%' + directorySuburb + '%')
     if (directorySearch) query = query.or('business_name.ilike.%' + directorySearch + '%,bio.ilike.%' + directorySearch + '%')
     const { data } = await query.order('rating_avg', { ascending: false }).limit(20)
     setDirectoryTradies(data || [])
@@ -251,7 +258,7 @@ export default function ShortlistPage() {
             <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
               {[
                 { key:'matches', label:'Steadyhand matches', count: shortlist.length },
-                { key:'directory', label:'Browse directory', count: 0 },
+                { key:'directory', label:'Browse directory', count: directoryTradies.length },
                 { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
                 { key:'requested', label:'Requested', count: quoteRequests.length },
               ].map(t => (
