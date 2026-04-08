@@ -289,17 +289,17 @@ export default function ShortlistPage() {
                                 </div>
                               )}
                             </div>
-                            <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'10px' }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'10px', paddingRight:'32px' }}>
                               <div style={{ width:'44px', height:'44px', borderRadius:'10px', background: i === 0 ? '#2E7D60' : i === 1 ? '#2E6A8F' : '#6B4FA8', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'white', flexShrink:0 }}>
                                 {t?.business_name?.charAt(0) || '?'}
                               </div>
-                              <div style={{ flex:1 }}>
+                              <div style={{ flex:1, minWidth:0 }}>
                                 <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px' }}>{t?.business_name}</div>
                                 <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>{t?.service_areas?.[0]} · ⭐ {Number(t?.rating_avg).toFixed(1)} · {t?.jobs_completed} jobs</div>
-                              </div>
-                              <div style={{ textAlign:'right' as const, flexShrink:0 }}>
-                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#D4522A' }}>{Math.round(entry.ai_score)}%</div>
-                                <div style={{ fontSize:'10px', color:'#7A9098' }}>match</div>
+                                <div style={{ display:'inline-flex', alignItems:'baseline', gap:'3px', marginTop:'4px', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'1px 8px' }}>
+                                  <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A' }}>{Math.round(entry.ai_score)}%</span>
+                                  <span style={{ fontSize:'10px', color:'#7A9098' }}>match</span>
+                                </div>
                               </div>
                             </div>
                             <div style={{ display:'flex', gap:'6px', marginBottom:'10px', flexWrap:'wrap' as const }}>
