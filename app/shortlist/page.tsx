@@ -143,7 +143,7 @@ export default function ShortlistPage() {
       .eq('licence_verified', true)
     if (directoryCategory) query = query.contains('trade_categories', [directoryCategory])
     if (directorySuburb) query = query.contains('service_areas', [directorySuburb])
-    if (directorySearch) query = query.ilike('business_name', '%' + directorySearch + '%')
+    if (directorySearch) query = query.or('business_name.ilike.%' + directorySearch + '%,bio.ilike.%' + directorySearch + '%')
     const { data } = await query.order('rating_avg', { ascending: false }).limit(20)
     setDirectoryTradies(data || [])
     setDirectoryLoading(false)
@@ -378,14 +378,14 @@ export default function ShortlistPage() {
             {tab === 'directory' && (
               <div style={{ padding:'20px' }}>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
-                  Browse Steadyhand-vetted trade businesses in Western Australia. All listings have been reviewed by the Steadyhand team.
+                  Browse Steadyhand-vetted trade businesses in Western Australia. Search by keyword — try specialisations like 'heritage', 'solar', 'commercial', or 'strata' — or browse by trade category and suburb.
                 </p>
 
                 {/* Search controls */}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
                   <div>
-                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name</label>
-                    <input type="text" placeholder="Search by name..." value={directorySearch}
+                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Keywords</label>
+                    <input type="text" placeholder="e.g. bathroom, heritage, solar..." value={directorySearch}
                       onChange={e => setDirectorySearch(e.target.value)}
                       style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
                   </div>
