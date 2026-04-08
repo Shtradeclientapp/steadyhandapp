@@ -92,6 +92,7 @@ export default function DashboardPage() {
                 {[
                   { label:'Dashboard', href:'/dashboard' },
                   { label:'Steadyhand Home', href:'/home-plan' },
+                  { label:'Document vault', href:'/vault' },
                   { label:'Build Journal', href:'/diy' },
                   { label:'Messages', href:'/messages' },
                   { label:'Organisation dashboard', href:'/org/dashboard' },

@@ -90,6 +90,23 @@ export default function SignoffPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'score_stage', stage: 'complete', job_id: job.id }),
     }).catch(() => {})
+
+    // Auto-deposit warranty certificate to vault
+    try {
+      const supabase2 = createClient()
+      await supabase2.from('vault_documents').insert({
+        user_id: session.user.id,
+        job_id: job.id,
+        job_title: job.title,
+        title: job.title + ' — warranty certificate',
+        document_type: 'warranty',
+        tradie_name: job.tradie?.business_name || null,
+        issued_date: new Date().toISOString().split('T')[0],
+        expiry_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        notes: '90-day warranty — signed off ' + new Date().toLocaleDateString('en-AU'),
+      })
+    } catch { /* non-critical */ }
+
     setDone(true)
     setSubmitting(false)
   }
