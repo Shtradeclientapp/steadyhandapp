@@ -235,7 +235,7 @@ export default function AssessPage() {
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
       const supabase2 = createClient()
-      await supabase2.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+      await supabase2.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
       setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/quotes' }, 1200)
     }
   }
@@ -454,6 +454,12 @@ export default function AssessPage() {
                 <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>📋</div>
                 <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>{theirLabel} hasn&apos;t shared their notes yet</p>
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>You&apos;ll be notified by email when they share their assessment.</p>
+                {!isTradie && myShared && (
+                  <div style={{ marginBottom:'12px', padding:'12px 14px', background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'8px' }}>
+                    <p style={{ fontSize:'12px', color:'#2E6A8F', marginBottom:'8px' }}>You&apos;ve shared your notes. You can proceed to compare quotes without waiting.</p>
+                    <a href="/compare" style={{ fontSize:'13px', color:'#2E6A8F', fontWeight:500, textDecoration:'none' }}>Proceed to compare quotes →</a>
+                  </div>
+                )}
                 <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
                   <a href="/messages" style={{ color:'#2E6A8F', textDecoration:'none', fontSize:'13px', padding:'8px 14px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'7px' }}>Message {theirLabel} →</a>
                   <button type="button" onClick={async () => {
@@ -523,10 +529,20 @@ export default function AssessPage() {
               <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'20px', textAlign:'center' as const }}>
                 <div style={{ fontSize:'32px', marginBottom:'8px' }}>✓</div>
                 <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Assessment complete</p>
-                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>Both parties have acknowledged each other&apos;s notes. You&apos;re ready to review quotes.</p>
-                <a href={isTradie ? '/tradie/dashboard' : '/quotes'}>
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>Both parties have acknowledged each other&apos;s notes. You&apos;re ready to compare quotes.</p>
+                <a href={isTradie ? '/tradie/dashboard' : '/compare'}>
                   <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                    {isTradie ? 'Back to dashboard →' : 'Proceed to quotes →'}
+                    {isTradie ? 'Back to dashboard →' : 'Proceed to compare →'}
+                  </button>
+                </a>
+              </div>
+            )}
+            {!isTradie && myAcknowledged && !theirAcknowledged && (
+              <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginTop:'12px' }}>
+                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'12px' }}>Waiting for {theirLabel} to acknowledge your notes. You can proceed to compare quotes when ready.</p>
+                <a href="/compare">
+                  <button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    Proceed to compare quotes →
                   </button>
                 </a>
               </div>
