@@ -102,14 +102,15 @@ export default function ShortlistPage() {
     for (const invite of pendingInvites) {
       await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite }) })
     }
-    await supabase.from('jobs').update({ status: 'assess', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
+    await supabase.from('jobs').update({ status: 'shortlisted', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
     await fetch('/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'assess_ready', job_id: selectedJob.id }),
+      body: JSON.stringify({ type: 'consult_ready', job_id: selectedJob.id }),
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
+    setTimeout(() => { window.location.href = '/assess' }, 1500)
     setSending(false)
     setTab('requested')
   }
@@ -219,7 +220,7 @@ export default function ShortlistPage() {
                   </button>
                 )}
                 {sent && allQuotes && allQuotes.length > 0 && (
-                  <button type="button" onClick={() => window.location.href = '/agreement'}
+                  <button type="button" onClick={() => window.location.href = '/assess'}
                     style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     Review quotes →
                   </button>
@@ -507,13 +508,13 @@ export default function ShortlistPage() {
                       Review and compare quotes →
                     </button>
 
-                    {selectedJob?.status === 'assess' && (
+                    {selectedJob?.status === 'shortlisted' && (
                       <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
                         <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'8px' }}>
-                          Steadyhand recommends a site consultation before quotes are submitted — it creates a shared record that protects both parties. If a visit is not possible, you can proceed directly to quoting.
+                          Steadyhand recommends a consult before quotes are submitted — it creates a shared record that protects both parties. If a visit is not possible, you can proceed directly to quoting.
                         </p>
                         <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'8px' }}>
-                          Skipping the assessment means your job will not have a shared site record. This may affect the trust score and could increase the likelihood of scope disputes later.
+                          Skipping the consult means your job will not have a shared record. This may affect the trust score and could increase the likelihood of scope disputes later.
                         </p>
                         <button type="button" onClick={async () => {
                           const supabase = createClient()
@@ -526,12 +527,12 @@ export default function ShortlistPage() {
                           await supabase.from('job_messages').insert({
                             job_id: selectedJob.id,
                             sender_id: session?.user.id,
-                            body: '⚠ Site assessment skipped — client has proceeded directly to quoting without a site visit.',
+                            body: '⚠ Consult skipped — client has proceeded directly to quoting.',
                           })
                           window.location.href = '/quotes'
                         }}
                           style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
-                          Proceed without site assessment
+                          Skip consult and go straight to quoting →
                         </button>
                       </div>
                     )}
