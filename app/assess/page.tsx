@@ -93,9 +93,9 @@ export default function AssessPage() {
     const supabase = createClient()
     const ext = file.name.split('.').pop()
     const path = 'assessments/' + assessment.id + '/' + Date.now() + '.' + ext
-    const { error } = await supabase.storage.from('job-photos').upload(path, file)
+    const { error } = await supabase.storage.from('Job Photos').upload(path, file)
     if (!error) {
-      const { data: urlData } = supabase.storage.from('job-photos').getPublicUrl(path)
+      const { data: urlData } = supabase.storage.from('Job Photos').getPublicUrl(path)
       const url = urlData.publicUrl
       const field = isTradie ? 'tradie_photo_urls' : 'client_photo_urls'
       const current = isTradie ? tradiePhotos : clientPhotos
