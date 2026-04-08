@@ -69,6 +69,10 @@ export default function QuotesPage() {
     return quotes.filter(q => q.tradie_id === tradieId).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
   }
 
+  const getAllVersions = (tradieId: string) => {
+    return quotes.filter(q => q.tradie_id === tradieId).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  }
+
   const acceptQuote = async (qr: any) => {
     const quote = getLatestQuote(qr.tradie_id)
     if (!quote || !job) return
@@ -304,6 +308,7 @@ export default function QuotesPage() {
                       {isHighest && <span style={{ fontSize:'10px', background:'rgba(192,120,48,0.1)', color:'#C07830', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>HIGHEST</span>}
                       {isAccepted && <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>✓ SELECTED</span>}
                       {isDeclined && <span style={{ fontSize:'10px', background:'rgba(28,43,50,0.06)', color:'#7A9098', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>DECLINED</span>}
+                      {quote.version > 1 && <span style={{ fontSize:'10px', background:'rgba(46,106,143,0.08)', color:'#2E6A8F', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>REVISED · v{quote.version}</span>}
                     </div>
                     <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' as const }}>
                       {qr.tradie?.rating_avg > 0 && <span style={{ fontSize:'12px', color:'#7A9098' }}>⭐ {Number(qr.tradie.rating_avg).toFixed(1)}</span>}
@@ -356,6 +361,25 @@ export default function QuotesPage() {
                   <div style={{ padding:'0 20px 16px' }}>
                     <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'6px' }}>Terms and conditions</p>
                     <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6' }}>{quote.conditions}</p>
+                  </div>
+                )}
+
+                {/* VERSION HISTORY */}
+                {isExpanded && getAllVersions(qr.tradie_id).length > 1 && (
+                  <div style={{ padding:'0 20px 16px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'8px' }}>Quote history</p>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                      {getAllVersions(qr.tradie_id).map((v: any, i: number) => (
+                        <div key={v.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 12px', background: i === 0 ? 'rgba(46,106,143,0.06)' : 'rgba(28,43,50,0.03)', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.06)' }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                            <span style={{ fontSize:'11px', fontWeight:600, color: i === 0 ? '#2E6A8F' : '#7A9098' }}>v{v.version}</span>
+                            <span style={{ fontSize:'11px', color:'#7A9098' }}>{new Date(v.created_at).toLocaleDateString('en-AU')}</span>
+                            {i === 0 && <span style={{ fontSize:'10px', color:'#2E6A8F', fontWeight:500 }}>Current</span>}
+                          </div>
+                          <span style={{ fontSize:'12px', fontWeight:500, color: i === 0 ? '#1C2B32' : '#7A9098' }}>${Number(v.total_price).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
