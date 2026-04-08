@@ -13,6 +13,7 @@ export default function ShortlistPage() {
   const [matching, setMatching] = useState(false)
   const [loading, setLoading] = useState(true)
   const [selectedTradies, setSelectedTradies] = useState<string[]>([])
+  const [pendingConfirm, setPendingConfirm] = useState(false)
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
@@ -222,17 +223,38 @@ export default function ShortlistPage() {
           )}
 
           {/* REQUEST CARD — shown when tradies are selected */}
-          {selectedJob && totalSelected > 0 && !sent && (
+          {selectedJob && totalSelected > 0 && !sent && !pendingConfirm && (
             <div style={{ background:'#E8F0EE', border:'2px solid #D4522A', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
                 <div>
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected</p>
                   <p style={{ fontSize:'12px', color:'#7A9098' }}>Steadyhand recommends requesting 2–4 quotes for best results.</p>
                 </div>
-                <button type="button" onClick={sendQuoteRequests} disabled={sending}
-                  style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
-                  {sending ? 'Sending...' : 'Request quotes →'}
+                <button type="button" onClick={() => { setPendingConfirm(true); setTab('requested') }}
+                  style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                  Review selections →
                 </button>
+              </div>
+            </div>
+          )}
+
+          {selectedJob && pendingConfirm && !sent && (
+            <div style={{ background:'rgba(212,82,42,0.06)', border:'2px solid #D4522A', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#D4522A', marginBottom:'3px' }}>Ready to send {totalSelected} quote request{totalSelected > 1 ? 's' : ''}?</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Each tradie will be notified and invited to book a consult time.</p>
+                </div>
+                <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
+                  <button type="button" onClick={() => setPendingConfirm(false)}
+                    style={{ background:'transparent', color:'#1C2B32', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
+                    ← Edit
+                  </button>
+                  <button type="button" onClick={sendQuoteRequests} disabled={sending}
+                    style={{ background:'#D4522A', color:'white', padding:'10px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1 }}>
+                    {sending ? 'Sending...' : 'Confirm and send →'}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -488,6 +510,32 @@ export default function ShortlistPage() {
 
             {tab === 'requested' && (
               <div style={{ padding:'20px' }}>
+                {pendingConfirm && selectedTradies.length > 0 && (
+                  <div style={{ background:'rgba(212,82,42,0.04)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#D4522A', marginBottom:'8px' }}>Review your selections before sending</p>
+                    {selectedTradies.map(id => {
+                      const entry = shortlist.find(e => e.tradie?.id === id)
+                      if (!entry) return null
+                      return (
+                        <div key={id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                            <div style={{ width:'28px', height:'28px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                              {entry.tradie?.business_name?.charAt(0) || '?'}
+                            </div>
+                            <div>
+                              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{entry.tradie?.business_name}</p>
+                              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{entry.tradie?.trade_categories?.slice(0,1).join(', ')} · {entry.tradie?.service_areas?.[0]}</p>
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => toggleTradie(id)}
+                            style={{ fontSize:'11px', color:'#D4522A', background:'none', border:'none', cursor:'pointer' }}>
+                            Remove
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
                 {quoteRequests.length === 0 ? (
                   <div style={{ textAlign:'center', padding:'32px', color:'#7A9098', fontSize:'14px' }}>
                     No quote requests sent yet. Select tradies from the Steadyhand matches tab or invite your own.
