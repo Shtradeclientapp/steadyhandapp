@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false)
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <style>{`
