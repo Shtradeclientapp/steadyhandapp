@@ -136,10 +136,13 @@ export default function DeliveryPage() {
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       setProfile(prof)
 
+      const isT = prof?.role === 'tradie'
+      setIsTradie(isT)
+      const col = isT ? 'tradie_id' : 'client_id'
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
-        .eq('client_id', session.user.id)
+        .eq(col, session.user.id)
         .in('status', ['delivery', 'agreement', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
@@ -414,7 +417,7 @@ export default function DeliveryPage() {
                     {m.percent}% of total{m.amount > 0 ? ' · $' + Number(m.amount).toLocaleString() : ''}
                     {isDone && m.approved_at ? ' · Approved ' + new Date(m.approved_at).toLocaleDateString('en-AU') : ''}
                   </p>
-                  {isActive && !isDone && payingMilestone !== m.id && (
+                  {isActive && !isDone && payingMilestone !== m.id && !isTradie && (
                     <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
                       <button type="button" onClick={() => initiatePayment(m.id, m.amount || 0)}
                         style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
@@ -424,6 +427,11 @@ export default function DeliveryPage() {
                         style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
                         Flag an issue
                       </button>
+                    </div>
+                  )}
+                  {isActive && !isDone && isTradie && (
+                    <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px' }}>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Waiting for client to approve this milestone and release payment.</p>
                     </div>
                   )}
                   {isActive && !isDone && payingMilestone === m.id && clientSecret && (
