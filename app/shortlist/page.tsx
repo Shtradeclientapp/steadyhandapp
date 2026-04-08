@@ -110,7 +110,6 @@ export default function ShortlistPage() {
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
-    setTimeout(() => { window.location.href = '/assess' }, 1500)
     setSending(false)
     setTab('requested')
   }

@@ -72,7 +72,8 @@ export default function AssessPage() {
           setForm(assess)
           setClientPhotos(assess.client_photo_urls || [])
           setTradiePhotos(assess.tradie_photo_urls || [])
-        } else {
+        } else if (jobs[0].tradie_id) {
+          // Only create assessment record if a tradie has been assigned
           const { data: newAssess } = await supabase
             .from('site_assessments')
             .insert({ job_id: jobs[0].id, consult_date: new Date().toISOString() })

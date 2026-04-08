@@ -145,10 +145,11 @@ export default function DeliveryPage() {
         .eq(col, session.user.id)
         .in('status', ['delivery', 'agreement', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
-        .limit(1)
 
       if (jobs && jobs.length > 0) {
-        setJob(jobs[0])
+        // Find the most relevant job — prefer delivery status, then most recently updated
+        const deliveryJob = jobs.find((j: any) => j.status === 'delivery') || jobs[0]
+        setJob(deliveryJob)
         const { data: ms } = await supabase
           .from('milestones')
           .select('*')
@@ -424,6 +425,7 @@ export default function DeliveryPage() {
                         {m.amount > 0 ? `Approve & pay $${Number(m.amount).toLocaleString()} →` : 'Approve milestone →'}
                       </button>
                       <button type="button"
+                        onClick={() => window.location.href = '/messages' + (job?.id ? '?job=' + job.id : '')}
                         style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
                         Flag an issue
                       </button>
