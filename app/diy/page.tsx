@@ -74,8 +74,11 @@ export default function DIYPage() {
     })
   }, [])
 
+  const [creatingProject, setCreatingProject] = useState(false)
+
   const createProject = async () => {
-    if (!newProject.title) return
+    if (!newProject.title || creatingProject) return
+    setCreatingProject(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const { data: proj } = await supabase.from('diy_projects').insert({
@@ -105,6 +108,21 @@ export default function DIYPage() {
       setActiveTab('overview')
       setShowNewProject(false)
       setNewProject({ title:'', description:'', address:'', permit_number:'', project_type:'owner_builder', budget_estimate:'', estimated_completion:'', builder_registration:'' })
+    }
+    setCreatingProject(false)
+  }
+
+  const deleteProject = async (projectId: string) => {
+    if (!confirm('Delete this project and all its data? This cannot be undone.')) return
+    const supabase = createClient()
+    await supabase.from('ob_checklist_items').delete().eq('project_id', projectId)
+    await supabase.from('diy_tasks').delete().eq('project_id', projectId)
+    await supabase.from('diy_expenses').delete().eq('project_id', projectId)
+    await supabase.from('diy_projects').delete().eq('id', projectId)
+    setProjects(prev => prev.filter(p => p.id !== projectId))
+    if (activeProject === projectId) {
+      const remaining = projects.filter(p => p.id !== projectId)
+      setActiveProject(remaining[0]?.id || null)
     }
   }
 
@@ -219,7 +237,7 @@ export default function DIYPage() {
               </div>
               <div style={{ display:'flex', gap:'8px' }}>
                 <button type="button" onClick={() => setShowNewProject(false)} style={{ background:'transparent', color:'#1C2B32', border:'1px solid rgba(28,43,50,0.25)', borderRadius:'8px', padding:'9px 14px', fontSize:'12px', cursor:'pointer' }}>Cancel</button>
-                <button type="button" onClick={createProject} disabled={!newProject.title} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'9px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity: !newProject.title ? 0.5 : 1 }}>Create build</button>
+                <button type="button" onClick={createProject} disabled={creatingProject || !newProject.title} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'9px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity: !newProject.title ? 0.5 : 1 }}>Create build</button>
               </div>
             </div>
           )}
