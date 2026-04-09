@@ -144,7 +144,7 @@ export default function AdminPage() {
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:'16px', padding:'10px 0' }}>
                 <button type="button" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
                   style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'7px 14px', cursor: page === 0 ? 'not-allowed' : 'pointer', opacity: page === 0 ? 0.4 : 1 }}>← Prev</button>
-                <span style={{ fontSize:'12px', color:'#7A9098' }}>{page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, tradies.length)} of {tradies.length}</span>
+                <span style={{ fontSize:'12px', color:'#7A9098' }}>{page * PAGE_SIZE + 1}-{Math.min((page + 1) * PAGE_SIZE, tradies.length)} of {tradies.length}</span>
                 <button type="button" onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= tradies.length}
                   style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'7px 14px', cursor: (page + 1) * PAGE_SIZE >= tradies.length ? 'not-allowed' : 'pointer', opacity: (page + 1) * PAGE_SIZE >= tradies.length ? 0.4 : 1 }}>Next →</button>
               </div>
