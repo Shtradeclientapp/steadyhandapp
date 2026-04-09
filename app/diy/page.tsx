@@ -540,11 +540,32 @@ export default function DIYPage() {
                     </p>
                   </div>
                   {projChecklist.length === 0 ? (
-                    <div style={{ textAlign:'center' as const, padding:'32px', background:'#E8F0EE', borderRadius:'12px', color:'#7A9098', fontSize:'13px' }}>
-                      Compliance checklist is pre-populated for build projects when you create them.
+                    <div style={{ textAlign:'center' as const, padding:'32px', background:'#E8F0EE', borderRadius:'12px' }}>
+                      <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'12px' }}>Compliance checklist is pre-populated for build projects when you create them.</p>
+                      <button type="button" onClick={async () => {
+                        const label = prompt('Add a custom compliance item:')
+                        if (!label?.trim() || !activeProj) return
+                        const supabase = createClient()
+                        const { data: item } = await supabase.from('ob_checklist_items').insert({ project_id: activeProj.id, item: label.trim(), category: 'Custom', completed: false }).select().single()
+                        if (item) setChecklist((prev: any[]) => [...prev, item])
+                      }} style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'7px', padding:'8px 14px', cursor:'pointer' }}>
+                        + Add item
+                      </button>
                     </div>
                   ) : (
-                    WA_CHECKLIST.map(cat => {
+                    <>
+                    <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}>
+                      <button type="button" onClick={async () => {
+                        const label = prompt('Add a custom compliance item:')
+                        if (!label?.trim() || !activeProj) return
+                        const supabase = createClient()
+                        const { data: item } = await supabase.from('ob_checklist_items').insert({ project_id: activeProj.id, item: label.trim(), category: 'Custom', completed: false }).select().single()
+                        if (item) setChecklist((prev: any[]) => [...prev, item])
+                      }} style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px', cursor:'pointer' }}>
+                        + Add item
+                      </button>
+                    </div>
+                    {WA_CHECKLIST.map(cat => {
                       const catItems = projChecklist.filter(c => c.category === cat.category)
                       const catDone = catItems.filter(c => c.completed).length
                       return (
@@ -564,7 +585,8 @@ export default function DIYPage() {
                           ))}
                         </div>
                       )
-                    })
+                    })}
+                    </>
                   )}
                 </div>
               )}
