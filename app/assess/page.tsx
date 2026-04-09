@@ -237,11 +237,6 @@ export default function AssessPage() {
     // If both acknowledged, move to quotes
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
-      // Show proceed CTA after a short delay
-      setTimeout(() => {
-        const proceed = confirm('Both parties have acknowledged the consult notes. Proceed to compare quotes?')
-        if (proceed) window.location.href = '/compare'
-      }, 500)
       const supabase2 = createClient()
       await supabase2.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
       setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/quotes' }, 1200)
@@ -571,29 +566,56 @@ export default function AssessPage() {
               </div>
             )}
 
-            {/* BOTH ACKNOWLEDGED */}
-            {myAcknowledged && theirAcknowledged && (
-              <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'20px', textAlign:'center' as const }}>
-                <div style={{ fontSize:'32px', marginBottom:'8px' }}>✓</div>
-                <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Consult complete</p>
-                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }}>Both parties have acknowledged each other&apos;s notes. You&apos;re ready to compare quotes.</p>
-                <a href={isTradie ? '/tradie/dashboard' : '/compare'}>
-                  <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                    {isTradie ? 'Back to dashboard →' : 'Proceed to compare →'}
-                  </button>
-                </a>
-              </div>
-            )}
-            {!isTradie && myAcknowledged && !theirAcknowledged && (
-              <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginTop:'12px' }}>
-                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'12px' }}>Waiting for {theirLabel} to acknowledge your notes. You can proceed to compare quotes when ready.</p>
-                <a href="/compare">
-                  <button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                    Proceed to compare quotes →
-                  </button>
-                </a>
-              </div>
-            )}
+            {/* UNIFIED TRANSITION PANEL */}
+            <div style={{ marginTop:'16px' }}>
+              {myAcknowledged && theirAcknowledged ? (
+                // Both acknowledged — consult complete
+                <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'20px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'10px' }}>
+                    <div style={{ width:'28px', height:'28px', borderRadius:'50%', background:'#2E7D60', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px', color:'white', flexShrink:0 }}>✓</div>
+                    <p style={{ fontSize:'15px', fontWeight:600, color:'#2E7D60', margin:0 }}>Consult complete</p>
+                  </div>
+                  <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
+                    Both parties have acknowledged each other&apos;s notes. The consult record is saved.
+                    {isTradie ? ' Quoting is now open — the client will compare and accept a quote to proceed.' : ' You are ready to compare quotes and select a tradie to proceed.'}
+                  </p>
+                  <a href={isTradie ? '/tradie/dashboard' : '/compare'} style={{ textDecoration:'none' }}>
+                    <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:600, border:'none', cursor:'pointer', width:'100%' }}>
+                      {isTradie ? 'Back to dashboard →' : 'Compare quotes →'}
+                    </button>
+                  </a>
+                </div>
+              ) : myAcknowledged && !theirAcknowledged ? (
+                // I acknowledged, waiting for them
+                <div style={{ background:'rgba(192,120,48,0.05)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'12px', padding:'18px 20px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' }}>
+                    <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#C07830', flexShrink:0 }} />
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:0 }}>Waiting for {theirLabel} to acknowledge</p>
+                  </div>
+                  <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'14px', lineHeight:'1.6' }}>
+                    You&apos;ve acknowledged {theirLabel}&apos;s notes. {isTradie ? 'The client will be notified.' : 'You can proceed to compare quotes now, or wait for them to acknowledge first.'}
+                  </p>
+                  {!isTradie && (
+                    <a href="/compare" style={{ textDecoration:'none' }}>
+                      <button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                        Proceed to compare quotes →
+                      </button>
+                    </a>
+                  )}
+                </div>
+              ) : !myAcknowledged && theirShared ? (
+                // They shared, I haven't acknowledged yet
+                <div style={{ background:'rgba(46,106,143,0.05)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'18px 20px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' }}>
+                    <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#2E6A8F', flexShrink:0 }} />
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:0 }}>{theirLabel} has shared their notes</p>
+                  </div>
+                  <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6' }}>
+                    Read {theirLabel}&apos;s notes in the &ldquo;Their notes&rdquo; tab, then acknowledge to complete the consult.
+                  </p>
+                </div>
+              ) : null}
+            </div>
           </div>
         )}
 
