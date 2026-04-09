@@ -144,6 +144,14 @@ export default function WarrantyPage() {
           </div>
         </div>
 
+        {daysLeft > 0 && daysLeft <= 30 && (
+          <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'10px', padding:'12px 16px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'10px' }}>
+            <span style={{ fontSize:'18px' }}>⏰</span>
+            <p style={{ fontSize:'13px', color:'#C07830', margin:0 }}>
+              <strong>Warranty expires in {daysLeft} day{daysLeft !== 1 ? 's' : ''}.</strong> Now is the time to do a final check and log any issues before your coverage ends.
+            </p>
+          </div>
+        )}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#1C2B32', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
           <button type="button" onClick={() => setShowForm(true)}

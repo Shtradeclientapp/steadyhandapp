@@ -414,6 +414,27 @@ export default function TradieJobPage() {
             )}
           </div>
 
+          {/* Decline quote request */}
+          {!currentQuote && !quoteSubmitted && !showQuoteForm && job?.status === 'shortlisted' && (
+            <div style={{ padding:'0 20px 12px' }}>
+              <button type="button" onClick={async () => {
+                if (!confirm('Decline this quote request? The client will be notified.')) return
+                const supabase = createClient()
+                const { data: { session } } = await supabase.auth.getSession()
+                const { data: qr } = await supabase.from('quote_requests').select('id').eq('job_id', job.id).eq('tradie_id', session?.user.id).single()
+                if (qr) await supabase.from('quote_requests').update({ status: 'declined' }).eq('id', qr.id)
+                await supabase.from('job_messages').insert({
+                  job_id: job.id,
+                  sender_id: session?.user.id,
+                  body: (profile?.tradie?.business_name || 'The tradie') + ' has declined to quote on this job.',
+                })
+                window.location.href = '/tradie/dashboard'
+              }} style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>
+                Decline this quote request
+              </button>
+            </div>
+          )}
+
           {quoteSubmitted && (
             <div style={{ padding:'20px' }}>
               <div style={{ textAlign:'center' as const, padding:'24px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', marginBottom:'16px' }}>

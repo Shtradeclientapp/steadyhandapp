@@ -216,6 +216,13 @@ export default function AgreementPage() {
       })
     } catch { /* non-critical */ }
 
+    // Notify other party via push/email
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'scope_signed', job_id: job.id, signed_by: profile?.role }),
+    }).catch(() => {})
+
     const updated = { ...scope, [field]: new Date().toISOString() }
     if (updated.client_signed_at && updated.tradie_signed_at) {
       await supabase.from('jobs').update({ status: 'delivery' }).eq('id', job.id)
@@ -712,6 +719,14 @@ export default function AgreementPage() {
 
                   {!(profile?.role === 'tradie' ? scope.tradie_signed_at : scope.client_signed_at) && (
                     <>
+                      {(profile?.role === 'tradie' ? scope.client_signed_at : scope.tradie_signed_at) && (
+                        <div style={{ background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px' }}>
+                          <span style={{ fontSize:'16px' }}>✍️</span>
+                          <p style={{ fontSize:'13px', color:'#2E6A8F', margin:0, fontWeight:500 }}>
+                            {profile?.role === 'tradie' ? (job.client?.full_name || 'The client') : (job.tradie?.business_name || 'The tradie')} has signed. Your signature is needed to proceed.
+                          </p>
+                        </div>
+                      )}
                       {!scope && !uploadedDoc ? (
                         <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'10px' }}>
                           <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'4px' }}>Scope required before signing</p>
