@@ -6,6 +6,8 @@ const ADMIN_EMAIL = 'anthony.coxeter@gmail.com'
 
 export default function AdminPage() {
   const [tab, setTab] = useState<'tradies'|'clients'|'jobs'>('tradies')
+  const [page, setPage] = useState(0)
+  const PAGE_SIZE = 20
   const [tradies, setTradies] = useState<any[]>([])
   const [clients, setClients] = useState<any[]>([])
   const [jobs, setJobs] = useState<any[]>([])
@@ -103,7 +105,7 @@ export default function AdminPage() {
           </div>
           <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)', marginBottom: '20px' }}>
             {(['tradies', 'clients', 'jobs'] as const).map(t => (
-              <button key={t} type="button" onClick={() => setTab(t)}
+              <button key={t} type="button" onClick={() => { setTab(t); setPage(0) }}
                 style={{ padding: '10px 20px', border: 'none', borderBottom: tab === t ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: tab === t ? 600 : 400, color: tab === t ? '#1C2B32' : '#7A9098', textTransform: 'capitalize' as const }}>
                 {t} ({t === 'tradies' ? tradies.length : t === 'clients' ? clients.length : jobs.length})
               </button>
@@ -111,7 +113,7 @@ export default function AdminPage() {
           </div>
           {tab === 'tradies' && (
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>
-              {tradies.map(t => (
+              {tradies.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map(t => (
                 <div key={t.id} onClick={() => selectProfile(t, 'tradie')}
                   style={{ background: '#E8F0EE', border: selectedProfile?.id === t.id ? '1.5px solid #D4522A' : '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '18px 20px', cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' as const }}>
@@ -138,6 +140,15 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
+            {tradies.length > PAGE_SIZE && (
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:'16px', padding:'10px 0' }}>
+                <button type="button" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+                  style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'7px 14px', cursor: page === 0 ? 'not-allowed' : 'pointer', opacity: page === 0 ? 0.4 : 1 }}>← Prev</button>
+                <span style={{ fontSize:'12px', color:'#7A9098' }}>{page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, tradies.length)} of {tradies.length}</span>
+                <button type="button" onClick={() => setPage(p => p + 1)} disabled={(page + 1) * PAGE_SIZE >= tradies.length}
+                  style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'7px 14px', cursor: (page + 1) * PAGE_SIZE >= tradies.length ? 'not-allowed' : 'pointer', opacity: (page + 1) * PAGE_SIZE >= tradies.length ? 0.4 : 1 }}>Next →</button>
+              </div>
+            )}
           )}
           {tab === 'clients' && (
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '12px' }}>

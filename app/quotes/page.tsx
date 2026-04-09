@@ -38,7 +38,7 @@ export default function QuotesPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name)')
         .eq('client_id', session.user.id)
-        .in('status', ['shortlisted', 'agreement', 'quotes', 'delivery', 'signoff', 'warranty', 'complete'])
+        .in('status', ['shortlisted', 'matching', 'agreement', 'quotes', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         
 
