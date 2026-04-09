@@ -52,8 +52,9 @@ export default function VaultPage() {
       const path = 'vault/' + profile.id + '/' + Date.now() + '.' + ext
       const { error } = await supabase.storage.from('Documents').upload(path, selectedFile)
       if (!error) {
-        const { data } = supabase.storage.from('Documents').getPublicUrl(path)
-        file_url = data.publicUrl
+        // Use signed URL for private bucket (1 year expiry)
+        const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
+        file_url = signedData?.signedUrl || null
         file_name = selectedFile.name
       }
     }

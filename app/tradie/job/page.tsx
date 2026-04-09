@@ -119,7 +119,7 @@ export default function TradieJobPage() {
       setUser(session.user)
       const params = new URLSearchParams(window.location.search)
       const jobId = params.get('id')
-      if (!jobId) { setLoading(false); return }
+      if (!jobId) { window.location.href = '/tradie/dashboard'; return }
       const { data: jobData } = await supabase.from('jobs')
         .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
         .eq('id', jobId).single()

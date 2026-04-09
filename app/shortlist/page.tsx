@@ -49,13 +49,31 @@ export default function ShortlistPage() {
       await loadQuoteRequests(jobsData[0].id)
       if (!existing || existing.length === 0) {
         setMatching(true)
-        const res = await fetch('/api/match', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-          body: JSON.stringify({ job_id: jobsData[0].id }),
-        })
-        const data = await res.json()
-        if (data.shortlist) await loadShortlist(jobsData[0].id)
+        try {
+          const res = await fetch('/api/match', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+            body: JSON.stringify({ job_id: jobsData[0].id }),
+          })
+          const data = await res.json()
+          if (data.shortlist) {
+            await loadShortlist(jobsData[0].id)
+          } else {
+            // Poll for results if API returned before shortlist was written
+            let attempts = 0
+            const poll = async () => {
+              if (attempts >= 5) { setMatching(false); return }
+              attempts++
+              await new Promise(r => setTimeout(r, 2000))
+              const results = await loadShortlist(jobsData[0].id)
+              if (!results || results.length === 0) poll()
+              else setMatching(false)
+            }
+            await poll()
+          }
+        } catch {
+          setMatching(false)
+        }
         setMatching(false)
       }
       setLoading(false)

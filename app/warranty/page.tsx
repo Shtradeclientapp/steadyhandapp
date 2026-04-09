@@ -229,6 +229,15 @@ export default function WarrantyPage() {
                   {issue.resolution_notes && (
                     <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px', fontStyle:'italic' }}>Resolution plan: {issue.resolution_notes}</p>
                   )}
+                  {issue.status === 'open' && (
+                    <button type="button" onClick={async () => {
+                      const supabase = createClient()
+                      await supabase.from('warranty_issues').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', issue.id)
+                      setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, status: 'resolved' } : i))
+                    }} style={{ marginTop:'10px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
+                      Mark as resolved ✓
+                    </button>
+                  )}
                   {issue.status !== 'resolved' && (
                     <button type="button" onClick={() => acceptResolution(issue.id)} disabled={acceptingId === issue.id}
                       style={{ marginTop:'10px', background:'#2E7D60', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: acceptingId === issue.id ? 0.7 : 1 }}>

@@ -237,6 +237,11 @@ export default function AssessPage() {
     // If both acknowledged, move to quotes
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
+      // Show proceed CTA after a short delay
+      setTimeout(() => {
+        const proceed = confirm('Both parties have acknowledged the consult notes. Proceed to compare quotes?')
+        if (proceed) window.location.href = '/compare'
+      }, 500)
       const supabase2 = createClient()
       await supabase2.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
       setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/quotes' }, 1200)
