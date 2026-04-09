@@ -317,7 +317,7 @@ export default function QuotesPage() {
                 <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait</p>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
                   {[
-                    { icon:'📋', title:'Review the consult record', desc:'Check your notes and the tradie's notes are aligned before quotes arrive.', link:'/assess' },
+                    { icon:'📋', title:'Review the consult record', desc:'Check your notes and the tradie notes are aligned before quotes arrive.', link:'/assess' },
                     { icon:'💡', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
                     { icon:'❓', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
                     { icon:'💬', title:'Not heard back after 2 days?', desc:'Message the tradie directly to follow up.', link:'/messages' },
