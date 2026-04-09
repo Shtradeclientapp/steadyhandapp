@@ -214,6 +214,13 @@ export default function WarrantyPage() {
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
+              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
+                <p style={{ fontSize:'11px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#C07830', margin:'0 0 8px' }}>
+                  {new Date(issue.response_due_at) < new Date()
+                    ? 'Tradie response overdue — Steadyhand has been notified.'
+                    : 'Tradie response due by ' + new Date(issue.response_due_at).toLocaleDateString('en-AU')}
+                </p>
+              )}
               {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (() => {
                 const due = new Date(issue.response_due_at)
                 const overdue = due < new Date()

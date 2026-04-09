@@ -419,6 +419,11 @@ export default function DeliveryPage() {
                 <div style={{ padding:'4px 0 28px', flex:1 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px', flexWrap:'wrap' }}>
                     <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px' }}>{m.label}</h3>
+                    {m.due_date && (
+                      <p style={{ fontSize:'11px', color: new Date(m.due_date) < new Date() && m.status !== 'approved' ? '#D4522A' : '#7A9098', margin:'2px 0 0' }}>
+                        {new Date(m.due_date) < new Date() && m.status !== 'approved' ? '⚠ Overdue · ' : 'Due · '}{new Date(m.due_date).toLocaleDateString('en-AU')}
+                      </p>
+                    )}
                     {isDone && <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'2px 8px', fontSize:'10px', color:'#2E7D60' }}>Approved</span>}
                     {isActive && !isDone && <span style={{ background:'rgba(192,120,48,0.1)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'100px', padding:'2px 8px', fontSize:'10px', color:'#C07830' }}>Action needed</span>}
                   </div>
