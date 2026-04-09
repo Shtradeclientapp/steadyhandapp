@@ -192,51 +192,52 @@ window.location.href = '/shortlist?submitted=true'
 
           {step === 0 && card(
             <>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'20px', fontWeight:'500' }}>What do you need done?</p>
+              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'6px', fontWeight:'500' }}>Tell us what you need</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>Start by describing the job in your own words. The more detail you give, the better your shortlist will be.</p>
+              <label style={labelStyle}>
+                What do you need done?
+                <textarea
+                  placeholder="e.g. Our hot water system stopped working yesterday. It is about 12 years old, gas-powered, in the laundry. We would like a plumber to assess whether it can be repaired or needs replacing. The house was built in 1995 — access through the side gate."
+                  value={form.description} onChange={set('description')}
+                  style={{ ...inputStyle, minHeight:'140px', resize:'vertical' as const }}
+                />
+                <div style={{ marginTop:'6px', background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'6px', padding:'8px 12px' }}>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px', fontWeight:600 }}>Helpful to include:</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.6' }}>What the problem is · How long it has been an issue · Property age · Access · Any known complications</p>
+                </div>
+              </label>
+              <label style={labelStyle}>
+                Give your request a title
+                <input type="text" placeholder="e.g. Hot water system repair or replacement — Subiaco" value={form.title} onChange={set('title')} style={inputStyle} />
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>A clear title helps tradies understand the job at a glance. Include the trade and your suburb.</span>
+              </label>
               <label style={labelStyle}>
                 Trade category
                 <select value={form.trade_category} onChange={set('trade_category')} style={inputStyle}>
-                  <option value="">Select trade...</option>
+                  <option value="">Not sure — select closest match</option>
                   {TRADES.map(t => <option key={t}>{t}</option>)}
                 </select>
-              </label>
-              <label style={labelStyle}>
-                Request title
-                <input type="text" placeholder="e.g. Full bathroom retile and fixture replacement — Subiaco" value={form.title} onChange={set('title')} style={inputStyle} />
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Include the trade type and your suburb — e.g. "Electrical switchboard upgrade — Mount Lawley"</span>
-              </label>
-              <label style={labelStyle}>
-                Describe what you need
-                <textarea
-                  placeholder="e.g. We need our main bathroom fully retiled — floor and walls. The house was built in 1978 and the existing tiles are coming away. Access is straightforward through the back door. We prefer a neutral grey tone. No asbestos that we know of but the house is pre-1990 so worth checking."
-                  value={form.description} onChange={set('description')}
-                  style={{ ...inputStyle, minHeight:'120px', resize:'vertical' as const }}
-                />
-                <div style={{ marginTop:'6px', background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'6px', padding:'8px 12px' }}>
-                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px', fontWeight:600 }}>A good description includes:</p>
-                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.6' }}>What needs doing · Property age · Access constraints · Material preferences · Any known issues (asbestos, heritage listing, existing damage)</p>
-                </div>
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — Steadyhand will confirm during matching.</span>
               </label>
               <button
                 onClick={() => setStep(1)}
-                disabled={!form.trade_category || !form.title || !form.description}
-                style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:(!form.trade_category || !form.title || !form.description) ? 0.5 : 1, fontFamily:'sans-serif' }}>
-                Continue — location & timing →
+                disabled={!form.title || !form.description}
+                style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:(!form.title || !form.description) ? 0.5 : 1, fontFamily:'sans-serif' }}>
+                Continue — location & details →
               </button>
             </>
           )}
 
           {step === 1 && card(
             <>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'20px', fontWeight:'500' }}>Location & timing</p>
+              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'20px', fontWeight:'500' }}>Location & job details</p>
+              <label style={labelStyle}>
+                Suburb
+                <input type="text" placeholder="e.g. Subiaco" value={form.suburb} onChange={set('suburb')} style={inputStyle} list="suburbs-list" />
+                <datalist id="suburbs-list">{SUBURBS.map(s => <option key={s} value={s} />)}</datalist>
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Type your suburb — if it is not in the list, type it in manually.</span>
+              </label>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
-                <label style={labelStyle}>
-                  Suburb
-                  <select value={form.suburb} onChange={set('suburb')} style={inputStyle}>
-                    <option value="">Select suburb...</option>
-                    {SUBURBS.map(s => <option key={s}>{s}</option>)}
-                  </select>
-                </label>
                 <label style={labelStyle}>
                   Property type
                   <select value={form.property_type} onChange={set('property_type')} style={inputStyle}>
@@ -247,7 +248,7 @@ window.location.href = '/shortlist?submitted=true'
                   </select>
                 </label>
                 <label style={labelStyle}>
-                  Preferred start
+                  When do you need this done?
                   <select value={form.preferred_start} onChange={set('preferred_start')} style={inputStyle}>
                     <option value="">As soon as possible</option>
                     <option>Within 2 weeks</option>
@@ -255,25 +256,25 @@ window.location.href = '/shortlist?submitted=true'
                     <option>Flexible — no rush</option>
                   </select>
                 </label>
-                <label style={labelStyle}>
-                  Budget range
-                  <select value={form.budget_range} onChange={set('budget_range')} style={inputStyle}>
-                    <option value="">Not sure — need quotes</option>
-                    <option>Under $1,000</option>
-                    <option>$1,000–$5,000</option>
-                    <option>$5,000–$15,000</option>
-                    <option>$15,000+</option>
-                  </select>
-                </label>
               </div>
+              <label style={labelStyle}>
+                Budget range <span style={{ fontSize:'11px', color:'#9AA5AA', fontWeight:400 }}>(optional — helps match you with the right tradies)</span>
+                <select value={form.budget_range} onChange={set('budget_range')} style={inputStyle}>
+                  <option value="">Not sure — I need quotes first</option>
+                  <option>Under $1,000</option>
+                  <option>$1,000–$5,000</option>
+                  <option>$5,000–$15,000</option>
+                  <option>$15,000+</option>
+                </select>
+              </label>
               <label style={labelStyle}>
                 Warranty period
                 <select value={form.warranty_period} onChange={set('warranty_period')} style={inputStyle}>
-                  <option value="90">Standard — 90 days</option>
-                  <option value="180">Extended — 6 months</option>
-                  <option value="365">Full — 12 months</option>
+                  <option value="90">Standard — 90 days (recommended for most jobs)</option>
+                  <option value="180">Extended — 6 months (complex or high-value work)</option>
+                  <option value="365">Full — 12 months (major renovations)</option>
                 </select>
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Written into the scope agreement. 90 days is standard for most trade work. Choose longer for complex or high-value jobs.</span>
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>This is written into the scope agreement that both parties sign before work begins. The tradie is formally obligated to this period.</span>
               </label>
               <div style={{ display:'flex', gap:'10px', marginTop:'8px' }}>
                 {btn('← Back', () => setStep(0), 'ghost')}
@@ -281,7 +282,7 @@ window.location.href = '/shortlist?submitted=true'
                   onClick={() => setStep(2)}
                   disabled={!form.suburb}
                   style={{ flex:1, background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:!form.suburb ? 0.5 : 1, fontFamily:'sans-serif' }}>
-                  Continue — review & submit →
+                  Review and submit →
                 </button>
               </div>
             </>
