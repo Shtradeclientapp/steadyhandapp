@@ -402,10 +402,16 @@ export default function TradieJobPage() {
               <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE</p>
               <p style={{ fontSize: '12px', color: '#7A9098' }}>{currentQuote ? 'Version ' + currentQuote.version + ' · ' + new Date(currentQuote.created_at).toLocaleDateString('en-AU') : 'No quote submitted yet'}</p>
             </div>
-            <button type="button" onClick={() => setShowQuoteForm(!showQuoteForm)}
-              style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#1C2B32' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
-              {showQuoteForm ? 'Cancel' : currentQuote ? 'Revise quote' : 'Build quote →'}
-            </button>
+            {['agreement','delivery','signoff','warranty','complete'].includes(job?.status) ? (
+              <span style={{ fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'7px 14px' }}>
+                ✓ Quote accepted
+              </span>
+            ) : (
+              <button type="button" onClick={() => setShowQuoteForm(!showQuoteForm)}
+                style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#1C2B32' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                {showQuoteForm ? 'Cancel' : currentQuote ? 'Revise quote' : 'Build quote →'}
+              </button>
+            )}
           </div>
 
           {quoteSubmitted && (

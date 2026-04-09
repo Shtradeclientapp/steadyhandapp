@@ -35,7 +35,6 @@ function MessagesPageInner() {
         .from('jobs')
         .select('*, client:profiles!jobs_client_id_fkey(full_name), tradie:tradie_profiles(business_name)')
         .eq(isTradie ? 'tradie_id' : 'client_id', session.user.id)
-        .not('tradie_id', 'is', null)
         .order('updated_at', { ascending: false })
 
       setJobs(jobData || [])
