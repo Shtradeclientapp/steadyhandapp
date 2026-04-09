@@ -406,6 +406,37 @@ export default function AssessPage() {
 
         {activeTab === 'mine' && (
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+
+            {/* CLIENT EXPLAINER — shown before notes are shared */}
+            {!isTradie && !myShared && (
+              <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'12px', padding:'18px 20px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'12px', letterSpacing:'0.2px' }}>What is the consult for?</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'12px' }}>
+                  The consult is a site visit where you and your tradie see the job together in person. It creates a shared record — before any quote is submitted — of what was discussed, what was observed, and what each party expects.
+                </p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>
+                  This record protects you both. If the scope changes later, you have a written baseline. If there is a dispute, you have evidence of what was agreed before work started.
+                </p>
+                <div style={{ borderTop:'1px solid rgba(155,107,155,0.15)', paddingTop:'12px' }}>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'8px' }}>During the visit, note down:</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                    {[
+                      'What the tradie looked at and what they said about it',
+                      'Any access issues, existing damage or complications they flagged',
+                      'Their initial advice — did they suggest a different approach?',
+                      'Anything left unresolved — pricing TBC, council approval needed, etc.',
+                      'What you expect the quote to include',
+                    ].map((item, i) => (
+                      <div key={i} style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                        <div style={{ width:'18px', height:'18px', borderRadius:'50%', background:'rgba(155,107,155,0.15)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'#9B6B9B', fontWeight:700, flexShrink:0, marginTop:'1px' }}>{i+1}</div>
+                        <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:0 }}>{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>YOUR CONSULT NOTES</p>
