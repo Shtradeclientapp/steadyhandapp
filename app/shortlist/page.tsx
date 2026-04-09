@@ -31,53 +31,67 @@ export default function ShortlistPage() {
   const [suburbSuggestions, setSuburbSuggestions] = useState<string[]>([])
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    const init = async () => {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/login'; return }
+
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       setProfile(prof)
+
       const { data: jobsData } = await supabase
         .from('jobs')
         .select('*')
         .eq('client_id', session.user.id)
         .in('status', ['matching', 'shortlisted', 'agreement', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('created_at', { ascending: false })
+
       if (!jobsData || jobsData.length === 0) { setLoading(false); return }
+
+      const job = jobsData[0]
       setJobs(jobsData)
-      setSelectedJob(jobsData[0])
-      const existing = await loadShortlist(jobsData[0].id)
-      await loadQuoteRequests(jobsData[0].id)
-      if (!existing || existing.length === 0) {
-        setMatching(true)
-        try {
-          const res = await fetch('/api/match', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-            body: JSON.stringify({ job_id: jobsData[0].id }),
-          })
-          const data = await res.json()
-          if (data.shortlist && data.shortlist.length > 0) {
-            await loadShortlist(jobsData[0].id)
-          } else {
-            // Poll for results
-            let attempts = 0
-            const poll = async () => {
-              if (attempts >= 8) return
-              attempts++
-              await new Promise(r => setTimeout(r, 2000))
-              const results = await loadShortlist(jobsData[0].id)
-              if (!results || results.length === 0) await poll()
-            }
-            await poll()
-          }
-        } catch (e) {
-          console.error('Match error:', e)
-        } finally {
-          setMatching(false)
-        }
+      setSelectedJob(job)
+      await loadQuoteRequests(job.id)
+
+      // Try to load existing shortlist first
+      const { data: existingShortlist } = await supabase
+        .from('shortlist')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(*))')
+        .eq('job_id', job.id)
+        .order('rank', { ascending: true })
+
+      if (existingShortlist && existingShortlist.length > 0) {
+        setShortlist(existingShortlist)
+        setLoading(false)
+        return
       }
+
+      // No shortlist yet - run matching
+      setMatching(true)
       setLoading(false)
-    })
+
+      try {
+        const res = await fetch('/api/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+          body: JSON.stringify({ job_id: job.id }),
+        })
+        const data = await res.json()
+        if (data.shortlist && data.shortlist.length > 0) {
+          // Use the returned data directly - no need to reload
+          const { data: fresh } = await supabase
+            .from('shortlist')
+            .select('*, tradie:tradie_profiles(*, profile:profiles(*))')
+            .eq('job_id', job.id)
+            .order('rank', { ascending: true })
+          setShortlist(fresh || [])
+        }
+      } catch (e) {
+        console.error('Match error:', e)
+      }
+      setMatching(false)
+    }
+    init()
   }, [])
 
   const loadShortlist = async (jobId: string) => {
