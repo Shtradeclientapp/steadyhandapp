@@ -190,7 +190,10 @@ function MessagesPageInner() {
           </div>
           {jobs.length === 0 && (
             <div style={{ padding:'24px', textAlign:'center' }}>
-              <p style={{ fontSize:'13px', color:'#7A9098' }}>No active jobs with a tradie assigned yet.</p>
+              <div style={{ fontSize:'28px', marginBottom:'10px', opacity:0.4 }}>💬</div>
+              <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'8px' }}>No job threads yet.</p>
+              <p style={{ fontSize:'12px', color:'#9AA5AA', lineHeight:'1.5' }}>Messages appear here once you have submitted a job request.</p>
+              <a href="/request" style={{ display:'inline-block', marginTop:'12px', fontSize:'13px', color:'#2E6A8F', textDecoration:'none', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'7px', padding:'7px 14px' }}>Start a request →</a>
             </div>
           )}
           {jobs.map(job => {
