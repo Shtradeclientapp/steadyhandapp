@@ -276,11 +276,61 @@ export default function QuotesPage() {
 
         {/* QUOTE CARDS */}
         {receivedQuotes.length === 0 && !isPastQuotes && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'48px', textAlign:'center' as const }}>
-            <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>📋</div>
-            <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>No quotes received yet</p>
-            <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>Tradies have been notified. Check back soon or send a reminder via messages.</p>
-            <a href="/messages" style={{ color:'#2E6A8F', textDecoration:'none', fontSize:'13px' }}>Send a message →</a>
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+
+            {/* WAITING STATE */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px' }}>
+                <div style={{ fontSize:'32px' }}>⏳</div>
+                <div>
+                  <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Tradies typically respond within 1–2 business days.</p>
+                </div>
+              </div>
+              {awaitingQuotes.length > 0 && (
+                <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'14px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                  {awaitingQuotes.map((qr: any) => (
+                    <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 12px', background:'rgba(28,43,50,0.03)', borderRadius:'8px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        <div style={{ width:'28px', height:'28px', borderRadius:'6px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                          {qr.tradie?.business_name?.charAt(0) || '?'}
+                        </div>
+                        <p style={{ fontSize:'13px', color:'#1C2B32', margin:0 }}>{qr.tradie?.business_name}</p>
+                      </div>
+                      <span style={{ fontSize:'11px', color:'#C07830', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'100px', padding:'2px 8px' }}>Awaiting</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{ marginTop:'14px', display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+                <a href="/messages" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px', background:'rgba(46,106,143,0.06)' }}>
+                  Message tradies →
+                </a>
+                <a href="/assess" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px' }}>
+                  Review consult notes
+                </a>
+              </div>
+            </div>
+
+            {/* WHILE YOU WAIT */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px' }}>
+              <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait — how to evaluate a trade quote</p>
+              {[
+                { icon:'💰', title:'Price is not the only signal', body:'A low quote may mean the tradie has underestimated the job and will come back with variations later. Ask what is and isn't included.' },
+                { icon:'📋', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won't be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
+                { icon:'📅', title:'Check the start date and timeline', body:'A tradie who can start immediately may have spare capacity for a reason. A realistic timeline is better than a fast one.' },
+                { icon:'🛡', title:'Warranty is written into the scope', body:'Once you accept a quote, Steadyhand writes the warranty period into the scope agreement. The tradie signs it before work begins.' },
+              ].map((item, i) => (
+                <div key={i} style={{ display:'flex', gap:'12px', marginBottom: i < 3 ? '14px' : '0', paddingBottom: i < 3 ? '14px' : '0', borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
+                  <span style={{ fontSize:'20px', flexShrink:0 }}>{item.icon}</span>
+                  <div>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>{item.title}</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>{item.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </div>
         )}
 
