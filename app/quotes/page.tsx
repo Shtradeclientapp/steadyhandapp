@@ -292,9 +292,9 @@ export default function QuotesPage() {
                 <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait</p>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
                   {[
-                    { icon:'📋', title:'Review the consult record', desc:'Check your notes and the tradie notes are aligned before quotes arrive.', link:'/assess' },
-                    { icon:'💡', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
-                    { icon:'❓', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
+                    { icon:'1', title:'Review the consult record', desc:'Check your notes and the tradie notes are aligned before quotes arrive.', link:'/assess' },
+                    { icon:'2', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
+                    { icon:'3', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
                     { icon:'💬', title:'Not heard back after 2 days?', desc:'Message the tradie directly to follow up.', link:'/messages' },
                   ].map((item, i) => (
                     <div key={i} style={{ display:'flex', gap:'12px', alignItems:'flex-start', paddingBottom: i < 3 ? '12px' : 0, borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
@@ -317,9 +317,9 @@ export default function QuotesPage() {
                 <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait</p>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
                   {[
-                    { icon:'📋', title:'Review the consult record', desc:'Check your notes and the tradie notes are aligned before quotes arrive.', link:'/assess' },
-                    { icon:'💡', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
-                    { icon:'❓', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
+                    { icon:'1', title:'Review the consult record', desc:'Check your notes and the tradie notes are aligned before quotes arrive.', link:'/assess' },
+                    { icon:'2', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
+                    { icon:'3', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
                     { icon:'💬', title:'Not heard back after 2 days?', desc:'Message the tradie directly to follow up.', link:'/messages' },
                   ].map((item, i) => (
                     <div key={i} style={{ display:'flex', gap:'12px', alignItems:'flex-start', paddingBottom: i < 3 ? '12px' : 0, borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
@@ -366,7 +366,7 @@ export default function QuotesPage() {
               <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait — how to evaluate a trade quote</p>
               {[
                 { icon:'💰', title:'Price is not the only signal', body:'A low quote may mean the tradie has underestimated the job and will come back with variations later. Ask what is and isn\'t included.' },
-                { icon:'📋', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won\'t be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
+                { icon:'1', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won\'t be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
                 { icon:'📅', title:'Check the start date and timeline', body:'A tradie who can start immediately may have spare capacity for a reason. A realistic timeline is better than a fast one.' },
                 { icon:'🛡', title:'Warranty is written into the scope', body:'Once you accept a quote, Steadyhand writes the warranty period into the scope agreement. The tradie signs it before work begins.' },
               ].map((item, i) => (
@@ -589,7 +589,7 @@ export default function QuotesPage() {
               <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait — how to evaluate a trade quote</p>
               {[
                 { icon:'💰', title:'Price is not the only signal', body:'A low quote may mean the tradie has underestimated the job and will come back with variations later. Ask what is and isn\'t included.' },
-                { icon:'📋', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won\'t be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
+                { icon:'1', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won\'t be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
                 { icon:'📅', title:'Check the start date and timeline', body:'A tradie who can start immediately may have spare capacity for a reason. A realistic timeline is better than a fast one.' },
                 { icon:'🛡', title:'Warranty is written into the scope', body:'Once you accept a quote, Steadyhand writes the warranty period into the scope agreement. The tradie signs it before work begins.' },
               ].map((item, i) => (
