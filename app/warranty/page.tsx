@@ -221,6 +221,13 @@ export default function WarrantyPage() {
                     : 'Tradie response due by ' + new Date(issue.response_due_at).toLocaleDateString('en-AU')}
                 </p>
               )}
+              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
+                <p style={{ fontSize:'11px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#C07830', margin:'0 0 8px' }}>
+                  {new Date(issue.response_due_at) < new Date()
+                    ? 'Tradie response overdue — Steadyhand has been notified.'
+                    : 'Tradie response due by ' + new Date(issue.response_due_at).toLocaleDateString('en-AU')}
+                </p>
+              )}
               {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (() => {
                 const due = new Date(issue.response_due_at)
                 const overdue = due < new Date()
