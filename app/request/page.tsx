@@ -157,7 +157,7 @@ window.location.href = '/shortlist?submitted=true'
               { icon:'🏠', tip:'Include the age of your property, any access constraints, and relevant history — tradies use this to price accurately.' },
               { icon:'✏️', tip:'A clear title helps Steadyhand match you faster. Include the trade and location, e.g. "Bathroom retile — Subiaco".' },
               { icon:'💰', tip:'A realistic budget range helps match you with tradies who are right for your job size.' },
-              { icon:'🛡', tip:'Warranty periods are written into your scope agreement — the tradie's formal obligation after completion.' },
+              { icon:'🛡', tip:'Warranty periods are written into your scope agreement — the tradie\'s formal obligation after completion.' },
             ]
             const tip = tips[showHints % tips.length]
             return (
