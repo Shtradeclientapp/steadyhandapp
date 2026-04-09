@@ -313,15 +313,14 @@ export default function ShortlistPage() {
           )}
 
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+            {/* PRIMARY TABS: matches + requested only */}
             <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
               {[
                 { key:'matches', label:'Steadyhand matches', count: shortlist.length },
-                { key:'directory', label:'Browse directory', count: directoryTradies.length },
-                { key:'invite', label:'Invite a tradie', count: pendingInvites.length },
                 { key:'requested', label: pendingConfirm ? 'Review & confirm' : sent ? 'Sent' : 'Requested', count: pendingConfirm ? selectedTradies.length : quoteRequests.length },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
-                  style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                  style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
                   {t.label}
                   {t.count > 0 && <span style={{ background: tab === t.key ? '#2E6A8F' : 'rgba(28,43,50,0.1)', color: tab === t.key ? 'white' : '#7A9098', fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius:'100px' }}>{t.count}</span>}
                 </button>
@@ -406,6 +405,10 @@ export default function ShortlistPage() {
 
             {tab === 'invite' && (
               <div style={{ padding:'20px' }}>
+                <button type="button" onClick={() => setTab('matches')}
+                  style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0, marginBottom:'16px', textDecoration:'underline' }}>
+                  ← Back to matches
+                </button>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>
                   Have a tradie you already trust? Add them below — they will receive an email with your job details and a link to submit a quote through Steadyhand.
                 </p>
@@ -458,8 +461,27 @@ export default function ShortlistPage() {
               </div>
             )}
 
+            {/* SECONDARY ACTIONS - shown below matches */}
+            {tab === 'matches' && !matching && (
+              <div style={{ padding:'12px 20px', borderTop:'1px solid rgba(28,43,50,0.06)', background:'rgba(28,43,50,0.02)', display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0, alignSelf:'center', flex:1 }}>Not seeing the right tradie?</p>
+                <button type="button" onClick={() => setTab('directory')}
+                  style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
+                  Browse directory
+                </button>
+                <button type="button" onClick={() => setTab('invite')}
+                  style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
+                  Invite your own tradie
+                </button>
+              </div>
+            )}
+
             {tab === 'directory' && (
               <div style={{ padding:'20px' }}>
+                <button type="button" onClick={() => setTab('matches')}
+                  style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0, marginBottom:'16px', textDecoration:'underline' }}>
+                  ← Back to matches
+                </button>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
                   Browse Steadyhand-vetted trade businesses in Western Australia. Search by keyword — try specialisations like 'heritage', 'solar', 'commercial', or 'strata' — or browse by trade category and suburb.
                 </p>
