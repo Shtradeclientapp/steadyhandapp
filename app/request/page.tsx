@@ -230,7 +230,14 @@ window.location.href = '/shortlist?submitted=true'
 
           {step === 1 && card(
             <>
-              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'20px', fontWeight:'500' }}>Location & job details</p>
+              <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'12px', fontWeight:'500' }}>Location & job details</p>
+              {form.description && (
+                <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px', marginBottom:'20px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.5px' }}>Your job</p>
+                  <p style={{ fontSize:'13px', color:'#1C2B32', margin:0, lineHeight:'1.5' }}>{form.title}</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:'4px 0 0', lineHeight:'1.5' }}>{form.description.slice(0, 120)}{form.description.length > 120 ? '...' : ''}</p>
+                </div>
+              )}
               <label style={labelStyle}>
                 Suburb
                 <input type="text" placeholder="e.g. Subiaco" value={form.suburb} onChange={set('suburb')} style={inputStyle} list="suburbs-list" />

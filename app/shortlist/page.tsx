@@ -144,11 +144,11 @@ export default function ShortlistPage() {
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
+    setTab('requested')
     } catch (e) {
       console.error('sendQuoteRequests error:', e)
     }
     setSending(false)
-    setTab('requested')
   }
 
   const addInvite = () => {
@@ -320,12 +320,36 @@ export default function ShortlistPage() {
                 { key:'requested', label: pendingConfirm ? 'Review & confirm' : sent ? 'Sent' : 'Requested', count: pendingConfirm ? selectedTradies.length : quoteRequests.length },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
-                  style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #2E6A8F' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
+                  style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
                   {t.label}
                   {t.count > 0 && <span style={{ background: tab === t.key ? '#2E6A8F' : 'rgba(28,43,50,0.1)', color: tab === t.key ? 'white' : '#7A9098', fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius:'100px' }}>{t.count}</span>}
                 </button>
               ))}
             </div>
+            {/* Secondary actions */}
+            {(tab === 'matches' || tab === 'directory' || tab === 'invite') && (
+              <div style={{ display:'flex', alignItems:'center', gap:'16px', padding:'8px 16px', background:'rgba(28,43,50,0.02)', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                {tab !== 'matches' && (
+                  <button type="button" onClick={() => setTab('matches')}
+                    style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+                    ← Back to matches
+                  </button>
+                )}
+                {tab === 'matches' && (
+                  <>
+                    <span style={{ fontSize:'11px', color:'#9AA5AA' }}>Can't find what you need?</span>
+                    <button type="button" onClick={() => setTab('directory')}
+                      style={{ fontSize:'12px', color:'#2E6A8F', background:'none', border:'none', cursor:'pointer', padding:0, textDecoration:'underline' }}>
+                      Browse directory{directoryTradies.length > 0 ? ' (' + directoryTradies.length + ')' : ''}
+                    </button>
+                    <button type="button" onClick={() => setTab('invite')}
+                      style={{ fontSize:'12px', color:'#2E6A8F', background:'none', border:'none', cursor:'pointer', padding:0, textDecoration:'underline' }}>
+                      Invite your own tradie{pendingInvites.length > 0 ? ' (' + pendingInvites.length + ')' : ''}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
 
             {tab === 'matches' && (
               <div style={{ padding:'20px' }}>

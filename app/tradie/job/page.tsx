@@ -426,7 +426,7 @@ export default function TradieJobPage() {
                 await supabase.from('job_messages').insert({
                   job_id: job.id,
                   sender_id: session?.user.id,
-                  body: (profile?.tradie?.business_name || 'The tradie') + ' has declined to quote on this job.',
+                  body: (job?.tradie?.business_name || 'The tradie') + ' has declined to quote on this job.',
                 })
                 window.location.href = '/tradie/dashboard'
               }} style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>

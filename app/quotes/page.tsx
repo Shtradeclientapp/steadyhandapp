@@ -283,10 +283,34 @@ export default function QuotesPage() {
               <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px' }}>
                 <div style={{ fontSize:'32px' }}>⏳</div>
                 <div>
-                  <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>Waiting for quotes</p>
-                  <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Tradies typically respond within 1–2 business days.</p>
+                  <p style={{ fontSize:'15px', fontWeight:500, color:'#C07830', margin:'0 0 3px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Tradies typically respond within 1–2 business days. You will receive an email when each quote arrives.</p>
                 </div>
               </div>
+              {/* Active waiting content */}
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px', marginTop:'16px' }}>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait</p>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
+                  {[
+                    { icon:'📋', title:'Review the consult record', desc:'Check your notes and the tradie's notes are aligned before quotes arrive.', link:'/assess' },
+                    { icon:'💡', title:'What makes a good quote', desc:'Clear itemisation of labour and materials, a realistic timeline, and specific conditions. Vague quotes lead to disputes.', link: null },
+                    { icon:'❓', title:'Questions to ask when quotes arrive', desc:'What is excluded? How are variations handled? What is the payment schedule?', link: null },
+                    { icon:'💬', title:'Not heard back after 2 days?', desc:'Message the tradie directly to follow up.', link:'/messages' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display:'flex', gap:'12px', alignItems:'flex-start', paddingBottom: i < 3 ? '12px' : 0, borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
+                      <span style={{ fontSize:'18px', flexShrink:0 }}>{item.icon}</span>
+                      <div>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>{item.title}</p>
+                        <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
+                        {item.link && <a href={item.link} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', display:'inline-block', marginTop:'4px' }}>Go →</a>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ background:'rgba(46,106,143,0.05)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'10px', padding:'14px 16px', marginTop:'12px' }}>
+                <p style={{ fontSize:'12px', fontWeight:600, color:'#2E6A8F', marginBottom:'6px' }}>How to compare quotes</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>Price is not the only factor. A higher quote with clear scope is often better value than a cheaper one that leaves things vague. Look at how each tradie handled your consult notes — it tells you a lot about how they will handle the job.
               {awaitingQuotes.length > 0 && (
                 <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'14px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
                   {awaitingQuotes.map((qr: any) => (
