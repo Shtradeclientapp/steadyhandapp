@@ -316,8 +316,8 @@ export default function QuotesPage() {
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px' }}>
               <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>While you wait — how to evaluate a trade quote</p>
               {[
-                { icon:'💰', title:'Price is not the only signal', body:'A low quote may mean the tradie has underestimated the job and will come back with variations later. Ask what is and isn't included.' },
-                { icon:'📋', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won't be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
+                { icon:'💰', title:'Price is not the only signal', body:'A low quote may mean the tradie has underestimated the job and will come back with variations later. Ask what is and isn\'t included.' },
+                { icon:'📋', title:'Read the conditions carefully', body:'Conditions tell you what the tradie won\'t be responsible for. Vague conditions ("as required") are a risk — specific ones are a sign of professionalism.' },
                 { icon:'📅', title:'Check the start date and timeline', body:'A tradie who can start immediately may have spare capacity for a reason. A realistic timeline is better than a fast one.' },
                 { icon:'🛡', title:'Warranty is written into the scope', body:'Once you accept a quote, Steadyhand writes the warranty period into the scope agreement. The tradie signs it before work begins.' },
               ].map((item, i) => (
