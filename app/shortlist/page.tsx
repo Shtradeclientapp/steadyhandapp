@@ -56,26 +56,25 @@ export default function ShortlistPage() {
             body: JSON.stringify({ job_id: jobsData[0].id }),
           })
           const data = await res.json()
-          if (data.shortlist) {
+          if (data.shortlist && data.shortlist.length > 0) {
             await loadShortlist(jobsData[0].id)
-            setMatching(false)
           } else {
-            // Poll for results if API returned before shortlist was written
+            // Poll for results
             let attempts = 0
             const poll = async () => {
-              if (attempts >= 5) { setMatching(false); return }
+              if (attempts >= 8) return
               attempts++
               await new Promise(r => setTimeout(r, 2000))
               const results = await loadShortlist(jobsData[0].id)
-              if (!results || results.length === 0) poll()
-              else setMatching(false)
+              if (!results || results.length === 0) await poll()
             }
             await poll()
           }
-        } catch {
+        } catch (e) {
+          console.error('Match error:', e)
+        } finally {
           setMatching(false)
         }
-        setMatching(false)
       }
       setLoading(false)
     })
