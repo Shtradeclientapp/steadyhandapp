@@ -112,6 +112,7 @@ export default function ShortlistPage() {
   const sendQuoteRequests = async () => {
     if (selectedTradies.length === 0 && pendingInvites.length === 0) return
     setSending(true)
+    try {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     for (const tradieId of selectedTradies) {
@@ -119,7 +120,7 @@ export default function ShortlistPage() {
       await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }) }).catch(() => {})
     }
     for (const invite of pendingInvites) {
-      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite }) })
+      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite }) }).catch(() => {})
     }
     await supabase.from('jobs').update({ status: 'shortlisted', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
     await fetch('/api/email', {
@@ -129,6 +130,9 @@ export default function ShortlistPage() {
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
+    } catch (e) {
+      console.error('sendQuoteRequests error:', e)
+    }
     setSending(false)
     setTab('requested')
   }
