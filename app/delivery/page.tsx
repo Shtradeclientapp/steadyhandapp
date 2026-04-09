@@ -286,7 +286,15 @@ export default function DeliveryPage() {
   const approveM = async (id: string) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id)
-    setMilestones(ms => ms.map(m => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString() } : m))
+    const updated = milestones.map((m: any) => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString() } : m)
+    setMilestones(updated)
+    // Auto-activate next pending milestone
+    const nextPending = updated.find((m: any) => m.status === 'pending')
+    if (nextPending) {
+      const supabase2 = createClient()
+      await supabase2.from('milestones').update({ status: 'active' }).eq('id', nextPending.id)
+      setMilestones(prev => prev.map((m: any) => m.id === nextPending.id ? { ...m, status: 'active' } : m))
+    }
     setPayingMilestone(null)
     setClientSecret(null)
     await fetch('/api/notify', {
