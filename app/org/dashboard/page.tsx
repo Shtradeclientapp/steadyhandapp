@@ -117,6 +117,13 @@ export default function OrgDashboardPage() {
     URL.revokeObjectURL(url)
   }
 
+  const removeMember = async (memberId: string, memberName: string) => {
+    if (!confirm('Remove ' + memberName + ' from your organisation?')) return
+    const supabase = createClient()
+    await supabase.from('org_memberships').delete().eq('id', memberId)
+    setMembers(prev => prev.filter((m: any) => m.id !== memberId))
+  }
+
   const sendInvite = async () => {
     if (!inviteEmail.trim() || !org) return
     setInviting(true)
@@ -360,6 +367,10 @@ export default function OrgDashboardPage() {
                       <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: m.role==='admin'?'rgba(212,82,42,0.1)':'rgba(28,43,50,0.06)', border:'1px solid '+(m.role==='admin'?'rgba(212,82,42,0.2)':'rgba(28,43,50,0.1)'), color: m.role==='admin'?'#D4522A':'#4A5E64', fontWeight:500, textTransform:'capitalize' as const }}>
                         {m.role}
                       </span>
+                      <button type="button" onClick={() => removeMember(m.id, m.profile?.full_name || 'this member')}
+                        style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:'2px 6px' }}>
+                        ×
+                      </button>
                     </div>
                   </div>
                 ))}
