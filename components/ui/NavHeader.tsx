@@ -61,7 +61,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                   </a>
                   <a href="/trust" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
                     onClick={() => setDropdownOpen(false)}>
-                    Trust score
+                    Dialogue Rating
                   </a>
                   {profile?.org_id && (
                     <a href="/org/dashboard" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}
