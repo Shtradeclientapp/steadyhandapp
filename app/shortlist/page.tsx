@@ -58,6 +58,7 @@ export default function ShortlistPage() {
           const data = await res.json()
           if (data.shortlist) {
             await loadShortlist(jobsData[0].id)
+            setMatching(false)
           } else {
             // Poll for results if API returned before shortlist was written
             let attempts = 0
