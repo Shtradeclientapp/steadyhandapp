@@ -381,6 +381,11 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'24px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', gap:'16px', justifyContent:'center' }}>
+        <a href="/terms" style={{ fontSize:'11px', color:'#9AA5AA', textDecoration:'none' }}>Terms of Service</a>
+        <a href="/privacy" style={{ fontSize:'11px', color:'#9AA5AA', textDecoration:'none' }}>Privacy Policy</a>
+        <span style={{ fontSize:'11px', color:'#9AA5AA' }}>© 2026 Steadyhand Digital Pty Ltd</span>
+      </div>
     </div>
   )
 }

@@ -571,6 +571,23 @@ export default function AssessPage() {
                 <p style={{ fontSize:'13px', fontWeight:500, color:'#9B6B9B', marginBottom:'4px' }}>✓ Notes shared with {theirLabel}</p>
                 <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Shared {new Date(myShared).toLocaleDateString('en-AU')} at {new Date(myShared).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}. Your notes are now locked.</p>
               </div>
+              {!theirShared && (
+                <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginTop:'10px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'4px' }}>Waiting for {theirLabel} to share their notes</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px' }}>You will receive an email when they share. In the meantime, you can message them directly.</p>
+                  <a href="/messages" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>Go to messages →</a>
+                </div>
+              )}
+              {theirShared && !myAcknowledged && (
+                <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginTop:'10px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:500, color:'#2E6A8F', marginBottom:'4px' }}>{theirLabel} has shared their notes</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px' }}>Read their notes on the {theirLabel} tab and acknowledge them to proceed to quoting.</p>
+                  <button type="button" onClick={() => setActiveTab('theirs')}
+                    style={{ fontSize:'12px', color:'white', background:'#2E6A8F', border:'none', borderRadius:'6px', padding:'6px 14px', cursor:'pointer' }}>
+                    Read {theirLabel} notes →
+                  </button>
+                </div>
+              )}
             )}
           </div>
         )}

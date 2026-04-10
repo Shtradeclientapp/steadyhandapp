@@ -111,6 +111,12 @@ export default function SignupPage() {
           </blockquote>
         </div>
       </div>
+      <p style={{ textAlign:'center', fontSize:'11px', color:'#9AA5AA', marginTop:'24px' }}>
+        By creating an account you agree to our{' '}
+        <a href="/terms" style={{ color:'#7A9098', textDecoration:'underline' }}>Terms of Service</a>
+        {' '}and{' '}
+        <a href="/privacy" style={{ color:'#7A9098', textDecoration:'underline' }}>Privacy Policy</a>
+      </p>
     </div>
   )
 }
