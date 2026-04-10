@@ -239,7 +239,7 @@ export default function TradieJobPage() {
       {/* TRADIE STAGE RAIL */}
       {(() => {
         const TRADIE_STAGES = [
-          {n:1,l:'Consult',p:'assess',c:'#9B6B9B'},
+          {n:1,l:'Consult',p:'/consult',c:'#9B6B9B'},
           {n:2,l:'Quote',p:'quote',c:'#C07830'},
           {n:3,l:'Confirm',p:'confirm',c:'#6B4FA8'},
           {n:4,l:'Build',p:'build',c:'#C07830'},
@@ -335,7 +335,7 @@ export default function TradieJobPage() {
                     )}
                   </div>
                   {guideSlide === slides.length - 1 && (
-                    <a href="/assess">
+                    <a href="/consult">
                       <button type="button" style={{ background:'#9B6B9B', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                         Book a consult time →
                       </button>

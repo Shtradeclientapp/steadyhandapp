@@ -335,7 +335,7 @@ export default function QuotesPage() {
                 <a href="/messages" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(46,106,143,0.3)', borderRadius:'6px', background:'rgba(46,106,143,0.06)' }}>
                   Message tradies →
                 </a>
-                <a href="/assess" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px' }}>
+                <a href="/consult" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px' }}>
                   Review consult notes
                 </a>
               </div>

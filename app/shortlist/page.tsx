@@ -303,7 +303,7 @@ export default function ShortlistPage() {
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', marginBottom:'3px' }}>✓ Quote requests sent</p>
                   <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies will be notified. Next step: book a consult time to visit the site before quoting begins.</p>
                 </div>
-                <a href="/assess">
+                <a href="/consult">
                   <button type="button" style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     Book consult time →
                   </button>
@@ -672,7 +672,7 @@ export default function ShortlistPage() {
                     <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
                       <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'4px' }}>Before quotes arrive — book a site consult</p>
                       <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'10px' }}>A consult creates a shared record of what was discussed before any quote is submitted. It protects both parties and produces better quotes.</p>
-                      <a href="/assess">
+                      <a href="/consult">
                         <button type="button" style={{ width:'100%', background:'#9B6B9B', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                           Go to consult →
                         </button>

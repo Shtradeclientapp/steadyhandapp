@@ -3,7 +3,7 @@
 const STAGES = [
   { n:1, l:'Request',   p:'/request'  },
   { n:2, l:'Match',     p:'/shortlist' },
-  { n:3, l:'Consult',   p:'/assess'  },
+  { n:3, l:'Consult',   p:'/consult'  },
   { n:4, l:'Compare',   p:'/compare'  },
   { n:5, l:'Contract',  p:'/agreement'},
   { n:6, l:'Build',     p:'/delivery' },

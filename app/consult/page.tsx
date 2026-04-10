@@ -137,8 +137,10 @@ export default function AssessPage() {
     // Store proposed slots in assessment
     await supabase.from('site_assessments').update({
       consult_date: filled[0],
+      proposed_slots: filled,
+      slot_proposed_by: isTradie ? 'tradie' : 'client',
     }).eq('id', assessment.id)
-    setAssessment((a: any) => ({ ...a, consult_date: filled[0], proposed_slots: filled }))
+    setAssessment((a: any) => ({ ...a, consult_date: filled[0], proposed_slots: filled, slot_proposed_by: isTradie ? 'tradie' : 'client' }))
     setForm((f: any) => ({ ...f, consult_date: filled[0] }))
     setProposingDate(false)
     setProposedSlots(['','',''])
@@ -149,14 +151,14 @@ export default function AssessPage() {
     if (!assessment || !job) return
     setConfirmingSlot(true)
     const supabase = createClient()
-    await supabase.from('site_assessments').update({ consult_date: slot }).eq('id', assessment.id)
+    await supabase.from('site_assessments').update({ consult_date: slot, slot_confirmed_at: new Date().toISOString() }).eq('id', assessment.id)
     const senderName = isTradie ? profile.tradie?.business_name : profile.full_name
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
       body: senderName + ' has confirmed the consultation: ' + new Date(slot).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' }),
     })
-    setAssessment((a: any) => ({ ...a, consult_date: slot }))
+    setAssessment((a: any) => ({ ...a, consult_date: slot, slot_confirmed_at: new Date().toISOString() }))
     setForm((f: any) => ({ ...f, consult_date: slot }))
     setConfirmingSlot(false)
   }
@@ -359,6 +361,25 @@ export default function AssessPage() {
                   )}
                 </div>
                 <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px' }}>* At least one time required. Options 2 and 3 are optional.</p>
+              </div>
+            )}
+            {/* Slot confirmation - shown to the party who didn't propose */}
+            {assessment?.proposed_slots && assessment.proposed_slots.length > 0 &&
+             assessment.slot_proposed_by && assessment.slot_proposed_by !== (isTradie ? 'tradie' : 'client') &&
+             !assessment.slot_confirmed_at && (
+              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'8px' }}>
+                  {theirLabel} has proposed these times — select one to confirm:
+                </p>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                  {assessment.proposed_slots.filter(Boolean).map((slot: string, i: number) => (
+                    <button key={i} type="button" onClick={() => confirmSlot(slot)}
+                      style={{ textAlign:'left' as const, padding:'12px 16px', borderRadius:'8px', border:'1.5px solid rgba(155,107,155,0.3)', background:'rgba(155,107,155,0.05)', cursor:'pointer', fontSize:'13px', color:'#1C2B32', fontWeight:500 }}>
+                      <span style={{ color:'#9B6B9B', marginRight:'8px' }}>✓</span>
+                      {new Date(slot).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' })} at {new Date(slot).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {assessment?.consult_date && (

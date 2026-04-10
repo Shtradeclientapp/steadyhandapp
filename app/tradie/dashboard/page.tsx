@@ -36,7 +36,7 @@ function getNextAction(job: any, tradieUserId: string): {
       return {
         icon: '🏠',
         headline: 'Confirm site visit',
-        sub: 'Arrange the assessment and record your observations',
+        sub: 'Arrange the site consult and record your observations',
         urgent: true,
       }
     case 'quote':
@@ -109,7 +109,7 @@ const STAGE_COLOR: Record<string, string> = {
 
 const STAGE_LABEL: Record<string, string> = {
   shortlisted: 'Shortlisted',
-  assess:      'Site assessment',
+  assess:      'Consult',
   quote:       'Awaiting quote',
   agreement:   'Awaiting signature',
   delivery:    'In delivery',
