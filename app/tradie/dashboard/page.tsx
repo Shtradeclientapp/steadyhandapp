@@ -390,6 +390,40 @@ export default function TradieDashboard() {
           </div>
         )}
 
+        {/* ── Upcoming consults ── */}
+        {consults.length > 0 && (
+          <div style={{ marginBottom:'24px' }}>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>UPCOMING CONSULTS</h2>
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+              {consults.map((a: any) => {
+                const date = new Date(a.consult_date)
+                const isPast = date < new Date()
+                const isConfirmed = !!a.slot_confirmed_at
+                const isToday = date.toDateString() === new Date().toDateString()
+                return (
+                  <a key={a.id} href="/consult" style={{ textDecoration:'none' }}>
+                    <div style={{ background:'#E8F0EE', border:'1px solid ' + (isToday ? 'rgba(155,107,155,0.4)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
+                      <div style={{ width:'40px', height:'40px', borderRadius:'8px', background: isToday ? 'rgba(155,107,155,0.12)' : 'rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                        <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#1C2B32', margin:0, lineHeight:1 }}>{date.getDate()}</p>
+                        <p style={{ fontSize:'9px', color:'#7A9098', margin:0, textTransform:'uppercase' as const }}>{date.toLocaleDateString('en-AU', { month:'short' })}</p>
+                      </div>
+                      <div style={{ flex:1 }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{a.job?.title}</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                          {a.job?.client?.full_name} · {date.toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
+                          {!isConfirmed && <span style={{ color:'#C07830', marginLeft:'6px' }}>· Awaiting confirmation</span>}
+                          {isPast && <span style={{ marginLeft:'6px' }}>· Done</span>}
+                        </p>
+                      </div>
+                      <span style={{ fontSize:'18px' }}>{isToday ? '📅' : isPast ? '✓' : '📋'}</span>
+                    </div>
+                  </a>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {/* ── Active jobs ── */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>
