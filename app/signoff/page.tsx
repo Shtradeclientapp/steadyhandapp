@@ -115,6 +115,12 @@ export default function SignoffPage() {
       })
     } catch { /* non-critical */ }
 
+    // Notify tradie of sign-off
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'job_signed_off', job_id: job.id }),
+    }).catch(() => {})
     if (typeof window !== 'undefined') sessionStorage.removeItem('signoff_rating')
     setDone(true)
     setSubmitting(false)

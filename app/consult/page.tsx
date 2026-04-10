@@ -392,6 +392,20 @@ export default function AssessPage() {
           </div>
         </div>
 
+        {/* Both acknowledged CTA */}
+        {myAcknowledged && theirAcknowledged && (
+          <div style={{ background:'rgba(46,125,96,0.08)', border:'2px solid rgba(46,125,96,0.3)', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+            <div>
+              <p style={{ fontSize:'14px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px' }}>Consult complete</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Both parties have acknowledged the consult record. You can now compare quotes.</p>
+            </div>
+            <a href="/quotes">
+              <button type="button" style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:600, border:'none', cursor:'pointer', whiteSpace:'nowrap' as const }}>
+                Compare quotes →
+              </button>
+            </a>
+          </div>
+        )}
         {/* TABS */}
         {/* STATUS STRIP */}
         <div style={{ marginBottom:'16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px' }}>

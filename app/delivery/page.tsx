@@ -309,6 +309,17 @@ export default function DeliveryPage() {
     if (allDone && job) {
       const supabase2 = createClient()
       await supabase2.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
+      await supabase2.from('job_messages').insert({
+        job_id: job.id,
+        sender_id: user?.id,
+        body: 'All milestones approved — the job is ready for sign-off.',
+      })
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'ready_for_signoff', job_id: job.id }),
+      }).catch(() => {})
+      setTimeout(() => { window.location.href = '/signoff' }, 800)
     }
   }
 
@@ -320,7 +331,7 @@ export default function DeliveryPage() {
         {[
           { num:1, label:'Request', path:'/request', color:'#2E7D60' },
           { num:2, label:'Match', path:'/shortlist', color:'#2E6A8F' },
-          { num:3, label:'Assess', path:'/assess', color:'#9B6B9B' },
+          { num:3, label:'Consult', path:'/consult', color:'#9B6B9B' },
           { num:4, label:'Quote', path:'/quotes', color:'#C07830' },
           { num:5, label:'Confirm', path:'/agreement', color:'#6B4FA8' },
           { num:6, label:'Build', path:'/delivery', color:'#C07830' },
