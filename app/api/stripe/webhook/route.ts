@@ -72,8 +72,10 @@ export async function POST(request: NextRequest) {
           .eq('stripe_account_id', account.id)
           .single()
         if (profile) {
+          // Update stripe_active separately from licence_verified
+          // licence_verified reflects actual licence check, not Stripe status
           await supabase.from('tradie_profiles').update({
-            licence_verified: account.charges_enabled,
+            subscription_active: account.charges_enabled,
           }).eq('id', profile.id)
           console.log('Account updated:', account.id, 'charges_enabled:', account.charges_enabled)
         }
