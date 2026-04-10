@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: tradieProfile.profile.email, subject: 'Quote update — ' + job.title, html })
     }
 
-    if (type === 'assessment_shared') {
+    if (type === 'consult_shared') {
       const reqBody = await request.clone().json()
       const { shared_by } = reqBody
       const { data: job } = await supabase
@@ -243,7 +243,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Site assessment notes shared — ' + job.title, html })
     }
 
-    if (type === 'assess_ready') {
+    if (type === 'consult_ready') {
       const { data: job } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
@@ -280,7 +280,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (type === 'assess_reminder') {
+    if (type === 'consult_reminder') {
       const reqBody = await request.clone().json()
       const { remind_party } = reqBody
       const { data: job } = await supabase
@@ -309,7 +309,7 @@ export async function POST(request: NextRequest) {
       await resend.emails.send({ from: FROM, to: recipientEmail, subject: 'Reminder: site assessment notes needed — ' + job.title, html })
     }
 
-    if (type === 'assess_ready') {
+    if (type === 'consult_ready') {
       const { data: job } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
@@ -356,7 +356,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (type === 'assess_ready') {
+    if (type === 'consult_ready') {
       const { data: job } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
@@ -428,6 +428,43 @@ export async function POST(request: NextRequest) {
       )
 
       await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: 'You received a contribution — ' + job.title, html })
+    }
+
+
+    if (type === 'ready_for_signoff') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id).single()
+      if (job) {
+        const clientHtml = wrap(
+          '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+          '<p style="color:#4A5E64;">All milestones on your job have been approved. You can now complete the sign-off and start your warranty period.</p>' +
+          card('<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2><p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>', '#2E7D60') +
+          btn(URL + '/signoff', 'Sign off and start warranty', '#1C2B32')
+        )
+        await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Ready to sign off — ' + job.title, html: clientHtml })
+      }
+    }
+
+    if (type === 'job_signed_off') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      if (job) {
+        const tradieEmail = job.tradie?.profile?.email
+        if (tradieEmail) {
+          const tradieHtml = wrap(
+            '<p style="color:#4A5E64;">Hi ' + (job.tradie?.profile?.full_name || 'there') + ',</p>' +
+            '<p style="color:#4A5E64;"><strong>' + job.client.full_name + '</strong> has signed off on the completed work. Your warranty period has started.</p>' +
+            card('<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2><p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>', '#2E7D60') +
+            '<p style="color:#4A5E64;">If any warranty issues are raised, you will be notified and will have 5 business days to respond.</p>' +
+            btn(URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32')
+          )
+          await resend.emails.send({ from: FROM, to: tradieEmail, subject: 'Job signed off — ' + job.title, html: tradieHtml })
+        }
+      }
     }
 
     return NextResponse.json({ sent: true })
