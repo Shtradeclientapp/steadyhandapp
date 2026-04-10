@@ -712,7 +712,7 @@ export default function ShortlistPage() {
                       </div>
                     )}
                   </>
-                )}
+                ))}
               </div>
             )}
           </div>
