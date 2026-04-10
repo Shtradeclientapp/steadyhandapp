@@ -199,7 +199,7 @@ export default function SignoffPage() {
                 {[
                   { icon:'🛡', text:'Your warranty period has started. Log any issues within ' + (job?.warranty_period_days || 90) + ' days and the tradie is obligated to respond within 5 business days.' },
                   { icon:'📄', text:'Your warranty certificate has been deposited to your Document Vault. You can access it any time from Home Hub.' },
-                  { icon:'⭐', text: rating > 0 ? 'Your ' + rating + '-star rating has been recorded against ' + (job?.tradie?.business_name || 'the tradie') + ''s Dialogue Rating.' : 'Consider leaving a rating — it helps future clients find good tradies.' },
+                  { icon:'⭐', text: rating > 0 ? 'Your ' + rating + '-star rating has been recorded against ' + (job?.tradie?.business_name || 'the tradie') + ' Dialogue Rating.' : 'Consider leaving a rating — it helps future clients find good tradies.' },
                 ].map((item, i) => (
                   <div key={i} style={{ display:'flex', gap:'10px', alignItems:'flex-start' }}>
                     <span style={{ fontSize:'16px', flexShrink:0 }}>{item.icon}</span>
