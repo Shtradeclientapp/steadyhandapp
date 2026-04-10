@@ -277,7 +277,7 @@ export default function AssessPage() {
       <OnboardingModal storageKey="seen_consult_explainer" slides={[
         { icon: '📋', title: 'THE CONSULT RECORD', body: 'This is where you document what was discussed during the site visit — before any quote is submitted. Both you and your tradie write independent notes, then share them with each other.', sub: 'Once shared, notes are locked. This creates a tamper-proof record that protects both parties if the scope is disputed later.' },
         { icon: '✍️', title: 'WHAT TO WRITE', body: 'Note what the tradie looked at, what they said, any complications they flagged, and what you expect the quote to include. The more specific you are, the stronger your position.'},
-        { icon: '✅', title: 'ACKNOWLEDGE AND PROCEED', body: 'Once both parties have shared their notes, you each acknowledge the other party's record. This unlocks the quoting stage. The consult record becomes part of the permanent job file.' },
+        { icon: '✅', title: 'ACKNOWLEDGE AND PROCEED', body: 'Once both parties have shared their notes, you each acknowledge the the other party record. This unlocks the quoting stage. The consult record becomes part of the permanent job file.' },
       ]} />
       <StageRail currentPath="/consult" jobStatus={job?.status} />
       {allJobs.length > 1 && (
