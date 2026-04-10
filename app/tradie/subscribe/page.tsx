@@ -130,6 +130,22 @@ export default function TradieSubscribePage() {
         <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Back to dashboard</a>
       </nav>
 
+      {subscribeSuccess && (
+        <div style={{ background:'rgba(46,125,96,0.1)', borderBottom:'2px solid #2E7D60', padding:'16px 24px', display:'flex', alignItems:'center', gap:'12px' }}>
+          <span style={{ fontSize:'24px' }}>✅</span>
+          <div>
+            <p style={{ fontSize:'14px', fontWeight:600, color:'#2E7D60', margin:'0 0 2px' }}>Subscription activated</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>Welcome to your new plan. Your dashboard has been updated. <a href="/tradie/dashboard" style={{ color:'#2E7D60' }}>Go to dashboard →</a></p>
+          </div>
+        </div>
+      )}
+      {subscribeCancelled && (
+        <div style={{ background:'rgba(192,120,48,0.08)', borderBottom:'1px solid rgba(192,120,48,0.3)', padding:'16px 24px', display:'flex', alignItems:'center', gap:'12px' }}>
+          <span style={{ fontSize:'20px' }}>↩</span>
+          <p style={{ fontSize:'13px', color:'#C07830', margin:0 }}>Checkout cancelled — no charge was made. You can subscribe any time below.</p>
+        </div>
+      )}
+
       <div style={{ background:'#1C2B32', padding:'40px 0', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 55%)' }} />
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
