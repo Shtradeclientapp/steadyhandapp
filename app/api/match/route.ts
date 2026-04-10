@@ -28,14 +28,20 @@ export async function POST(request: NextRequest) {
       .select('*, profile:profiles(*)')
       .eq('subscription_active', true)
       .eq('licence_verified', true)
-      .contains('trade_categories', [job.trade_category])
       .not('business_name', 'is', null)
       .not('bio', 'is', null)
-    if (!tradies || tradies.length === 0) return NextResponse.json({ error: 'No tradies found for: ' + job.trade_category }, { status: 404 })
+    // Filter tradies - exact match OR partial match on trade category
+    const jobCat = (job.trade_category || '').toLowerCase()
+    const filteredTradies = (tradies || []).filter((t: any) => {
+      const cats = (t.trade_categories || []).map((c: string) => c.toLowerCase())
+      return cats.some((c: string) => c === jobCat || c.includes(jobCat) || jobCat.includes(c))
+    })
+    if (filteredTradies.length === 0) return NextResponse.json({ error: 'No tradies found for: ' + job.trade_category }, { status: 404 })
+    const tradies_matched = filteredTradies
 
-    const candidates = tradies.slice(0, 10)
+    const candidates = tradies_matched
     const descriptions = candidates.map((t: any, i: number) => 'Tradie ' + (i+1) + ': ID: ' + t.id + ', Business: ' + t.business_name + ', Rating: ' + t.rating_avg + ', Bio: ' + (t.bio || 'none')).join('\n')
-    const tradieDescriptions = (tradies || []).map((t: any) => {
+    const tradieDescriptions = tradies_matched.map((t: any) => {
       const trustNote = t.trust_score_composite ? ' Trust score: ' + t.trust_score_composite + '/100.' : ''
       const ratingNote = t.rating_avg ? ' Rating: ' + Number(t.rating_avg).toFixed(1) + '/5 from ' + t.jobs_completed + ' jobs.' : ''
       return t.id + ': ' + t.business_name + ' — ' + (t.bio || 'No bio') + ratingNote + trustNote
