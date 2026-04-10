@@ -123,6 +123,7 @@ export default function TradieDashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [user, setUser]       = useState<any>(null)
   const [jobs, setJobs]       = useState<any[]>([])
+  const [consults, setConsults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -187,6 +188,19 @@ export default function TradieDashboard() {
         .not('read_by', 'cs', JSON.stringify([session.user.id]))
       setUnreadCount(unreadTotal || 0)
 
+      const allJobIds = merged.map((j: any) => j.id)
+      if (allJobIds.length > 0) {
+        const supabase2 = (await import('@/lib/supabase/client')).createClient()
+        const { data: assessments } = await supabase2
+          .from('site_assessments')
+          .select('*, job:jobs(id, title, client:profiles!jobs_client_id_fkey(full_name))')
+          .in('job_id', allJobIds)
+          .not('consult_date', 'is', null)
+        const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        const upcoming = (assessments || []).filter((a: any) => new Date(a.consult_date) > cutoff)
+        upcoming.sort((a: any, b: any) => new Date(a.consult_date).getTime() - new Date(b.consult_date).getTime())
+        setConsults(upcoming)
+      }
       setLoading(false)
     })
   }, [])
