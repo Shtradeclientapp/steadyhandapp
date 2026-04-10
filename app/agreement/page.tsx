@@ -224,6 +224,13 @@ export default function AgreementPage() {
       body: JSON.stringify({ type: 'scope_signed', job_id: job.id, signed_by: profile?.role }),
     }).catch(() => {})
 
+    // Email the other party
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'scope_signed', job_id: job.id, signed_by: profile?.role }),
+    }).catch(() => {})
+
     const updated = { ...scope, [field]: new Date().toISOString() }
     if (updated.client_signed_at && updated.tradie_signed_at) {
       await supabase.from('jobs').update({ status: 'delivery' }).eq('id', job.id)

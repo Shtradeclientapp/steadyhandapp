@@ -467,6 +467,62 @@ export async function POST(request: NextRequest) {
       }
     }
 
+
+    if (type === 'quote_submitted') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id).single()
+      if (job?.client?.email) {
+        const html = wrap(
+          '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+          '<p style="color:#4A5E64;"><strong>' + (job.tradie?.business_name || 'A tradie') + '</strong> has submitted a quote for your job.</p>' +
+          card('<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2><p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>', '#C07830') +
+          btn(URL + '/quotes', 'Review the quote', '#1C2B32')
+        )
+        await resend.emails.send({ from: FROM, to: job.client.email, subject: 'New quote received — ' + job.title, html })
+      }
+    }
+
+    if (type === 'scope_signed') {
+      const reqBody = await request.clone().json()
+      const { signed_by } = reqBody
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id).single()
+      if (job) {
+        const notifyEmail = signed_by === 'tradie' ? job.client?.email : job.tradie?.profile?.email
+        const notifyName = signed_by === 'tradie' ? job.client?.full_name : job.tradie?.profile?.full_name
+        const signerName = signed_by === 'tradie' ? job.tradie?.business_name : job.client?.full_name
+        if (notifyEmail) {
+          const html = wrap(
+            '<p style="color:#4A5E64;">Hi ' + notifyName + ',</p>' +
+            '<p style="color:#4A5E64;"><strong>' + signerName + '</strong> has signed the scope agreement. Your signature is now needed to proceed.</p>' +
+            card('<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2><p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>', '#6B4FA8') +
+            btn(URL + '/agreement', 'Review and sign', '#1C2B32')
+          )
+          await resend.emails.send({ from: FROM, to: notifyEmail, subject: signerName + ' has signed — ' + job.title, html })
+        }
+      }
+    }
+
+    if (type === 'milestone_submitted') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id).single()
+      if (job?.client?.email) {
+        const html = wrap(
+          '<p style="color:#4A5E64;">Hi ' + job.client.full_name + ',</p>' +
+          '<p style="color:#4A5E64;">A milestone has been submitted for approval on your job.</p>' +
+          card('<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2><p style="color:#4A5E64;margin:0;">' + job.trade_category + ' · ' + job.suburb + '</p>', '#C07830') +
+          btn(URL + '/delivery', 'Review milestone', '#1C2B32')
+        )
+        await resend.emails.send({ from: FROM, to: job.client.email, subject: 'Milestone ready for approval — ' + job.title, html })
+      }
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
