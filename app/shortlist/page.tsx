@@ -668,9 +668,19 @@ export default function ShortlistPage() {
                         </div>
                       ))}
                     </div>
+                    {/* Consult CTA - primary action */}
+                    <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'4px' }}>Before quotes arrive — book a site consult</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'10px' }}>A consult creates a shared record of what was discussed before any quote is submitted. It protects both parties and produces better quotes.</p>
+                      <a href="/assess">
+                        <button type="button" style={{ width:'100%', background:'#9B6B9B', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                          Go to consult →
+                        </button>
+                      </a>
+                    </div>
                     <button type="button" onClick={() => window.location.href = '/quotes'}
-                      style={{ width:'100%', background:'#2E6A8F', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                      Review and compare quotes →
+                      style={{ width:'100%', background:'transparent', color:'#2E6A8F', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(46,106,143,0.3)', cursor:'pointer' }}>
+                      Skip to compare quotes
                     </button>
 
                     {selectedJob?.status === 'shortlisted' && (

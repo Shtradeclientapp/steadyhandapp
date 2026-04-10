@@ -505,7 +505,16 @@ export default function AssessPage() {
                   style={{ flex:1, background:'transparent', color:'#1C2B32', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer', opacity: saving ? 0.7 : 1 }}>
                   {saving ? 'Saving...' : 'Save draft'}
                 </button>
-                <button type="button" onClick={async () => { await save(); await share(); }}
+                <button type="button" onClick={async () => {
+                    // Create assessment record if it doesn't exist yet
+                    if (!assessment && job) {
+                      const supabase = (await import('@/lib/supabase/client')).createClient()
+                      const { data: newAssess } = await supabase.from('site_assessments').insert({ job_id: job.id, consult_date: new Date().toISOString() }).select().single()
+                      if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
+                      await new Promise(r => setTimeout(r, 100))
+                    }
+                    await save(); await share();
+                  }}
                   disabled={sharing}
                   style={{ flex:2, background:'#9B6B9B', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: sharing ? 0.7 : 1 }}>
                   {sharing ? 'Sharing...' : 'Save and share with ' + theirLabel + ' →'}
