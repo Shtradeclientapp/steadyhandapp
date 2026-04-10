@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier } = await request.json()
+    const { action, job_id, milestone_id, tradie_id, client_id, amount, email } = await request.json()
 
     if (action === 'create_connect_account') {
       const { data: profile } = await supabase.from('profiles').select('stripe_account_id, full_name').eq('id', tradie_id).single()
@@ -85,16 +85,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'create_checkout') {
-      // price_id, tradie_id, email, tier already destructured above
+      const { price_id, tradie_id, email } = body
       if (!price_id || !tradie_id) return NextResponse.json({ error: 'price_id and tradie_id required' }, { status: 400 })
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],
         customer_email: email,
         line_items: [{ price: price_id, quantity: 1 }],
-        success_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?success=true&tier=' + tier,
+        success_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?success=true&tier=' + body.tier,
         cancel_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?cancelled=true',
-        metadata: { tradie_id, tier },
+        metadata: { tradie_id, tier: body.tier },
       })
       return NextResponse.json({ url: session.url })
     }
