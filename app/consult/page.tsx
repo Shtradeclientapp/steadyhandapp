@@ -573,10 +573,22 @@ export default function AssessPage() {
                   <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Shared {new Date(myShared).toLocaleDateString('en-AU')} at {new Date(myShared).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}. Your notes are now locked.</p>
                 </div>
                 {!theirShared && (
-                  <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px', marginTop:'10px' }}>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'4px' }}>Waiting for {theirLabel} to share their notes</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px' }}>You will receive an email when they share. In the meantime you can message them directly.</p>
-                    <a href="/messages" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>Go to messages →</a>
+                  <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 18px', marginTop:'10px' }}>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>You are done for now</p>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
+                      {[
+                        { icon:'📅', text:'The tradie will propose times for the site visit — you will confirm which suits you.' },
+                        { icon:'📋', text:'After the visit, the tradie will write up their own notes and share them with you.' },
+                        { icon:'✅', text:'Once both sets of notes are shared and acknowledged, quoting begins.' },
+                      ].map((item, i) => (
+                        <div key={i} style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                          <span style={{ fontSize:'14px', flexShrink:0 }}>{item.icon}</span>
+                          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{item.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p style={{ fontSize:'11px', color:'#9AA5AA', marginBottom:'8px' }}>This usually takes 1–3 business days. If you have not heard back after 2 days:</p>
+                    <a href="/messages" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>Message {theirLabel} directly →</a>
                   </div>
                 )}
                 {theirShared && !myAcknowledged && (
