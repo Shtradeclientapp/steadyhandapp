@@ -29,6 +29,8 @@ export default function SignoffPage() {
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [showPartial, setShowPartial] = useState(false)
+  const [outstandingNote, setOutstandingNote] = useState('')
 
   useEffect(() => {
     const supabase = createClient()
@@ -294,14 +296,57 @@ export default function SignoffPage() {
             </div>
 
             {/* Submit */}
-            <div style={{ background: !allChecked || rating === 0 ? 'rgba(28,43,50,0.04)' : 'rgba(46,125,96,0.06)', border:'1px solid ' + (!allChecked || rating === 0 ? 'rgba(28,43,50,0.1)' : 'rgba(46,125,96,0.2)'), borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
-              {!allChecked && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Complete all checklist items before signing off</p>}
+            <div style={{ background: allChecked && rating > 0 ? 'rgba(46,125,96,0.06)' : 'rgba(28,43,50,0.04)', border:'1px solid ' + (allChecked && rating > 0 ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
               {rating === 0 && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Please rate your tradie before signing off</p>}
-              {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your 90-day warranty starts from this moment</p>}
+              {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your {job?.warranty_period_days || 90}-day warranty starts from this moment</p>}
               <button type="button" onClick={submitSignoff} disabled={!allChecked || rating === 0 || submitting}
-                style={{ width:'100%', background: allChecked && rating > 0 ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s' }}>
+                style={{ width:'100%', background: allChecked && rating > 0 ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s', marginBottom: !allChecked ? '10px' : '0' }}>
                 {submitting ? 'Signing off...' : 'Sign off and start warranty →'}
               </button>
+
+              {/* Partial sign-off option */}
+              {!allChecked && rating > 0 && (
+                <div style={{ marginTop:'2px' }}>
+                  {!showPartial ? (
+                    <button type="button" onClick={() => setShowPartial(true)}
+                      style={{ width:'100%', background:'transparent', color:'#C07830', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(192,120,48,0.3)', cursor:'pointer' }}>
+                      Some items outstanding — sign off with exceptions
+                    </button>
+                  ) : (
+                    <div style={{ background:'rgba(192,120,48,0.05)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'8px', padding:'14px', marginTop:'4px' }}>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#C07830', marginBottom:'8px' }}>Describe the outstanding items</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'10px', lineHeight:'1.5' }}>A message will be sent to {job?.tradie?.business_name || 'the tradie'} noting the outstanding items. Your warranty still starts from today.</p>
+                      <textarea
+                        value={outstandingNote}
+                        onChange={e => setOutstandingNote(e.target.value)}
+                        placeholder="e.g. The bathroom tap still drips slightly and the paint touch-up on the south wall is incomplete."
+                        rows={3}
+                        style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(192,120,48,0.25)', borderRadius:'8px', fontSize:'13px', background:'white', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, marginBottom:'10px', fontFamily:'sans-serif' }}
+                      />
+                      <div style={{ display:'flex', gap:'8px' }}>
+                        <button type="button" onClick={async () => {
+                          if (!outstandingNote.trim()) return
+                          const supabase = createClient()
+                          const { data: { session } } = await supabase.auth.getSession()
+                          await supabase.from('job_messages').insert({
+                            job_id: job.id,
+                            sender_id: session?.user.id,
+                            body: 'Sign-off with outstanding items: ' + outstandingNote.trim(),
+                          })
+                          submitSignoff()
+                        }} disabled={!outstandingNote.trim() || submitting}
+                          style={{ flex:1, background:'#C07830', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !outstandingNote.trim() || submitting ? 0.5 : 1 }}>
+                          {submitting ? 'Signing off...' : 'Sign off with outstanding items →'}
+                        </button>
+                        <button type="button" onClick={() => setShowPartial(false)}
+                          style={{ background:'transparent', color:'#7A9098', padding:'10px 14px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <p style={{ fontSize:'12px', color:'#7A9098', textAlign:'center' as const, lineHeight:'1.6' }}>
