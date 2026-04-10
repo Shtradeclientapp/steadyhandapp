@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { OnboardingModal } from '@/components/ui/OnboardingModal'
 import { JobSelector } from '@/components/ui/JobSelector'
 
 
@@ -273,6 +274,11 @@ export default function AssessPage() {
       <NavHeader profile={profile} isTradie={false}   />
 
       {/* STAGE RAIL */}
+      <OnboardingModal storageKey="seen_consult_explainer" slides={[
+        { icon: '📋', title: 'THE CONSULT RECORD', body: 'This is where you document what was discussed during the site visit — before any quote is submitted. Both you and your tradie write independent notes, then share them with each other.', sub: 'Once shared, notes are locked. This creates a tamper-proof record that protects both parties if the scope is disputed later.' },
+        { icon: '✍️', title: 'WHAT TO WRITE', body: 'Note what the tradie looked at, what they said, any complications they flagged, and what you expect the quote to include. The more specific you are, the stronger your position.'},
+        { icon: '✅', title: 'ACKNOWLEDGE AND PROCEED', body: 'Once both parties have shared their notes, you each acknowledge the other party's record. This unlocks the quoting stage. The consult record becomes part of the permanent job file.' },
+      ]} />
       <StageRail currentPath="/consult" jobStatus={job?.status} />
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'16px 24px 0' }}>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
 // ── Next-action prompt per pipeline stage ────────────────────────────────────
 function getNextAction(job: any, tradieUserId: string): {
@@ -213,7 +214,16 @@ export default function TradieDashboard() {
     return (bNext.urgent ? 1 : 0) - (aNext.urgent ? 1 : 0)
   })
 
+  const tradieSlides = [
+    { icon: '📬', title: 'QUOTE REQUESTS ARRIVE HERE', body: 'When a client selects you from their shortlist, a quote request appears on your dashboard. Review the job details, visit the site, and submit your quote through the platform.' },
+    { icon: '📋', title: 'THE CONSULT COMES FIRST', body: 'Before you submit a quote, Steadyhand encourages a site consult. You and the client both record independent notes from the visit. This protects you if the scope is disputed later.', sub: 'Tradies who complete consults receive higher Dialogue Ratings.' },
+    { icon: '✍️', title: 'SCOPE BEFORE WORK', body: 'Once your quote is accepted, Steadyhand generates a scope agreement. Both parties sign digitally before work begins. Milestones and payment are tracked through the platform.' },
+    { icon: '⭐', title: 'YOUR DIALOGUE RATING', body: 'After each job, clients rate the quality of communication — not just the finished work. Your Dialogue Rating reflects how well you document, communicate and follow through. It is visible to future clients.' },
+  ]
+
   return (
+    <>
+      <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
 
       {/* ── Nav ── */}
@@ -547,5 +557,8 @@ export default function TradieDashboard() {
 
       </div>
     </div>
+  )
+
+    </>
   )
 }

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
   draft:       { label: 'Draft',             path: '/request',   color: '#7A9098' },
