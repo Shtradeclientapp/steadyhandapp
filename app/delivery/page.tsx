@@ -4,7 +4,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { StageRail } from '@/components/ui'
+import { StageRail, JobSelector } from '@/components/ui'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
@@ -117,6 +117,7 @@ function VariationCard({ v, isTradie, onRespond }: { v: any, isTradie: boolean, 
 
 export default function DeliveryPage() {
   const [job, setJob] = useState<any>(null)
+  const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -148,6 +149,7 @@ export default function DeliveryPage() {
 
       if (jobs && jobs.length > 0) {
         // Find the most relevant job — prefer delivery status, then most recently updated
+        setAllJobs(jobs)
         const deliveryJob = jobs.find((j: any) => j.status === 'delivery') || jobs[0]
         setJob(deliveryJob)
         const { data: ms } = await supabase

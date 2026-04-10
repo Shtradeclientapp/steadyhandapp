@@ -152,6 +152,11 @@ export default function QuotesPage() {
       <NavHeader profile={profile} isTradie={false}   />
 
       <StageRail currentPath="/compare" jobStatus={job?.status} />
+      {allJobs.length > 1 && (
+        <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px 24px 0' }}>
+          <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={id => setJob(allJobs.find((j:any) => j.id === id))} />
+        </div>
+      )}
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
         {/* Minimum 3 quotes nudge */}
