@@ -64,24 +64,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'release_milestone') {
-      const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)))').eq('id', milestone_id).single()
+      // Payment intent uses transfer_data which auto-transfers to tradie on capture
+      // This action just marks the milestone as paid in the DB
+      const { data: milestone } = await supabase.from('milestones').select('*').eq('id', milestone_id).single()
       if (!milestone) return NextResponse.json({ error: 'Milestone not found' }, { status: 404 })
-      const tradieAccountId = milestone.job?.tradie?.profile?.stripe_account_id
-      if (!tradieAccountId) return NextResponse.json({ error: 'Tradie not connected to Stripe' }, { status: 400 })
-      if (!milestone.amount || milestone.amount <= 0) return NextResponse.json({ error: 'No amount set for this milestone' }, { status: 400 })
-      const amountCents = Math.round(Number(milestone.amount) * 100)
-      const foundingMember = milestone.job?.tradie?.founding_member === true
-      const feeRate = foundingMember ? 0.03 : 0.035
-      const platformFee = Math.round(amountCents * feeRate)
-      const transferAmount = amountCents - platformFee
-      const transfer = await stripe.transfers.create({
-        amount: transferAmount,
-        currency: 'aud',
-        destination: tradieAccountId,
-        metadata: { milestone_id, job_id: milestone.job_id },
-      })
-      await supabase.from('milestones').update({ stripe_transfer_id: transfer.id, paid_at: new Date().toISOString() }).eq('id', milestone_id)
-      return NextResponse.json({ transfer_id: transfer.id })
+      await supabase.from('milestones').update({ paid_at: new Date().toISOString() }).eq('id', milestone_id)
+      return NextResponse.json({ success: true })
     }
 
     if (action === 'get_account_status') {
