@@ -82,6 +82,40 @@ export async function POST(request: NextRequest) {
         break
       }
 
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session
+        const tradieId = session.metadata?.tradie_id
+        const tier = session.metadata?.tier
+        if (tradieId && tier) {
+          await supabase.from('tradie_profiles').update({
+            subscription_active: true,
+            subscription_tier: tier,
+          }).eq('id', tradieId)
+          await supabase.from('profiles').update({
+            subscription_plan: tier,
+            subscription_active: true,
+            subscription_since: new Date().toISOString(),
+          }).eq('id', tradieId)
+          console.log('Subscription activated for tradie:', tradieId, 'tier:', tier)
+        }
+        break
+      }
+
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('stripe_customer_id', sub.customer as string)
+          .single()
+        if (profile) {
+          await supabase.from('tradie_profiles').update({ subscription_active: false, subscription_tier: 'basic' }).eq('id', profile.id)
+          await supabase.from('profiles').update({ subscription_plan: 'free', subscription_active: false }).eq('id', profile.id)
+          console.log('Subscription cancelled for profile:', profile.id)
+        }
+        break
+      }
+
       default:
         console.log('Unhandled event type:', event.type)
     }

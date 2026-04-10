@@ -84,6 +84,21 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    if (action === 'create_checkout') {
+      const { price_id, tradie_id, email } = body
+      if (!price_id || !tradie_id) return NextResponse.json({ error: 'price_id and tradie_id required' }, { status: 400 })
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        customer_email: email,
+        line_items: [{ price: price_id, quantity: 1 }],
+        success_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?success=true&tier=' + body.tier,
+        cancel_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?cancelled=true',
+        metadata: { tradie_id, tier: body.tier },
+      })
+      return NextResponse.json({ url: session.url })
+    }
+
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 
   } catch (err: any) {

@@ -41,7 +41,7 @@ const TIERS = [
       'Dedicated onboarding call',
       '2.5% completion fee (2% founding)',
     ],
-    cta: 'Register interest',
+    cta: 'Subscribe now',
     ctaStyle: 'primary',
   },
   {
@@ -62,7 +62,7 @@ const TIERS = [
       'Quarterly business review (30 min)',
       '1.5% completion fee (1% founding)',
     ],
-    cta: 'Register interest',
+    cta: 'Subscribe now',
     ctaStyle: 'primary',
   },
 ]
@@ -86,22 +86,28 @@ export default function TradieSubscribePage() {
     })
   }, [])
 
-  const registerInterest = async (tierId: string) => {
-    if (!profile) return
+  const PRICE_IDS: Record<string, string> = {
+    business: process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS || '',
+    pro: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || '',
+  }
+
+  const subscribe = async (tierId: string) => {
+    if (!profile || tierId === 'basic') return
     setSubmitting(tierId)
-    // Log interest to job_messages or a simple notification
-    await fetch('/api/email', {
+    const priceId = PRICE_IDS[tierId]
+    if (!priceId) {
+      alert('Subscription not available yet for this plan. Please contact support.')
+      setSubmitting(null)
+      return
+    }
+    const res = await fetch('/api/stripe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'subscription_interest',
-        to: 'anthony.coxeter@gmail.com',
-        subject: 'Subscription interest: ' + tierId + ' — ' + (tradie?.business_name || profile.full_name),
-        body: (tradie?.business_name || profile.full_name) + ' (' + profile.email + ') has registered interest in the ' + tierId + ' plan.',
-      }),
-    }).catch(() => {})
-    setSubmitting(null)
-    setSubmitted(tierId)
+      body: JSON.stringify({ action: 'create_checkout', price_id: priceId, tradie_id: profile.id, email: profile.email, tier: tierId }),
+    })
+    const data = await res.json()
+    if (data.url) window.location.href = data.url
+    else { alert('Could not start checkout. Please try again.'); setSubmitting(null) }
   }
 
   if (loading) return (
@@ -109,6 +115,10 @@ export default function TradieSubscribePage() {
       <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p>
     </div>
   )
+
+  const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+  const subscribeSuccess = urlParams?.get('success') === 'true'
+  const subscribeCancelled = urlParams?.get('cancelled') === 'true'
 
   const isFounding = tradie?.founding_member === true
   const currentTier = tradie?.subscription_tier || 'basic'
@@ -200,7 +210,7 @@ export default function TradieSubscribePage() {
                       <span style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60' }}>✓ We'll be in touch soon</span>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => registerInterest(tier.id)} disabled={submitting === tier.id}
+                    <button type="button" onClick={() => subscribe(tier.id)} disabled={submitting === tier.id}
                       style={{ width:'100%', background:tier.color, color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: submitting === tier.id ? 0.7 : 1 }}>
                       {submitting === tier.id ? 'Sending...' : tier.cta + ' →'}
                     </button>
