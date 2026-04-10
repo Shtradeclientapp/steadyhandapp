@@ -644,8 +644,8 @@ export default function ShortlistPage() {
                       {[
                         { step:'1', text:'Tradies review your job and submit their quotes — this usually takes 1–2 business days.' },
                         { step:'2', text:'You will receive an email notification when each quote arrives.' },
-                        { step:'3', text:'Once you have quotes, go to the agreement page to compare them side by side.' },
-                        { step:'4', text:'Accept the quote you prefer and begin the scope agreement before work starts.' },
+                        { step:'3', text:'Once you have quotes, go to the Compare stage to review them side by side.' },
+                        { step:'4', text:'Accept the quote you prefer and sign the contract before work starts.' },
                       ].map(s => (
                         <div key={s.step} style={{ display:'flex', gap:'10px', marginBottom:'10px', alignItems:'flex-start' }}>
                           <div style={{ width:'20px', height:'20px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', fontWeight:600, flexShrink:0, marginTop:'1px' }}>{s.step}</div>
