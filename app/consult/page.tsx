@@ -310,7 +310,12 @@ export default function AssessPage() {
         {/* CONSULT DATE */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
           <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>CONSULTATION DATE</p>
+            <div>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 2px' }}>CONSULTATION DATE</p>
+              {job?.tradie?.business_name && (
+                <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.45)', margin:0 }}>with {job.tradie.business_name}</p>
+              )}
+            </div>
             {assessment?.consult_date && !proposingDate && (
               <button type="button" onClick={() => setProposingDate(true)}
                 style={{ fontSize:'11px', color:'rgba(216,228,225,0.5)', background:'none', border:'1px solid rgba(216,228,225,0.15)', borderRadius:'6px', padding:'3px 8px', cursor:'pointer' }}>
@@ -334,7 +339,7 @@ export default function AssessPage() {
             ) : (
               <div>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
-                  {assessment?.consult_date ? 'Propose new times:' : 'Suggest up to 3 times that work for you. ' + theirLabel + ' will confirm which suits them.'}
+                  {assessment?.consult_date ? 'Propose new times:' : 'Suggest up to 3 times that work for you. ' + (job?.tradie?.business_name || theirLabel) + ' will confirm which suits them. Each tradie you have requested will need their own consult.'}
                 </p>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'14px' }}>
                   {[0,1,2].map(i => (

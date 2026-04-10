@@ -632,7 +632,7 @@ export default function ShortlistPage() {
                   <div style={{ textAlign:'center', padding:'32px', color:'#7A9098', fontSize:'14px' }}>
                     No quote requests sent yet. Select tradies from the Steadyhand matches tab or invite your own.
                   </div>
-                ) : (
+                ) : !pendingConfirm ? (
                   <>
                     <div style={{ textAlign:'center' as const, padding:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginBottom:'20px' }}>
                       <div style={{ fontSize:'32px', marginBottom:'8px' }}>✅</div>
