@@ -311,7 +311,7 @@ export default function DeliveryPage() {
       await supabase2.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
       await supabase2.from('job_messages').insert({
         job_id: job.id,
-        sender_id: user?.id,
+        sender_id: profile?.id,
         body: 'All milestones approved — the job is ready for sign-off.',
       })
       await fetch('/api/email', {
