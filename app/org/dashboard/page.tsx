@@ -51,14 +51,13 @@ export default function OrgDashboardPage() {
         .eq('org_id', prof.org_id)
         .order('updated_at', { ascending: false })
       setJobs(jobsData || [])
-      const { data: { session } } = await supabase.auth.getSession()
       const { data: mems } = await supabase
         .from('org_memberships')
         .select('*, profile:profiles(full_name, email)')
         .eq('org_id', prof.org_id)
       setMembers(mems || [])
       // Find current user's role
-      const myMembership = (mems || []).find((m: any) => m.user_id === session?.user.id || m.profile?.email === prof?.email)
+      const myMembership = (mems || []).find((m: any) => m.profile?.email === prof?.email)
       if (myMembership) setMyRole(myMembership.role)
       else setMyRole('admin') // org creator is admin
 
