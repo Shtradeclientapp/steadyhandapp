@@ -23,6 +23,8 @@ export default function QuotesPage() {
   const [loading, setLoading] = useState(true)
   const [expandedQuote, setExpandedQuote] = useState<string|null>(null)
   const [decliningId, setDecliningId] = useState<string|null>(null)
+  const [revisingId, setRevisingId] = useState<string|null>(null)
+  const [revisionNote, setRevisionNote] = useState<Record<string, string>>({})
   const [declineForm, setDeclineForm] = useState<Record<string, { reason: string, note: string }>>({})
   const [submitting, setSubmitting] = useState(false)
   const [accepting, setAccepting] = useState(false)
@@ -71,6 +73,28 @@ export default function QuotesPage() {
 
   const getAllVersions = (tradieId: string) => {
     return quotes.filter(q => q.tradie_id === tradieId).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+  }
+
+  const requestRevision = async (qr: any) => {
+    const note = revisionNote[qr.tradie_id] || ''
+    if (!note.trim()) return
+    setSubmitting(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    await supabase.from('job_messages').insert({
+      job_id: job.id,
+      sender_id: session?.user.id,
+      body: 'Quote revision requested: ' + note.trim(),
+    })
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'revision_requested', job_id: job.id, note: note.trim() }),
+    }).catch(() => {})
+    setRevisingId(null)
+    setRevisionNote(prev => ({ ...prev, [qr.tradie_id]: '' }))
+    setSubmitting(false)
+    alert('Revision request sent to ' + (qr.tradie?.business_name || 'the tradie') + ' via messages.')
   }
 
   const acceptQuote = async (qr: any) => {
@@ -481,14 +505,39 @@ export default function QuotesPage() {
                           </button>
                         </div>
                       </div>
+                    ) : revisingId === qr.tradie_id ? (
+                      <div style={{ background:'rgba(46,106,143,0.04)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'16px' }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'8px' }}>What would you like changed?</p>
+                        <textarea
+                          value={revisionNote[qr.tradie_id] || ''}
+                          onChange={e => setRevisionNote(prev => ({ ...prev, [qr.tradie_id]: e.target.value }))}
+                          placeholder="e.g. Please itemise labour and materials separately. Also can you clarify what the $500 contingency covers?"
+                          rows={3}
+                          style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'white', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, marginBottom:'10px', fontFamily:'sans-serif' }}
+                        />
+                        <div style={{ display:'flex', gap:'8px' }}>
+                          <button type="button" onClick={() => requestRevision(qr)} disabled={!revisionNote[qr.tradie_id]?.trim() || submitting}
+                            style={{ flex:1, background:'#2E6A8F', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !revisionNote[qr.tradie_id]?.trim() || submitting ? 0.5 : 1 }}>
+                            {submitting ? 'Sending...' : 'Send revision request →'}
+                          </button>
+                          <button type="button" onClick={() => setRevisingId(null)}
+                            style={{ background:'transparent', color:'#7A9098', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
                     ) : (
-                      <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+                      <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
                         <button type="button" onClick={() => acceptQuote(qr)} disabled={accepting}
                           style={{ flex:2, background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: accepting ? 0.7 : 1 }}>
                           {accepting ? 'Accepting...' : 'Select this quote and review scope →'}
                         </button>
+                        <button type="button" onClick={() => setRevisingId(qr.tradie_id)}
+                          style={{ flex:1, background:'transparent', color:'#2E6A8F', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(46,106,143,0.3)', cursor:'pointer' }}>
+                          Request revision
+                        </button>
                         <button type="button" onClick={() => setDecliningId(qr.tradie_id)}
-                          style={{ flex:1, background:'transparent', color:'#D4522A', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
+                          style={{ background:'transparent', color:'#D4522A', padding:'12px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
                           Decline
                         </button>
                       </div>
