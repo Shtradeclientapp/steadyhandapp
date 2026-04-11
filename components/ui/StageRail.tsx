@@ -5,7 +5,7 @@ const STAGES = [
   { n:2, l:'Match',     p:'/shortlist' },
   { n:3, l:'Consult',   p:'/consult'  },
   { n:4, l:'Compare',   p:'/compare'  },
-  { n:5, l:'Contract',  p:'/agreement'},
+  { n:5, l:'Agreement', p:'/agreement'},
   { n:6, l:'Build',     p:'/delivery' },
   { n:7, l:'Sign off',  p:'/signoff'  },
   { n:8, l:'Protected', p:'/warranty' },

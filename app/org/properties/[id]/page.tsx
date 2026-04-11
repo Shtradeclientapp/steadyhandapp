@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 
 const STATUS_LABEL: Record<string, string> = {
   draft: 'Draft', matching: 'Matching', shortlisted: 'Shortlisted',
-  assess: 'Consult', compare: 'Compare', agreement: 'Contract',
+  assess: 'Consult', compare: 'Compare', agreement: 'Agreement',
   delivery: 'Build', signoff: 'Complete', warranty: 'Protect', complete: 'Done',
 }
 const STATUS_COLOR: Record<string, string> = {
