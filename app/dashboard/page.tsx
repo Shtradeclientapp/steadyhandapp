@@ -386,6 +386,28 @@ export default function DashboardPage() {
         <a href="/privacy" style={{ fontSize:'11px', color:'#9AA5AA', textDecoration:'none' }}>Privacy Policy</a>
         <span style={{ fontSize:'11px', color:'#9AA5AA' }}>© 2026 Steadyhand Digital Pty Ltd</span>
       </div>
+      <OnboardingModal storageKey="seen_client_onboarding" slides={[
+        {
+          icon: '🏠',
+          title: 'Welcome to Steadyhand',
+          body: 'Western Australia\'s only request-to-warranty platform. We stay with you from the first job request all the way through to your 90-day warranty.',
+        },
+        {
+          icon: '📋',
+          title: 'Start with a request',
+          body: 'Describe the job in your own words. Steadyhand uses this to match you with verified trade businesses in your area — no lead fees, no bidding wars.',
+        },
+        {
+          icon: '✅',
+          title: 'Verified tradies only',
+          body: 'Every trade business on Steadyhand has their licence and insurance verified before appearing in your shortlist.',
+        },
+        {
+          icon: '💳',
+          title: 'Pay in milestones',
+          body: 'You only release payment when you\'re satisfied each stage is complete. Steadyhand takes 5% — only when the tradie gets paid.',
+        },
+      ]} />
     </div>
   )
 }

@@ -246,6 +246,17 @@ export default function TradieDashboard() {
 
   return (
     <>
+      {/* Quick action links */}
+      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px 8px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+        {[
+          { label:'+ Invite a client', href:'/tradie/lead' },
+          { label:'Availability status', href:'/tradie/availability' },
+          { label:'Dialogue Rating', href:'/tradie/dialogue' },
+        ].map(l => (
+          <a key={l.href} href={l.href} style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'20px', padding:'5px 14px', textDecoration:'none', fontWeight:500 }}>{l.label}</a>
+        ))}
+      </div>
+
       <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
 
