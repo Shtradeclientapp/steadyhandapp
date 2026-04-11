@@ -10,8 +10,10 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier } = await request.json()
+    const body = await request.json()
+    const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier } = body
 
+    // ── Stripe Connect onboarding ────────────────────────────────
     if (action === 'create_connect_account') {
       const { data: profile } = await supabase.from('profiles').select('stripe_account_id, full_name').eq('id', tradie_id).single()
       if (profile?.stripe_account_id) {
@@ -24,9 +26,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ url: link.url })
       }
       const account = await stripe.accounts.create({
-        type: 'express',
-        country: 'AU',
-        email,
+        type: 'express', country: 'AU', email,
         capabilities: { transfers: { requested: true } },
         business_profile: { mcc: '1711', url: process.env.NEXT_PUBLIC_APP_URL },
       })
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ url: link.url })
     }
 
+    // ── Milestone payment intent ─────────────────────────────────
     if (action === 'create_payment_intent') {
       const { data: job } = await supabase.from('jobs').select('*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id, email))').eq('id', job_id).single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
@@ -48,12 +49,10 @@ export async function POST(request: NextRequest) {
       const tradieAccountId = job.tradie?.profile?.stripe_account_id
       if (!tradieAccountId) return NextResponse.json({ error: 'Tradie has not connected Stripe yet' }, { status: 400 })
       const amountCents = Math.round(Number(quote.total_price) * 100)
-      const foundingMember = job.tradie?.founding_member === true
-      const feeRate = foundingMember ? 0.03 : 0.035
+      const feeRate = job.tradie?.founding_member ? 0.03 : 0.035
       const platformFeeCents = Math.round(amountCents * feeRate)
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: amountCents,
-        currency: 'aud',
+        amount: amountCents, currency: 'aud',
         application_fee_amount: platformFeeCents,
         transfer_data: { destination: tradieAccountId },
         metadata: { job_id, client_id },
@@ -63,15 +62,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ client_secret: paymentIntent.client_secret, amount: amountCents, fee: platformFeeCents })
     }
 
+    // ── Release milestone ────────────────────────────────────────
     if (action === 'release_milestone') {
-      // Payment intent uses transfer_data which auto-transfers to tradie on capture
-      // This action just marks the milestone as paid in the DB
       const { data: milestone } = await supabase.from('milestones').select('*').eq('id', milestone_id).single()
       if (!milestone) return NextResponse.json({ error: 'Milestone not found' }, { status: 404 })
       await supabase.from('milestones').update({ paid_at: new Date().toISOString() }).eq('id', milestone_id)
       return NextResponse.json({ success: true })
     }
 
+    // ── Stripe Connect account status ────────────────────────────
     if (action === 'get_account_status') {
       const { data: profile } = await supabase.from('profiles').select('stripe_account_id').eq('id', tradie_id).single()
       if (!profile?.stripe_account_id) return NextResponse.json({ connected: false })
@@ -84,19 +83,57 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // ── Embedded subscription checkout ───────────────────────────
     if (action === 'create_checkout') {
-      // price_id, tradie_id, email, tier already destructured above
       if (!price_id || !tradie_id) return NextResponse.json({ error: 'price_id and tradie_id required' }, { status: 400 })
-      const session = await stripe.checkout.sessions.create({
+
+      // Find or create Stripe customer
+      const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id, business_name').eq('id', tradie_id).single()
+      const { data: prof } = await supabase.from('profiles').select('email, full_name').eq('id', tradie_id).single()
+
+      let customerId = tp?.stripe_customer_id
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: prof?.email || email,
+          name: tp?.business_name || prof?.full_name || undefined,
+          metadata: { tradie_id },
+        })
+        customerId = customer.id
+        await supabase.from('tradie_profiles').update({ stripe_customer_id: customerId }).eq('id', tradie_id)
+      }
+
+      const session = await (stripe.checkout.sessions.create as any)({
+        ui_mode: 'embedded',
         mode: 'subscription',
-        payment_method_types: ['card'],
-        customer_email: email,
+        customer: customerId,
         line_items: [{ price: price_id, quantity: 1 }],
-        success_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?success=true&tier=' + tier,
-        cancel_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe?cancelled=true',
+        return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe/return?session_id={CHECKOUT_SESSION_ID}',
         metadata: { tradie_id, tier },
       })
-      return NextResponse.json({ url: session.url })
+      return NextResponse.json({ client_secret: session.client_secret })
+    }
+
+    // ── Get checkout session status (for return page) ────────────
+    if (action === 'get_session_status') {
+      const { session_id } = body
+      if (!session_id) return NextResponse.json({ error: 'session_id required' }, { status: 400 })
+      const session = await stripe.checkout.sessions.retrieve(session_id)
+      return NextResponse.json({
+        status: session.status,
+        customer_email: session.customer_details?.email,
+        tier: session.metadata?.tier,
+      })
+    }
+
+    // ── Customer portal (manage/cancel subscription) ─────────────
+    if (action === 'create_portal_session') {
+      const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id').eq('id', tradie_id).single()
+      if (!tp?.stripe_customer_id) return NextResponse.json({ error: 'No Stripe customer found' }, { status: 404 })
+      const portalSession = await stripe.billingPortal.sessions.create({
+        customer: tp.stripe_customer_id,
+        return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe',
+      })
+      return NextResponse.json({ url: portalSession.url })
     }
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
