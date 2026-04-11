@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
           milestone_approved: [{ user_id: job.tradie_id, message: 'Milestone approved on: ' + job.title }],
           milestone_submitted: [{ user_id: job.client_id, message: 'Milestone ready for review on: ' + job.title }],
           warranty_issue: [{ user_id: job.tradie_id, message: 'Warranty issue logged on: ' + job.title }],
+          quote_submitted: [{ user_id: job.client_id, message: 'New quote received for: ' + job.title }],
+          consult_complete: [{ user_id: job.client_id, message: 'Consult complete — quotes are now open for: ' + job.title }],
         }
         const notifs = notifMap[type] || []
         for (const n of notifs) {

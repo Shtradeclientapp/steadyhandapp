@@ -241,8 +241,9 @@ export default function AssessPage() {
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
       const supabase2 = createClient()
-      await supabase2.from('jobs').update({ status: 'shortlisted' }).eq('id', job.id)
-      setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/quotes' }, 1200)
+      await supabase2.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+      await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
+      setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/compare' }, 1200)
     }
   }
 
@@ -639,7 +640,7 @@ export default function AssessPage() {
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>You&apos;ll be notified by email when they share their assessment.</p>
                 {!isTradie && myShared && (
                   <div style={{ marginBottom:'12px', padding:'12px 14px', background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'8px' }}>
-                    <p style={{ fontSize:'12px', color:'#2E6A8F', marginBottom:'8px' }}>You&apos;ve shared your notes. You can proceed to compare quotes without waiting.</p>
+                    <p style={{ fontSize:'12px', color:'#2E6A8F', marginBottom:'8px' }}>You&apos;ve shared your notes. You can go to Compare Quotes now — you don&apos;t need to wait for the other party to acknowledge.</p>
                     <a href="/compare" style={{ fontSize:'13px', color:'#2E6A8F', fontWeight:500, textDecoration:'none' }}>Proceed to compare quotes →</a>
                   </div>
                 )}

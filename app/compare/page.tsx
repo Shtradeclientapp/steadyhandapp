@@ -15,6 +15,7 @@ export default function ComparePage() {
   const [accepting, setAccepting] = useState<string|null>(null)
   const [accepted, setAccepted] = useState<string|null>(null)
   const [expandedQuote, setExpandedQuote] = useState<string|null>(null)
+  const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [reviseId, setReviseId] = useState<string|null>(null)
   const [reviseNote, setReviseNote] = useState('')
   const [sendingRevise, setSendingRevise] = useState(false)
@@ -42,6 +43,11 @@ export default function ComparePage() {
 
   const loadQuotes = async (jobId: string, sb?: any) => {
     const supabase = sb || createClient()
+    const { data: qrs } = await supabase
+      .from('quote_requests')
+      .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible)')
+      .eq('job_id', jobId)
+    setQuoteRequests(qrs || [])
     const { data } = await supabase
       .from('quotes')
       .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible, licence_number, insurance_expiry, dialogue_score_avg, id), quote_requests(status)')
@@ -120,11 +126,49 @@ export default function ComparePage() {
           )}
 
           {quotes.length === 0 && (
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'40px', textAlign:'center' }}>
-              <p style={{ fontSize:'28px', marginBottom:'12px' }}>⏳</p>
-              <p style={{ fontSize:'16px', fontWeight:500, color:'#1C2B32', marginBottom:'8px' }}>Waiting for quotes</p>
-              <p style={{ fontSize:'13px', color:'#7A9098', maxWidth:'400px', margin:'0 auto 20px', lineHeight:'1.6' }}>Tradies you invited are preparing their quotes. You will be notified when each one arrives.</p>
-              <a href="/shortlist"><button style={{ background:'#1C2B32', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Back to shortlist →</button></a>
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px', marginBottom:'16px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
+                <span style={{ fontSize:'24px' }}>⏳</span>
+                <div>
+                  <p style={{ fontSize:'15px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>You will be notified as each quote arrives. You can accept the first good one or wait for all to come in.</p>
+                </div>
+              </div>
+              {quoteRequests.length > 0 && (
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>Quote request status</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                    {quoteRequests.map((qr: any) => {
+                      const hasQuote = quotes.some((q: any) => q.tradie_id === qr.tradie_id)
+                      const statusLabel = hasQuote ? 'Quote received' : qr.status === 'declined' ? 'Declined' : 'Awaiting quote'
+                      const statusColor = hasQuote ? '#2E7D60' : qr.status === 'declined' ? '#D4522A' : '#C07830'
+                      return (
+                        <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'white', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                          <div>
+                            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{qr.tradie?.business_name || 'Trade business'}</p>
+                            {qr.tradie?.availability_visible && qr.tradie?.availability_message && (
+                              <p style={{ fontSize:'11px', color:'#C07830', margin:0 }}>⏱ {qr.tradie.availability_message}</p>
+                            )}
+                          </div>
+                          <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: statusColor + '18', border:'1px solid ' + statusColor + '40', color: statusColor, fontWeight:500, flexShrink:0 }}>{statusLabel}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+                <a href="/shortlist" style={{ fontSize:'13px', color:'#7A9098', textDecoration:'none' }}>← Back to shortlist to invite more tradies</a>
+              </div>
+            </div>
+          )}
+
+          {quotes.length > 0 && quoteRequests.some((qr: any) => !quotes.some((q: any) => q.tradie_id === qr.tradie_id) && qr.status !== 'declined') && (
+            <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 16px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'10px' }}>
+              <span style={{ fontSize:'16px' }}>⏳</span>
+              <p style={{ fontSize:'13px', color:'#C07830', margin:0 }}>
+                {quoteRequests.filter((qr: any) => !quotes.some((q: any) => q.tradie_id === qr.tradie_id) && qr.status !== 'declined').length} more quote{quoteRequests.filter((qr: any) => !quotes.some((q: any) => q.tradie_id === qr.tradie_id) && qr.status !== 'declined').length !== 1 ? 's' : ''} still pending — you can accept now or wait for all quotes to arrive.
+              </p>
             </div>
           )}
 
