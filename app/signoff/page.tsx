@@ -1,4 +1,5 @@
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -401,6 +402,23 @@ export default function SignoffPage() {
         </a>
 
       </div>
+      <StageGuideModal
+        storageKey="seen_signoff_guide"
+        stageNumber={7}
+        stageColor="#D4522A"
+        stageLabel="Sign off"
+        headline="Sign off starts your warranty clock"
+        intro="The job is complete. Sign-off is the formal end of the build stage and the start of your warranty period. Do this carefully."
+        checklist={[
+          { text: 'Walk through the completed work — check every item against the scope', emphasis: true },
+          { text: 'If anything is outstanding, do not sign off until it is resolved', emphasis: false },
+          { text: 'Your warranty period starts from sign-off date — not invoice date', emphasis: false },
+          { text: 'Your warranty certificate is automatically saved to your Document Vault', emphasis: false },
+        ]}
+        warning="Signing off acknowledges the work is complete. Raise any issues before signing — not after."
+        ctaLabel="Review and sign off"
+      />
     </div>
+
   )
 }

@@ -3,6 +3,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
 import { JobSelector } from '@/components/ui/JobSelector'
 
@@ -788,6 +789,23 @@ export default function AssessPage() {
         </a>
 
       </div>
+      <StageGuideModal
+        storageKey="seen_consult_guide"
+        stageNumber={3}
+        stageColor="#9B6B9B"
+        stageLabel="Consult"
+        headline="The consult is the most important hour of the job"
+        intro="Before any quote is submitted, both parties document what was seen, said and expected on site. This record is locked once shared."
+        checklist={[
+          { text: 'Write your notes independently before sharing', emphasis: true },
+          { text: 'Record what was observed, discussed, and what remains unresolved', emphasis: false },
+          { text: 'Be specific — vague notes provide no protection', emphasis: false },
+          { text: 'Read the other party record carefully before acknowledging it', emphasis: false },
+        ]}
+        warning="Acknowledging the other party record means you accept it as accurate. Do not acknowledge without reading."
+        ctaLabel="Start my consult notes"
+      />
     </div>
+
   )
 }

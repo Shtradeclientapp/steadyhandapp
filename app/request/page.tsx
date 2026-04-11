@@ -1,5 +1,6 @@
 
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useState, useEffect } from 'react'
@@ -353,6 +354,24 @@ sessionStorage.removeItem('diy_project_id')
           )}
         </div>
       </div>
+      <StageGuideModal
+        storageKey="seen_request_guide"
+        stageNumber={1}
+        stageColor="#2E7D60"
+        stageLabel="Request"
+        headline="Write a request that gets you the right tradies"
+        intro="Your request is the foundation of everything. Tradies use it to decide whether to quote, and Steadyhand uses it to match you with the right ones."
+        checklist={[
+          { text: 'Describe the problem and how long it has been an issue', emphasis: true },
+          { text: 'Include your property age, type and any access restrictions', emphasis: false },
+          { text: 'Mention anything unusual — previous repairs, asbestos, heritage overlay', emphasis: false },
+          { text: 'Pick the closest trade category — Steadyhand confirms during matching', emphasis: false },
+          { text: 'A budget range is optional but helps tradies assess fit before visiting', emphasis: false },
+        ]}
+        warning="Vague requests attract vague quotes. The more specific you are, the more accurate your shortlist."
+        ctaLabel="Write my request"
+      />
     </>
+
   )
 }

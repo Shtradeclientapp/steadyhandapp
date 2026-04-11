@@ -1,4 +1,5 @@
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -711,6 +712,23 @@ export default function ShortlistPage() {
 
         </div>
       </div>
+      <StageGuideModal
+        storageKey="seen_shortlist_guide"
+        stageNumber={2}
+        stageColor="#2E6A8F"
+        stageLabel="Match"
+        headline="Choose who you invite — not who quotes fastest"
+        intro="Steadyhand has matched you with verified trade businesses. You decide who to invite. This is not a race."
+        checklist={[
+          { text: 'Request quotes from 2 to 4 tradies for the best comparison', emphasis: true },
+          { text: 'Every tradie shown has had their licence and insurance verified', emphasis: false },
+          { text: 'You can invite a tradie you already know — their quote sits alongside the others', emphasis: false },
+          { text: 'Tradies are ranked by fit and track record — not by who paid to be listed', emphasis: false },
+        ]}
+        warning="Selecting just one tradie means no comparison. Two to four quotes is the Steadyhand recommendation for any job over $1,000."
+        ctaLabel="Review my matches"
+      />
     </>
+
   )
 }
