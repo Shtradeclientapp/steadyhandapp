@@ -354,30 +354,74 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div style={{ marginTop:'32px' }}>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>HOME HUB</h2>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(130px, 1fr))', gap:'12px' }}>
-            <a href="/wallet" style={{ textDecoration:'none' }}>
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', cursor:'pointer', height:'100%' }}>
-                <div style={{ fontSize:'28px', marginBottom:'10px' }}>💰</div>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>FINANCE</div>
-                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Track quotes, milestone payments and invoice history across all your jobs.</div>
+        <div style={{ marginTop:'36px' }}>
+          {/* HOME HUB HEADER */}
+          <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'20px 24px', marginBottom:'12px', position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 100% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
+            <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <div>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.4)', letterSpacing:'2px', margin:'0 0 4px' }}>YOUR HOME</p>
+                <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', margin:0 }}>HOME HUB</h2>
               </div>
-            </a>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', margin:0, maxWidth:'200px', textAlign:'right' as const, lineHeight:'1.5' }}>Your property record, finances and build projects — in one place.</p>
+            </div>
+          </div>
+
+          {/* HUB CARDS */}
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+
+            {/* Build Journal */}
             <a href="/diy" style={{ textDecoration:'none' }}>
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', cursor:'pointer', height:'100%' }}>
-                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🏗</div>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>BUILD JOURNAL</div>
-                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Manage your owner-builder projects — trades, tasks, budget and compliance.</div>
+              <div style={{ background:'linear-gradient(135deg, #2A1A12 0%, #3D2318 100%)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(212,82,42,0.12), transparent 60%)' }} />
+                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(212,82,42,0.2)', border:'1px solid rgba(212,82,42,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>🏗</div>
+                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Build Journal</p>
+                    <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.2)', color:'#D4522A', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>Owner-builder</span>
+                  </div>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Manage trades, permits, tasks, budget and WA compliance — all in one place.</p>
+                </div>
+                <span style={{ fontSize:'16px', color:'rgba(212,82,42,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
               </div>
             </a>
+
+            {/* Document Vault */}
             <a href="/vault" style={{ textDecoration:'none' }}>
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', cursor:'pointer', height:'100%' }}>
-                <div style={{ fontSize:'28px', marginBottom:'10px' }}>🗄</div>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'6px' }}>DOCUMENT VAULT</div>
-                <div style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6' }}>Your permanent home record — scope agreements, warranties and certificates.</div>
+              <div style={{ background:'linear-gradient(135deg, #0D1F1A 0%, #162D25 100%)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(46,125,96,0.1), transparent 60%)' }} />
+                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(46,125,96,0.2)', border:'1px solid rgba(46,125,96,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>🗄</div>
+                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Document Vault</p>
+                    {jobs.filter(j => j.status === 'warranty').length > 0 && (
+                      <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.2)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{jobs.filter(j => j.status === 'warranty').length} under warranty</span>
+                    )}
+                  </div>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Your permanent home record — scope agreements, warranties and certificates.</p>
+                </div>
+                <span style={{ fontSize:'16px', color:'rgba(46,125,96,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
               </div>
             </a>
+
+            {/* Finance */}
+            <a href="/wallet" style={{ textDecoration:'none' }}>
+              <div style={{ background:'linear-gradient(135deg, #1A1508 0%, #2A2010 100%)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
+                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(192,120,48,0.1), transparent 60%)' }} />
+                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(192,120,48,0.2)', border:'1px solid rgba(192,120,48,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>💰</div>
+                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Finance</p>
+                    {activeJobs.length > 0 && (
+                      <span style={{ fontSize:'10px', background:'rgba(192,120,48,0.2)', color:'#C07830', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{activeJobs.length} active job{activeJobs.length !== 1 ? 's' : ''}</span>
+                    )}
+                  </div>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</p>
+                </div>
+                <span style={{ fontSize:'16px', color:'rgba(192,120,48,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+              </div>
+            </a>
+
           </div>
         </div>
       </div>
