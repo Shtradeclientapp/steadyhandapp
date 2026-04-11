@@ -90,6 +90,11 @@ export default function RequestPage() {
     setForm(f => ({ ...f, [k]: e.target.value }))
 
 const submitJob = async () => {
+    if (!form.title || !form.description || !form.trade_category || !form.suburb) {
+      alert('Please complete all required fields — title, description, trade category and suburb.')
+      setSubmitting(false)
+      return
+    }
     setSubmitting(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
@@ -197,16 +202,15 @@ sessionStorage.removeItem('diy_project_id')
           </p>
           {dots}
 
-          <HintPanel color="#2E7D60" hints={[
-            "The more detail you include in your description, the better your shortlist will be. Include the property age, access details, and any known complications.",
-            "Not sure which trade category? Pick the closest match — Steadyhand will confirm with you during matching.",
-            "You can request quotes from 2–4 tradies. More quotes means better comparison, but you don't need to wait for all of them before reviewing.",
-            "Your budget range is optional but helpful — tradies use it to calibrate their approach before visiting the site.",
-          ]} />
           {step === 0 && card(
             <>
               <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'6px', fontWeight:'500' }}>Tell us what you need</p>
-              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>Start by describing the job in your own words. The more detail you give, the better your shortlist will be.</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>Start by describing the job in your own words. The more detail you give, the better your shortlist will be.</p>
+              <HintPanel color="#2E7D60" hints={[
+                "Include the property age, access details, and any complications you\'re aware of — tradies use this before visiting.",
+                "Not sure which trade category? Pick the closest match — Steadyhand will confirm during matching.",
+                "Your budget range is optional but helps tradies calibrate their approach.",
+              ]} />
               <label style={labelStyle}>
                 What do you need done?
                 <textarea
@@ -233,6 +237,7 @@ sessionStorage.removeItem('diy_project_id')
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — Steadyhand will confirm during matching.</span>
               </label>
               <button
+                type="button"
                 onClick={() => setStep(1)}
                 disabled={!form.title || !form.description}
                 style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:(!form.title || !form.description) ? 0.5 : 1, fontFamily:'sans-serif' }}>
@@ -337,8 +342,9 @@ sessionStorage.removeItem('diy_project_id')
               <div style={{ display:'flex', gap:'10px', marginTop:'20px' }}>
                 {btn('← Back', () => setStep(1), 'ghost')}
                 <button
+                  type="button"
                   onClick={submitJob}
-                  disabled={submitting}
+                  disabled={submitting || !form.title || !form.description || !form.trade_category || !form.suburb}
                   style={{ flex:1, background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:submitting ? 0.6 : 1, fontFamily:'sans-serif' }}>
                   {submitting ? 'Submitting...' : 'Submit request & build shortlist →'}
                 </button>
