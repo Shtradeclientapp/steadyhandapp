@@ -16,10 +16,19 @@ function getNextAction(job: any, tradieUserId: string): {
 
   // Quote requested but not yet assigned
   if (!isAssigned && myQR?.status === 'requested') {
+    const hasQuote = job.quotes && job.quotes.length > 0
+    if (hasQuote) {
+      return {
+        icon: '⏳',
+        headline: 'Waiting for client to accept',
+        sub: 'Your quote has been submitted — the client is comparing options',
+        urgent: false,
+      }
+    }
     return {
       icon: '📋',
       headline: 'Submit your quote',
-      sub: 'Client is waiting — quotes close when they choose a tradie',
+      sub: 'Client is waiting — review the job and send your quote',
       urgent: true,
     }
   }
@@ -28,15 +37,15 @@ function getNextAction(job: any, tradieUserId: string): {
     case 'shortlisted':
       return {
         icon: '👋',
-        headline: 'Introduce yourself',
-        sub: 'Client has shortlisted you — send a message to stand out',
+        headline: 'Quote requested',
+        sub: 'You have been shortlisted — visit the job to propose a consult time or submit a quote',
         urgent: true,
       }
     case 'assess':
       return {
         icon: '🏠',
-        headline: 'Confirm site visit',
-        sub: 'Arrange the site consult and record your observations',
+        headline: 'Complete site consult',
+        sub: 'Propose times, visit the site, then record your observations in the Consult page',
         urgent: true,
       }
     case 'quote':
