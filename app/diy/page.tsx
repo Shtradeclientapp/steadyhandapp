@@ -51,7 +51,7 @@ export default function DIYPage() {
   const [occupancyInput, setOccupancyInput] = useState('')
   const [loading, setLoading] = useState(true)
   const [activeProject, setActiveProject] = useState<string|null>(null)
-  const [activeTab, setActiveTab] = useState<'overview'|'sequence'|'trades'|'tasks'|'budget'|'compliance'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'schedule'|'trades'|'tasks'|'budget'|'compliance'>('overview')
   const [showNewProject, setShowNewProject] = useState(false)
   const [showNewTask, setShowNewTask] = useState(false)
   const [showNewExpense, setShowNewExpense] = useState(false)
@@ -90,11 +90,20 @@ export default function DIYPage() {
           .eq('document_type', 'compliance')
         setVaultDocs(vd || [])
       }
+      const projectIds = (proj || []).map((p:any) => p.id)
+      if (projectIds.length > 0) {
+        const { data: stages } = await supabase.from('project_stages').select('*').in('project_id', projectIds).order('n', { ascending: true })
+        setProjectStages(stages || [])
+      }
       setLoading(false)
     })
   }, [])
 
   const [creatingProject, setCreatingProject] = useState(false)
+  const [projectStages, setProjectStages] = useState<any[]>([])
+  const [editingStage, setEditingStage] = useState<string|null>(null)
+  const [savingStage, setSavingStage] = useState(false)
+  const [projectStartDate, setProjectStartDate] = useState('')
 
   const createProject = async () => {
     if (!newProject.title || creatingProject) return
@@ -243,7 +252,7 @@ export default function DIYPage() {
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', marginBottom:'14px' }}>
               {/* Progress bar */}
               <div style={{ display:'flex', gap:'4px', marginBottom:'16px' }}>
-                {[0,1,2,3,4,5].map(i => (
+                {[0,1,2,3,4,5,6,7].map(i => (
                   <div key={i} style={{ flex:1, height:'3px', borderRadius:'2px', background: i <= wizardStep ? '#D4522A' : 'rgba(28,43,50,0.12)', transition:'background 0.2s' }} />
                 ))}
               </div>
@@ -386,6 +395,62 @@ export default function DIYPage() {
                 </div>
               )}
 
+              {/* Step 6 — Stage selection */}
+              {wizardStep === 6 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>Select your build stages</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px', lineHeight:'1.5' }}>These become the rows in your Gantt schedule. Deselect any that don't apply. You can edit durations and add custom stages in the Schedule tab.</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px', marginBottom:'14px' }}>
+                    {[
+                      { n:1, label:'Site preparation', desc:'Demolition, excavation, site clearing', color:'#7A9098' },
+                      { n:2, label:'Slab / footings', desc:'Concrete, footings, drainage', color:'#C07830' },
+                      { n:3, label:'Frame / structure', desc:'Timber or steel frame, roof structure', color:'#D4522A' },
+                      { n:4, label:'Rough-in', desc:'Electrical, plumbing, gas rough-in', color:'#6B4FA8' },
+                      { n:5, label:'Lock-up', desc:'Roofing, windows, external doors', color:'#2E6A8F' },
+                      { n:6, label:'Fix-out', desc:'Tiling, plastering, painting, joinery', color:'#2E7D60' },
+                      { n:7, label:'Completion', desc:'Final inspections and certificates', color:'#1A6B5A' },
+                    ].map((stage:any) => {
+                      const excl: number[] = (newProject as any).excludedStages || []
+                      const selected = !excl.includes(stage.n)
+                      return (
+                        <div key={stage.n} onClick={() => setNewProject((f:any) => ({ ...f, excludedStages: selected ? [...excl, stage.n] : excl.filter((n:number) => n !== stage.n) }))}
+                          style={{ display:'flex', alignItems:'center', gap:'12px', padding:'10px 12px', borderRadius:'8px', border:'1.5px solid '+(selected?stage.color+'60':'rgba(28,43,50,0.1)'), background:selected?stage.color+'08':'rgba(28,43,50,0.02)', cursor:'pointer' }}>
+                          <div style={{ width:'16px', height:'16px', borderRadius:'3px', border:'1.5px solid '+(selected?stage.color:'rgba(28,43,50,0.2)'), background:selected?stage.color:'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', flexShrink:0 }}>{selected?'✓':''}</div>
+                          <div>
+                            <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', margin:0 }}>{stage.label}</p>
+                            <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{stage.desc}</p>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(5)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={() => setWizardStep(7)} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 7 — Start date */}
+              {wizardStep === 7 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>When does work start?</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px', lineHeight:'1.5' }}>Steadyhand calculates end dates for each stage using standard WA build durations. You can adjust everything in the Schedule tab after creating your project.</p>
+                  <div style={{ marginBottom:'14px' }}>
+                    <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'4px' }}>Planned start date</label>
+                    <input type="date" onChange={e => setNewProject((f:any) => ({ ...f, planned_start: e.target.value }))} style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', fontSize:'13px', boxSizing:'border-box' as const, color:'#1C2B32' }} />
+                  </div>
+                  <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'8px', padding:'10px 12px', marginBottom:'14px' }}>
+                    <p style={{ fontSize:'11px', color:'#2E7D60', margin:0, lineHeight:'1.5' }}>✓ Your Gantt schedule will be pre-populated with selected stages and standard WA build durations. Critical path and float are calculated automatically.</p>
+                  </div>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(6)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={createProject} disabled={creatingProject} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity:creatingProject?0.6:1 }}>Create project & schedule →</button>
+                  </div>
+                </div>
+              )}
+
+
               {/* Step 5 — Review and create */}
               {wizardStep === 5 && (
                 <div>
@@ -412,7 +477,7 @@ export default function DIYPage() {
                   )}
                   <div style={{ display:'flex', gap:'8px' }}>
                     <button type="button" onClick={() => setWizardStep(4)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
-                    <button type="button" onClick={createProject} disabled={creatingProject} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity:creatingProject?0.6:1 }}>Create project →</button>
+                    <button type="button" onClick={() => setWizardStep(6)} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue — build schedule →</button>
                   </div>
                   <button type="button" onClick={() => { setShowNewProject(false); setWizardStep(0) }} style={{ width:'100%', background:'transparent', border:'none', color:'#7A9098', fontSize:'12px', cursor:'pointer', marginTop:'8px', padding:'4px' }}>Cancel</button>
                 </div>
@@ -557,7 +622,7 @@ export default function DIYPage() {
               <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'20px' }}>
                 {([
                   { id:'overview', label:'Overview' },
-                  { id:'sequence', label:'Build sequence' },
+                  { id:'schedule', label:'Schedule' },
                   { id:'trades', label:'Trade packages' },
                   { id:'tasks', label:'Tasks', count: projTasks.length },
                   { id:'budget', label:'Budget', count: projExpenses.length },
@@ -616,122 +681,186 @@ export default function DIYPage() {
               )}
 
               {/* Sequence tab */}
-              {activeTab === 'sequence' && (() => {
-                const projJobs = childJobs.filter(j => j.diy_project_id === activeProj.id)
-
-                const STAGES = [
-                  {
-                    n: 1, label: 'Demolition / site prep', trades: ['demolition','excavation','site'],
-                    dependsOn: 'Building permit issued',
-                    enables: 'Foundation and slab work',
-                    color: '#7A9098',
-                  },
-                  {
-                    n: 2, label: 'Slab / footings', trades: ['concret','slab','footing','foundation'],
-                    dependsOn: 'Site cleared',
-                    enables: 'Frame stage — book framer 2–3 weeks after pour',
-                    color: '#C07830',
-                  },
-                  {
-                    n: 3, label: 'Frame / structure', trades: ['frame','struct','carpent','timber'],
-                    dependsOn: 'Slab approved',
-                    enables: 'Rough-in electrical, plumbing, roofing',
-                    color: '#D4522A',
-                  },
-                  {
-                    n: 4, label: 'Rough-in (electrical + plumbing)', trades: ['electr','plumb','gas'],
-                    dependsOn: 'Frame inspection passed',
-                    enables: 'Insulation, wall linings, roofing',
-                    color: '#6B4FA8',
-                  },
-                  {
-                    n: 5, label: 'Lock-up (roofing, windows, doors)', trades: ['roof','window','door','lock','glaz'],
-                    dependsOn: 'Rough-in inspected',
-                    enables: 'Internal fit-out, tiling, plastering',
-                    color: '#2E6A8F',
-                  },
-                  {
-                    n: 6, label: 'Fix-out / fit-out', trades: ['tile','plaster','paint','floor','cabinet','joiner'],
-                    dependsOn: 'Lock-up complete',
-                    enables: 'Final electrical / plumbing, painting',
-                    color: '#2E7D60',
-                  },
-                  {
-                    n: 7, label: 'Practical completion', trades: ['final','inspect','certif'],
-                    dependsOn: 'All trades complete',
-                    enables: 'Final inspection, occupancy permit',
-                    color: '#1A6B5A',
-                  },
+              {activeTab === 'schedule' && (() => {
+                const projStages = projectStages.filter((s:any) => s.project_id === activeProj.id).sort((a:any,b:any) => a.n - b.n)
+                const projJobs2 = childJobs.filter((j:any) => j.diy_project_id === activeProj.id)
+                const WA_DEFAULTS = [
+                  { n:1, label:'Site preparation', color:'#7A9098', duration_days:7,  trade_category:'demolition' },
+                  { n:2, label:'Slab / footings',  color:'#C07830', duration_days:14, trade_category:'concreting' },
+                  { n:3, label:'Frame / structure', color:'#D4522A', duration_days:21, trade_category:'carpentry' },
+                  { n:4, label:'Rough-in',          color:'#6B4FA8', duration_days:14, trade_category:'electrical' },
+                  { n:5, label:'Lock-up',           color:'#2E6A8F', duration_days:14, trade_category:'roofing' },
+                  { n:6, label:'Fix-out',           color:'#2E7D60', duration_days:28, trade_category:'tiling' },
+                  { n:7, label:'Completion',        color:'#1A6B5A', duration_days:7,  trade_category:'inspection' },
                 ]
-
-                const STATUS_LABEL: Record<string,string> = {
-                  matching:'Matching', shortlisted:'Shortlisted', assess:'Consult', consult:'Consult',
-                  quotes:'Quoting', agreement:'Agreement', delivery:'In progress',
-                  signoff:'Sign-off', warranty:'Warranty', complete:'Complete',
+                const seedStages = async () => {
+                  const sb = (await import('@/lib/supabase/client')).createClient()
+                  const start = projectStartDate || new Date().toISOString().slice(0,10)
+                  let cursor = new Date(start)
+                  const rows = WA_DEFAULTS.map((s:any) => {
+                    const sd = new Date(cursor)
+                    cursor.setDate(cursor.getDate() + s.duration_days)
+                    return { project_id: activeProj.id, n: s.n, label: s.label, color: s.color, duration_days: s.duration_days, trade_category: s.trade_category, start_date: sd.toISOString().slice(0,10), end_date: new Date(cursor).toISOString().slice(0,10), depends_on_ids: [] }
+                  })
+                  const { data: seeded } = await sb.from('project_stages').insert(rows).select()
+                  if (seeded) setProjectStages((prev:any[]) => [...prev.filter((s:any) => s.project_id !== activeProj.id), ...seeded])
                 }
-
+                const updateStage = async (id: string, updates: any) => {
+                  setSavingStage(true)
+                  const sb = (await import('@/lib/supabase/client')).createClient()
+                  const { data: up } = await sb.from('project_stages').update(updates).eq('id', id).select().single()
+                  if (up) setProjectStages((prev:any[]) => prev.map((s:any) => s.id === id ? up : s))
+                  setSavingStage(false); setEditingStage(null)
+                }
+                const deleteStage = async (id: string) => {
+                  const sb = (await import('@/lib/supabase/client')).createClient()
+                  await sb.from('project_stages').delete().eq('id', id)
+                  setProjectStages((prev:any[]) => prev.filter((s:any) => s.id !== id))
+                }
+                const addStage = async () => {
+                  const sb = (await import('@/lib/supabase/client')).createClient()
+                  const maxN = projStages.length > 0 ? Math.max(...projStages.map((s:any) => s.n)) : 0
+                  const last: any = projStages[projStages.length - 1]
+                  const sd = last?.end_date || new Date().toISOString().slice(0,10)
+                  const ed = new Date(new Date(sd).getTime() + 14*86400000).toISOString().slice(0,10)
+                  const { data: added } = await sb.from('project_stages').insert({ project_id: activeProj.id, n: maxN+1, label: 'New stage', color: '#7A9098', duration_days: 14, start_date: sd, end_date: ed, depends_on_ids: [] }).select().single()
+                  if (added) { setProjectStages((prev:any[]) => [...prev, added]); setEditingStage(added.id) }
+                }
+                const allDates = projStages.flatMap((s:any) => [s.start_date, s.end_date].filter(Boolean))
+                const minDate = allDates.length ? new Date(Math.min(...allDates.map((d:string) => new Date(d).getTime()))) : new Date()
+                const maxDate = allDates.length ? new Date(Math.max(...allDates.map((d:string) => new Date(d).getTime()))) : new Date(Date.now() + 90*86400000)
+                const totalDays = Math.max(1, (maxDate.getTime() - minDate.getTime()) / 86400000)
+                const todayPct = Math.min(100, Math.max(0, (new Date().getTime() - minDate.getTime()) / 86400000 / totalDays * 100))
+                const criticalIds = new Set(projStages.filter((s:any) => {
+                  const next = projStages.find((s2:any) => s2.n === s.n + 1)
+                  if (!next) return true
+                  return s.end_date === next.start_date
+                }).map((s:any) => s.id))
+                if (projStages.length === 0) return (
+                  <div>
+                    <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'10px', padding:'16px 18px', marginBottom:'16px' }}>
+                      <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:600, margin:'0 0 6px' }}>No schedule yet</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 12px', lineHeight:'1.5' }}>Generate the standard WA residential build sequence, then edit durations, resources and dependencies to match your project.</p>
+                      <div style={{ display:'flex', gap:'8px', alignItems:'center', marginBottom:'12px' }}>
+                        <input type="date" value={projectStartDate} onChange={e => setProjectStartDate(e.target.value)} style={{ padding:'8px 10px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'7px', fontSize:'12px', color:'#1C2B32', background:'white' }} />
+                        <span style={{ fontSize:'12px', color:'#7A9098' }}>Project start date</span>
+                      </div>
+                      <button type="button" onClick={seedStages} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Generate WA build schedule →</button>
+                    </div>
+                  </div>
+                )
                 return (
                   <div>
-                    <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'10px', padding:'12px 16px', marginBottom:'16px' }}>
-                      <p style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, margin:'0 0 3px' }}>Build sequence — WA residential</p>
-                      <p style={{ fontSize:'11px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Each stage depends on the one before it. Steadyhand maps your trade packages to the right stage and flags sequencing conflicts. Trade packages you add will appear here automatically.</p>
-                    </div>
-                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'0' }}>
-                      {STAGES.map((stage, idx) => {
-                        // Match child jobs to this stage by trade category
-                        const stageJobs = projJobs.filter(j =>
-                          stage.trades.some(t => (j.trade_category || '').toLowerCase().includes(t))
-                        )
-                        const isComplete = stageJobs.length > 0 && stageJobs.every(j => j.status === 'complete' || j.status === 'warranty')
-                        const isActive = stageJobs.some(j => ['delivery','signoff','agreement'].includes(j.status))
-                        const hasJobs = stageJobs.length > 0
-
-                        return (
-                          <div key={stage.n} style={{ display:'flex', gap:'0', alignItems:'stretch' }}>
-                            {/* Left spine */}
-                            <div style={{ display:'flex', flexDirection:'column' as const, alignItems:'center', width:'32px', flexShrink:0 }}>
-                              <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: isComplete ? '#2E7D60' : isActive ? stage.color : hasJobs ? 'rgba(28,43,50,0.12)' : 'rgba(28,43,50,0.06)', border:'2px solid ' + (isComplete ? '#2E7D60' : isActive ? stage.color : 'rgba(28,43,50,0.15)'), display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color: isComplete || isActive ? 'white' : '#7A9098', flexShrink:0, zIndex:1 }}>
-                                {isComplete ? '✓' : stage.n}
+                    <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'16px', marginBottom:'16px', overflowX:'auto' as const }}>
+                      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.6)', letterSpacing:'1px', margin:0 }}>SCHEDULE</p>
+                        <div style={{ display:'flex', gap:'10px' }}>
+                          {[['#D4522A','Critical'],['rgba(216,228,225,0.3)','Float'],['#C07830','Today']].map(([col,lbl]) => (
+                            <span key={lbl} style={{ display:'flex', alignItems:'center', gap:'4px', fontSize:'9px', color:'rgba(216,228,225,0.4)' }}>
+                              <span style={{ width:'8px', height:'8px', background:col, display:'inline-block', borderRadius:'2px' }} />{lbl}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ minWidth:'460px' }}>
+                        {projStages.map((stage:any) => {
+                          const startPct = stage.start_date ? Math.max(0,(new Date(stage.start_date).getTime()-minDate.getTime())/86400000/totalDays*100) : 0
+                          const durPct = Math.max(0.5, stage.duration_days/totalDays*100)
+                          const isCritical = criticalIds.has(stage.id)
+                          const linked = projJobs2.find((j:any) => stage.trade_category && (j.trade_category||'').toLowerCase().includes(stage.trade_category.slice(0,5).toLowerCase()))
+                          return (
+                            <div key={stage.id} style={{ display:'flex', alignItems:'center', marginBottom:'5px' }}>
+                              <div style={{ width:'120px', flexShrink:0, paddingRight:'8px' }}>
+                                <p style={{ fontSize:'10px', color:'rgba(216,228,225,0.75)', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{stage.label}</p>
+                                <p style={{ fontSize:'9px', color:'rgba(216,228,225,0.35)', margin:0 }}>{stage.duration_days}d{stage.resource ? ' · '+stage.resource : ''}</p>
                               </div>
-                              {idx < STAGES.length - 1 && (
-                                <div style={{ width:'2px', flex:1, background: isComplete ? '#2E7D60' : 'rgba(28,43,50,0.1)', minHeight:'16px' }} />
-                              )}
-                            </div>
-                            {/* Stage content */}
-                            <div style={{ flex:1, paddingLeft:'12px', paddingBottom: idx < STAGES.length - 1 ? '16px' : '0' }}>
-                              <div style={{ background: isActive ? stage.color + '08' : isComplete ? 'rgba(46,125,96,0.04)' : '#E8F0EE', border:'1px solid ' + (isActive ? stage.color + '30' : isComplete ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 14px' }}>
-                                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'8px', marginBottom:'4px' }}>
-                                  <p style={{ fontSize:'13px', fontWeight:600, color: isActive ? stage.color : '#1C2B32', margin:0 }}>{stage.label}</p>
-                                  {isComplete && <span style={{ fontSize:'10px', color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'4px', padding:'1px 7px', flexShrink:0 }}>Done</span>}
-                                  {isActive && <span style={{ fontSize:'10px', color:stage.color, background:stage.color+'12', border:'1px solid '+stage.color+'30', borderRadius:'4px', padding:'1px 7px', flexShrink:0 }}>Active</span>}
+                              <div style={{ flex:1, height:'18px', background:'rgba(255,255,255,0.04)', borderRadius:'3px', position:'relative' as const }}>
+                                <div style={{ position:'absolute' as const, left:todayPct+'%', top:0, bottom:0, width:'1.5px', background:'#C07830', zIndex:2 }} />
+                                <div style={{ position:'absolute' as const, left:startPct+'%', width:durPct+'%', top:'2px', height:'14px', borderRadius:'3px', background:isCritical?'#D4522A':stage.color, opacity:0.85, zIndex:1, display:'flex', alignItems:'center', paddingLeft:'4px', overflow:'hidden' }}>
+                                  {linked && <span style={{ fontSize:'8px', color:'white', whiteSpace:'nowrap' as const }}>✓</span>}
                                 </div>
-                                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 6px', lineHeight:'1.5' }}>
-                                  <span style={{ fontWeight:500 }}>Needs:</span> {stage.dependsOn} · <span style={{ fontWeight:500 }}>Enables:</span> {stage.enables}
-                                </p>
-                                {stageJobs.length > 0 ? (
-                                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'4px' }}>
-                                    {stageJobs.map((j: any) => (
-                                      <div key={j.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'5px 10px', background:'white', borderRadius:'6px', border:'1px solid rgba(28,43,50,0.08)' }}>
-                                        <p style={{ fontSize:'12px', color:'#1C2B32', margin:0 }}>{j.title}</p>
-                                        <span style={{ fontSize:'10px', color:'#7A9098', background:'rgba(28,43,50,0.06)', borderRadius:'4px', padding:'1px 6px' }}>{STATUS_LABEL[j.status] || j.status}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <button type="button" onClick={() => convertToJob({ ...activeProj, title: stage.label + ' — ' + activeProj.title })}
-                                    style={{ fontSize:'11px', color:'#7A9098', background:'transparent', border:'1px dashed rgba(28,43,50,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer', width:'100%' }}>
-                                    + Add {stage.label.toLowerCase()} trade package
-                                  </button>
-                                )}
                               </div>
+                              {isCritical && <span style={{ fontSize:'8px', color:'#D4522A', marginLeft:'4px', flexShrink:0 }}>CP</span>}
                             </div>
+                          )
+                        })}
+                        <div style={{ paddingLeft:'120px', marginTop:'2px', position:'relative' as const, height:'12px' }}>
+                          <span style={{ position:'absolute' as const, left:todayPct+'%', fontSize:'8px', color:'#C07830', transform:'translateX(-50%)' }}>Today</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
+                      {projStages.map((stage:any) => {
+                        const isCritical = criticalIds.has(stage.id)
+                        const isEditing = editingStage === stage.id
+                        const next = projStages.find((s:any) => s.n === stage.n+1)
+                        const floatDays = next && stage.end_date && next.start_date ? Math.max(0,(new Date(next.start_date).getTime()-new Date(stage.end_date).getTime())/86400000) : 0
+                        return (
+                          <div key={stage.id} style={{ background:'#E8F0EE', border:'1px solid '+(isCritical?'rgba(212,82,42,0.25)':'rgba(28,43,50,0.1)'), borderRadius:'10px', overflow:'hidden' }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', cursor:'pointer' }} onClick={() => setEditingStage(isEditing ? null : stage.id)}>
+                              <div style={{ width:'10px', height:'10px', borderRadius:'50%', background:stage.color, flexShrink:0 }} />
+                              <div style={{ flex:1 }}>
+                                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{stage.label}</p>
+                                <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                                  {stage.start_date ? new Date(stage.start_date).toLocaleDateString('en-AU') : '—'} → {stage.end_date ? new Date(stage.end_date).toLocaleDateString('en-AU') : '—'} · {stage.duration_days}d
+                                  {stage.resource ? ' · '+stage.resource : ''}
+                                  {isCritical ? <span style={{ color:'#D4522A', fontWeight:600 }}> · Critical</span> : <span style={{ color:'#2E7D60' }}> · {floatDays}d float</span>}
+                                </p>
+                              </div>
+                              <span style={{ fontSize:'11px', color:'#9AA5AA' }}>{isEditing ? '▲' : '▼'}</span>
+                            </div>
+                            {isEditing && (
+                              <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', padding:'12px 14px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+                                  {[
+                                    { lbl:'Stage name', id:'lbl-'+stage.id, val:stage.label, type:'text', ph:'' },
+                                    { lbl:'Resource / trade', id:'res-'+stage.id, val:stage.resource||'', type:'text', ph:'e.g. Smith Concreting' },
+                                    { lbl:'Start date', id:'start-'+stage.id, val:stage.start_date||'', type:'date', ph:'' },
+                                    { lbl:'Duration (days)', id:'dur-'+stage.id, val:String(stage.duration_days), type:'number', ph:'' },
+                                  ].map(f => (
+                                    <div key={f.id}>
+                                      <label style={{ fontSize:'10px', color:'#7A9098', display:'block', marginBottom:'3px' }}>{f.lbl}</label>
+                                      <input type={f.type} defaultValue={f.val} id={f.id} placeholder={f.ph} style={{ width:'100%', padding:'7px 9px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', fontSize:'12px', boxSizing:'border-box' as const }} />
+                                    </div>
+                                  ))}
+                                </div>
+                                <div style={{ display:'flex', gap:'8px' }}>
+                                  <button type="button" disabled={savingStage} onClick={async () => {
+                                    const lbl = (document.getElementById('lbl-'+stage.id) as HTMLInputElement)?.value
+                                    const res = (document.getElementById('res-'+stage.id) as HTMLInputElement)?.value
+                                    const start = (document.getElementById('start-'+stage.id) as HTMLInputElement)?.value
+                                    const dur = parseInt((document.getElementById('dur-'+stage.id) as HTMLInputElement)?.value||'14')
+                                    await updateStage(stage.id, { label:lbl, resource:res||null, start_date:start, duration_days:dur, end_date:new Date(new Date(start).getTime()+dur*86400000).toISOString().slice(0,10) })
+                                  }} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'7px', padding:'8px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity:savingStage?0.6:1 }}>{savingStage?'Saving...':'Save changes'}</button>
+                                  <button type="button" onClick={() => deleteStage(stage.id)} style={{ background:'transparent', color:'#D4522A', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'7px', padding:'8px 12px', fontSize:'12px', cursor:'pointer' }}>Delete</button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )
                       })}
+                      <button type="button" onClick={addStage} style={{ width:'100%', background:'transparent', border:'1px dashed rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px', fontSize:'12px', color:'#7A9098', cursor:'pointer' }}>+ Add custom stage</button>
+                    </div>
+                    <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'10px', padding:'12px 16px' }}>
+                      <p style={{ fontSize:'11px', fontWeight:600, color:'#6B4FA8', margin:'0 0 8px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Critical path & float</p>
+                      <div style={{ display:'flex', flexDirection:'column' as const, gap:'5px' }}>
+                        {projStages.map((stage:any) => {
+                          const isCritical = criticalIds.has(stage.id)
+                          const next = projStages.find((s:any) => s.n === stage.n+1)
+                          const floatDays = next && stage.end_date && next.start_date ? Math.max(0,(new Date(next.start_date).getTime()-new Date(stage.end_date).getTime())/86400000) : 0
+                          return (
+                            <div key={stage.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:'12px' }}>
+                              <span style={{ color:isCritical?'#D4522A':'#4A5E64' }}>{stage.label}</span>
+                              <span style={{ color:isCritical?'#D4522A':'#2E7D60', fontWeight:500 }}>{isCritical?'⚠ Critical — 0d float':floatDays+'d float'}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
                 )
               })()}
+
 
               {/* Trades tab */}
               {activeTab === 'trades' && (
