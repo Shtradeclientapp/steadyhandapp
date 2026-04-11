@@ -144,7 +144,8 @@ export default function ShortlistPage() {
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
-    setTab('requested')
+    // Redirect to consult page after sending
+    setTimeout(() => { window.location.href = '/consult' }, 800)
     } catch (e) {
       console.error('sendQuoteRequests error:', e)
     }
