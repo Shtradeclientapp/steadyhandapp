@@ -164,6 +164,11 @@ export default function ComparePage() {
                             Dialogue Rating: <span style={{ color: isAccepted ? scoreColor : 'rgba(216,228,225,0.7)', fontWeight:500 }}>{Math.round(score)}</span>
                           </p>
                         )}
+                        {q.tradie?.availability_visible && q.tradie?.availability_message && (
+                          <p style={{ fontSize:'11px', color:'#C07830', margin:'6px 0 0', background:'rgba(192,120,48,0.12)', borderRadius:'4px', padding:'3px 8px', display:'inline-block' }}>
+                            ⏱ {q.tradie.availability_message}
+                          </p>
+                        )}
                       </div>
 
                       {/* Price */}
