@@ -1,4 +1,5 @@
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import React from 'react'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { HintPanel } from '@/components/ui/HintPanel'
@@ -514,6 +515,23 @@ export default function DeliveryPage() {
           </div>
         )}
       </div>
-    </div></>
+    </div>
+      <StageGuideModal
+        storageKey="seen_delivery_guide"
+        stageNumber={6}
+        stageColor="#C07830"
+        stageLabel="Build"
+        headline="You control when each payment releases"
+        intro="Payments are held until you approve each milestone — giving you control at every stage without holding the tradie to ransom."
+        checklist={[
+          { text: 'Only approve a milestone when you are genuinely satisfied — not out of politeness', emphasis: true },
+          { text: 'Check the scope agreement before approving — does the work match what was agreed?', emphasis: false },
+          { text: 'If something is not right, use the variations process', emphasis: false },
+          { text: 'Progress photos are your record if a milestone is disputed later', emphasis: false },
+        ]}
+        warning={undefined}
+        ctaLabel="Review milestones →"
+      />
+    </>
   )
 }

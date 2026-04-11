@@ -1,4 +1,5 @@
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { HintPanel } from '@/components/ui/HintPanel'
 
@@ -125,6 +126,7 @@ export default function WarrantyPage() {
   )
 
   return (
+    <>
     <>{nav}
     <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
       <div style={{ maxWidth:'780px', margin:'0 auto' }}>
@@ -304,5 +306,22 @@ export default function WarrantyPage() {
 
       </div>
     </div></>
+      <StageGuideModal
+        storageKey="seen_warranty_guide"
+        stageNumber={8}
+        stageColor="#2E7D60"
+        stageLabel="Protected"
+        headline="You are protected — here is how to use it"
+        intro="Your warranty period is active. If something goes wrong with the completed work, log it here. Steadyhand tracks the response and enforces the SLA."
+        checklist={[
+          { text: 'Log issues as soon as you notice them — do not wait until the warranty expires', emphasis: true },
+          { text: 'The tradie has 5 business days to respond — overdue responses are flagged automatically', emphasis: false },
+          { text: 'Check your warranty end date — issues must be logged before it expires', emphasis: false },
+          { text: 'All issues and responses are permanently recorded in your Document Vault', emphasis: false },
+        ]}
+        warning={undefined}
+        ctaLabel="View my warranty →"
+      />
+    </>
   )
 }
