@@ -308,6 +308,30 @@ export default function AssessPage() {
         </p>
 
         {/* CONSULT DATE */}
+        {!isTradie && !myShared && (
+          <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+            <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Prefer to go straight to quotes without a site consult?</p>
+            <button type="button" onClick={async () => {
+              if (!job) return
+              const supabase = createClient()
+              const { data: { session } } = await supabase.auth.getSession()
+              await supabase.from('site_assessments').upsert({
+                job_id: job.id,
+                client_what_discussed: 'Consult skipped by client — proceeded directly to quoting.',
+              }, { onConflict: 'job_id' })
+              await supabase.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+              await supabase.from('job_messages').insert({
+                job_id: job.id,
+                sender_id: session?.user.id,
+                body: 'Consult skipped — client has proceeded directly to quoting.',
+              })
+              window.location.href = '/quotes'
+            }} style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 14px', cursor:'pointer', whiteSpace:'nowrap' as const }}>
+              Skip consult →
+            </button>
+          </div>
+        )}
+
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
           <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <div>

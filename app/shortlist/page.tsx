@@ -684,34 +684,7 @@ export default function ShortlistPage() {
                       Skip to compare quotes
                     </button>
 
-                    {selectedJob?.status === 'shortlisted' && (
-                      <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
-                        <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'8px' }}>
-                          Steadyhand recommends a consult before quotes are submitted — it creates a shared record that protects both parties. If a visit is not possible, you can proceed directly to quoting.
-                        </p>
-                        <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'8px' }}>
-                          Skipping the consult means your job will not have a shared record. This may affect the Dialogue Rating and could increase the likelihood of scope disputes later.
-                        </p>
-                        <button type="button" onClick={async () => {
-                          const supabase = createClient()
-                          const { data: { session } } = await supabase.auth.getSession()
-                          await supabase.from('site_assessments').upsert({
-                            job_id: selectedJob.id,
-                            client_what_discussed: 'Assessment skipped by client — proceeded directly to quoting.',
-                          }, { onConflict: 'job_id' })
-                          await supabase.from('jobs').update({ status: 'quotes' }).eq('id', selectedJob.id)
-                          await supabase.from('job_messages').insert({
-                            job_id: selectedJob.id,
-                            sender_id: session?.user.id,
-                            body: '⚠ Consult skipped — client has proceeded directly to quoting.',
-                          })
-                          window.location.href = '/quotes'
-                        }}
-                          style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', textDecoration:'underline', padding:0 }}>
-                          Skip consult and go straight to quoting →
-                        </button>
-                      </div>
-                    )}
+
                   </>
                 ))}
               </div>
