@@ -346,7 +346,7 @@ export default function TradieJobPage() {
                   )}
                   {guideSlide === slides.length - 1 && proposingConsult && !consultSent && (
                     <div style={{ marginTop:'12px', background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'14px' }}>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#9B6B9B', marginBottom:'10px' }}>Suggest up to 3 times — {job.client?.full_name || 'the client'} will confirm which suits them</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#9B6B9B', marginBottom:'10px' }}>Suggest up to 3 times — the client will confirm which suits them</p>
                       <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
                         {[0,1,2].map(i => (
                           <div key={i} style={{ display:'flex', alignItems:'center', gap:'8px' }}>
@@ -371,18 +371,13 @@ export default function TradieJobPage() {
                           } else {
                             await supabase.from('site_assessments').insert(slotData)
                           }
-                          const slotLines = filled.map((s, i) => 'Option ' + (i+1) + ': ' + new Date(s).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' }) + ' at ' + new Date(s).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })).join('
-')
+                          const slotLines = filled.map((s, i) => 'Option ' + (i+1) + ': ' + new Date(s).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' }) + ' at ' + new Date(s).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })).join(', ')
                           await supabase.from('job_messages').insert({
                             job_id: job.id,
                             sender_id: user?.id,
-                            body: (job.tradie?.business_name || 'The tradie') + ' has proposed ' + filled.length + ' consult time' + (filled.length > 1 ? 's' : '') + ':\n' + slotLines + '\n\nPlease confirm which time works for you by visiting the Consult page.',
+                            body: 'Consult times proposed: ' + slotLines + '. Please confirm via the Consult page.',
                           })
-                          await fetch('/api/email', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ type: 'consult_ready', job_id: job.id }),
-                          }).catch(() => {})
+                          await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_ready', job_id: job.id }) }).catch(() => {})
                           setSavingSlots(false)
                           setConsultSent(true)
                           setProposingConsult(false)
@@ -395,13 +390,12 @@ export default function TradieJobPage() {
                           Cancel
                         </button>
                       </div>
-                      <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'8px' }}>* At least one time required</p>
                     </div>
                   )}
                   {consultSent && (
                     <div style={{ marginTop:'12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px' }}>
-                      <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:'0 0 4px' }}>✓ Times sent to {job.client?.full_name || 'client'}</p>
-                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>They will confirm via the Consult page. You will be notified by message.</p>
+                      <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:'0 0 4px' }}>Times sent to client</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>They will confirm via the Consult page.</p>
                     </div>
                   )}
                 </div>
