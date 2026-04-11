@@ -16,6 +16,20 @@ export async function POST(request: NextRequest) {
     const { data: job } = await supabase.from('jobs').select('*').eq('id', job_id).single()
     if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
+    // Fetch parent OB project if linked
+    let obProject: any = null
+    if (job.diy_project_id) {
+      const { data: proj } = await supabase.from('diy_projects').select('*').eq('id', job.diy_project_id).single()
+      obProject = proj
+    }
+
+    const obContext = obProject
+      ? '\nOwner-builder project: ' + obProject.title +
+        '\nSite address: ' + (obProject.address || job.suburb) +
+        '\nPermit number: ' + (obProject.permit_number || 'Pending') +
+        '\nBuilder registration: ' + (obProject.builder_registration || 'N/A') +
+        '\n\nIMPORTANT: This is an owner-builder project. Reference the building permit number and site address in the scope. Include a clause that the tradie has sighted the owner-builder approval before commencing work.'
+      : ''
     const promptText = 'You are a trades contract specialist for Steadyhand in Western Australia.\n\nDraft a scope of work for:\nTitle: ' + job.title + '\nTrade: ' + job.trade_category + '\nSuburb: ' + job.suburb + '\nDescription: ' + job.description + '\nProperty: ' + (job.property_type || 'residential') + '\nBudget: ' + (job.budget_range || 'to be agreed') + '\nWarranty: ' + job.warranty_period + ' days\n\nReturn ONLY valid JSON, no markdown:\n{"inclusions":["item1","item2"],"exclusions":["item1"],"milestones":[{"label":"label","percent":25,"amount":0,"description":"desc"}],"warranty_days":' + job.warranty_period + ',"total_price_estimate":0,"notes":"brief note"}\'\nRules: 3-4 milestones summing to 100%, realistic exclusions for this trade type.' + (suggestion ? '\n\nIMPORTANT: Incorporate this change request into the scope: ' + suggestion : '')
 
     const message = await anthropic.messages.create({
