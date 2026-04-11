@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/ob-reminders",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}

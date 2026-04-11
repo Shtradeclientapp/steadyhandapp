@@ -48,7 +48,7 @@ export default function DIYPage() {
   const [generatingSummary, setGeneratingSummary] = useState(false)
   const [loading, setLoading] = useState(true)
   const [activeProject, setActiveProject] = useState<string|null>(null)
-  const [activeTab, setActiveTab] = useState<'overview'|'trades'|'tasks'|'budget'|'compliance'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'sequence'|'trades'|'tasks'|'budget'|'compliance'>('overview')
   const [showNewProject, setShowNewProject] = useState(false)
   const [showNewTask, setShowNewTask] = useState(false)
   const [showNewExpense, setShowNewExpense] = useState(false)
@@ -390,6 +390,7 @@ export default function DIYPage() {
               <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'20px' }}>
                 {([
                   { id:'overview', label:'Overview' },
+                  { id:'sequence', label:'Build sequence' },
                   { id:'trades', label:'Trade packages' },
                   { id:'tasks', label:'Tasks', count: projTasks.length },
                   { id:'budget', label:'Budget', count: projExpenses.length },
@@ -446,6 +447,124 @@ export default function DIYPage() {
                   )}
                 </div>
               )}
+
+              {/* Sequence tab */}
+              {activeTab === 'sequence' && (() => {
+                const projJobs = childJobs.filter(j => j.diy_project_id === activeProj.id)
+
+                const STAGES = [
+                  {
+                    n: 1, label: 'Demolition / site prep', trades: ['demolition','excavation','site'],
+                    dependsOn: 'Building permit issued',
+                    enables: 'Foundation and slab work',
+                    color: '#7A9098',
+                  },
+                  {
+                    n: 2, label: 'Slab / footings', trades: ['concret','slab','footing','foundation'],
+                    dependsOn: 'Site cleared',
+                    enables: 'Frame stage — book framer 2–3 weeks after pour',
+                    color: '#C07830',
+                  },
+                  {
+                    n: 3, label: 'Frame / structure', trades: ['frame','struct','carpent','timber'],
+                    dependsOn: 'Slab approved',
+                    enables: 'Rough-in electrical, plumbing, roofing',
+                    color: '#D4522A',
+                  },
+                  {
+                    n: 4, label: 'Rough-in (electrical + plumbing)', trades: ['electr','plumb','gas'],
+                    dependsOn: 'Frame inspection passed',
+                    enables: 'Insulation, wall linings, roofing',
+                    color: '#6B4FA8',
+                  },
+                  {
+                    n: 5, label: 'Lock-up (roofing, windows, doors)', trades: ['roof','window','door','lock','glaz'],
+                    dependsOn: 'Rough-in inspected',
+                    enables: 'Internal fit-out, tiling, plastering',
+                    color: '#2E6A8F',
+                  },
+                  {
+                    n: 6, label: 'Fix-out / fit-out', trades: ['tile','plaster','paint','floor','cabinet','joiner'],
+                    dependsOn: 'Lock-up complete',
+                    enables: 'Final electrical / plumbing, painting',
+                    color: '#2E7D60',
+                  },
+                  {
+                    n: 7, label: 'Practical completion', trades: ['final','inspect','certif'],
+                    dependsOn: 'All trades complete',
+                    enables: 'Final inspection, occupancy permit',
+                    color: '#1A6B5A',
+                  },
+                ]
+
+                const STATUS_LABEL: Record<string,string> = {
+                  matching:'Matching', shortlisted:'Shortlisted', assess:'Consult', consult:'Consult',
+                  quotes:'Quoting', agreement:'Agreement', delivery:'In progress',
+                  signoff:'Sign-off', warranty:'Warranty', complete:'Complete',
+                }
+
+                return (
+                  <div>
+                    <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'10px', padding:'12px 16px', marginBottom:'16px' }}>
+                      <p style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, margin:'0 0 3px' }}>Build sequence — WA residential</p>
+                      <p style={{ fontSize:'11px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Each stage depends on the one before it. Steadyhand maps your trade packages to the right stage and flags sequencing conflicts. Trade packages you add will appear here automatically.</p>
+                    </div>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'0' }}>
+                      {STAGES.map((stage, idx) => {
+                        // Match child jobs to this stage by trade category
+                        const stageJobs = projJobs.filter(j =>
+                          stage.trades.some(t => (j.trade_category || '').toLowerCase().includes(t))
+                        )
+                        const isComplete = stageJobs.length > 0 && stageJobs.every(j => j.status === 'complete' || j.status === 'warranty')
+                        const isActive = stageJobs.some(j => ['delivery','signoff','agreement'].includes(j.status))
+                        const hasJobs = stageJobs.length > 0
+
+                        return (
+                          <div key={stage.n} style={{ display:'flex', gap:'0', alignItems:'stretch' }}>
+                            {/* Left spine */}
+                            <div style={{ display:'flex', flexDirection:'column' as const, alignItems:'center', width:'32px', flexShrink:0 }}>
+                              <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: isComplete ? '#2E7D60' : isActive ? stage.color : hasJobs ? 'rgba(28,43,50,0.12)' : 'rgba(28,43,50,0.06)', border:'2px solid ' + (isComplete ? '#2E7D60' : isActive ? stage.color : 'rgba(28,43,50,0.15)'), display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color: isComplete || isActive ? 'white' : '#7A9098', flexShrink:0, zIndex:1 }}>
+                                {isComplete ? '✓' : stage.n}
+                              </div>
+                              {idx < STAGES.length - 1 && (
+                                <div style={{ width:'2px', flex:1, background: isComplete ? '#2E7D60' : 'rgba(28,43,50,0.1)', minHeight:'16px' }} />
+                              )}
+                            </div>
+                            {/* Stage content */}
+                            <div style={{ flex:1, paddingLeft:'12px', paddingBottom: idx < STAGES.length - 1 ? '16px' : '0' }}>
+                              <div style={{ background: isActive ? stage.color + '08' : isComplete ? 'rgba(46,125,96,0.04)' : '#E8F0EE', border:'1px solid ' + (isActive ? stage.color + '30' : isComplete ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 14px' }}>
+                                <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'8px', marginBottom:'4px' }}>
+                                  <p style={{ fontSize:'13px', fontWeight:600, color: isActive ? stage.color : '#1C2B32', margin:0 }}>{stage.label}</p>
+                                  {isComplete && <span style={{ fontSize:'10px', color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'4px', padding:'1px 7px', flexShrink:0 }}>Done</span>}
+                                  {isActive && <span style={{ fontSize:'10px', color:stage.color, background:stage.color+'12', border:'1px solid '+stage.color+'30', borderRadius:'4px', padding:'1px 7px', flexShrink:0 }}>Active</span>}
+                                </div>
+                                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 6px', lineHeight:'1.5' }}>
+                                  <span style={{ fontWeight:500 }}>Needs:</span> {stage.dependsOn} · <span style={{ fontWeight:500 }}>Enables:</span> {stage.enables}
+                                </p>
+                                {stageJobs.length > 0 ? (
+                                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'4px' }}>
+                                    {stageJobs.map((j: any) => (
+                                      <div key={j.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'5px 10px', background:'white', borderRadius:'6px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                                        <p style={{ fontSize:'12px', color:'#1C2B32', margin:0 }}>{j.title}</p>
+                                        <span style={{ fontSize:'10px', color:'#7A9098', background:'rgba(28,43,50,0.06)', borderRadius:'4px', padding:'1px 6px' }}>{STATUS_LABEL[j.status] || j.status}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <button type="button" onClick={() => convertToJob({ ...activeProj, title: stage.label + ' — ' + activeProj.title })}
+                                    style={{ fontSize:'11px', color:'#7A9098', background:'transparent', border:'1px dashed rgba(28,43,50,0.2)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer', width:'100%' }}>
+                                    + Add {stage.label.toLowerCase()} trade package
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Trades tab */}
               {activeTab === 'trades' && (
