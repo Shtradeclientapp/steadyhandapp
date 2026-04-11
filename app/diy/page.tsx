@@ -46,6 +46,9 @@ export default function DIYPage() {
   const [childJobs, setChildJobs] = useState<any[]>([])
   const [wizardStep, setWizardStep] = useState(0)
   const [generatingSummary, setGeneratingSummary] = useState(false)
+  const [vaultDocs, setVaultDocs] = useState<any[]>([])
+  const [savingPermit, setSavingPermit] = useState(false)
+  const [occupancyInput, setOccupancyInput] = useState('')
   const [loading, setLoading] = useState(true)
   const [activeProject, setActiveProject] = useState<string|null>(null)
   const [activeTab, setActiveTab] = useState<'overview'|'sequence'|'trades'|'tasks'|'budget'|'compliance'>('overview')
@@ -79,6 +82,13 @@ export default function DIYPage() {
           .in('diy_project_id', ids)
           .order('created_at', { ascending: false })
         setChildJobs(cj || [])
+        // Fetch vault compliance docs for these projects
+        const { data: vd } = await supabase
+          .from('vault_documents')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('document_type', 'compliance')
+        setVaultDocs(vd || [])
       }
       setLoading(false)
     })
@@ -700,66 +710,123 @@ export default function DIYPage() {
                 </div>
               )}
 
-              {/* Compliance tab */}
-              {activeTab === 'compliance' && (
-                <div>
-                  <div style={{ background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
-                    <p style={{ fontSize:'13px', color:'#6B4FA8', fontWeight:500, marginBottom:'4px' }}>WA Owner-Builder Compliance Checklist</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
-                      Based on WA Building Commission requirements. Tick items as you complete them — this creates your compliance record. Always verify current requirements with the Building Commission directly.
-                    </p>
-                  </div>
-                  {projChecklist.length === 0 ? (
-                    <div style={{ textAlign:'center' as const, padding:'32px', background:'#E8F0EE', borderRadius:'12px' }}>
-                      <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'12px' }}>Compliance checklist is pre-populated for build projects when you create them.</p>
-                      <button type="button" onClick={async () => {
-                        const label = prompt('Add a custom compliance item:')
-                        if (!label?.trim() || !activeProj) return
-                        const supabase = createClient()
-                        const { data: item } = await supabase.from('ob_checklist_items').insert({ project_id: activeProj.id, item: label.trim(), category: 'Custom', completed: false }).select().single()
-                        if (item) setChecklist((prev: any[]) => [...prev, item])
-                      }} style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'7px', padding:'8px 14px', cursor:'pointer' }}>
-                        + Add item
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                    <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'8px' }}>
-                      <button type="button" onClick={async () => {
-                        const label = prompt('Add a custom compliance item:')
-                        if (!label?.trim() || !activeProj) return
-                        const supabase = createClient()
-                        const { data: item } = await supabase.from('ob_checklist_items').insert({ project_id: activeProj.id, item: label.trim(), category: 'Custom', completed: false }).select().single()
-                        if (item) setChecklist((prev: any[]) => [...prev, item])
-                      }} style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px', cursor:'pointer' }}>
-                        + Add item
-                      </button>
-                    </div>
-                    {WA_CHECKLIST.map(cat => {
-                      const catItems = projChecklist.filter(c => c.category === cat.category)
-                      const catDone = catItems.filter(c => c.completed).length
-                      return (
-                        <div key={cat.category} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'12px' }}>
-                          <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', background: catDone === catItems.length && catItems.length > 0 ? 'rgba(46,125,96,0.08)' : 'rgba(28,43,50,0.03)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                            <p style={{ fontSize:'12px', fontWeight:600, color: catDone === catItems.length && catItems.length > 0 ? '#2E7D60' : '#1C2B32', margin:0 }}>{cat.category}</p>
-                            <span style={{ fontSize:'11px', color:'#7A9098' }}>{catDone}/{catItems.length}</span>
-                          </div>
-                          {catItems.map(item => (
-                            <div key={item.id} onClick={() => toggleChecklist(item.id, item.completed)}
-                              style={{ display:'flex', alignItems:'flex-start', gap:'12px', padding:'11px 18px', borderBottom:'1px solid rgba(28,43,50,0.05)', cursor:'pointer' }}>
-                              <div style={{ width:'18px', height:'18px', borderRadius:'4px', border:'1.5px solid '+(item.completed?'#2E7D60':'rgba(28,43,50,0.25)'), background:item.completed?'#2E7D60':'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'1px', fontSize:'11px', color:'white' }}>
-                                {item.completed?'✓':''}
-                              </div>
-                              <span style={{ fontSize:'13px', color:item.completed?'#7A9098':'#1C2B32', textDecoration:item.completed?'line-through':'none', lineHeight:'1.5' }}>{item.item}</span>
-                            </div>
-                          ))}
+              {/* Compliance tab — Sprint 4 close-out dashboard */}
+              {activeTab === 'compliance' && (() => {
+                const projJobs = childJobs.filter(j => j.diy_project_id === activeProj.id)
+                const allSignoff = projJobs.length > 0 && projJobs.every(j => ['signoff','warranty','complete'].includes(j.status))
+                const COC_TRADES = ['electr','plumb','gas']
+                const cocRequiredJobs = projJobs.filter(j => COC_TRADES.some(t => (j.trade_category || '').toLowerCase().includes(t)))
+                return (
+                  <div>
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'10px', marginBottom:'20px' }}>
+                      {[
+                        { label:'Compliance checklist', value: checklistDone+'/'+checklistTotal, color: checklistDone === checklistTotal && checklistTotal > 0 ? '#2E7D60' : checklistDone > 0 ? '#C07830' : '#D4522A' },
+                        { label:'Certificates of compliance', value: cocRequiredJobs.length === 0 ? 'N/A' : vaultDocs.filter(d => cocRequiredJobs.some(j => d.job_id === j.id)).length+'/'+cocRequiredJobs.length, color: cocRequiredJobs.length === 0 ? '#7A9098' : vaultDocs.filter(d => cocRequiredJobs.some(j => d.job_id === j.id)).length === cocRequiredJobs.length ? '#2E7D60' : '#D4522A' },
+                        { label:'Occupancy permit', value: activeProj.occupancy_permit_number ? 'Recorded' : 'Pending', color: activeProj.occupancy_permit_number ? '#2E7D60' : allSignoff ? '#C07830' : '#7A9098' },
+                      ].map(s => (
+                        <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px', textAlign:'center' as const }}>
+                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:s.color, margin:'0 0 3px' }}>{s.value}</p>
+                          <p style={{ fontSize:'10px', color:'#7A9098', margin:0 }}>{s.label}</p>
                         </div>
-                      )
-                    })}
-                    </>
-                  )}
-                </div>
-              )}
+                      ))}
+                    </div>
+
+                    {allSignoff && !activeProj.occupancy_permit_number && (
+                      <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'10px', padding:'12px 16px', marginBottom:'16px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
+                        <span style={{ fontSize:'18px' }}>🏛</span>
+                        <div>
+                          <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 3px' }}>All trades at sign-off — book your final inspection</p>
+                          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Contact your local government to book a final building inspection. Once passed, apply for your occupancy permit.</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {cocRequiredJobs.length > 0 && (
+                      <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'16px' }}>
+                        <div style={{ padding:'12px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.02)' }}>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Certificates of compliance</p>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Electrical, plumbing and gas trades must provide a CoC before your final inspection.</p>
+                        </div>
+                        {cocRequiredJobs.map((j: any) => {
+                          const hasCoc = vaultDocs.some(d => d.job_id === j.id)
+                          return (
+                            <div key={j.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'11px 18px', borderBottom:'1px solid rgba(28,43,50,0.05)', gap:'12px' }}>
+                              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                                <div style={{ width:'9px', height:'9px', borderRadius:'50%', background: hasCoc ? '#2E7D60' : j.status === 'warranty' || j.status === 'complete' ? '#D4522A' : '#C07830', flexShrink:0 }} />
+                                <div>
+                                  <p style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500, margin:'0 0 1px' }}>{j.title}</p>
+                                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{j.trade_category}</p>
+                                </div>
+                              </div>
+                              <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: hasCoc ? 'rgba(46,125,96,0.1)' : 'rgba(212,82,42,0.08)', border:'1px solid '+(hasCoc?'rgba(46,125,96,0.25)':'rgba(212,82,42,0.2)'), color: hasCoc ? '#2E7D60' : '#D4522A', fontWeight:500, flexShrink:0 }}>
+                                {hasCoc ? 'Received ✓' : 'Pending'}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
+
+                    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 18px', marginBottom:'16px' }}>
+                      <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 3px' }}>Occupancy permit</p>
+                      <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 10px', lineHeight:'1.5' }}>Issued by local government after final inspection. Enter the permit number once received — this marks your project complete.</p>
+                      {activeProj.occupancy_permit_number ? (
+                        <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'7px', padding:'10px 14px' }}>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px' }}>Permit number</p>
+                          <p style={{ fontSize:'15px', fontWeight:600, color:'#2E7D60', margin:0 }}>{activeProj.occupancy_permit_number}</p>
+                        </div>
+                      ) : (
+                        <div style={{ display:'flex', gap:'8px' }}>
+                          <input type="text" placeholder="e.g. OP2026/12345" value={occupancyInput} onChange={e => setOccupancyInput(e.target.value)}
+                            style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                          <button type="button" onClick={async () => {
+                            if (!occupancyInput.trim()) return
+                            setSavingPermit(true)
+                            const supabase = createClient()
+                            await supabase.from('diy_projects').update({ occupancy_permit_number: occupancyInput.trim(), status:'complete', completed_at: new Date().toISOString() }).eq('id', activeProj.id)
+                            setProjects(prev => prev.map(p => p.id === activeProj.id ? { ...p, occupancy_permit_number: occupancyInput.trim(), status:'complete' } : p))
+                            setSavingPermit(false)
+                            setOccupancyInput('')
+                          }} disabled={!occupancyInput.trim() || savingPermit}
+                            style={{ background: !occupancyInput.trim() ? 'rgba(46,125,96,0.3)' : '#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'9px 16px', fontSize:'13px', fontWeight:500, cursor:'pointer', flexShrink:0 }}>
+                            {savingPermit ? 'Saving...' : 'Record →'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'10px', padding:'12px 16px', marginBottom:'12px' }}>
+                      <p style={{ fontSize:'12px', color:'#6B4FA8', fontWeight:500, margin:'0 0 2px' }}>WA Owner-Builder Compliance Checklist</p>
+                      <p style={{ fontSize:'11px', color:'#4A5E64', margin:0 }}>Based on WA Building Commission requirements. Always verify with the Building Commission directly.</p>
+                    </div>
+                    {projChecklist.length === 0 ? (
+                      <div style={{ textAlign:'center' as const, padding:'24px', background:'#E8F0EE', borderRadius:'12px', color:'#7A9098', fontSize:'13px' }}>Compliance checklist is pre-populated for owner-builder projects when you create them.</div>
+                    ) : (
+                      WA_CHECKLIST.map(cat => {
+                        const catItems = projChecklist.filter(c => c.category === cat.category)
+                        const catDone = catItems.filter(c => c.completed).length
+                        return (
+                          <div key={cat.category} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'10px' }}>
+                            <div style={{ padding:'12px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', background: catDone === catItems.length && catItems.length > 0 ? 'rgba(46,125,96,0.08)' : 'rgba(28,43,50,0.02)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                              <p style={{ fontSize:'12px', fontWeight:600, color: catDone === catItems.length && catItems.length > 0 ? '#2E7D60' : '#1C2B32', margin:0 }}>{cat.category}</p>
+                              <span style={{ fontSize:'11px', color:'#7A9098' }}>{catDone}/{catItems.length}</span>
+                            </div>
+                            {catItems.map(item => (
+                              <div key={item.id} onClick={() => toggleChecklist(item.id, item.completed)}
+                                style={{ display:'flex', alignItems:'flex-start', gap:'12px', padding:'10px 18px', borderBottom:'1px solid rgba(28,43,50,0.04)', cursor:'pointer' }}>
+                                <div style={{ width:'16px', height:'16px', borderRadius:'3px', border:'1.5px solid '+(item.completed?'#2E7D60':'rgba(28,43,50,0.25)'), background:item.completed?'#2E7D60':'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'2px', fontSize:'10px', color:'white' }}>
+                                  {item.completed?'✓':''}
+                                </div>
+                                <span style={{ fontSize:'12px', color:item.completed?'#7A9098':'#1C2B32', textDecoration:item.completed?'line-through':'none', lineHeight:'1.55' }}>{item.item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )
+                      })
+                    )}
+                  </div>
+                )
+              })()}
             </>
           )}
         </div>

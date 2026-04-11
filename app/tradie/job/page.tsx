@@ -64,6 +64,10 @@ export default function TradieJobPage() {
   const [guideSlide, setGuideSlide] = useState(0)
   const [responseForm, setResponseForm] = useState<Record<string,string>>({})
   const [activeTemplate, setActiveTemplate] = useState<string>('detailed')
+  const [sharedDocs, setSharedDocs] = useState<any[]>([])
+  const [cocFile, setCocFile] = useState<File|null>(null)
+  const [uploadingCoc, setUploadingCoc] = useState(false)
+  const [cocUploaded, setCocUploaded] = useState(false)
   const [quoteForm, setQuoteForm] = useState({
     estimated_start: '',
     estimated_days: '',
@@ -208,6 +212,42 @@ export default function TradieJobPage() {
   const scopeSigned = scope && scope.tradie_signed_at
   const allMilestonesApproved = milestones.length > 0 && milestones.every((m: any) => m.status === 'approved')
   const inWarranty = job && ['warranty', 'complete'].includes(job.status)
+
+  const uploadCoc = async () => {
+    if (!cocFile || !job) return
+    setUploadingCoc(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const ext = cocFile.name.split('.').pop()
+    const path = 'vault/coc/' + job.id + '/' + Date.now() + '.' + ext
+    const { error } = await supabase.storage.from('Documents').upload(path, cocFile)
+    if (!error) {
+      const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
+      const file_url = signedData?.signedUrl || null
+      // Save to vault under client's user_id
+      await supabase.from('vault_documents').insert({
+        user_id: job.client_id,
+        job_id: job.id,
+        job_title: job.title,
+        title: (job.tradie?.business_name || 'Tradie') + ' — Certificate of compliance — ' + job.title,
+        document_type: 'compliance',
+        tradie_name: job.tradie?.business_name || null,
+        issued_date: new Date().toISOString().split('T')[0],
+        file_url,
+        file_name: cocFile.name,
+        diy_project_id: job.diy_project_id || null,
+        phase: 'close-out',
+      })
+      // Post message confirming upload
+      await supabase.from('job_messages').insert({
+        job_id: job.id,
+        sender_id: session?.user.id,
+        body: (job.tradie?.business_name || 'Tradie') + ' has uploaded the certificate of compliance for this job. It has been saved to the client vault.',
+      })
+      setCocUploaded(true)
+    }
+    setUploadingCoc(false)
+  }
   const currentStageN = !job ? 1 : inWarranty ? 6
     : allMilestonesApproved && job.status === 'signoff' ? 5
     : milestones.length > 0 && job.status === 'delivery' ? 4
@@ -471,6 +511,31 @@ export default function TradieJobPage() {
               </button>
             )}
           </div>
+
+          {/* Certificate of compliance upload */}
+              {(job?.status === 'signoff' || job?.status === 'warranty' || job?.status === 'complete') && (
+                <div style={{ background: cocUploaded ? 'rgba(46,125,96,0.08)' : 'rgba(107,79,168,0.06)', border:'1px solid ' + (cocUploaded ? 'rgba(46,125,96,0.25)' : 'rgba(107,79,168,0.2)'), borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color: cocUploaded ? '#2E7D60' : '#6B4FA8', marginBottom:'6px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>
+                    {cocUploaded ? '✓ Certificate of compliance uploaded' : 'Certificate of compliance required'}
+                  </p>
+                  {!cocUploaded && (
+                    <>
+                      <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', marginBottom:'10px', lineHeight:'1.5' }}>
+                        The client requires your certificate of compliance for this job. Upload it here — it will be saved directly to their Document Vault.
+                      </p>
+                      <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+                        <input type="file" accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={e => setCocFile(e.target.files?.[0] || null)}
+                          style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', flex:1 }} />
+                        <button type="button" onClick={uploadCoc} disabled={!cocFile || uploadingCoc}
+                          style={{ background: !cocFile || uploadingCoc ? 'rgba(107,79,168,0.3)' : '#6B4FA8', color:'white', border:'none', borderRadius:'7px', padding:'7px 14px', fontSize:'12px', fontWeight:500, cursor:'pointer', flexShrink:0, whiteSpace:'nowrap' as const }}>
+                          {uploadingCoc ? 'Uploading...' : 'Upload →'}
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
           {/* Decline quote request */}
           {!currentQuote && !quoteSubmitted && !showQuoteForm && job?.status === 'shortlisted' && (

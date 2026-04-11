@@ -115,6 +115,32 @@ export default function SignoffPage() {
       })
     } catch { /* non-critical */ }
 
+    // Request certificate of compliance from tradie
+    if (job.tradie_id) {
+      const supabase3 = createClient()
+      const { data: { session: sess3 } } = await supabase3.auth.getSession()
+      try {
+        await supabase3.from('job_messages').insert({
+          job_id: job.id,
+          sender_id: sess3?.user.id,
+          body: 'Sign-off complete. ' + (job.tradie?.business_name || 'Tradie') + ' — please provide your certificate of compliance for this job. Upload it to the job page so it is stored in the client vault.',
+        })
+      } catch { /* non-critical */ }
+      // If OB project, check if all child jobs are now at sign-off/warranty → final inspection reminder
+      if (job.diy_project_id) {
+        const supabase4 = createClient()
+        const { data: siblingJobs } = await supabase4.from('jobs').select('id, status').eq('diy_project_id', job.diy_project_id)
+        const allAtSignoff = (siblingJobs || []).length > 0 && (siblingJobs || []).every((j: any) => ['signoff','warranty','complete'].includes(j.status))
+        if (allAtSignoff) {
+          await fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'ob_final_inspection', job_id: job.id }),
+          }).catch(() => {})
+        }
+      }
+    }
+
     // Notify tradie of sign-off
     await fetch('/api/email', {
       method: 'POST',
