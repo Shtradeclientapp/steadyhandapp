@@ -376,10 +376,7 @@ export default function TradieJobPage() {
                           await supabase.from('job_messages').insert({
                             job_id: job.id,
                             sender_id: user?.id,
-                            body: (job.tradie?.business_name || 'The tradie') + ' has proposed ' + filled.length + ' consult time' + (filled.length > 1 ? 's' : '') + ':
-' + slotLines + '
-
-Please confirm which time works for you by visiting the Consult page.',
+                            body: (job.tradie?.business_name || 'The tradie') + ' has proposed ' + filled.length + ' consult time' + (filled.length > 1 ? 's' : '') + ':\n' + slotLines + '\n\nPlease confirm which time works for you by visiting the Consult page.',
                           })
                           await fetch('/api/email', {
                             method: 'POST',
