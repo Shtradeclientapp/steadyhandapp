@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       title, description, trade_category, suburb,
       property_type, urgency, budget_range,
       warranty_period, preferred_start,
-      org_id, property_id
+      org_id, property_id, diy_project_id
     } = body
 
     if (!title || !description || !trade_category || !suburb) {
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
         status: 'matching',
         org_id: org_id || null,
         property_id: property_id || null,
+        diy_project_id: diy_project_id || null,
       })
       .select()
       .single()

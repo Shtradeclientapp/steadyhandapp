@@ -101,12 +101,19 @@ const submitJob = async () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ ...form, warranty_period: Number(form.warranty_period), org_id: orgId, property_id: propertyId }),
+      body: JSON.stringify({
+        ...form,
+        warranty_period: Number(form.warranty_period),
+        org_id: orgId,
+        property_id: propertyId,
+        diy_project_id: sessionStorage.getItem('diy_project_id') || null,
+      }),
     })
 
     const { job, error } = await res.json()
     if (error) { alert(error); setSubmitting(false); return }
-window.location.href = '/shortlist?submitted=true'
+sessionStorage.removeItem('diy_project_id')
+    window.location.href = '/shortlist?submitted=true'
   }
 
   const nav = (

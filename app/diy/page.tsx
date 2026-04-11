@@ -43,6 +43,9 @@ export default function DIYPage() {
   const [tasks, setTasks] = useState<any[]>([])
   const [expenses, setExpenses] = useState<any[]>([])
   const [checklist, setChecklist] = useState<any[]>([])
+  const [childJobs, setChildJobs] = useState<any[]>([])
+  const [wizardStep, setWizardStep] = useState(0)
+  const [generatingSummary, setGeneratingSummary] = useState(false)
   const [loading, setLoading] = useState(true)
   const [activeProject, setActiveProject] = useState<string|null>(null)
   const [activeTab, setActiveTab] = useState<'overview'|'trades'|'tasks'|'budget'|'compliance'>('overview')
@@ -69,6 +72,13 @@ export default function DIYPage() {
         setExpenses(e || [])
         const { data: cl } = await supabase.from('ob_checklist_items').select('*').in('project_id', ids)
         setChecklist(cl || [])
+        // Fetch child jobs linked to these projects
+        const { data: cj } = await supabase
+          .from('jobs')
+          .select('id, title, status, trade_category, suburb, created_at, diy_project_id')
+          .in('diy_project_id', ids)
+          .order('created_at', { ascending: false })
+        setChildJobs(cj || [])
       }
       setLoading(false)
     })
@@ -216,7 +226,7 @@ export default function DIYPage() {
         <div>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>MY BUILDS</h2>
-            <button type="button" onClick={() => setShowNewProject(true)} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button>
+            <button type="button" onClick={() => { setShowNewProject(true); setWizardStep(0) }} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button>
           </div>
 
           {showNewProject && (
@@ -339,6 +349,13 @@ export default function DIYPage() {
                       <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'4px' }}>{activeProj.title}</h2>
                       {activeProj.address && <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', marginBottom:'2px' }}>📍 {activeProj.address}</p>}
                       {activeProj.permit_number && <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)' }}>Permit: {activeProj.permit_number}</p>}
+                      {activeProj.permit_date && (() => {
+                        const expiry = new Date(activeProj.permit_date)
+                        expiry.setMonth(expiry.getMonth() + 6)
+                        const daysLeft = Math.ceil((expiry.getTime() - Date.now()) / (1000*60*60*24))
+                        if (daysLeft > 30 || daysLeft <= 0) return null
+                        return <p style={{ fontSize:'11px', color:'#D4522A', background:'rgba(212,82,42,0.15)', borderRadius:'4px', padding:'3px 8px', display:'inline-block', marginTop:'4px' }}>⚠ Owner-builder approval expires in {daysLeft} days — ensure your building permit is issued.</p>
+                      })()}
                     </div>
                     <div style={{ display:'flex', gap:'8px', flexShrink:0, flexWrap:'wrap' as const }}>
                       <select value={activeProj.status} onChange={e => updateStatus(activeProj.id, e.target.value)}
@@ -443,11 +460,45 @@ export default function DIYPage() {
                     style={{ width:'100%', background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', marginBottom:'16px' }}>
                     + Add trade package (new job request) →
                   </button>
-                  <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'24px', textAlign:'center' as const }}>
-                    <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>🔧</div>
-                    <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'6px' }}>No trade packages yet</p>
-                    <p style={{ fontSize:'13px', color:'#7A9098' }}>Each time you hire a tradie through Steadyhand for this build, it will appear here with its full job record.</p>
-                  </div>
+                  {(() => {
+                    const projJobs = childJobs.filter(j => j.diy_project_id === activeProj.id)
+                    const STATUS_LABEL: Record<string,string> = {
+                      matching:'Matching', shortlisted:'Shortlisted', assess:'Consult', consult:'Consult',
+                      quotes:'Quoting', agreement:'Agreement', delivery:'In progress',
+                      signoff:'Sign-off', warranty:'Warranty', complete:'Complete',
+                    }
+                    const STATUS_COLOR: Record<string,string> = {
+                      matching:'#7A9098', shortlisted:'#2E6A8F', assess:'#9B6B9B', consult:'#9B6B9B',
+                      quotes:'#6B4FA8', agreement:'#6B4FA8', delivery:'#C07830',
+                      signoff:'#D4522A', warranty:'#2E7D60', complete:'#2E7D60',
+                    }
+                    if (projJobs.length === 0) return (
+                      <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'24px', textAlign:'center' as const }}>
+                        <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>🔧</div>
+                        <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'6px' }}>No trade packages yet</p>
+                        <p style={{ fontSize:'13px', color:'#7A9098' }}>Each time you hire a tradie through Steadyhand for this build, it will appear here with its full job record.</p>
+                      </div>
+                    )
+                    return (
+                      <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                        {projJobs.map((j: any) => {
+                          const sc = STATUS_COLOR[j.status] || '#7A9098'
+                          const sl = STATUS_LABEL[j.status] || j.status
+                          return (
+                            <a key={j.id} href={'/shortlist'} style={{ textDecoration:'none' }}>
+                              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                                <div>
+                                  <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{j.title}</p>
+                                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{j.trade_category} · {j.suburb}</p>
+                                </div>
+                                <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background:sc+'18', border:'1px solid '+sc+'40', color:sc, fontWeight:500, flexShrink:0 }}>{sl}</span>
+                              </div>
+                            </a>
+                          )
+                        })}
+                      </div>
+                    )
+                  })()}
                 </div>
               )}
 
