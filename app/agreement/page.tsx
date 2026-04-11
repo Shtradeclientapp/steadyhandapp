@@ -284,7 +284,8 @@ export default function AgreementPage() {
         <p style={{ color:'#4A5E64', marginBottom:'16px', fontFamily:'sans-serif' }}>No job in agreement stage.</p>
         <a href="/shortlist"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to shortlist</button></a>
       </div>
-    </div></>
+    </div>
+  </>
   )
 
   return (

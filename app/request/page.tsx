@@ -197,6 +197,12 @@ sessionStorage.removeItem('diy_project_id')
           </p>
           {dots}
 
+          <HintPanel color="#2E7D60" hints={[
+            "The more detail you include in your description, the better your shortlist will be. Include the property age, access details, and any known complications.",
+            "Not sure which trade category? Pick the closest match — Steadyhand will confirm with you during matching.",
+            "You can request quotes from 2–4 tradies. More quotes means better comparison, but you don't need to wait for all of them before reviewing.",
+            "Your budget range is optional but helpful — tradies use it to calibrate their approach before visiting the site.",
+          ]} />
           {step === 0 && card(
             <>
               <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'6px', fontWeight:'500' }}>Tell us what you need</p>

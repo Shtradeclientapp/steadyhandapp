@@ -238,10 +238,27 @@ export default function TradieDashboard() {
   })
 
   const tradieSlides = [
-    { icon: '📬', title: 'QUOTE REQUESTS ARRIVE HERE', body: 'When a client selects you from their shortlist, a quote request appears on your dashboard. Review the job details, visit the site, and submit your quote through the platform.' },
-    { icon: '📋', title: 'THE CONSULT COMES FIRST', body: 'Before you submit a quote, Steadyhand encourages a site consult. You and the client both record independent notes from the visit. This protects you if the scope is disputed later.', sub: 'Tradies who complete consults receive higher Dialogue Ratings.' },
-    { icon: '✍️', title: 'SCOPE BEFORE WORK', body: 'Once your quote is accepted, Steadyhand generates a scope agreement. Both parties sign digitally before work begins. Milestones and payment are tracked through the platform.' },
-    { icon: '⭐', title: 'YOUR DIALOGUE RATING', body: 'After each job, clients rate the quality of communication — not just the finished work. Your Dialogue Rating reflects how well you document, communicate and follow through. It is visible to future clients.' },
+    {
+      icon: '👋',
+      title: 'Welcome to Steadyhand',
+      body: 'When a client selects you from their shortlist, a quote request lands on your dashboard. From there, Steadyhand guides both of you through consult, scope, milestones and warranty — step by step.',
+    },
+    {
+      icon: '📋',
+      title: 'The consult comes first',
+      body: 'Before you submit a quote, visit the site and record your observations here. The client does the same independently. Both records are locked and shared — creating a tamper-proof baseline before any money changes hands.',
+      sub: 'Tradies who complete consults consistently receive higher Dialogue Ratings.',
+    },
+    {
+      icon: '✍️',
+      title: 'Scope, then work',
+      body: 'Once your quote is accepted, Steadyhand drafts a scope agreement. Both parties sign digitally before work begins. Milestones are set, and payment releases automatically when the client approves each stage.',
+    },
+    {
+      icon: '⭐',
+      title: 'Your Dialogue Rating',
+      body: 'Your Dialogue Rating is your professional reputation on Steadyhand. It reflects how clearly and transparently you communicate — on pricing, risk, timeline and scope. It builds with every job and is visible to future clients.',
+    },
   ]
 
   return (

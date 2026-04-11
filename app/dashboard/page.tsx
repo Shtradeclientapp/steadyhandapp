@@ -390,7 +390,7 @@ export default function DashboardPage() {
         {
           icon: '🏠',
           title: 'Welcome to Steadyhand',
-          body: 'Western Australia\'s only request-to-warranty platform. We stay with you from the first job request all the way through to your 90-day warranty.',
+          body: 'Getting work done on your home shouldn\'t be stressful. Steadyhand stays with you from your first request all the way through to your 90-day warranty — so you always know what\'s happening and what happens next.',
         },
         {
           icon: '📋',
@@ -399,8 +399,8 @@ export default function DashboardPage() {
         },
         {
           icon: '✅',
-          title: 'Verified tradies only',
-          body: 'Every trade business on Steadyhand has their licence and insurance verified before appearing in your shortlist.',
+          title: 'No unverified tradies',
+          body: 'Every trade business on Steadyhand has their licence and insurance verified before they can appear in your shortlist. You won\'t be matched with someone we haven\'t checked.',
         },
         {
           icon: '💳',

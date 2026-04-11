@@ -2,7 +2,7 @@
 import { useState } from 'react'
 
 export function HintPanel({ hints, color = '#2E6A8F' }: { hints: string[], color?: string }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [dismissed, setDismissed] = useState(false)
 
   if (dismissed) return null
@@ -14,7 +14,7 @@ export function HintPanel({ hints, color = '#2E6A8F' }: { hints: string[], color
         <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
           <span style={{ fontSize:'14px' }}>💡</span>
           <span style={{ fontSize:'12px', fontWeight:600, color, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>
-            Steadyhand tips for this stage
+            A few things worth knowing
           </span>
           <span style={{ fontSize:'11px', color, background: color + '15', borderRadius:'100px', padding:'2px 8px' }}>
             {hints.length}
