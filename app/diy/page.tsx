@@ -240,26 +240,183 @@ export default function DIYPage() {
           </div>
 
           {showNewProject && (
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', marginBottom:'14px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'12px' }}>NEW BUILD</p>
-              <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
-                <input placeholder="Project name *" value={newProject.title} onChange={e => setNewProject(f => ({ ...f, title: e.target.value }))} style={inp} />
-                <input placeholder="Site address" value={newProject.address} onChange={e => setNewProject(f => ({ ...f, address: e.target.value }))} style={inp} />
-                <select value={newProject.project_type} onChange={e => setNewProject(f => ({ ...f, project_type: e.target.value }))} style={inp}>
-                  <option value="owner_builder">Owner-builder</option>
-                  <option value="renovation">Renovation</option>
-                  <option value="diy">DIY project</option>
-                </select>
-                <input placeholder="Permit number" value={newProject.permit_number} onChange={e => setNewProject(f => ({ ...f, permit_number: e.target.value }))} style={inp} />
-                <input placeholder="Builder registration no." value={newProject.builder_registration} onChange={e => setNewProject(f => ({ ...f, builder_registration: e.target.value }))} style={inp} />
-                <input type="number" placeholder="Total budget ($)" value={newProject.budget_estimate} onChange={e => setNewProject(f => ({ ...f, budget_estimate: e.target.value }))} style={inp} />
-                <input type="date" placeholder="Target completion" value={newProject.estimated_completion} onChange={e => setNewProject(f => ({ ...f, estimated_completion: e.target.value }))} style={inp} />
-                <textarea placeholder="Description / notes" value={newProject.description} onChange={e => setNewProject(f => ({ ...f, description: e.target.value }))} rows={2} style={{ ...inp, resize:'vertical' as const }} />
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', marginBottom:'14px' }}>
+              {/* Progress bar */}
+              <div style={{ display:'flex', gap:'4px', marginBottom:'16px' }}>
+                {[0,1,2,3,4,5].map(i => (
+                  <div key={i} style={{ flex:1, height:'3px', borderRadius:'2px', background: i <= wizardStep ? '#D4522A' : 'rgba(28,43,50,0.12)', transition:'background 0.2s' }} />
+                ))}
               </div>
-              <div style={{ display:'flex', gap:'8px' }}>
-                <button type="button" onClick={() => setShowNewProject(false)} style={{ background:'transparent', color:'#1C2B32', border:'1px solid rgba(28,43,50,0.25)', borderRadius:'8px', padding:'9px 14px', fontSize:'12px', cursor:'pointer' }}>Cancel</button>
-                <button type="button" onClick={createProject} disabled={creatingProject || !newProject.title} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'9px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity: !newProject.title ? 0.5 : 1 }}>Create build</button>
-              </div>
+
+              {/* Step 0 — Project type */}
+              {wizardStep === 0 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>What kind of project is this?</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'14px', lineHeight:'1.5' }}>This determines what guidance and compliance checklists Steadyhand prepares for you.</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
+                    {[
+                      { value:'owner_builder', label:'Owner-builder', desc:'I have or am getting an owner-builder permit from the WA Building Commission' },
+                      { value:'renovation', label:'Renovation / extension', desc:'Major work with multiple trades — no owner-builder permit required' },
+                      { value:'diy', label:'Home project', desc:'Smaller project — some DIY, some tradies' },
+                    ].map(opt => (
+                      <div key={opt.value} onClick={() => setNewProject(f => ({ ...f, project_type: opt.value }))}
+                        style={{ padding:'12px 14px', borderRadius:'8px', border:'1.5px solid ' + (newProject.project_type === opt.value ? '#D4522A' : 'rgba(28,43,50,0.15)'), background: newProject.project_type === opt.value ? 'rgba(212,82,42,0.06)' : 'white', cursor:'pointer' }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{opt.label}</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{opt.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => setWizardStep(1)} style={{ width:'100%', background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue →</button>
+                </div>
+              )}
+
+              {/* Step 1 — Name + address */}
+              {wizardStep === 1 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>Name and site address</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'14px', lineHeight:'1.5' }}>Give your project a name you will recognise. The address is used to tag all documents and trade packages.</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Project name *</label>
+                      <input placeholder="e.g. Subiaco extension 2026" value={newProject.title} onChange={e => setNewProject(f => ({ ...f, title: e.target.value }))} style={inp} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Site address</label>
+                      <input placeholder="e.g. 14 Example St, Subiaco WA 6008" value={newProject.address} onChange={e => setNewProject(f => ({ ...f, address: e.target.value }))} style={inp} />
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(0)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={() => setWizardStep(2)} disabled={!newProject.title} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity:!newProject.title?0.5:1 }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2 — Budget + timeline */}
+              {wizardStep === 2 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>Budget and timeline</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'14px', lineHeight:'1.5' }}>Used to track spending and trigger timely reminders. You can update these at any time.</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Total budget estimate ($)</label>
+                      <input type="number" placeholder="e.g. 150000" value={newProject.budget_estimate} onChange={e => setNewProject(f => ({ ...f, budget_estimate: e.target.value }))} style={inp} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Target completion date</label>
+                      <input type="date" value={newProject.estimated_completion} onChange={e => setNewProject(f => ({ ...f, estimated_completion: e.target.value }))} style={inp} />
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(1)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={() => setWizardStep(3)} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3 — Permit details */}
+              {wizardStep === 3 && (
+                <div>
+                  {newProject.project_type === 'owner_builder' ? (
+                    <>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>Owner-builder permit details</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'8px', lineHeight:'1.5' }}>If you have received your owner-builder approval, enter the details here. If not, leave blank — Steadyhand will remind you.</p>
+                      <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'8px', padding:'10px 12px', marginBottom:'12px' }}>
+                        <p style={{ fontSize:'11px', color:'#6B4FA8', margin:0, lineHeight:'1.5' }}>
+                          Owner-builder approval is issued by the Building Services Board (WA). <a href="https://www.buildingcommission.wa.gov.au/owner-builders" target="_blank" rel="noreferrer" style={{ color:'#6B4FA8' }}>Learn more →</a>
+                        </p>
+                      </div>
+                      <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
+                        <div>
+                          <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Owner-builder approval number</label>
+                          <input placeholder="Leave blank if not yet received" value={newProject.permit_number} onChange={e => setNewProject(f => ({ ...f, permit_number: e.target.value }))} style={inp} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Builder registration number (if applicable)</label>
+                          <input placeholder="e.g. BR12345" value={newProject.builder_registration} onChange={e => setNewProject(f => ({ ...f, builder_registration: e.target.value }))} style={inp} />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ padding:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'8px', marginBottom:'14px' }}>
+                      <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:'0 0 4px' }}>No permit required</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>For renovations and home projects, no owner-builder permit is needed. Steadyhand will still track your compliance checklist for licensed trade work.</p>
+                    </div>
+                  )}
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(2)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={() => setWizardStep(4)} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4 — Description + AI summary */}
+              {wizardStep === 4 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>Describe your project</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px', lineHeight:'1.5' }}>
+                    {newProject.project_type === 'owner_builder'
+                      ? 'This becomes the basis of your project plan summary — required for your owner-builder permit application. Steadyhand can draft it for you.'
+                      : 'A brief description helps Steadyhand generate better trade package suggestions and reminders.'}
+                  </p>
+                  <textarea placeholder="e.g. Single-storey rear extension to existing brick house. New kitchen, living and dining area approximately 60m2. Includes demolition, new slab, framing, electrical, plumbing, roofing, plastering and painting."
+                    value={newProject.description} onChange={e => setNewProject(f => ({ ...f, description: e.target.value }))}
+                    rows={5} style={{ ...inp, resize:'vertical' as const, marginBottom:'10px' }} />
+                  {newProject.project_type === 'owner_builder' && newProject.description && (
+                    <button type="button" onClick={async () => {
+                      setGeneratingSummary(true)
+                      try {
+                        const res = await fetch('/api/ob-summary', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ description: newProject.description, address: newProject.address, title: newProject.title }),
+                        })
+                        const { summary } = await res.json()
+                        if (summary) setNewProject(f => ({ ...f, description: summary }))
+                      } finally { setGeneratingSummary(false) }
+                    }} disabled={generatingSummary}
+                      style={{ width:'100%', background:'rgba(107,79,168,0.08)', color:'#6B4FA8', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'8px', padding:'9px', fontSize:'12px', fontWeight:500, cursor:'pointer', marginBottom:'10px', opacity: generatingSummary ? 0.6 : 1 }}>
+                      {generatingSummary ? 'Drafting...' : '✦ Draft project plan summary with AI'}
+                    </button>
+                  )}
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(3)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={() => setWizardStep(5)} style={{ flex:1, background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Continue →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5 — Review and create */}
+              {wizardStep === 5 && (
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'14px' }}>Review your project</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'0', marginBottom:'16px', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', overflow:'hidden' }}>
+                    {[
+                      { label:'Type', value: newProject.project_type.replace('_',' ') },
+                      { label:'Name', value: newProject.title },
+                      { label:'Address', value: newProject.address || '—' },
+                      { label:'Budget', value: newProject.budget_estimate ? '$' + Number(newProject.budget_estimate).toLocaleString() : '—' },
+                      { label:'Completion', value: newProject.estimated_completion ? new Date(newProject.estimated_completion).toLocaleDateString('en-AU') : '—' },
+                      { label:'Permit no.', value: newProject.permit_number || '—' },
+                    ].map((r, i) => (
+                      <div key={r.label} style={{ display:'flex', padding:'9px 12px', borderBottom: i < 5 ? '1px solid rgba(28,43,50,0.06)' : 'none', fontSize:'12px' }}>
+                        <span style={{ color:'#7A9098', minWidth:'90px' }}>{r.label}</span>
+                        <span style={{ color:'#1C2B32', fontWeight:500, textTransform:'capitalize' as const }}>{r.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {newProject.project_type === 'owner_builder' && (
+                    <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'8px', padding:'10px 12px', marginBottom:'12px' }}>
+                      <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>✓ WA owner-builder compliance checklist will be pre-populated for this project.</p>
+                    </div>
+                  )}
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    <button type="button" onClick={() => setWizardStep(4)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    <button type="button" onClick={createProject} disabled={creatingProject} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity:creatingProject?0.6:1 }}>Create project →</button>
+                  </div>
+                  <button type="button" onClick={() => { setShowNewProject(false); setWizardStep(0) }} style={{ width:'100%', background:'transparent', border:'none', color:'#7A9098', fontSize:'12px', cursor:'pointer', marginTop:'8px', padding:'4px' }}>Cancel</button>
+                </div>
+              )}
             </div>
           )}
 
