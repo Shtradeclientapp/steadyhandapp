@@ -46,6 +46,10 @@ const BLANK_ITEM = (category: string) => ({ category, label: '', quantity: '1', 
 
 export default function TradieJobPage() {
   const [user, setUser] = useState<any>(null)
+  const [proposedSlots, setProposedSlots] = useState(['','',''])
+  const [proposingConsult, setProposingConsult] = useState(false)
+  const [consultSent, setConsultSent] = useState(false)
+  const [savingSlots, setSavingSlots] = useState(false)
   const [job, setJob] = useState<any>(null)
   const [scope, setScope] = useState<any>(null)
   const [quotes, setQuotes] = useState<any[]>([])
@@ -334,12 +338,74 @@ export default function TradieJobPage() {
                       </button>
                     )}
                   </div>
-                  {guideSlide === slides.length - 1 && (
-                    <a href="/consult">
-                      <button type="button" style={{ background:'#9B6B9B', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                        Book a consult time →
-                      </button>
-                    </a>
+                  {guideSlide === slides.length - 1 && !consultSent && !proposingConsult && (
+                    <button type="button" onClick={() => setProposingConsult(true)}
+                      style={{ background:'#9B6B9B', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                      Propose consult times →
+                    </button>
+                  )}
+                  {guideSlide === slides.length - 1 && proposingConsult && !consultSent && (
+                    <div style={{ marginTop:'12px', background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'14px' }}>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#9B6B9B', marginBottom:'10px' }}>Suggest up to 3 times — {job.client?.full_name || 'the client'} will confirm which suits them</p>
+                      <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
+                        {[0,1,2].map(i => (
+                          <div key={i} style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                            <span style={{ fontSize:'11px', color:'#7A9098', width:'56px', flexShrink:0 }}>Option {i+1}{i===0?' *':''}</span>
+                            <input type="datetime-local" value={proposedSlots[i]}
+                              onChange={e => { const s = [...proposedSlots]; s[i] = e.target.value; setProposedSlots(s) }}
+                              min={new Date().toISOString().slice(0,16)}
+                              style={{ flex:1, padding:'7px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display:'flex', gap:'8px' }}>
+                        <button type="button" onClick={async () => {
+                          const filled = proposedSlots.filter(s => s.trim())
+                          if (!filled.length) return
+                          setSavingSlots(true)
+                          const supabase = createClient()
+                          const { data: existing } = await supabase.from('site_assessments').select('id').eq('job_id', job.id).single()
+                          const slotData = { job_id: job.id, proposed_slots: filled, consult_date: filled[0], slot_proposed_by: 'tradie' }
+                          if (existing) {
+                            await supabase.from('site_assessments').update(slotData).eq('job_id', job.id)
+                          } else {
+                            await supabase.from('site_assessments').insert(slotData)
+                          }
+                          const slotLines = filled.map((s, i) => 'Option ' + (i+1) + ': ' + new Date(s).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' }) + ' at ' + new Date(s).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })).join('
+')
+                          await supabase.from('job_messages').insert({
+                            job_id: job.id,
+                            sender_id: user?.id,
+                            body: (job.tradie?.business_name || 'The tradie') + ' has proposed ' + filled.length + ' consult time' + (filled.length > 1 ? 's' : '') + ':
+' + slotLines + '
+
+Please confirm which time works for you by visiting the Consult page.',
+                          })
+                          await fetch('/api/email', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ type: 'consult_ready', job_id: job.id }),
+                          }).catch(() => {})
+                          setSavingSlots(false)
+                          setConsultSent(true)
+                          setProposingConsult(false)
+                        }} disabled={!proposedSlots[0] || savingSlots}
+                          style={{ flex:1, background:'#9B6B9B', color:'white', padding:'9px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedSlots[0] || savingSlots ? 0.5 : 1 }}>
+                          {savingSlots ? 'Sending...' : 'Send times to client →'}
+                        </button>
+                        <button type="button" onClick={() => setProposingConsult(false)}
+                          style={{ background:'transparent', color:'#7A9098', padding:'9px 14px', borderRadius:'7px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                          Cancel
+                        </button>
+                      </div>
+                      <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'8px' }}>* At least one time required</p>
+                    </div>
+                  )}
+                  {consultSent && (
+                    <div style={{ marginTop:'12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px' }}>
+                      <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:'0 0 4px' }}>✓ Times sent to {job.client?.full_name || 'client'}</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>They will confirm via the Consult page. You will be notified by message.</p>
+                    </div>
                   )}
                 </div>
               </div>
