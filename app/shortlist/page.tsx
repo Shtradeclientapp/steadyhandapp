@@ -36,7 +36,7 @@ export default function ShortlistPage() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/login'; return }
 
-      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible)').eq('id', session.user.id).single()
       setProfile(prof)
 
       const { data: jobsData } = await supabase
@@ -109,7 +109,7 @@ export default function ShortlistPage() {
     const supabase = createClient()
     const { data } = await supabase
       .from('quote_requests')
-      .select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)')
+      .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible, rating_avg, jobs_completed)')
       .eq('job_id', jobId)
     setQuoteRequests(data || [])
     if (data && data.length > 0) { setSent(true); setTab('requested') }
