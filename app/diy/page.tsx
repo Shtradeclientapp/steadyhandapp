@@ -72,7 +72,8 @@ export default function DIYPage() {
         if (newProjectId && proj.find((p: any) => p.id === newProjectId)) {
           setActiveProject(newProjectId)
         } else {
-        setActiveProject(proj[0].id)
+          setActiveProject(proj[0].id)
+        }
         const ids = proj.map((p: any) => p.id)
         const { data: t } = await supabase.from('diy_tasks').select('*').in('project_id', ids).order('created_at', { ascending: true })
         setTasks(t || [])
