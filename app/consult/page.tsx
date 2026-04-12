@@ -262,6 +262,11 @@ export default function AssessPage() {
 
   const myShared = isTradie ? assessment?.tradie_shared_at : assessment?.client_shared_at
   const theirShared = isTradie ? assessment?.client_shared_at : assessment?.tradie_shared_at
+
+  // Auto-show wait modal on page load if already shared but waiting
+  useEffect(() => {
+    if (myShared && !theirShared) setShowWaitModal(true)
+  }, [myShared, theirShared])
   const myAcknowledged = isTradie ? assessment?.tradie_acknowledged_at : assessment?.client_acknowledged_at
   const theirAcknowledged = isTradie ? assessment?.client_acknowledged_at : assessment?.tradie_acknowledged_at
   const myPrompts = isTradie ? TRADIE_PROMPTS : CLIENT_PROMPTS
@@ -628,7 +633,7 @@ export default function AssessPage() {
                 </div>
                 {!theirShared && (
                   <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 18px', marginTop:'10px' }}>
-                    <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>You are done for now</p>
+                    <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>You are done for now — waiting for {theirLabel}</p>
                     <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
                       {[
                         { icon:'📅', text:'The tradie will propose times for the site visit — you will confirm which suits you.' },
@@ -845,10 +850,10 @@ export default function AssessPage() {
             </div>
             <div style={{ padding:'24px 28px' }}>
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>
-                You have acknowledged the consult notes. Your record is now locked and permanently saved to your Document Vault — the first entry in your job file.
+                Your consult notes are locked and shared. They are permanently saved to your Document Vault as the first entry in your job file.
               </p>
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'20px' }}>
-                Quoting will open once the other party has also acknowledged. You will be notified when that happens and when quotes arrive.
+                Once the other party shares and both records are acknowledged, quoting opens. You will be notified at each step.
               </p>
               <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
                 <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>While you wait — explore your Document Vault</p>
