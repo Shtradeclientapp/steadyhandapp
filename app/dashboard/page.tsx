@@ -378,7 +378,7 @@ export default function DashboardPage() {
                 <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
                     <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Build Journal</p>
-                    <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.2)', color:'#D4522A', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>Owner-builder</span>
+                    {builds.length > 0 && <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.2)', color:'#D4522A', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>Owner-builder</span>}
                   </div>
                   <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Manage trades, permits, tasks, budget and WA compliance — all in one place.</p>
                 </div>

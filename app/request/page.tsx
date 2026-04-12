@@ -5,7 +5,6 @@ import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { StageRail } from '@/components/ui'
 
 const TRADES = [
   'Plumbing & Gas', 'Electrical', 'Carpentry & Joinery', 'Tiling',
@@ -158,7 +157,6 @@ sessionStorage.removeItem('diy_project_id')
   return (
     <>
       {nav}
-      <StageRail currentPath="/request" jobStatus={undefined} />
       <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
         <div style={{ maxWidth:'600px', margin:'0 auto' }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>

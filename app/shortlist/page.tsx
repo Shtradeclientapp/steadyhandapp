@@ -13,6 +13,8 @@ export default function ShortlistPage() {
   const [shortlist, setShortlist] = useState<any[]>([])
   const [matching, setMatching] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [matchError, setMatchError] = useState<string|null>(null)
+  const [sendError, setSendError] = useState<string|null>(null)
   const [selectedTradies, setSelectedTradies] = useState<string[]>([])
   const [pendingConfirm, setPendingConfirm] = useState(false)
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
@@ -90,6 +92,7 @@ export default function ShortlistPage() {
         }
       } catch (e) {
         console.error('Match error:', e)
+        setMatchError('Matching failed — please refresh and try again.')
       }
       setMatching(false)
     }
@@ -149,6 +152,7 @@ export default function ShortlistPage() {
     setShowNextStepModal(true)
     } catch (e) {
       console.error('sendQuoteRequests error:', e)
+      setSendError('Could not send quote requests — please try again.')
     }
     setSending(false)
   }
@@ -224,6 +228,11 @@ export default function ShortlistPage() {
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#2E6A8F', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Meet your options</span>
           </div>
+          {(matchError || sendError) && (
+            <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'16px' }}>
+              <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>{matchError || sendError}</p>
+            </div>
+          )}
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR MATCHES</h1>
 
           {!isPastStage && <HintPanel color="#2E6A8F" hints={[

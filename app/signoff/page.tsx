@@ -337,6 +337,13 @@ export default function SignoffPage() {
                 {submitting ? 'Signing off...' : 'Sign off and start warranty →'}
               </button>
 
+              {/* Checklist incomplete hint */}
+              {rating > 0 && !allChecked && (
+                <p style={{ fontSize:'12px', color:'#C07830', margin:'8px 0 0', textAlign:'center' as const }}>
+                  ⚠ Tick all checklist items above to enable sign-off
+                </p>
+              )}
+
               {/* Partial sign-off option */}
               {!allChecked && rating > 0 && (
                 <div style={{ marginTop:'2px' }}>
