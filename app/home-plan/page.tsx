@@ -126,13 +126,15 @@ export default function HomePlanPage() {
                   ✓ Interest registered — we will be in touch
                 </div>
               ) : (
-                {submitError && (
-                  <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {submitError}</p>
-                )}
-                <button type="button" onClick={registerInterest} disabled={submitting}
-                  style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: submitting ? 0.7 : 1 }}>
-                  {submitting ? 'Registering...' : 'Register interest — founding rate →'}
-                </button>
+                <>
+                  {submitError && (
+                    <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {submitError}</p>
+                  )}
+                  <button type="button" onClick={registerInterest} disabled={submitting}
+                    style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: submitting ? 0.7 : 1 }}>
+                    {submitting ? 'Registering...' : 'Register interest — founding rate →'}
+                  </button>
+                </>
               )}
             </div>
           </div>
