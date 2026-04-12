@@ -50,6 +50,7 @@ export default function DIYPage() {
   const [loading, setLoading] = useState(true)
   const [activeProject, setActiveProject] = useState<string|null>(null)
   const [activeTab, setActiveTab] = useState<'overview'|'schedule'|'trades'|'tasks'|'budget'|'compliance'>('overview')
+  const [isMobile, setIsMobile] = useState(false)
   const [showNewTask, setShowNewTask] = useState(false)
   const [showNewExpense, setShowNewExpense] = useState(false)
   const [newTask, setNewTask] = useState('')
@@ -203,10 +204,10 @@ export default function DIYPage() {
         <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
-      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'32px 24px', display:'grid', gridTemplateColumns:'260px 1fr', gap:'24px', alignItems:'start' }}>
+      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'24px 16px', display:'grid', gridTemplateColumns: isMobile ? '1fr' : '260px 1fr', gap:'20px', alignItems:'start' }}>
 
         {/* LEFT — Project list */}
-        <div>
+        <div style={{ display: isMobile && activeProject ? 'none' : 'block' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>MY BUILDS</h2>
             <a href="/diy/new"><button type="button" style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button></a>
@@ -269,6 +270,13 @@ export default function DIYPage() {
         </div>
 
         {/* RIGHT — Project detail */}
+        {isMobile && activeProject && (
+          <button type="button" onClick={() => setActiveProject(null)}
+            style={{ gridColumn:'1/-1', background:'none', border:'none', color:'#4A5E64', fontSize:'13px', cursor:'pointer', textAlign:'left' as const, padding:'0 0 4px', display:'flex', alignItems:'center', gap:'6px' }}>
+            ← All projects
+          </button>
+        )}
+        {/* RIGHT — Project detail original}
         <div>
           {!activeProj ? (
             <div style={{ background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
