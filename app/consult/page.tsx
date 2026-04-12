@@ -38,8 +38,6 @@ export default function AssessPage() {
   const [form, setForm] = useState<any>({})
   const [uploadingPhotos, setUploadingPhotos] = useState(false)
   const [photoError, setPhotoError] = useState<string|null>(null)
-  const [photoError, setPhotoError] = useState<string|null>(null)
-  const [photoError, setPhotoError] = useState<string|null>(null)
   const [clientPhotos, setClientPhotos] = useState<string[]>([])
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
   const [proposingDate, setProposingDate] = useState(false)
@@ -583,12 +581,6 @@ export default function AssessPage() {
                           e.target.value = ''
                         }}
                       />
-                      {photoError && (
-                        <p style={{ fontSize:'12px', color:'#D4522A', margin:'8px 0 0' }}>⚠ {photoError}</p>
-                      )}
-                      {photoError && (
-                        <p style={{ fontSize:'12px', color:'#D4522A', margin:'8px 0 0' }}>⚠ {photoError}</p>
-                      )}
                       {photoError && (
                         <p style={{ fontSize:'12px', color:'#D4522A', margin:'8px 0 0' }}>⚠ {photoError}</p>
                       )}
