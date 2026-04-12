@@ -380,9 +380,9 @@ export default function DashboardPage() {
                     <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Build Journal</p>
                     <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.2)', color:'#D4522A', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>Owner-builder</span>
                   </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Manage trades, permits, tasks, budget and WA compliance — all in one place.</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Manage trades, permits, tasks, budget and WA compliance — all in one place.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(212,82,42,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'16px', color:'rgba(212,82,42,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
               </div>
             </a>
 
@@ -398,9 +398,9 @@ export default function DashboardPage() {
                       <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.2)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{jobs.filter(j => j.status === 'warranty').length} under warranty</span>
                     )}
                   </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Your permanent home record — scope agreements, warranties and certificates.</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Your permanent home record — scope agreements, warranties and certificates.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(46,125,96,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'16px', color:'rgba(46,125,96,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
               </div>
             </a>
 
@@ -416,9 +416,9 @@ export default function DashboardPage() {
                       <span style={{ fontSize:'10px', background:'rgba(192,120,48,0.2)', color:'#C07830', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{activeJobs.length} active job{activeJobs.length !== 1 ? 's' : ''}</span>
                     )}
                   </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(192,120,48,0.5)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'16px', color:'rgba(192,120,48,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
               </div>
             </a>
 
