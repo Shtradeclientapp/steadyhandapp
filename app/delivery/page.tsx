@@ -2,7 +2,6 @@
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import React from 'react'
 import { NavHeader } from '@/components/ui/NavHeader'
-import { HintPanel } from '@/components/ui/HintPanel'
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'

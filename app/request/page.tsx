@@ -198,19 +198,17 @@ sessionStorage.removeItem('diy_project_id')
               </div>
             )
           })()}
-          <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-            You set the brief. The more detail you give, the better your AI-matched shortlist.
-          </p>
+
           {dots}
 
           {step === 0 && card(
             <>
               <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'6px', fontWeight:'500' }}>Tell us what you need</p>
-              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>Start by describing the job in your own words. The more detail you give, the better your shortlist will be.</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>Describe the job as you would explain it to a friend. What is the problem, where is it, and how long has it been an issue?</p>
               <HintPanel color="#2E7D60" hints={[
                 "Include the property age, access details, and any complications you\'re aware of — tradies use this before visiting.",
-                "Not sure which trade category? Pick the closest match — Steadyhand will confirm during matching.",
-                "Your budget range is optional but helps tradies calibrate their approach.",
+                "Your budget range is optional but helps tradies calibrate their approach before the site visit.",
+                "A clear title helps tradies understand the job at a glance — include the trade type and your suburb.",
               ]} />
               <label style={labelStyle}>
                 What do you need done?

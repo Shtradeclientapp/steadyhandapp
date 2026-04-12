@@ -1,7 +1,6 @@
 'use client'
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
-import { HintPanel } from '@/components/ui/HintPanel'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
