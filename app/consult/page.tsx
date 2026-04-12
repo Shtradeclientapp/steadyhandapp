@@ -33,6 +33,8 @@ export default function AssessPage() {
   const [saving, setSaving] = useState(false)
   const [sharing, setSharing] = useState(false)
   const [acknowledging, setAcknowledging] = useState(false)
+  const [showWaitModal, setShowWaitModal] = useState(false)
+  const [showCompleteModal, setShowCompleteModal] = useState(false)
   const [form, setForm] = useState<any>({})
   const [uploadingPhotos, setUploadingPhotos] = useState(false)
   const [clientPhotos, setClientPhotos] = useState<string[]>([])
@@ -244,7 +246,13 @@ export default function AssessPage() {
       const supabase2 = createClient()
       await supabase2.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
       await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
-      setTimeout(() => { window.location.href = isTradie ? '/tradie/dashboard' : '/compare' }, 1200)
+      if (!isTradie) {
+        setShowCompleteModal(true)
+      } else {
+        setTimeout(() => { window.location.href = '/tradie/dashboard' }, 1200)
+      }
+    } else if (!isTradie) {
+      setShowWaitModal(true)
     }
   }
 
@@ -805,6 +813,75 @@ export default function AssessPage() {
         warning="Acknowledging the other party record means you accept it as accurate. Do not acknowledge without reading."
         ctaLabel="Start my consult notes"
       />
+
+      {/* WAITING modal — client acknowledged, tradie hasn't yet */}
+      {showWaitModal && (
+        <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.82)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+          <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #9B6B9B' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>CONSULT NOTES LOCKED</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Your record is saved — waiting for the other party</p>
+            </div>
+            <div style={{ padding:'24px 28px' }}>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>
+                You have acknowledged the consult notes. Your record is now locked and permanently saved to your Document Vault — the first entry in your job file.
+              </p>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'20px' }}>
+                Quoting will open once the other party has also acknowledged. You will be notified when that happens and when quotes arrive.
+              </p>
+              <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>While you wait — explore your Document Vault</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 12px', lineHeight:'1.5' }}>Every Steadyhand job automatically builds your property record. Your consult notes are already there. Scope agreements, milestone records and warranty certificates will follow as the job progresses.</p>
+                <a href="/vault" style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>See my Document Vault →</a>
+              </div>
+              <button type="button" onClick={() => setShowWaitModal(false)}
+                style={{ display:'block', margin:'0 auto', background:'none', border:'none', fontSize:'12px', color:'#9AA5AA', cursor:'pointer', textDecoration:'underline' }}>
+                Stay on this page
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* COMPLETE modal — both acknowledged, quotes now open */}
+      {showCompleteModal && (
+        <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.82)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+          <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>CONSULT COMPLETE</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Both parties have acknowledged — quoting is now open</p>
+            </div>
+            <div style={{ padding:'24px 28px' }}>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>
+                Both parties have acknowledged the consult record. It is now locked, timestamped and saved permanently to your Document Vault — the first entry in your job file.
+              </p>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'20px' }}>
+                Tradies can now submit their quotes. You will be notified when each quote arrives.
+              </p>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                <a href="/compare" style={{ textDecoration:'none' }}>
+                  <div style={{ background:'#2E7D60', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <div>
+                      <p style={{ fontSize:'14px', fontWeight:600, color:'white', margin:'0 0 2px' }}>Go to Compare</p>
+                      <p style={{ fontSize:'12px', color:'rgba(255,255,255,0.7)', margin:0 }}>Review quotes as they arrive</p>
+                    </div>
+                    <span style={{ fontSize:'18px', color:'white' }}>→</span>
+                  </div>
+                </a>
+                <a href="/vault" style={{ textDecoration:'none' }}>
+                  <div style={{ background:'white', border:'1.5px solid rgba(155,107,155,0.3)', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <div>
+                      <p style={{ fontSize:'14px', fontWeight:600, color:'#9B6B9B', margin:'0 0 2px' }}>Explore my Document Vault</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Your consult record is already saved there</p>
+                    </div>
+                    <span style={{ fontSize:'18px', color:'#9B6B9B' }}>→</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
 
   )
