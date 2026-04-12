@@ -19,6 +19,7 @@ export default function ShortlistPage() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [tab, setTab] = useState<'matches'|'invite'|'requested'|'directory'>('matches')
+  const [showNextStepModal, setShowNextStepModal] = useState(false)
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
   const [inviteSent, setInviteSent] = useState(false)
@@ -145,8 +146,7 @@ export default function ShortlistPage() {
     }).catch(() => {})
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
-    // Redirect to consult page after sending
-    setTimeout(() => { window.location.href = '/consult' }, 800)
+    setShowNextStepModal(true)
     } catch (e) {
       console.error('sendQuoteRequests error:', e)
     }
@@ -302,13 +302,57 @@ export default function ShortlistPage() {
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
                 <div>
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', marginBottom:'3px' }}>✓ Quote requests sent</p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies will be notified. Next step: book a consult time to visit the site before quoting begins.</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies have been notified. Choose your next step below.</p>
                 </div>
-                <a href="/consult">
-                  <button type="button" style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-                    Book consult time →
+                <button type="button" onClick={() => setShowNextStepModal(true)}
+                  style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                  What happens next? →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* NEXT STEP MODAL */}
+          {showNextStepModal && (
+            <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.8)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+              <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
+                <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>QUOTE REQUESTS SENT</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Your selected tradies have been notified</p>
+                </div>
+                <div style={{ padding:'24px 28px' }}>
+                  <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'20px' }}>
+                    You have two options from here. Both are valid — it depends on how much protection you want before quoting begins.
+                  </p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', marginBottom:'24px' }}>
+                    <a href="/consult" style={{ textDecoration:'none' }}>
+                      <div style={{ background:'white', border:'2px solid #9B6B9B', borderRadius:'12px', padding:'16px 18px', cursor:'pointer' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'6px' }}>
+                          <span style={{ fontSize:'20px' }}>📋</span>
+                          <p style={{ fontSize:'14px', fontWeight:600, color:'#9B6B9B', margin:0 }}>Book a site consult first</p>
+                          <span style={{ fontSize:'10px', background:'rgba(155,107,155,0.12)', color:'#9B6B9B', border:'1px solid rgba(155,107,155,0.3)', borderRadius:'4px', padding:'2px 7px', fontWeight:600, marginLeft:'auto' }}>Recommended</span>
+                        </div>
+                        <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
+                          Visit the site with each tradie before they quote. Both parties record independent notes — creating a shared record of what was seen, discussed and expected. This protects you both if the scope is ever disputed.
+                        </p>
+                      </div>
+                    </a>
+                    <div style={{ background:'white', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'12px', padding:'16px 18px', cursor:'pointer' }}
+                      onClick={() => setShowNextStepModal(false)}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'6px' }}>
+                        <span style={{ fontSize:'20px' }}>⚡</span>
+                        <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', margin:0 }}>Skip consult — go straight to quotes</p>
+                      </div>
+                      <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
+                        Tradies will quote from your written request only. You will be notified when quotes arrive on the Compare page. This is faster but means there is no shared site record before work is priced.
+                      </p>
+                    </div>
+                  </div>
+                  <button type="button" onClick={() => setShowNextStepModal(false)}
+                    style={{ display:'block', margin:'0 auto', background:'none', border:'none', fontSize:'12px', color:'#9AA5AA', cursor:'pointer', textDecoration:'underline' }}>
+                    I'll decide later
                   </button>
-                </a>
+                </div>
               </div>
             </div>
           )}
