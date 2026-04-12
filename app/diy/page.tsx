@@ -283,7 +283,6 @@ export default function DIYPage() {
             ← All projects
           </button>
         )}
-        {/* RIGHT — Project detail original}
         <div>
           {!activeProj ? (
             <div style={{ background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
