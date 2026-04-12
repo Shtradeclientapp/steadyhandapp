@@ -258,17 +258,14 @@ export default function Home() {
                 <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Trade business — Case study</span>
               </div>
               <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'16px', flex:1 }}>
-                The roadmap Steadyhand designed for us meant the ride was controlled, data-driven and milestoned along the way. Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective — less on the tools and more in a position of strategic leadership.
+              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'20px', flex:1 }}>
+                From the get-go, Steadyhand developed sensitive ways of creating processes from the ground up across worksites, office and client comms, but they were also great at recognising and supporting my intuitions as an owner-operator going through a period of change. I recommend Steadyhand wholeheartedly as digital operations professionals.
               </blockquote>
-              <p style={{ fontSize:'12px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'20px', fontStyle:'normal' }}>
-                Over six months, Steadyhand oversaw a structural transformation that took Margaret River Re-Gutters from an owner-operator with two to three sub-contractors to a small business with two teams of three.
-              </p>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                 <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(212,82,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', fontWeight:600 }}>C</div>
                 <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.6' }}>
-                  Cullum Creevey &nbsp;·&nbsp; Roofing Specialist<br />
-                  <span style={{ fontSize:'12px' }}>Margaret River Regutters / Busselton Regutters</span>
+                  C Creevey &nbsp;·&nbsp; Small Business Owner<br />
+                  <span style={{ fontSize:'12px' }}>Margaret River &amp; Busselton Regutters</span>
                 </cite>
               </div>
             </div>
