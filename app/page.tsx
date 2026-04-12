@@ -237,6 +237,9 @@ export default function Home() {
 
             {/* Homeowner testimonial */}
             <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'32px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
+                <span style={{ fontSize:'10px', color:'#2E6A8F', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Homeowner — Case study</span>
+              </div>
               <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
               <blockquote style={{ fontSize:'17px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'24px', flex:1 }}>
                 The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.
