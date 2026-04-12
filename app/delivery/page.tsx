@@ -552,7 +552,6 @@ export default function DeliveryPage() {
           { text: 'If something is not right, use the variations process', emphasis: false },
           { text: 'Progress photos are your record if a milestone is disputed later', emphasis: false },
         ]}
-        warning={undefined}
         ctaLabel="Review milestones →"
       />
     </>

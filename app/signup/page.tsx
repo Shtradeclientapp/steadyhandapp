@@ -58,7 +58,7 @@ export default function SignupPage() {
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px', marginBottom:'24px' }}>
                 {([
                   { id:'client', icon:'🏠', label:'HOMEOWNER', sub:'Post job requests' },
-                  { id:'tradie', icon:'🔧', label:'TRADE BIZ', sub:'Receive verified jobs' },
+                  { id:'tradie', icon:'🔧', label:'TRADE BUSINESS', sub:'Receive verified jobs' },
                   { id:'org', icon:'🏢', label:'ORGANISATION', sub:'Manage properties' },
                 ] as const).map(r => (
                   <button key={r.id} type="button" onClick={() => setRole(r.id)}

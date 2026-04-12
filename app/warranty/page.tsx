@@ -318,7 +318,6 @@ export default function WarrantyPage() {
           { text: 'Check your warranty end date — issues must be logged before it expires', emphasis: false },
           { text: 'All issues and responses are permanently recorded in your Document Vault', emphasis: false },
         ]}
-        warning={undefined}
         ctaLabel="View my warranty →"
       />
     </>

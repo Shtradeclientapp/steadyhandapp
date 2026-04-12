@@ -495,6 +495,9 @@ export default function TradieDashboard() {
           </div>
         )}
 
+        {(() => { const declinedCount = sortedActive.filter(job => { const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id); return myQR?.status === 'declined' }).length; return declinedCount > 0 ? (
+          <p style={{ fontSize:'12px', color:'#9AA5AA', textAlign:'center' as const, marginBottom:'8px' }}>{declinedCount} declined job{declinedCount !== 1 ? 's' : ''} hidden</p>
+        ) : null })()}
         <div style={{ display:'flex', flexDirection:'column', gap:'12px', marginBottom:'32px' }}>
           {sortedActive.map(job => {
             const myQR      = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id)
