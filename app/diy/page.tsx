@@ -184,6 +184,13 @@ export default function DIYPage() {
   const getProjectExpenses = (id: string) => expenses.filter(e => e.project_id === id)
   const getProjectChecklist = (id: string) => checklist.filter(c => c.project_id === id)
 
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 680)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   const inp = { width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }
 
   if (loading) return <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}><p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p></div>
