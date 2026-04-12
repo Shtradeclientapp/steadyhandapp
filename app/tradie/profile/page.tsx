@@ -18,6 +18,7 @@ export default function TradieProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [saveError, setSaveError] = useState<string|null>(null)
   const [form, setForm] = useState<any>({})
   const [activeTab, setActiveTab] = useState<'profile'|'business'|'availability'>('profile')
   const [logoUrl, setLogoUrl] = useState<string|null>(null)
@@ -62,23 +63,28 @@ export default function TradieProfilePage() {
     const ext = file.name.split('.').pop()
     const path = `logos/${profile.id}.${ext}`
     const { error } = await supabase.storage.from('Job Photos').upload(path, file, { upsert: true })
-    if (!error) {
-      const { data } = supabase.storage.from('Job Photos').getPublicUrl(path)
-      const url = data.publicUrl
-      setLogoUrl(url)
-      await supabase.from('tradie_profiles').update({ logo_url: url }).eq('id', profile.id)
+    if (error) {
+      console.error('Logo upload failed:', error.message)
+      setUploadingLogo(false)
+      return
     }
+    const { data } = supabase.storage.from('Job Photos').getPublicUrl(path)
+    const url = data.publicUrl
+    setLogoUrl(url)
+    await supabase.from('tradie_profiles').update({ logo_url: url }).eq('id', profile.id)
     setUploadingLogo(false)
   }
 
   const save = async () => {
     setSaving(true)
+    setSaveError(null)
     const supabase = createClient()
-    await supabase.from('profiles').update({
+    const { error: profileErr } = await supabase.from('profiles').update({
       full_name: form.full_name,
       phone: form.phone,
     }).eq('id', profile.id)
-    await supabase.from('tradie_profiles').update({
+    if (profileErr) { setSaveError('Save failed — please check your connection and try again.'); setSaving(false); return }
+    const { error: tradieErr } = await supabase.from('tradie_profiles').update({
       business_name: form.business_name,
       bio: form.bio,
       trade_categories: form.trade_categories,
@@ -386,6 +392,9 @@ export default function TradieProfilePage() {
         )}
 
         <div style={{ marginTop: '28px' }}>
+          {saveError && (
+            <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'8px' }}>⚠ {saveError}</p>
+          )}
           <button type="button" onClick={save} disabled={saving}
             style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
             {saving ? 'Saving...' : saved ? '✓ Profile saved' : 'Save profile →'}

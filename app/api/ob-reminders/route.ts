@@ -120,7 +120,7 @@ async function sendReminder(userId: string, projectId: string, type: ReminderTyp
 export async function GET(request: NextRequest) {
   // Verify cron secret to prevent unauthorised triggering
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== 'Bearer ' + process.env.CRON_SECRET && process.env.CRON_SECRET) {
+  if (process.env.CRON_SECRET && authHeader !== 'Bearer ' + process.env.CRON_SECRET) {
     return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
   }
 

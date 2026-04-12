@@ -112,9 +112,11 @@ export default function WarrantyPage() {
     open: '#D4522A', pending: '#C07830', resolved: '#2E7D60', escalated: '#6B4FA8'
   }
 
+  const isTradie = profile?.role === 'tradie'
+
   const nav = (
     <div>
-      <NavHeader profile={profile} isTradie={false}   />
+      <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/warranty" jobStatus={job?.status} />
     </div>
   )

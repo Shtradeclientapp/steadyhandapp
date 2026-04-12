@@ -301,7 +301,7 @@ function MessagesPageInner() {
                 <div style={{ display:'flex', gap:'10px', alignItems:'flex-end' }}>
                   <textarea
                     value={newMessage}
-                    onChange={e => setNewMessage(e.target.value)}
+                    onChange={e => { setNewMessage(e.target.value); if (sendError) setSendError(null) }}
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                     placeholder="Type a message... (Enter to send)"
                     rows={2}

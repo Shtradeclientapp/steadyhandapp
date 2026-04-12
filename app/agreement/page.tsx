@@ -318,7 +318,8 @@ export default function AgreementPage() {
                 </div>
               ))}
               {saving && <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px' }}>Saving...</p>}
-              {savedAt && !saving && <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'8px' }}>✓ Saved {savedAt}</p>}
+              {savedAt && !saving && !saveError && <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'8px' }}>✓ Saved {savedAt}</p>}
+              {saveError && <p style={{ fontSize:'11px', color:'#D4522A', marginTop:'8px' }}>⚠ {saveError}</p>}
             </div>
           </div>
 
@@ -656,6 +657,9 @@ export default function AgreementPage() {
           {!scope && (
               <div style={{ padding:'32px', textAlign:'center' as const, borderBottom:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>No scope drafted yet. Steadyhand will generate a scope from your job details.</p>
+                {draftError && (
+                  <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {draftError}</p>
+                )}
                 <button type="button" onClick={() => draftScope()} disabled={drafting}
                   style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
                   {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
@@ -776,6 +780,9 @@ export default function AgreementPage() {
                         </button>
                       )}
                     </>
+                  )}
+                  {draftError && (
+                    <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {draftError}</p>
                   )}
                   <button type="button" onClick={() => draftScope()} disabled={drafting}
                     style={{ width:'100%', background:'transparent', color:'#6B4FA8', padding:'12px', borderRadius:'10px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(107,79,168,0.25)', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>

@@ -129,6 +129,7 @@ export default function DeliveryPage() {
   const [showVariationForm, setShowVariationForm] = useState(false)
   const [variationForm, setVariationForm] = useState({ title: '', description: '', cost_impact: '', time_impact_days: '' })
   const [submittingVariation, setSubmittingVariation] = useState(false)
+  const [variationError, setVariationError] = useState<string|null>(null)
   const [isTradie, setIsTradie] = useState(false)
 
   useEffect(() => {
@@ -235,9 +236,10 @@ export default function DeliveryPage() {
   const submitVariation = async () => {
     if (!variationForm.title || !job) return
     setSubmittingVariation(true)
+    setVariationError(null)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    const { data: variation } = await supabase.from('variations').insert({
+    const { data: variation, error: varErr } = await supabase.from('variations').insert({
       job_id: job.id,
       requested_by: session?.user.id,
       title: variationForm.title,
@@ -246,6 +248,11 @@ export default function DeliveryPage() {
       time_impact_days: parseInt(variationForm.time_impact_days) || 0,
       status: 'pending',
     }).select().single()
+    if (varErr || !variation) {
+      setVariationError('Could not submit variation — please check your connection and try again.')
+      setSubmittingVariation(false)
+      return
+    }
     if (variation) {
       setVariations(prev => [variation, ...prev])
       await supabase.from('job_messages').insert({
