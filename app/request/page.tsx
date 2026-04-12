@@ -234,6 +234,11 @@ sessionStorage.removeItem('diy_project_id')
                 </select>
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — Steadyhand will confirm during matching.</span>
               </label>
+              {submitError && step === 0 && (
+                <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
+                  <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>{submitError}</p>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={() => setStep(1)}

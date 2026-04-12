@@ -6,6 +6,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const apiKey = process.env.GOOGLE_PLACES_API_KEY
+    if (!apiKey) {
+      console.warn('GOOGLE_PLACES_API_KEY is not set — suburb autocomplete will not work')
+      return NextResponse.json({ suggestions: [], error: 'API_KEY_MISSING' })
+    }
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&types=(regions)&components=country:au&key=${apiKey}`
     const res = await fetch(url)
     const data = await res.json()

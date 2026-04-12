@@ -25,6 +25,7 @@ export default function HomePlanPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string|null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -38,9 +39,14 @@ export default function HomePlanPage() {
 
   const registerInterest = async () => {
     setSubmitting(true)
+    setSubmitError(null)
     const supabase = createClient()
-    await supabase.from('profiles').update({ subscription_plan: 'home_interest' }).eq('id', profile.id)
-    // Log interest internally via profile update only
+    const { error } = await supabase.from('profiles').update({ subscription_plan: 'home_interest' }).eq('id', profile.id)
+    if (error) {
+      setSubmitError('Something went wrong — please try again.')
+      setSubmitting(false)
+      return
+    }
     setSubmitted(true)
     setSubmitting(false)
   }

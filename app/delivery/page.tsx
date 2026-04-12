@@ -221,9 +221,9 @@ export default function DeliveryPage() {
     const { data: { session } } = await supabase.auth.getSession()
     const ext = file.name.split('.').pop()
     const filePath = `milestone-photos/${milestoneId}/${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true })
+    const { error } = await supabase.storage.from('Job Photos').upload(filePath, file, { upsert: true })
     if (!error) {
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath)
+      const { data } = supabase.storage.from('Job Photos').getPublicUrl(filePath)
       const url = data.publicUrl
       const milestone = milestones.find(m => m.id === milestoneId)
       const existingPhotos = milestone?.photos || []

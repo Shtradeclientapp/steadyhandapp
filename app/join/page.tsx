@@ -36,7 +36,8 @@ export default function JoinPage() {
     await supabase.from('tradie_invitations').update({ status: 'accepted', accepted_at: new Date().toISOString() }).eq('id', invitation.id)
     setStep('done')
     setSubmitting(false)
-    setTimeout(() => { window.location.href = '/tradie/dashboard' }, 2000)
+    const redirectPath = invitation.role === 'org' ? '/org/dashboard' : invitation.role === 'client' ? '/dashboard' : '/tradie/dashboard'
+    setTimeout(() => { window.location.href = redirectPath }, 2000)
   }
 
   if (loading) return (

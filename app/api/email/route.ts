@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 const FROM = 'Steadyhand <onboarding@resend.dev>'
-const URL = 'https://steadyhandapp.vercel.app'
+const URL = process.env.NEXT_PUBLIC_APP_URL || 'https://steadyhandapp.vercel.app'
 
 function wrap(body: string) {
   return '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;">' +

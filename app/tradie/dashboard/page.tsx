@@ -438,6 +438,11 @@ export default function TradieDashboard() {
               <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', marginBottom:'4px' }}>Profile pending verification</p>
               <p style={{ fontSize:'12px', color:'#4A5E64' }}>Your licence and insurance are being verified. You'll be notified when your profile goes live.</p>
             </div>
+            <a href="/tradie/subscribe" style={{ flexShrink:0 }}>
+              <button type="button" style={{ background:'#D4522A', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Manage subscription →
+              </button>
+            </a>
           </div>
         )}
 
