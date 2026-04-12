@@ -783,18 +783,29 @@ export default function AssessPage() {
           </div>
         )}
 
-        {/* MESSAGES */}
-        <a href={'/messages' + (job?.id ? '?job=' + job.id : '')} style={{ display:'block', marginTop:'24px', textDecoration:'none' }}>
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
-            <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-              <span style={{ fontSize:'16px' }}>💬</span>
+        {/* MESSAGES — post-lock notes */}
+        <div style={{ marginTop:'24px' }}>
+          {myShared && (
+            <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px', display:'flex', gap:'8px', alignItems:'flex-start' }}>
+              <span style={{ fontSize:'14px', flexShrink:0 }}>🔒</span>
+              <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
+                <strong style={{ color:'#1C2B32' }}>Consult record is locked.</strong> Any observations or follow-up notes after this point go in the job thread below — they are timestamped and visible to both parties, but separate from the locked record.
+              </p>
             </div>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Continue the conversation</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Message {theirLabel} about the assessment →</p>
+          )}
+          <a href={'/messages' + (job?.id ? '?job=' + job.id : '')} style={{ display:'block', textDecoration:'none' }}>
+            <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', gap:'12px' }}>
+              <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontSize:'16px' }}>💬</span>
+              </div>
+              <div style={{ flex:1 }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 2px' }}>Job thread — add notes or follow up</p>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0 }}>All messages, system updates and stage records in one place →</p>
+              </div>
+              <span style={{ fontSize:'16px', color:'rgba(216,228,225,0.4)' }}>→</span>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
 
       </div>
       <StageGuideModal
@@ -875,6 +886,15 @@ export default function AssessPage() {
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Your consult record is already saved there</p>
                     </div>
                     <span style={{ fontSize:'18px', color:'#9B6B9B' }}>→</span>
+                  </div>
+                </a>
+                <a href={'/messages' + (job?.id ? '?job=' + job.id : '')} style={{ textDecoration:'none' }}>
+                  <div style={{ background:'white', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <div>
+                      <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Add follow-up notes</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Job thread — for anything after the locked record</p>
+                    </div>
+                    <span style={{ fontSize:'18px', color:'#7A9098' }}>→</span>
                   </div>
                 </a>
               </div>
