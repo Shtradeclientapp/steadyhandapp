@@ -51,7 +51,7 @@ export default function RequestPage() {
   const [step, setStep] = useState(0)
   const [showHints, setShowHints] = useState(0)
   const [submitting, setSubmitting] = useState(false)
-  const [jobId, setJobId] = useState<string | null>(null)
+  const [submitError, setSubmitError] = useState<string|null>(null)
   const [orgId, setOrgId] = useState<string | null>(null)
   const [propertyId, setPropertyId] = useState<string | null>(null)
   const [form, setForm] = useState({
@@ -92,10 +92,11 @@ export default function RequestPage() {
 
 const submitJob = async () => {
     if (!form.title || !form.description || !form.trade_category || !form.suburb) {
-      alert('Please complete all required fields — title, description, trade category and suburb.')
+      setSubmitError('Please complete all required fields — title, description, trade category and suburb.')
       setSubmitting(false)
       return
     }
+    setSubmitError(null)
     setSubmitting(true)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
@@ -117,7 +118,7 @@ const submitJob = async () => {
     })
 
     const { job, error } = await res.json()
-    if (error) { alert(error); setSubmitting(false); return }
+    if (error) { setSubmitError(error); setSubmitting(false); return }
 sessionStorage.removeItem('diy_project_id')
     window.location.href = '/shortlist?submitted=true'
   }
@@ -338,6 +339,11 @@ sessionStorage.removeItem('diy_project_id')
                   Claude will review your request and build a shortlist of 3–5 verified tradies matched to your trade, suburb, and job complexity.
                 </p>
               </div>
+              {submitError && (
+                <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
+                  <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>{submitError}</p>
+                </div>
+              )}
               <div style={{ display:'flex', gap:'10px', marginTop:'20px' }}>
                 {btn('← Back', () => setStep(1), 'ghost')}
                 <button

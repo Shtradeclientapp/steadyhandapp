@@ -87,7 +87,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                   )}
                   <div style={{ maxHeight:'320px', overflowY:'auto' }}>
                     {notifs.map((n: any) => (
-                      <a key={n.id} href={n.job_id ? '/dashboard' : '#'}
+                      <a key={n.id} href={n.job_id ? (isTradie ? '/tradie/dashboard' : '/dashboard') : '#'}
                         style={{ display:'block', padding:'10px 14px', borderBottom:'1px solid rgba(28,43,50,0.05)', textDecoration:'none', background: n.read ? 'white' : 'rgba(46,125,96,0.04)' }}
                         onClick={() => setNotifOpen(false)}>
                         <p style={{ fontSize:'13px', color:'#1C2B32', margin:'0 0 2px', fontWeight: n.read ? 400 : 500 }}>{n.message}</p>

@@ -409,6 +409,30 @@ export default function DeliveryPage() {
           </div>
         </div>
 
+        {milestones.length === 0 && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'28px 24px', textAlign:'center' as const, marginBottom:'24px' }}>
+            <div style={{ fontSize:'32px', marginBottom:'12px', opacity:0.4 }}>📋</div>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>No milestones set up yet</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
+              {isTradie
+                ? 'Add milestones to your quote so the client can track and approve each stage of work.'
+                : 'Your tradie has not yet set up milestones for this job. Check back soon or message them directly.'}
+            </p>
+            {isTradie ? (
+              <a href={'/tradie/job?id=' + job.id}>
+                <button type="button" style={{ background:'#C07830', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  Set up milestones →
+                </button>
+              </a>
+            ) : (
+              <a href={'/messages?job=' + job.id}>
+                <button type="button" style={{ background:'#1C2B32', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  Message tradie →
+                </button>
+              </a>
+            )}
+          </div>
+        )}
         <div style={{ display:'flex', flexDirection:'column', gap:'0' }}>
           {milestones.map((m, i) => {
             const isDone = m.status === 'approved'
