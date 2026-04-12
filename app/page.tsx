@@ -240,9 +240,8 @@ export default function Home() {
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
                 <span style={{ fontSize:'10px', color:'#2E6A8F', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Homeowner — Case study</span>
               </div>
-              <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
               <blockquote style={{ fontSize:'17px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'24px', flex:1 }}>
-                The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.
+                &ldquo;The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.&rdquo;
               </blockquote>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                 <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(212,82,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', fontWeight:600 }}>E</div>
@@ -257,9 +256,8 @@ export default function Home() {
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
                 <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Trade business — Case study</span>
               </div>
-              <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
               <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'20px', flex:1 }}>
-                From the get-go, Steadyhand developed sensitive ways of creating processes from the ground up across worksites, office and client comms, but they were also great at recognising and supporting my intuitions as an owner-operator going through a period of change. I recommend Steadyhand wholeheartedly as digital operations professionals.
+                &ldquo;From the get-go, Steadyhand developed sensitive ways of creating processes from the ground up across worksites, office and client comms, but they were also great at recognising and supporting my intuitions as an owner-operator going through a period of change. I recommend Steadyhand wholeheartedly as digital operations professionals.&rdquo;
               </blockquote>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                 <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(212,82,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', fontWeight:600 }}>C</div>
