@@ -17,6 +17,7 @@ export default function WarrantyPage() {
   const [submitting, setSubmitting] = useState(false)
   const [form, setForm] = useState({ title: '', description: '', severity: 'moderate' })
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
+  const [issueError, setIssueError] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function WarrantyPage() {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const responseDue = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-    const { data: issue } = await supabase.from('warranty_issues').insert({
+    const { data: issue, error: issueInsertErr } = await supabase.from('warranty_issues').insert({
       job_id: job.id,
       raised_by: session?.user.id,
       title: form.title,
@@ -77,6 +78,12 @@ export default function WarrantyPage() {
         body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
       }).catch(() => {})
     }
+    if (!issue) {
+      setIssueError('Could not log issue — please check your connection and try again.')
+      setSubmitting(false)
+      return
+    }
+    setIssueError(null)
     setForm({ title: '', description: '', severity: 'moderate' })
     setShowForm(false)
     setSubmitting(false)
@@ -196,6 +203,9 @@ export default function WarrantyPage() {
                 style={{ background:'transparent', color:'#1C2B32', padding:'11px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>
                 Cancel
               </button>
+              {issueError && (
+                <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 6px' }}>⚠ {issueError}</p>
+              )}
               <button type="button" onClick={submitIssue} disabled={submitting || !form.title || !form.description}
                 style={{ flex:1, background:'#D4522A', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer', opacity: submitting || !form.title || !form.description ? 0.6 : 1 }}>
                 {submitting ? 'Submitting...' : 'Submit warranty issue →'}

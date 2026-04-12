@@ -19,6 +19,7 @@ export default function VaultPage() {
   const [docs, setDocs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string|null>(null)
   const [showUpload, setShowUpload] = useState(false)
   const [filter, setFilter] = useState('all')
   const [form, setForm] = useState({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
@@ -51,12 +52,15 @@ export default function VaultPage() {
       const ext = selectedFile.name.split('.').pop()
       const path = 'vault/' + profile.id + '/' + Date.now() + '.' + ext
       const { error } = await supabase.storage.from('Documents').upload(path, selectedFile)
-      if (!error) {
-        // Use signed URL for private bucket (1 year expiry)
-        const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
-        file_url = signedData?.signedUrl || null
-        file_name = selectedFile.name
+      if (error) {
+        setUploadError('File upload failed — the Documents bucket may be missing or have no upload policy. Check Supabase Storage settings.')
+        setUploading(false)
+        return
       }
+      // Use signed URL for private bucket (1 year expiry)
+      const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
+      file_url = signedData?.signedUrl || null
+      file_name = selectedFile.name
     }
     const { data: doc } = await supabase.from('vault_documents').insert({
       user_id: profile.id,

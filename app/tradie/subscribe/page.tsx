@@ -76,6 +76,7 @@ export default function TradieSubscribePage() {
   const [loading, setLoading] = useState(true)
   const [selectedTier, setSelectedTier] = useState<string|null>(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
 
   useEffect(() => {
@@ -93,7 +94,7 @@ export default function TradieSubscribePage() {
   const openCheckout = useCallback(async (tierId: string) => {
     if (!profile || tierId === 'basic') return
     const priceId = PRICE_IDS[tierId]
-    if (!priceId) { alert('This plan is not yet available. Please contact support.'); return }
+    if (!priceId) { setCheckoutError('This plan is not yet available. Please contact support.'); return }
     setSelectedTier(tierId)
     setCheckoutLoading(true)
     setClientSecret(null)
@@ -106,7 +107,7 @@ export default function TradieSubscribePage() {
     if (data.client_secret) {
       setClientSecret(data.client_secret)
     } else {
-      alert(data.error || 'Could not start checkout. Please try again.')
+      setCheckoutError(data.error || 'Could not start checkout. Please try again.')
       setSelectedTier(null)
     }
     setCheckoutLoading(false)
@@ -121,7 +122,7 @@ export default function TradieSubscribePage() {
     })
     const data = await res.json()
     if (data.url) window.location.href = data.url
-    else alert('Could not open billing portal. Please try again.')
+    else setCheckoutError('Could not open billing portal. Please try again.')
   }
 
   if (loading) return (
@@ -235,6 +236,11 @@ export default function TradieSubscribePage() {
         </div>
 
         {/* Embedded checkout panel */}
+        {checkoutError && (
+          <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'12px 16px', margin:'0 0 16px' }}>
+            <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>⚠ {checkoutError}</p>
+          </div>
+        )}
         {clientSecret && (
           <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'16px', overflow:'hidden', marginBottom:'32px', boxShadow:'0 8px 32px rgba(28,43,50,0.08)' }}>
             <div style={{ background:'#1C2B32', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>

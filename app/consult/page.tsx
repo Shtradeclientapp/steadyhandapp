@@ -37,6 +37,7 @@ export default function AssessPage() {
   const [showCompleteModal, setShowCompleteModal] = useState(false)
   const [form, setForm] = useState<any>({})
   const [uploadingPhotos, setUploadingPhotos] = useState(false)
+  const [reminderSent, setReminderSent] = useState(false)
   const [photoError, setPhotoError] = useState<string|null>(null)
   const [clientPhotos, setClientPhotos] = useState<string[]>([])
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
@@ -680,10 +681,13 @@ export default function AssessPage() {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ type: 'assess_reminder', job_id: job.id, remind_party: isTradie ? 'client' : 'tradie' }),
                     })
-                    alert('Reminder sent to ' + theirLabel)
+                    setReminderSent(true); setTimeout(() => setReminderSent(false), 3000)
                   }} style={{ fontSize:'13px', color:'#9B6B9B', background:'none', border:'1px solid rgba(155,107,155,0.3)', borderRadius:'7px', padding:'8px 14px', cursor:'pointer' }}>
                     Send email reminder
                   </button>
+                  {reminderSent && (
+                    <p style={{ fontSize:'12px', color:'#2E7D60', margin:'6px 0 0' }}>✓ Reminder sent</p>
+                  )}
                 </div>
               </div>
             ) : (

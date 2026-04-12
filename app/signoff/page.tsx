@@ -82,7 +82,7 @@ export default function SignoffPage() {
     await supabase.from('jobs').update({
       status: 'warranty',
       signoff_at: new Date().toISOString(),
-      warranty_ends_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+      warranty_ends_at: new Date(Date.now() + (job.warranty_period || 90) * 24 * 60 * 60 * 1000).toISOString(),
     }).eq('id', job.id)
     if (review && session) {
       await supabase.from('reviews').insert({
@@ -111,8 +111,8 @@ export default function SignoffPage() {
         document_type: 'warranty',
         tradie_name: job.tradie?.business_name || null,
         issued_date: new Date().toISOString().split('T')[0],
-        expiry_date: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        notes: '90-day warranty — signed off ' + new Date().toLocaleDateString('en-AU'),
+        expiry_date: new Date(Date.now() + (job.warranty_period || 90) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        notes: (job.warranty_period || 90) + '-day warranty — signed off ' + new Date().toLocaleDateString('en-AU'),
       })
     } catch { /* non-critical */ }
 
@@ -172,7 +172,7 @@ export default function SignoffPage() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <NavHeader profile={profile} isTradie={false} />
+      <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/signoff" jobStatus={job?.status} />
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'680px', margin:'0 auto', padding:'16px 24px 0' }}>
@@ -331,7 +331,7 @@ export default function SignoffPage() {
             {/* Submit */}
             <div style={{ background: allChecked && rating > 0 ? 'rgba(46,125,96,0.06)' : 'rgba(28,43,50,0.04)', border:'1px solid ' + (allChecked && rating > 0 ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
               {rating === 0 && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Please rate your tradie before signing off</p>}
-              {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your {job?.warranty_period_days || 90}-day warranty starts from this moment</p>}
+              {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your {job?.warranty_period || 90}-day warranty starts from this moment</p>}
               <button type="button" onClick={submitSignoff} disabled={!allChecked || rating === 0 || submitting}
                 style={{ width:'100%', background: allChecked && rating > 0 ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s', marginBottom: !allChecked ? '10px' : '0' }}>
                 {submitting ? 'Signing off...' : 'Sign off and start warranty →'}

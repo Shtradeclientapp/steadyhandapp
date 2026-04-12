@@ -45,6 +45,7 @@ export default function DIYPage() {
   const [checklist, setChecklist] = useState<any[]>([])
   const [childJobs, setChildJobs] = useState<any[]>([])
   const [wizardStep, setWizardStep] = useState(0)
+  const [wizardError, setWizardError] = useState<string|null>(null)
   const [generatingSummary, setGeneratingSummary] = useState(false)
   const [vaultDocs, setVaultDocs] = useState<any[]>([])
   const [savingPermit, setSavingPermit] = useState(false)
@@ -108,9 +109,10 @@ export default function DIYPage() {
   const createProject = async () => {
     if (!newProject.title || creatingProject) return
     setCreatingProject(true)
+    setWizardError(null)
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
-    const { data: proj } = await supabase.from('diy_projects').insert({
+    const { data: proj, error: projErr } = await supabase.from('diy_projects').insert({
       user_id: session?.user.id,
       title: newProject.title,
       description: newProject.description || null,
@@ -122,6 +124,11 @@ export default function DIYPage() {
       builder_registration: newProject.builder_registration || null,
       status: 'active',
     }).select().single()
+    if (projErr || !proj) {
+      setWizardError('Could not create project — please check your connection and try again.')
+      setCreatingProject(false)
+      return
+    }
     if (proj) {
       // Pre-populate WA compliance checklist
       if (newProject.project_type === 'owner_builder') {
@@ -445,6 +452,9 @@ export default function DIYPage() {
                   </div>
                   <div style={{ display:'flex', gap:'8px' }}>
                     <button type="button" onClick={() => setWizardStep(6)} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 14px', fontSize:'12px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+                    {wizardError && (
+                      <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {wizardError}</p>
+                    )}
                     <button type="button" onClick={createProject} disabled={creatingProject} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity:creatingProject?0.6:1 }}>Create project & schedule →</button>
                   </div>
                 </div>

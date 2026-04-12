@@ -58,6 +58,7 @@ export default function TradieJobPage() {
   const [showQuoteForm, setShowQuoteForm] = useState(false)
   const [showTemplates, setShowTemplates] = useState(false)
   const [submittingQuote, setSubmittingQuote] = useState(false)
+  const [quoteError, setQuoteError] = useState<string|null>(null)
   const [quoteSubmitted, setQuoteSubmitted] = useState(false)
   const [warrantyIssues, setWarrantyIssues] = useState<any[]>([])
   const [respondingTo, setRespondingTo] = useState<string|null>(null)
@@ -67,6 +68,7 @@ export default function TradieJobPage() {
   const [sharedDocs, setSharedDocs] = useState<any[]>([])
   const [cocFile, setCocFile] = useState<File|null>(null)
   const [uploadingCoc, setUploadingCoc] = useState(false)
+  const [cocError, setCocError] = useState<string|null>(null)
   const [cocUploaded, setCocUploaded] = useState(false)
   const [quoteForm, setQuoteForm] = useState({
     estimated_start: '',
@@ -151,7 +153,7 @@ export default function TradieJobPage() {
     const breakdown = quoteForm.lineItems
       .filter(item => item.label && item.amount)
       .map(item => ({ label: item.label, amount: parseFloat(item.amount), category: item.category }))
-    const { data: quote } = await supabase.from('quotes').insert({
+    const { data: quote, error: quoteInsertError } = await supabase.from('quotes').insert({
       job_id: job.id,
       tradie_id: user.id,
       version: latestVersion,
@@ -161,6 +163,11 @@ export default function TradieJobPage() {
       estimated_days: quoteForm.estimated_days ? Number(quoteForm.estimated_days) : null,
       conditions: quoteForm.conditions || null,
     }).select().single()
+    if (quoteInsertError || !quote) {
+      setQuoteError('Failed to submit quote — please check your connection and try again.')
+      setSubmittingQuote(false)
+      return
+    }
     if (quote) {
       setQuotes(prev => [quote, ...prev])
       const supabase2 = createClient()
@@ -221,6 +228,12 @@ export default function TradieJobPage() {
     const ext = cocFile.name.split('.').pop()
     const path = 'vault/coc/' + job.id + '/' + Date.now() + '.' + ext
     const { error } = await supabase.storage.from('Documents').upload(path, cocFile)
+    if (error) {
+      setCocError('Upload failed — the Documents bucket may be missing or have no upload policy.')
+      setUploadingCoc(false)
+      return
+    }
+    setCocError(null)
     if (!error) {
       const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
       const file_url = signedData?.signedUrl || null

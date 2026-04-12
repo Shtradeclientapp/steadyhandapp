@@ -18,6 +18,7 @@ export default function AgreementPage() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [drafting, setDrafting] = useState(false)
+  const [draftError, setDraftError] = useState<string|null>(null)
   const [sending, setSending] = useState(false)
   const [pushingMsg, setPushingMsg] = useState<string|null>(null)
   const [scopeVersion, setScopeVersion] = useState(1)
@@ -25,6 +26,7 @@ export default function AgreementPage() {
   const [allQuotes, setAllQuotes] = useState<any[]>([])
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string|null>(null)
   const [savedAt, setSavedAt] = useState<string|null>(null)
   const [acceptingQuote, setAcceptingQuote] = useState(false)
   const [showThread, setShowThread] = useState(true)
@@ -145,10 +147,10 @@ export default function AgreementPage() {
         setScope(data.scope)
         setScopeVersion(v => v + 1)
       } else {
-        alert('Could not generate scope — please try again or write it manually.')
+        setDraftError('Could not generate scope — please try again or write it manually.')
       }
     } catch (e) {
-      alert('Connection error — please check your internet and try again.')
+      setDraftError('Connection error — please check your internet and try again.')
     }
     setDrafting(false)
   }
@@ -176,7 +178,9 @@ export default function AgreementPage() {
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     setScope({ ...scope, ...updates })
-    await supabase.from('scope_agreements').update({ ...updates, last_edited_by: session?.user.id, last_edited_at: new Date().toISOString(), client_signed_at: null, tradie_signed_at: null }).eq('id', scope.id)
+    const { error: saveErr } = await supabase.from('scope_agreements').update({ ...updates, last_edited_by: session?.user.id, last_edited_at: new Date().toISOString(), client_signed_at: null, tradie_signed_at: null }).eq('id', scope.id)
+    if (saveErr) { setSaveError('Save failed — please check your connection and try again.'); setSaving(false); return }
+    setSaveError(null)
 
     const editedField = Object.keys(updates)[0]
     const fieldLabel: Record<string,string> = { inclusions: 'inclusions', exclusions: 'exclusions', milestones: 'payment milestones' }

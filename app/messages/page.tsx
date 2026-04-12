@@ -13,6 +13,7 @@ function MessagesPageInner() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string|null>(null)
   const [lastMessages, setLastMessages] = useState<Record<string, any>>({})
   const [unread, setUnread] = useState<Record<string, number>>({})  // per-job unread counts
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -142,13 +143,18 @@ function MessagesPageInner() {
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedJob || !user) return
     setSending(true)
+    setSendError(null)
     const supabase = createClient()
-    await supabase.from('job_messages').insert({
+    const { error } = await supabase.from('job_messages').insert({
       job_id: selectedJob.id,
       sender_id: user.id,
       body: newMessage.trim(),
     })
-    setNewMessage('')
+    if (error) {
+      setSendError('Message failed to send — check your connection and try again.')
+    } else {
+      setNewMessage('')
+    }
     setSending(false)
   }
 
@@ -289,6 +295,9 @@ function MessagesPageInner() {
               </div>
 
               <div style={{ padding:'16px 20px', borderTop:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE', flexShrink:0 }}>
+                {sendError && (
+                  <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 6px' }}>⚠ {sendError}</p>
+                )}
                 <div style={{ display:'flex', gap:'10px', alignItems:'flex-end' }}>
                   <textarea
                     value={newMessage}

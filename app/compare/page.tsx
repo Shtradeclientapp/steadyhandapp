@@ -13,6 +13,7 @@ export default function ComparePage() {
   const [quotes, setQuotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [accepting, setAccepting] = useState<string|null>(null)
+  const [acceptError, setAcceptError] = useState<string|null>(null)
   const [accepted, setAccepted] = useState<string|null>(null)
   const [expandedQuote, setExpandedQuote] = useState<string|null>(null)
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
@@ -61,18 +62,25 @@ export default function ComparePage() {
   const acceptQuote = async (quote: any) => {
     if (!confirm('Accept this quote from ' + quote.tradie?.business_name + '? The other tradies will be notified.')) return
     setAccepting(quote.id)
-    const supabase = createClient()
-    await supabase.from('quotes').update({ status: 'accepted' }).eq('id', quote.id)
-    await supabase.from('quotes').update({ status: 'rejected' }).eq('job_id', selectedJob.id).neq('id', quote.id)
-    await supabase.from('jobs').update({ status: 'agreement', tradie_id: quote.tradie_id }).eq('id', selectedJob.id)
-    await fetch('/api/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'quote_accepted', job_id: selectedJob.id, tradie_id: quote.tradie_id }),
-    }).catch(() => {})
-    setAccepted(quote.id)
+    setAcceptError(null)
+    try {
+      const supabase = createClient()
+      const { error: e1 } = await supabase.from('quotes').update({ status: 'accepted' }).eq('id', quote.id)
+      if (e1) throw new Error(e1.message)
+      await supabase.from('quotes').update({ status: 'rejected' }).eq('job_id', selectedJob.id).neq('id', quote.id)
+      const { error: e2 } = await supabase.from('jobs').update({ status: 'agreement', tradie_id: quote.tradie_id }).eq('id', selectedJob.id)
+      if (e2) throw new Error(e2.message)
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'quote_accepted', job_id: selectedJob.id, tradie_id: quote.tradie_id }),
+      }).catch(() => {})
+      setAccepted(quote.id)
+      await loadQuotes(selectedJob.id)
+    } catch (e: any) {
+      setAcceptError('Could not accept quote — please check your connection and try again.')
+    }
     setAccepting(null)
-    await loadQuotes(selectedJob.id)
   }
 
   const requestRevision = async (quoteId: string) => {
@@ -260,6 +268,9 @@ export default function ComparePage() {
                       {/* Actions */}
                       {!accepted && (
                         <div style={{ padding:'14px 20px', display:'flex', gap:'8px', flexDirection:'column' as const }}>
+                          {acceptError && (
+                            <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 6px' }}>⚠ {acceptError}</p>
+                          )}
                           <button type="button" onClick={() => acceptQuote(q)} disabled={!!accepting}
                             style={{ width:'100%', background:'#2E7D60', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: accepting ? 0.6 : 1 }}>
                             {accepting === q.id ? 'Accepting...' : 'Accept this quote →'}
