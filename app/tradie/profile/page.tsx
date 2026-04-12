@@ -98,8 +98,10 @@ export default function TradieProfilePage() {
       preferred_contact: form.preferred_contact,
       availability_status: form.availability_status,
     }).eq('id', profile.id)
+    if (tradieErr) { setSaveError('Save failed — please check your connection and try again.'); setSaving(false); return }
     setSaving(false)
     setSaved(true)
+    setSaveError(null)
     setTimeout(() => setSaved(false), 3000)
   }
 

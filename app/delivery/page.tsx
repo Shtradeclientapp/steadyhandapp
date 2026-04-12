@@ -534,6 +534,77 @@ export default function DeliveryPage() {
           })}
         </div>
 
+        {/* Variations section */}
+        <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginTop:'24px', marginBottom:'16px' }}>
+          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>VARIATIONS</p>
+              <p style={{ fontSize:'11px', color:'#7A9098', margin:'2px 0 0' }}>Scope changes, additions or unexpected work</p>
+            </div>
+            <button type="button" onClick={() => setShowVariationForm(v => !v)}
+              style={{ background:'#C07830', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+              {showVariationForm ? 'Cancel' : '+ Request variation'}
+            </button>
+          </div>
+
+          {showVariationForm && (
+            <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(192,120,48,0.03)' }}>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                <input
+                  type="text"
+                  placeholder="Variation title (required)"
+                  value={variationForm.title}
+                  onChange={e => setVariationForm(f => ({ ...f, title: e.target.value }))}
+                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }}
+                />
+                <textarea
+                  placeholder="Description (optional)"
+                  value={variationForm.description}
+                  onChange={e => setVariationForm(f => ({ ...f, description: e.target.value }))}
+                  rows={2}
+                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }}
+                />
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+                  <input
+                    type="number"
+                    placeholder="Cost impact ($)"
+                    value={variationForm.cost_impact}
+                    onChange={e => setVariationForm(f => ({ ...f, cost_impact: e.target.value }))}
+                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif' }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Time impact (days)"
+                    value={variationForm.time_impact_days}
+                    onChange={e => setVariationForm(f => ({ ...f, time_impact_days: e.target.value }))}
+                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif' }}
+                  />
+                </div>
+                {variationError && (
+                  <p style={{ fontSize:'12px', color:'#D4522A', margin:0 }}>⚠ {variationError}</p>
+                )}
+                <button type="button" onClick={submitVariation} disabled={submittingVariation || !variationForm.title}
+                  style={{ background: submittingVariation || !variationForm.title ? 'rgba(192,120,48,0.4)' : '#C07830', color:'white', padding:'10px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor: submittingVariation || !variationForm.title ? 'not-allowed' : 'pointer' }}>
+                  {submittingVariation ? 'Submitting...' : 'Submit variation →'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {variations.length === 0 && !showVariationForm && (
+            <div style={{ padding:'20px', textAlign:'center' as const }}>
+              <p style={{ fontSize:'13px', color:'#9AA5AA', margin:0 }}>No variations requested yet.</p>
+            </div>
+          )}
+          {variations.length > 0 && (
+            <div style={{ padding:'16px 20px', display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+              {variations.map(v => (
+                <VariationCard key={v.id} v={v} isTradie={isTradie} onRespond={respondToVariation} />
+              ))}
+            </div>
+          )}
+        </div>
+
         {done === total && total > 0 && (
           <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'20px', textAlign:'center', marginTop:'8px' }}>
             <p style={{ fontSize:'15px', color:'#2E7D60', fontWeight:'500', marginBottom:'12px' }}>All milestones complete. Ready for final sign-off.</p>
