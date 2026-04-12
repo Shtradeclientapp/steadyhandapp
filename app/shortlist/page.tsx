@@ -227,10 +227,9 @@ export default function ShortlistPage() {
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR MATCHES</h1>
 
           {!isPastStage && <HintPanel color="#2E6A8F" hints={[
-            "Best practice is to request quotes from at least 3 tradies so you can compare pricing and approach.",
-            "Steadyhand ranks tradies by category fit, location, track record and verification status — not by who pays to be listed.",
-            "You can select from Steadyhand matches and invite your own tradie — all quotes are compared in one place.",
-            "Verified licence and insurance badges mean Steadyhand has checked the tradie's credentials.",
+            "Check each tradie's Dialogue Rating — it reflects how transparently they communicate on pricing, risk and scope, not just whether they did good work.",
+            "A tradie's response time to your quote request is itself a signal. Fast, detailed responses suggest an organised business.",
+            "If you already have a tradie in mind, you can invite them directly — their quote will sit alongside the Steadyhand matches for comparison.",
           ]} />}
 
           {jobs.length > 1 && (
