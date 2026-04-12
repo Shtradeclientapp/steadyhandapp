@@ -37,6 +37,7 @@ export default function AssessPage() {
   const [showCompleteModal, setShowCompleteModal] = useState(false)
   const [form, setForm] = useState<any>({})
   const [uploadingPhotos, setUploadingPhotos] = useState(false)
+  const [photoError, setPhotoError] = useState<string|null>(null)
   const [clientPhotos, setClientPhotos] = useState<string[]>([])
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
   const [proposingDate, setProposingDate] = useState(false)
@@ -100,7 +101,9 @@ export default function AssessPage() {
     const supabase = createClient()
     const ext = file.name.split('.').pop()
     const path = 'assessments/' + assessment.id + '/' + Date.now() + '.' + ext
+    setPhotoError(null)
     const { error } = await supabase.storage.from('Job Photos').upload(path, file)
+    if (error) { setPhotoError('Photo upload failed — check that the Job Photos bucket exists in Supabase storage and is set to public.'); setUploadingPhotos(false); return }
     if (!error) {
       const { data: urlData } = supabase.storage.from('Job Photos').getPublicUrl(path)
       const url = urlData.publicUrl
@@ -578,6 +581,9 @@ export default function AssessPage() {
                           e.target.value = ''
                         }}
                       />
+                      {photoError && (
+                        <p style={{ fontSize:'12px', color:'#D4522A', margin:'8px 0 0' }}>⚠ {photoError}</p>
+                      )}
                       {uploadingPhotos ? (
                         <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Uploading...</p>
                       ) : (

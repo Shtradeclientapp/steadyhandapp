@@ -180,11 +180,15 @@ export default function TradieProfilePage() {
                 ))}
               </div>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' as const }}>
-                {tradie?.licence_verified && (
+                {tradie?.licence_verified ? (
                   <span style={{ fontSize: '12px', color: '#2E7D60', display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Licence verified</span>
+                ) : (
+                  <span style={{ fontSize: '12px', color: '#9AA5AA', display: 'flex', alignItems: 'center', gap: '4px' }}>⏳ Licence verification pending</span>
                 )}
-                {tradie?.insurance_verified && (
+                {tradie?.insurance_verified ? (
                   <span style={{ fontSize: '12px', color: '#2E7D60', display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Insurance verified</span>
+                ) : (
+                  <span style={{ fontSize: '12px', color: '#9AA5AA', display: 'flex', alignItems: 'center', gap: '4px' }}>⏳ Insurance verification pending</span>
                 )}
                 {tradie?.rating_avg > 0 && (
                   <span style={{ fontSize: '12px', color: 'rgba(216,228,225,0.6)' }}>⭐ {Number(tradie.rating_avg).toFixed(1)} · {tradie.jobs_completed} jobs</span>
