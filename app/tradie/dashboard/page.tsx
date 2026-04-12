@@ -411,38 +411,22 @@ export default function TradieDashboard() {
 
         {/* ── Stripe banners ── */}
         {!stripeConnected && (
-          <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' as const }}>
-            <div style={{ flex:1 }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Connect your bank account</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Set up Stripe to receive milestone payments directly to your bank account.</p>
-            </div>
+          <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+            <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Bank account not connected — milestone payments are on hold.</p>
             <button type="button" onClick={async () => {
               const res  = await fetch('/api/stripe', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
               const data = await res.json()
               if (data.url) window.location.href = data.url
-            }} style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-              Connect with Stripe →
+            }} style={{ background:'none', color:'#2E7D60', padding:'0', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0, textDecoration:'underline' }}>
+              Connect bank account →
             </button>
           </div>
         )}
-        {stripeConnected && (
-          <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'12px 16px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'8px' }}>
-            <span style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500 }}>✓ Stripe connected — payments will be deposited directly to your bank</span>
-          </div>
-        )}
 
-        {/* ── Subscription pending banner ── */}
         {profile?.tradie?.subscription_active === false && (
-          <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap' as const }}>
-            <div style={{ flex:1 }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', marginBottom:'4px' }}>Profile pending verification</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Your licence and insurance are being verified. You'll be notified when your profile goes live.</p>
-            </div>
-            <a href="/tradie/subscribe" style={{ flexShrink:0 }}>
-              <button type="button" style={{ background:'#D4522A', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                Manage subscription →
-              </button>
-            </a>
+          <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+            <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Profile pending verification — we will notify you when live.</p>
+            <a href="/tradie/subscribe" style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, textDecoration:'underline', flexShrink:0 }}>Manage subscription →</a>
           </div>
         )}
 
@@ -485,11 +469,7 @@ export default function TradieDashboard() {
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>
             {activeJobs.length > 0 ? 'ACTIVE JOBS' : 'NO ACTIVE JOBS'}
           </h2>
-          {activeJobs.some(j => getNextAction(j, user?.id).urgent) && (
-            <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'3px 10px' }}>
-              {activeJobs.filter(j => getNextAction(j, user?.id).urgent).length} need action
-            </span>
-          )}
+
         </div>
 
         {activeJobs.length === 0 && (
@@ -500,9 +480,6 @@ export default function TradieDashboard() {
           </div>
         )}
 
-        {(() => { const declinedCount = sortedActive.filter(job => { const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id); return myQR?.status === 'declined' }).length; return declinedCount > 0 ? (
-          <p style={{ fontSize:'12px', color:'#9AA5AA', textAlign:'center' as const, marginBottom:'8px' }}>{declinedCount} declined job{declinedCount !== 1 ? 's' : ''} hidden</p>
-        ) : null })()}
         {(() => { const declinedCount = sortedActive.filter(job => { const myQR = job.quote_requests?.find((qr: any) => qr.tradie_id === user?.id); return myQR?.status === 'declined' }).length; return declinedCount > 0 ? (
           <p style={{ fontSize:'12px', color:'#9AA5AA', textAlign:'center' as const, marginBottom:'8px' }}>{declinedCount} declined job{declinedCount !== 1 ? 's' : ''} hidden</p>
         ) : null })()}
@@ -536,9 +513,7 @@ export default function TradieDashboard() {
                       <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
                       <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</div>
                     </div>
-                    <span style={{ background: color + '18', border:`1px solid ${color}40`, borderRadius:'100px', padding:'4px 12px', fontSize:'11px', fontWeight:500, color, flexShrink:0 }}>
-                      {label}
-                    </span>
+                    <span style={{ fontSize:'11px', color, fontWeight:500, flexShrink:0 }}>{label}</span>
                   </div>
 
                   {/* Milestone bar (delivery stage) */}
@@ -554,22 +529,9 @@ export default function TradieDashboard() {
                     </div>
                   )}
 
-                  {/* ── Next action prompt ── */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    background: next.urgent ? 'rgba(212,82,42,0.06)' : 'rgba(28,43,50,0.04)',
-                    border: next.urgent ? '1px solid rgba(212,82,42,0.2)' : '1px solid rgba(28,43,50,0.08)',
-                    borderRadius: '8px',
-                    padding: '10px 14px',
-                  }}>
-                    <span style={{ fontSize:'16px', lineHeight:1, flexShrink:0 }}>{next.icon}</span>
-                    <div style={{ flex:1, minWidth:0 }}>
-                      <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? '#D4522A' : '#1C2B32', margin:'0 0 1px' }}>{next.headline}</p>
-                      {next.sub && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{next.sub}</p>}
-                    </div>
-                    <span style={{ fontSize:'13px', color: next.urgent ? '#D4522A' : '#4A5E64', fontWeight:500, flexShrink:0 }}>→</span>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', paddingTop:'10px', borderTop:'1px solid rgba(28,43,50,0.07)' }}>
+                    <p style={{ fontSize:'13px', color: next.urgent ? '#D4522A' : '#4A5E64', margin:0, fontWeight: next.urgent ? 500 : 400 }}>{next.headline}</p>
+                    <span style={{ fontSize:'13px', color: next.urgent ? '#D4522A' : '#7A9098', flexShrink:0 }}>→</span>
                   </div>
                 </div>
               </a>
@@ -595,35 +557,9 @@ export default function TradieDashboard() {
           </>
         )}
 
-        {/* TRADIE BUILD JOURNAL EXPLAINER */}
-        <div style={{ marginTop:'32px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>SOURCING QUOTES FROM SUPPLIERS?</p>
-            <a href="/diy" style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', textDecoration:'none' }}>Open Build Journal →</a>
-          </div>
-          <div style={{ padding:'16px 20px' }}>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'14px' }}>
-              As a trade business, you&apos;re often a quote-seeker too — sourcing materials, subcontractors or specialist services for your projects. Use the Build Journal to manage these requests, group them under a project name, and track costs and scope agreements in one place.
-            </p>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'14px' }}>
-              {[
-                { icon:'🔍', text:'Request quotes from suppliers and subcontractors through Steadyhand' },
-                { icon:'📁', text:'Group all trade packages under a single project name' },
-                { icon:'💰', text:'Track costs, variations and budget across the full project' },
-                { icon:'📋', text:'Store scope agreements and compliance records per project' },
-              ].map((item, i) => (
-                <div key={i} style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
-                  <span style={{ fontSize:'14px', flexShrink:0 }}>{item.icon}</span>
-                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{item.text}</p>
-                </div>
-              ))}
-            </div>
-            <a href="/diy">
-              <button type="button" style={{ background:'#1C2B32', color:'white', border:'none', borderRadius:'8px', padding:'9px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
-                Open Build Journal →
-              </button>
-            </a>
-          </div>
+        <div style={{ marginTop:'32px', paddingTop:'20px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>For your business — sourcing quotes from suppliers?</p>
+          <a href="/diy" style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500, textDecoration:'none', flexShrink:0 }}>Build Journal →</a>
         </div>
 
         {/* BUILD YOUR CAPABILITY */}
