@@ -67,7 +67,11 @@ export default function DIYPage() {
       setUser(session.user)
       const { data: proj } = await supabase.from('diy_projects').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false })
       setProjects(proj || [])
+      const newProjectId = new URLSearchParams(window.location.search).get('project')
       if (proj && proj.length > 0) {
+        if (newProjectId && proj.find((p: any) => p.id === newProjectId)) {
+          setActiveProject(newProjectId)
+        } else {
         setActiveProject(proj[0].id)
         const ids = proj.map((p: any) => p.id)
         const { data: t } = await supabase.from('diy_tasks').select('*').in('project_id', ids).order('created_at', { ascending: true })
@@ -252,7 +256,7 @@ export default function DIYPage() {
         <div>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>MY BUILDS</h2>
-            <button type="button" onClick={() => { setShowNewProject(true); setWizardStep(0) }} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button>
+            <a href="/diy/new"><button type="button" style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button></a>
           </div>
 
           {showNewProject && (
@@ -518,7 +522,7 @@ export default function DIYPage() {
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 0 24px', lineHeight:'1.5' }}>{ex.desc}</p>
                     </div>
                   ))}
-                  <button type="button" onClick={() => setShowNewProject(true)}
+                  <button type="button" onClick={() => window.location.href = '/diy/new'}
                     style={{ width:'100%', marginTop:'8px', background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
                     + Start your first build journal
                   </button>
