@@ -346,13 +346,13 @@ export default function AssessPage() {
                 job_id: job.id,
                 client_what_discussed: 'Consult skipped by client — proceeded directly to quoting.',
               }, { onConflict: 'job_id' })
-              await supabase.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+              await supabase.from('jobs').update({ status: 'compare' }).eq('id', job.id)
               await supabase.from('job_messages').insert({
                 job_id: job.id,
                 sender_id: session?.user.id,
                 body: 'Consult skipped — client has proceeded directly to quoting.',
               })
-              window.location.href = '/quotes'
+              window.location.href = '/compare'
             }} style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 14px', cursor:'pointer', whiteSpace:'nowrap' as const }}>
               Skip consult →
             </button>

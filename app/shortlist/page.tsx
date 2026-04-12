@@ -769,8 +769,8 @@ export default function ShortlistPage() {
         stageNumber={2}
         stageColor="#2E6A8F"
         stageLabel="Match"
-        headline="Choose who you invite — not who quotes fastest"
-        intro="Steadyhand has matched you with verified trade businesses. You decide who to invite. This is not a race."
+        headline="Choose who you want to quote"
+        intro="Steadyhand has matched you with verified trade businesses based on your trade, suburb and job details. Review each one and select who you want to invite to quote."
         checklist={[
           { text: 'Request quotes from 2 to 4 tradies for the best comparison', emphasis: true },
           { text: 'Every tradie shown has had their licence and insurance verified', emphasis: false },

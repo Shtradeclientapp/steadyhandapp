@@ -2,7 +2,7 @@
 import { useState } from 'react'
 
 export function HintPanel({ hints, color = '#2E6A8F' }: { hints: string[], color?: string }) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [dismissed, setDismissed] = useState(false)
 
   if (dismissed) return null

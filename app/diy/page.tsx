@@ -294,11 +294,11 @@ export default function DIYPage() {
                   <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
                     <div>
                       <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Project name *</label>
-                      <input placeholder="e.g. Subiaco extension 2026" value={newProject.title} onChange={e => setNewProject(f => ({ ...f, title: e.target.value }))} style={inp} />
+                      <input placeholder="e.g. My renovation project" value={newProject.title} onChange={e => setNewProject(f => ({ ...f, title: e.target.value }))} style={inp} />
                     </div>
                     <div>
                       <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Site address</label>
-                      <input placeholder="e.g. 14 Example St, Subiaco WA 6008" value={newProject.address} onChange={e => setNewProject(f => ({ ...f, address: e.target.value }))} style={inp} />
+                      <input placeholder="e.g. 14 Smith St, Perth WA 6000" value={newProject.address} onChange={e => setNewProject(f => ({ ...f, address: e.target.value }))} style={inp} />
                     </div>
                   </div>
                   <div style={{ display:'flex', gap:'8px' }}>
@@ -316,7 +316,7 @@ export default function DIYPage() {
                   <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'14px' }}>
                     <div>
                       <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Total budget estimate ($)</label>
-                      <input type="number" placeholder="e.g. 150000" value={newProject.budget_estimate} onChange={e => setNewProject(f => ({ ...f, budget_estimate: e.target.value }))} style={inp} />
+                      <input type="number" placeholder="e.g. 80000" value={newProject.budget_estimate} onChange={e => setNewProject(f => ({ ...f, budget_estimate: e.target.value }))} style={inp} />
                     </div>
                     <div>
                       <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'3px' }}>Target completion date</label>

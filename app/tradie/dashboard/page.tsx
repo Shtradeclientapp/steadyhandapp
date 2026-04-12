@@ -264,7 +264,7 @@ export default function TradieDashboard() {
   return (
     <>
       {/* Quick action links */}
-      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px 8px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'8px 24px 12px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
         {[
           { label:'+ Invite a client', href:'/tradie/lead' },
           { label:'Availability status', href:'/tradie/availability' },

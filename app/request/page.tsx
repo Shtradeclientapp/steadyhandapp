@@ -164,40 +164,6 @@ sessionStorage.removeItem('diy_project_id')
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
 
-          {(() => {
-            const tips = [
-              { icon:'🏠', tip:'Include the age of your property, any access constraints, and relevant history — tradies use this to price accurately.' },
-              { icon:'✏️', tip:'A clear title helps Steadyhand match you faster. Include the trade and location, e.g. "Bathroom retile — Subiaco".' },
-              { icon:'💰', tip:'A realistic budget range helps match you with tradies who are right for your job size.' },
-              { icon:'🛡', tip:'Warranty periods are written into your scope agreement — the tradie\'s formal obligation after completion.' },
-            ]
-            const tip = tips[showHints % tips.length]
-            return (
-              <div style={{ marginBottom:'20px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', overflow:'hidden' }}>
-                <div style={{ padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                  <span style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', letterSpacing:'0.3px' }}>💡 Tips for a great request</span>
-                  <div style={{ display:'flex', gap:'4px' }}>
-                    {tips.map((_, i) => (
-                      <div key={i} onClick={() => setShowHints(i)}
-                        style={{ width: i === showHints % tips.length ? '18px' : '6px', height:'6px', borderRadius:'3px', background: i === showHints % tips.length ? '#1C2B32' : 'rgba(28,43,50,0.2)', cursor:'pointer', transition:'all 0.2s' }} />
-                    ))}
-                  </div>
-                </div>
-                <div style={{ padding:'0 16px 14px', display:'flex', alignItems:'flex-start', gap:'10px' }}>
-                  <span style={{ fontSize:'18px', flexShrink:0 }}>{tip.icon}</span>
-                  <p style={{ fontSize:'13px', color:'#4A5E64', margin:0, lineHeight:'1.65', fontFamily:'sans-serif' }}>{tip.tip}</p>
-                </div>
-                <div style={{ padding:'8px 16px', borderTop:'1px solid rgba(28,43,50,0.06)', display:'flex', justifyContent:'space-between' }}>
-                  <button type="button" onClick={() => setShowHints(h => (h - 1 + tips.length) % tips.length)}
-                    style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0 }}>← Prev</button>
-                  <span style={{ fontSize:'11px', color:'#9AA5AA' }}>{(showHints % tips.length) + 1} of {tips.length}</span>
-                  <button type="button" onClick={() => setShowHints(h => (h + 1) % tips.length)}
-                    style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0 }}>Next →</button>
-                </div>
-              </div>
-            )
-          })()}
-
           {dots}
 
           {step === 0 && card(
