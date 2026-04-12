@@ -112,7 +112,7 @@ const submitJob = async () => {
         warranty_period: Number(form.warranty_period),
         org_id: orgId,
         property_id: propertyId,
-        diy_project_id: sessionStorage.getItem('diy_project_id') || null,
+        diy_project_id: new URLSearchParams(window.location.search).get('diy_project_id') || sessionStorage.getItem('diy_project_id') || null,
       }),
     })
 
