@@ -170,6 +170,8 @@ export default function SignoffPage() {
     </div>
   )
 
+  const isTradie = profile?.role === 'tradie'
+
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={isTradie} />
