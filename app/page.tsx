@@ -234,29 +234,42 @@ export default function Home() {
         <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'64px 48px' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, marginBottom:'32px', textAlign:'center' as const }}>From the field</p>
           <div className="values-grid" style={{ alignItems:'stretch' }}>
-            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
-              <div style={{ fontSize:'18px', marginBottom:'12px', opacity:0.3, fontFamily:'Georgia, serif', lineHeight:1 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'16px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px', flex:1 }}>
+
+            {/* Homeowner testimonial */}
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'32px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
+              <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'17px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'24px', flex:1 }}>
                 The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.
               </blockquote>
-              <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
-              <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
-                Emma T.<br />Homeowner, Subiaco WA
-              </cite>
-            </div>
-            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'16px' }}>
-                <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Case study — Trade business</span>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(212,82,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', fontWeight:600 }}>E</div>
+                <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.6' }}>
+                  Emma T. &nbsp;·&nbsp; Homeowner, Subiaco WA
+                </cite>
               </div>
-              <div style={{ fontSize:'18px', marginBottom:'12px', opacity:0.3, fontFamily:'Georgia, serif', lineHeight:1 }}>&ldquo;</div>
-              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:'300', color:'#1C2B32', lineHeight:'1.7', marginBottom:'20px', flex:1 }}>
-                Steadyhand oversaw a structural transformation in operations for my business over six months. That transformation took Margaret River Re-Gutters from a solid owner-operator-run business with two-to-three sub-contractors toward a small business with two teams of three workers. The roadmap Steadyhand designed for us meant the ride was controlled, data-driven and milestoned along the way. Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective &mdash; less on the tools and more in a position of strategic leadership.
-              </blockquote>
-              <div style={{ width:'32px', height:'1px', background:'rgba(212,82,42,0.4)', marginBottom:'14px' }} />
-              <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.8', display:'block' }}>
-                Cullum Creevey<br />Small Business Owner &amp; Roofing Specialist<br />Margaret River Regutters / Busselton Regutters
-              </cite>
             </div>
+
+            {/* Trade business case study */}
+            <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'32px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
+                <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Trade business — Case study</span>
+              </div>
+              <div style={{ fontFamily:'Georgia, serif', fontSize:'48px', color:'#D4522A', lineHeight:'0.8', marginBottom:'20px', opacity:0.6 }}>&ldquo;</div>
+              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'16px', flex:1 }}>
+                The roadmap Steadyhand designed for us meant the ride was controlled, data-driven and milestoned along the way. Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective — less on the tools and more in a position of strategic leadership.
+              </blockquote>
+              <p style={{ fontSize:'12px', color:'#9AA5AA', lineHeight:'1.6', marginBottom:'20px', fontStyle:'normal' }}>
+                Over six months, Steadyhand oversaw a structural transformation that took Margaret River Re-Gutters from an owner-operator with two to three sub-contractors to a small business with two teams of three.
+              </p>
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(212,82,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', fontWeight:600 }}>C</div>
+                <cite style={{ fontSize:'13px', color:'#7A9098', fontStyle:'normal', lineHeight:'1.6' }}>
+                  Cullum Creevey &nbsp;·&nbsp; Roofing Specialist<br />
+                  <span style={{ fontSize:'12px' }}>Margaret River Regutters / Busselton Regutters</span>
+                </cite>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
