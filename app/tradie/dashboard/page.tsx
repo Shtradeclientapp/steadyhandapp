@@ -264,13 +264,13 @@ export default function TradieDashboard() {
   return (
     <>
       {/* Quick action links */}
-      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'8px 24px 12px', display:'flex', gap:'8px', flexWrap:'wrap' }}>
+      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'12px 24px', display:'flex', gap:'8px', flexWrap:'wrap', background:'#C8D5D2' }}>
         {[
           { label:'+ Invite a client', href:'/tradie/lead' },
           { label:'Availability status', href:'/tradie/availability' },
           { label:'Dialogue Rating', href:'/tradie/dialogue' },
         ].map(l => (
-          <a key={l.href} href={l.href} style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'20px', padding:'5px 14px', textDecoration:'none', fontWeight:500 }}>{l.label}</a>
+          <a key={l.href} href={l.href} style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1.5px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'8px 16px', textDecoration:'none', fontWeight:500 }}>{l.label}</a>
         ))}
       </div>
 
