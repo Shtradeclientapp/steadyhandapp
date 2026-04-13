@@ -20,7 +20,7 @@ export default function ShortlistPage() {
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
-  const [tab, setTab] = useState<'matches'|'invite'|'requested'|'directory'>('matches')
+  const [tab, setTab] = useState<'matches'|'invite'|'requested'|'directory'>('invite')
   const [showNextStepModal, setShowNextStepModal] = useState(false)
   const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
   const [inviteSending, setInviteSending] = useState(false)
@@ -70,31 +70,8 @@ export default function ShortlistPage() {
         return
       }
 
-      // No shortlist yet - run matching
-      setMatching(true)
+      // Matching disabled — invite-only mode
       setLoading(false)
-
-      try {
-        const res = await fetch('/api/match', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-          body: JSON.stringify({ job_id: job.id }),
-        })
-        const data = await res.json()
-        if (data.shortlist && data.shortlist.length > 0) {
-          // Use the returned data directly - no need to reload
-          const { data: fresh } = await supabase
-            .from('shortlist')
-            .select('*, tradie:tradie_profiles(*, profile:profiles(*))')
-            .eq('job_id', job.id)
-            .order('rank', { ascending: true })
-          setShortlist(fresh || [])
-        }
-      } catch (e) {
-        console.error('Match error:', e)
-        setMatchError('Matching failed — please refresh and try again.')
-      }
-      setMatching(false)
     }
     init()
   }, [])
@@ -233,7 +210,7 @@ export default function ShortlistPage() {
               <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>{matchError || sendError}</p>
             </div>
           )}
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR MATCHES</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR JOB</h1>
 
           {!isPastStage && <HintPanel color="#2E6A8F" hints={[
             "Check each tradie's Dialogue Rating — it reflects how transparently they communicate on pricing, risk and scope, not just whether they did good work.",
@@ -299,17 +276,12 @@ export default function ShortlistPage() {
 
           {/* SENT CONFIRMATION CARD */}
           {selectedJob && sent && (
-            <div style={{ background:'rgba(46,125,96,0.06)', border:'2px solid #2E7D60', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                <div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', marginBottom:'3px' }}>✓ Quote requests sent</p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Tradies have been notified. Choose your next step below.</p>
-                </div>
-                <button type="button" onClick={() => setShowNextStepModal(true)}
-                  style={{ background:'#2E7D60', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-                  What happens next? →
-                </button>
-              </div>
+            <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+              <p style={{ fontSize:'13px', color:'#2E7D60', margin:0 }}>✓ Quote requests sent — tradies have been notified.</p>
+              <button type="button" onClick={() => setShowNextStepModal(true)}
+                style={{ background:'none', border:'none', fontSize:'13px', color:'#2E7D60', fontWeight:500, cursor:'pointer', textDecoration:'underline', flexShrink:0 }}>
+                What happens next? →
+              </button>
             </div>
           )}
 
@@ -374,16 +346,16 @@ export default function ShortlistPage() {
           )}
 
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-            {/* PRIMARY TABS: matches + requested only */}
+            {/* TABS: invite + requested */}
             <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
               {[
-                { key:'matches', label:'Steadyhand matches', count: shortlist.length },
-                { key:'requested', label: pendingConfirm ? 'Review & confirm' : sent ? 'Sent' : 'Requested', count: pendingConfirm ? selectedTradies.length : quoteRequests.length },
+                { key:'invite', label:'Invite a tradie' },
+                { key:'requested', label: pendingConfirm ? 'Review & confirm' : 'Requested', count: pendingConfirm ? selectedTradies.length : quoteRequests.length },
               ].map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key as any)}
                   style={{ flex:1, padding:'14px 12px', border:'none', borderBottom: tab === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? '#2E6A8F' : '#7A9098', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
                   {t.label}
-                  {t.count > 0 && <span style={{ background: tab === t.key ? '#2E6A8F' : 'rgba(28,43,50,0.1)', color: tab === t.key ? 'white' : '#7A9098', fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius:'100px' }}>{t.count}</span>}
+                  {(t as any).count > 0 && <span style={{ background: tab === t.key ? '#2E6A8F' : 'rgba(28,43,50,0.1)', color: tab === t.key ? 'white' : '#7A9098', fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius:'100px' }}>{(t as any).count}</span>}
                 </button>
               ))}
             </div>
@@ -546,20 +518,7 @@ export default function ShortlistPage() {
               </div>
             )}
 
-            {/* SECONDARY ACTIONS - shown below matches */}
-            {tab === 'matches' && !matching && (
-              <div style={{ padding:'12px 20px', borderTop:'1px solid rgba(28,43,50,0.06)', background:'rgba(28,43,50,0.02)', display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
-                <p style={{ fontSize:'12px', color:'#7A9098', margin:0, alignSelf:'center', flex:1 }}>Not seeing the right tradie?</p>
-                <button type="button" onClick={() => setTab('directory')}
-                  style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
-                  Browse directory
-                </button>
-                <button type="button" onClick={() => setTab('invite')}
-                  style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
-                  Invite your own tradie
-                </button>
-              </div>
-            )}
+
 
             {tab === 'directory' && (
               <div style={{ padding:'20px' }}>
