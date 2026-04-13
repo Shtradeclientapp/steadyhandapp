@@ -287,6 +287,19 @@ sessionStorage.removeItem('diy_project_id')
             </>
           )}
 
+          {quotesSent >= 3 && !isHomeMember && step === 2 && (
+            <div style={{ background:'rgba(212,82,42,0.06)', border:'2px solid rgba(212,82,42,0.3)', borderRadius:'12px', padding:'20px 24px', marginBottom:'16px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#D4522A', letterSpacing:'0.5px', marginBottom:'8px' }}>FREE PLAN LIMIT REACHED</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
+                You have used your 3 free quote requests. Upgrade to Steadyhand Home for unlimited jobs, extended warranty, document vault and more.
+              </p>
+              <a href="/home-plan">
+                <button type="button" style={{ background:'#D4522A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  Upgrade to Steadyhand Home →
+                </button>
+              </a>
+            </div>
+          )}
           {step === 2 && card(
             <>
               <p style={{ fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', color:'#7A9098', marginBottom:'20px', fontWeight:'500' }}>Review your request</p>
@@ -323,7 +336,7 @@ sessionStorage.removeItem('diy_project_id')
                 <button
                   type="button"
                   onClick={submitJob}
-                  disabled={submitting || !form.title || !form.description || !form.trade_category || !form.suburb}
+                  disabled={submitting || !form.title || !form.description || !form.trade_category || !form.suburb || (quotesSent >= 3 && !isHomeMember)}
                   style={{ flex:1, background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:submitting ? 0.6 : 1, fontFamily:'sans-serif' }}>
                   {submitting ? 'Submitting...' : 'Submit request →'}
                 </button>
