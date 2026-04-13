@@ -282,10 +282,8 @@ export default function DashboardPage() {
                         <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
                       </div>
                       <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
-                        <span style={{ background: stage.color + '18', border:'1px solid ' + stage.color + '40', borderRadius:'100px', padding:'4px 12px', fontSize:'11px', fontWeight:500, color: stage.color }}>
-                          {stage.label}
-                        </span>
-                        <span style={{ fontSize:'18px', color:'#7A9098' }}>→</span>
+                        <span style={{ fontSize:'12px', fontWeight:500, color: stage.color }}>{stage.label}</span>
+                        <span style={{ fontSize:'14px', color:'#7A9098' }}>→</span>
                       </div>
                     </div>
                   </a>
@@ -356,69 +354,41 @@ export default function DashboardPage() {
 
         <div style={{ marginTop:'36px' }}>
           {/* HOME HUB HEADER */}
-          <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'20px 24px', marginBottom:'12px', position:'relative', overflow:'hidden' }}>
-            <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 100% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
-            <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-              <div>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.4)', letterSpacing:'2px', margin:'0 0 4px' }}>YOUR HOME</p>
-                <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', margin:0 }}>HOME HUB</h2>
-              </div>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', margin:0, maxWidth:'200px', textAlign:'right' as const, lineHeight:'1.5' }}>Your property record, finances and build projects — in one place.</p>
-            </div>
-          </div>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>YOUR HOME</h2>
 
           {/* HUB CARDS */}
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
 
             {/* Build Journal */}
             <a href="/diy" style={{ textDecoration:'none' }}>
-              <div style={{ background:'linear-gradient(135deg, #2A1A12 0%, #3D2318 100%)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
-                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(212,82,42,0.12), transparent 60%)' }} />
-                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(212,82,42,0.2)', border:'1px solid rgba(212,82,42,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>🏗</div>
-                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
-                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Build Journal</p>
-                    {builds.length > 0 && <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.2)', color:'#D4522A', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>Owner-builder</span>}
-                  </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Manage trades, permits, tasks, budget and WA compliance — all in one place.</p>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #D4522A', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Build Journal</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Trades, permits, tasks, budget and WA compliance.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(212,82,42,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
               </div>
             </a>
 
             {/* Document Vault */}
             <a href="/vault" style={{ textDecoration:'none' }}>
-              <div style={{ background:'linear-gradient(135deg, #0D1F1A 0%, #162D25 100%)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
-                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(46,125,96,0.1), transparent 60%)' }} />
-                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(46,125,96,0.2)', border:'1px solid rgba(46,125,96,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>🗄</div>
-                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
-                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Document Vault</p>
-                    {jobs.filter(j => j.status === 'warranty').length > 0 && (
-                      <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.2)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{jobs.filter(j => j.status === 'warranty').length} under warranty</span>
-                    )}
-                  </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Your permanent home record — scope agreements, warranties and certificates.</p>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #2E7D60', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Document Vault</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Scope agreements, warranties and certificates.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(46,125,96,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
               </div>
             </a>
 
             {/* Finance */}
             <a href="/wallet" style={{ textDecoration:'none' }}>
-              <div style={{ background:'linear-gradient(135deg, #1A1508 0%, #2A2010 100%)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'14px', padding:'18px 20px', display:'flex', alignItems:'center', gap:'16px', position:'relative' as const, overflow:'hidden' }}>
-                <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 0% 50%, rgba(192,120,48,0.1), transparent 60%)' }} />
-                <div style={{ width:'48px', height:'48px', borderRadius:'12px', background:'rgba(192,120,48,0.2)', border:'1px solid rgba(192,120,48,0.3)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', flexShrink:0, position:'relative' as const, zIndex:1 }}>💰</div>
-                <div style={{ flex:1, position:'relative' as const, zIndex:1 }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
-                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>Finance</p>
-                    {activeJobs.length > 0 && (
-                      <span style={{ fontSize:'10px', background:'rgba(192,120,48,0.2)', color:'#C07830', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>{activeJobs.length} active job{activeJobs.length !== 1 ? 's' : ''}</span>
-                    )}
-                  </div>
-                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.72)', margin:0, lineHeight:'1.5' }}>Track quotes, milestone payments and invoice history across all your jobs.</p>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #C07830', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Finance</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quotes, milestone payments and invoice history.</p>
                 </div>
-                <span style={{ fontSize:'16px', color:'rgba(192,120,48,0.75)', flexShrink:0, position:'relative' as const, zIndex:1 }}>→</span>
+                <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
               </div>
             </a>
 
