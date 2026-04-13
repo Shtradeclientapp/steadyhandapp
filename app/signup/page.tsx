@@ -1,25 +1,25 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 const TRADES = ['Plumbing & Gas','Electrical','Carpentry & Joinery','Tiling','Painting & Decorating','Roofing','Landscaping','Air Conditioning','General Handyman']
 const SUBURBS = [
-  'Perth CBD', 'Subiaco', 'Leederville', 'Mount Lawley', 'Northbridge',
-  'Fremantle', 'Cottesloe', 'Claremont', 'Nedlands', 'Crawley',
-  'Victoria Park', 'South Perth', 'Como', 'Applecross', 'Melville',
-  'Canning Vale', 'Willetton', 'Booragoon', 'Karrinyup', 'Scarborough',
-  'Innaloo', 'Stirling', 'Balga', 'Mirrabooka', 'Morley',
-  'Bayswater', 'Maylands', 'Bassendean', 'Guildford', 'Midland',
-  'Armadale', 'Gosnells', 'Maddington', 'Kenwick', 'Bentley',
-  'Joondalup', 'Wanneroo', 'Kingsley', 'Duncraig', 'Hillarys',
-  'Rockingham', 'Baldivis', 'Secret Harbour', 'Mandurah', 'Pinjarra',
-  'Murray', 'Serpentine', 'Mundijong',
-  'Bunbury', 'Busselton', 'Dunsborough', 'Margaret River', 'Augusta',
-  'Collie', 'Harvey', 'Donnybrook', 'Bridgetown', 'Manjimup',
-  'Geraldton', 'Carnarvon', 'Exmouth', 'Karratha', 'Port Hedland',
-  'Broome', 'Kununurra', 'Derby',
-  'Albany', 'Denmark', 'Mount Barker', 'Esperance',
-  'Kalgoorlie', 'Boulder', 'Merredin', 'Northam', 'York',
-  'Narrogin', 'Katanning', 'Wagin',
+  'Albany', 'Applecross', 'Armadale', 'Augusta', 'Baldivis',
+  'Balga', 'Bassendean', 'Bayswater', 'Bentley', 'Booragoon',
+  'Boulder', 'Bridgetown', 'Broome', 'Bunbury', 'Busselton',
+  'Canning Vale', 'Carnarvon', 'Claremont', 'Collie', 'Como',
+  'Cottesloe', 'Crawley', 'Denmark', 'Derby', 'Donnybrook',
+  'Duncraig', 'Dunsborough', 'Esperance', 'Exmouth', 'Fremantle',
+  'Geraldton', 'Gosnells', 'Guildford', 'Harvey', 'Hillarys',
+  'Innaloo', 'Joondalup', 'Kalgoorlie', 'Karratha', 'Karrinyup',
+  'Katanning', 'Kenwick', 'Kingsley', 'Kununurra', 'Leederville',
+  'Maddington', 'Mandurah', 'Manjimup', 'Margaret River', 'Maylands',
+  'Melville', 'Merredin', 'Midland', 'Mirrabooka', 'Morley',
+  'Mount Barker', 'Mount Lawley', 'Mundijong', 'Murray', 'Narrogin',
+  'Nedlands', 'Northam', 'Northbridge', 'Perth CBD', 'Pinjarra',
+  'Port Hedland', 'Rockingham', 'Scarborough', 'Secret Harbour', 'Serpentine',
+  'South Perth', 'Stirling', 'Subiaco', 'Victoria Park', 'Wagin',
+  'Wanneroo', 'Willetton', 'York'
 ]
 const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', display:'block' }
 const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }

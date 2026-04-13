@@ -226,7 +226,7 @@ export default function NewDIYProjectPage() {
               <>
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>If you have received your owner-builder approval, enter the details here. If not, leave blank — Steadyhand will remind you.</p>
                 <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'8px', padding:'10px 14px', marginBottom:'16px' }}>
-                  <p style={{ fontSize:'12px', color:'#6B4FA8', margin:0 }}>Owner-builder permits are issued by the WA Building Commission. Apply at buildingcommission.wa.gov.au before work begins.</p>
+                  <p style={{ fontSize:'12px', color:'#6B4FA8', margin:0 }}>Owner-builder permits are issued by the WA Building Commission. Apply at <a href="https://www.buildingcommission.wa.gov.au" target="_blank" style={{color:"#6B4FA8"}}>buildingcommission.wa.gov.au</a> before work begins.</p>
                 </div>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', marginBottom:'20px' }}>
                   <div>
