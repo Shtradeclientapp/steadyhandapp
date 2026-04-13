@@ -46,7 +46,18 @@ export default function SignupPage() {
     if (role === 'tradie') {
       await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, subscription_active: false })
     }
-    window.location.href = role === 'tradie' ? '/tradie/dashboard' : role === 'org' ? '/org/setup' : '/dashboard'
+    // Wait for session to be established before redirecting
+    const dest = role === 'tradie' ? '/tradie/dashboard' : role === 'org' ? '/org/setup' : '/dashboard'
+    const supabase2 = createClient()
+    let attempts = 0
+    const waitForSession = setInterval(async () => {
+      attempts++
+      const { data: { session } } = await supabase2.auth.getSession()
+      if (session || attempts > 10) {
+        clearInterval(waitForSession)
+        window.location.href = dest
+      }
+    }, 300)
   }
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', flexDirection:'column' }}>
