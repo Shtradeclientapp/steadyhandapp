@@ -145,6 +145,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    console.error('Stripe API error:', err.message, err.stack)
+    return NextResponse.json({ error: err.message, type: err.type, code: err.code }, { status: 500 })
   }
 }
