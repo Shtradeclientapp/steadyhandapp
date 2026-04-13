@@ -98,7 +98,7 @@ export default function SignoffPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'score_stage', stage: 'complete', job_id: job.id }),
-    }).catch(() => {})
+    })
 
     // Auto-deposit warranty certificate to vault
     try {
@@ -137,7 +137,7 @@ export default function SignoffPage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'ob_final_inspection', job_id: job.id }),
-          }).catch(() => {})
+          })
         }
       }
     }
@@ -150,7 +150,7 @@ export default function SignoffPage() {
         job_id: job.id,
         sender_id: sess3?.user.id,
         body: 'Sign-off complete. ' + (job.tradie?.business_name || 'Tradie') + ' — please provide your certificate of compliance for this job. Upload it to the job page so it is stored in the client vault.',
-      }).catch(() => {})
+      })
       // If OB project, check if all child jobs are now at sign-off/warranty → final inspection reminder
       if (job.diy_project_id) {
         const supabase4 = createClient()
@@ -161,7 +161,7 @@ export default function SignoffPage() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'ob_final_inspection', job_id: job.id }),
-          }).catch(() => {})
+          })
         }
       }
     }
@@ -171,7 +171,7 @@ export default function SignoffPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'job_signed_off', job_id: job.id }),
-    }).catch(() => {})
+    })
     if (typeof window !== 'undefined') sessionStorage.removeItem('signoff_rating')
     setDone(true)
     setSubmitting(false)

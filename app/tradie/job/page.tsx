@@ -180,7 +180,7 @@ export default function TradieJobPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'quote_submitted', job_id: job.id }),
-      }).catch(() => {})
+      })
     }
     setShowQuoteForm(false)
     setSubmittingQuote(false)
@@ -277,7 +277,7 @@ export default function TradieJobPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'milestone_submitted', job_id: job.id }),
-    }).catch(() => {})
+    })
   }
 
   const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
@@ -430,7 +430,7 @@ export default function TradieJobPage() {
                             sender_id: user?.id,
                             body: 'Consult times proposed: ' + slotLines + '. Please confirm via the Consult page.',
                           })
-                          await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_ready', job_id: job.id }) }).catch(() => {})
+                          await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_ready', job_id: job.id }) })
                           setSavingSlots(false)
                           setConsultSent(true)
                           setProposingConsult(false)
