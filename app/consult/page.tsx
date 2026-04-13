@@ -127,22 +127,6 @@ export default function AssessPage() {
   }
 
 
-  const confirmSlot = async (slot: string) => {
-    if (!assessment || !job) return
-    setConfirmingSlot(true)
-    const supabase = createClient()
-    await supabase.from('site_assessments').update({ consult_date: slot, slot_confirmed_at: new Date().toISOString() }).eq('id', assessment.id)
-    const senderName = isTradie ? profile.tradie?.business_name : profile.full_name
-    await supabase.from('job_messages').insert({
-      job_id: job.id,
-      sender_id: profile.id,
-      body: senderName + ' has confirmed the consultation: ' + new Date(slot).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' }),
-    })
-    setAssessment((a: any) => ({ ...a, consult_date: slot, slot_confirmed_at: new Date().toISOString() }))
-    setForm((f: any) => ({ ...f, consult_date: slot }))
-    setConfirmingSlot(false)
-  }
-
   const save = async () => {
     if (!assessment) return
     setSaving(true)
