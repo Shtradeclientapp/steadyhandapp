@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
-  draft:       { label: 'Draft',             path: '/request',   color: '#7A9098' },
   draft:       { label: 'Draft',          path: '/request',    color: '#7A9098' },
   matching:    { label: 'Matching',        path: '/shortlist',  color: '#2E6A8F' },
   shortlisted: { label: 'Match',           path: '/shortlist',  color: '#2E6A8F' },
