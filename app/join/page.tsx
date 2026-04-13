@@ -34,6 +34,14 @@ export default function JoinPage() {
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: invitation.email, password: form.password })
       if (signInError) { setError('Account exists but password incorrect — try signing in at /login'); setSubmitting(false); return }
       uid = signInData.user?.id
+      // Check if existing account is a client — warn them
+      const { data: existingRole } = await supabase.from('profiles').select('role').eq('id', uid).single()
+      if (existingRole?.role === 'client') {
+        setError('This email is registered as a client account. Please use a different email address to register as a trade business, or contact Steadyhand to change your account type.')
+        await supabase.auth.signOut()
+        setSubmitting(false)
+        return
+      }
     } else if (signupError) {
       setError(signupError.message); setSubmitting(false); return
     } else {
