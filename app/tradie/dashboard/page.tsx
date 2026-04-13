@@ -301,6 +301,8 @@ export default function TradieDashboard() {
                   { label:'Dashboard', href:'/tradie/dashboard' },
                   { label:'My profile', href:'/tradie/profile' },
                   { label:'Messages', href:'/messages' },
+                  { label:'Availability status', href:'/tradie/availability' },
+                  { label:'Dialogue Rating', href:'/tradie/dialogue' },
                   { label:'Subscription plans', href:'/tradie/subscribe' },
                 ].map(item => (
                   <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
