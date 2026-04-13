@@ -107,12 +107,36 @@ export default function DashboardPage() {
     </div>
   )
 
-  const activeJobs = jobs.filter(j => j.status !== 'complete')
+  const cancelableStatuses = ['matching', 'shortlisted', 'compare', 'draft']
+
+  const cancelJob = async (jobId: string, jobTitle: string) => {
+    if (!confirm('Cancel "' + jobTitle + '"? This will notify any tradies who have been invited and cannot be undone.')) return
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    await supabase.from('jobs').update({ status: 'cancelled' }).eq('id', jobId)
+    await supabase.from('job_messages').insert({
+      job_id: jobId,
+      sender_id: session?.user.id,
+      body: 'This job has been cancelled by the client.',
+    })
+    // Notify any tradies with quote requests
+    const { data: qrs } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', jobId)
+    if (qrs && qrs.length > 0) {
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'job_cancelled', job_id: jobId }),
+      }).catch(() => {})
+    }
+    setJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: 'cancelled' } : j))
+  }
+
+  const activeJobs = jobs.filter(j => j.status !== 'complete' && j.status !== 'cancelled')
   const quotesSent = jobs.filter(j => j.quote_request_sent_at).length
   const isHomeMember = profile?.subscription_plan === 'home'
   const [showClientWizard, setShowClientWizard] = useState(false)
   const atQuoteLimit = quotesSent >= 3 && !isHomeMember
-  const doneJobs = jobs.filter(j => j.status === 'complete')
+  const doneJobs = jobs.filter(j => j.status === 'complete' || j.status === 'cancelled')
 
   const justSubmitted = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('submitted') === 'true'
 
@@ -293,6 +317,12 @@ export default function DashboardPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
                         <span style={{ fontSize:'12px', fontWeight:500, color: stage.color }}>{stage.label}</span>
                         <span style={{ fontSize:'14px', color:'#7A9098' }}>→</span>
+                        {cancelableStatuses.includes(job.status) && (
+                          <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); cancelJob(job.id, job.title) }}
+                            style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'5px', padding:'3px 8px', cursor:'pointer', flexShrink:0 }}>
+                            Cancel
+                          </button>
+                        )}
                       </div>
                     </div>
                   </a>
