@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
           quote_submitted: [{ user_id: job.client_id, message: 'New quote received for: ' + job.title }],
           consult_complete: [{ user_id: job.client_id, message: 'Consult complete — quotes are now open for: ' + job.title }],
           ob_final_inspection: [{ user_id: job.client_id, message: 'All trades at sign-off — time to book your final building inspection.' }],
-          ob_final_inspection: [{ user_id: job.client_id, message: 'All trades at sign-off — time to book your final building inspection.' }],
         }
         const notifs = notifMap[type] || []
         for (const n of notifs) {
