@@ -127,18 +127,7 @@ export default function ShortlistPage() {
 
   const searchDirectory = async () => {
     setDirectoryLoading(true)
-    const supabase = createClient()
-    let query = supabase
-      .from('tradie_profiles')
-      .select('*, profile:profiles(full_name, email, suburb)')
-      .eq('licence_verified', true)
-    if (directoryCategory) query = query.ilike('trade_categories', '%' + directoryCategory + '%')
-    if (directorySuburb) query = query.ilike('service_areas', '%' + directorySuburb + '%')
-    if (directorySearch) query = query.or('business_name.ilike.%' + directorySearch + '%,bio.ilike.%' + directorySearch + '%')
-    const { data } = await query.order('rating_avg', { ascending: false }).limit(20)
-    setDirectoryTradies(data || [])
-    setDirectoryLoading(false)
-  }
+
 
   const nav = (
     <div>
