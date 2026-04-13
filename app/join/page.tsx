@@ -41,7 +41,11 @@ export default function JoinPage() {
     }
     if (!uid) { setError('Could not establish session'); setSubmitting(false); return }
     // Only insert profile/tradie rows if this is a new signup
-    const { data: existingProfile } = await supabase.from('profiles').select('id').eq('id', uid).single().catch(() => ({ data: null }))
+    let existingProfile = null
+    try {
+      const { data: ep } = await supabase.from('profiles').select('id').eq('id', uid).single()
+      existingProfile = ep
+    } catch (_) {}
     if (!existingProfile) {
       await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
       await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
