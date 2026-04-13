@@ -125,8 +125,6 @@ export default function ShortlistPage() {
 
   const removeInvite = (i: number) => setPendingInvites(prev => prev.filter((_, idx) => idx !== i))
 
-  const searchDirectory = async () => {
-    setDirectoryLoading(true)
 
 
   const nav = (
