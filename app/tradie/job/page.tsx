@@ -228,6 +228,42 @@ export default function TradieJobPage() {
     const ext = cocFile.name.split('.').pop()
     const path = 'vault/coc/' + job.id + '/' + Date.now() + '.' + ext
     const { error } = await supabase.storage.from('Documents').upload(path, cocFile)
+    if (!error) {
+      const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
+      const file_url = signedData?.signedUrl || null
+      // Save to vault under client's user_id
+      await supabase.from('vault_documents').insert({
+        user_id: job.client_id,
+        job_id: job.id,
+        job_title: job.title,
+        title: (profile?.tradie?.business_name || 'Tradie') + ' — Certificate of compliance — ' + job.title,
+        document_type: 'compliance',
+        tradie_name: profile?.tradie?.business_name || null,
+        issued_date: new Date().toISOString().split('T')[0],
+        file_url,
+        file_name: cocFile.name,
+        diy_project_id: job.diy_project_id || null,
+        phase: 'close-out',
+      })
+      // Post message confirming upload
+      await supabase.from('job_messages').insert({
+        job_id: job.id,
+        sender_id: session?.user.id,
+        body: (profile?.tradie?.business_name || 'Tradie') + ' has uploaded the certificate of compliance for this job. It has been saved to the client vault.',
+      })
+      setCocUploaded(true)
+    }
+    setUploadingCoc(false)
+  }
+
+  const uploadCoc = async () => {
+    if (!cocFile || !job) return
+    setUploadingCoc(true)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    const ext = cocFile.name.split('.').pop()
+    const path = 'vault/coc/' + job.id + '/' + Date.now() + '.' + ext
+    const { error } = await supabase.storage.from('Documents').upload(path, cocFile)
     if (error) {
       setCocError('Upload failed — the Documents bucket may be missing or have no upload policy.')
       setUploadingCoc(false)

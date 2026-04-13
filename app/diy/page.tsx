@@ -91,6 +91,13 @@ export default function DIYPage() {
           .eq('user_id', session.user.id)
           .eq('document_type', 'compliance')
         setVaultDocs(vd || [])
+        // Fetch vault compliance docs for these projects
+        const { data: vd } = await supabase
+          .from('vault_documents')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('document_type', 'compliance')
+        setVaultDocs(vd || [])
       }
       const projectIds = (proj || []).map((p:any) => p.id)
       if (projectIds.length > 0) {
