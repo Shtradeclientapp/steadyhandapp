@@ -41,11 +41,8 @@ export default function AssessPage() {
   const [photoError, setPhotoError] = useState<string|null>(null)
   const [clientPhotos, setClientPhotos] = useState<string[]>([])
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
-  const [proposingDate, setProposingDate] = useState(false)
-  const [proposedDate, setProposedDate] = useState('')
-  const [proposedSlots, setProposedSlots] = useState(['','',''])
+  const [consultDate, setConsultDate] = useState('')
   const [savingDate, setSavingDate] = useState(false)
-  const [confirmingSlot, setConfirmingSlot] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
 
   useEffect(() => {
@@ -129,30 +126,6 @@ export default function AssessPage() {
     else setClientPhotos(updated)
   }
 
-  const proposeConsultDate = async () => {
-    const filled = proposedSlots.filter(s => s.trim())
-    if (!filled.length || !assessment || !job) return
-    setSavingDate(true)
-    const supabase = createClient()
-    const senderName = isTradie ? profile.tradie?.business_name : profile.full_name
-    const slotLines = filled.map((s, i) => 'Option ' + (i+1) + ': ' + new Date(s).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' })).join('\n')
-    await supabase.from('job_messages').insert({
-      job_id: job.id,
-      sender_id: profile.id,
-      body: senderName + ' has proposed ' + filled.length + ' consultation time' + (filled.length > 1 ? 's' : '') + ':\n' + slotLines + '\n\nPlease confirm which time works for you.',
-    })
-    // Store proposed slots in assessment
-    await supabase.from('site_assessments').update({
-      consult_date: filled[0],
-      proposed_slots: filled,
-      slot_proposed_by: isTradie ? 'tradie' : 'client',
-    }).eq('id', assessment.id)
-    setAssessment((a: any) => ({ ...a, consult_date: filled[0], proposed_slots: filled, slot_proposed_by: isTradie ? 'tradie' : 'client' }))
-    setForm((f: any) => ({ ...f, consult_date: filled[0] }))
-    setProposingDate(false)
-    setProposedSlots(['','',''])
-    setSavingDate(false)
-  }
 
   const confirmSlot = async (slot: string) => {
     if (!assessment || !job) return
@@ -372,77 +345,26 @@ export default function AssessPage() {
                 <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.45)', margin:0 }}>with {job.tradie.business_name}</p>
               )}
             </div>
-            {assessment?.consult_date && !proposingDate && (
-              <button type="button" onClick={() => setProposingDate(true)}
-                style={{ fontSize:'11px', color:'rgba(216,228,225,0.5)', background:'none', border:'1px solid rgba(216,228,225,0.15)', borderRadius:'6px', padding:'3px 8px', cursor:'pointer' }}>
-                Change date
-              </button>
-            )}
-          </div>
-          <div style={{ padding:'20px' }}>
-            {assessment?.consult_date && !proposingDate ? (
-              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-                <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'rgba(155,107,155,0.1)', border:'1px solid rgba(155,107,155,0.2)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                  <span style={{ fontSize:'18px' }}>📅</span>
-                </div>
-                <div>
-                  <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>
-                    {new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}
-                  </p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Agreed consultation date</p>
-                </div>
+            {/* ── Consult date picker ── */}
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Consult date</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px' }}>
+                {assessment?.consult_date
+                  ? 'Set to ' + new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Either party can update this.'
+                  : 'Agree on a time via the message thread, then confirm it here.'}
+              </p>
+              <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+                <input type="datetime-local"
+                  defaultValue={assessment?.consult_date ? new Date(assessment.consult_date).toISOString().slice(0,16) : ''}
+                  onChange={e => setConsultDate(e.target.value)}
+                  style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                <button type="button" onClick={() => saveConsultDate(consultDate)} disabled={!consultDate || savingDate}
+                  style={{ background:'#9B6B9B', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !consultDate || savingDate ? 0.5 : 1, flexShrink:0 }}>
+                  {savingDate ? 'Saving...' : assessment?.consult_date ? 'Update' : 'Set date'}
+                </button>
               </div>
-            ) : (
-              <div>
-                <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
-                  {assessment?.consult_date ? 'Propose new times:' : 'Suggest up to 3 times that work for you. ' + (job?.tradie?.business_name || theirLabel) + ' will confirm which suits them. Each tradie you have requested will need their own consult.'}
-                </p>
-                <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'14px' }}>
-                  {[0,1,2].map(i => (
-                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                      <span style={{ fontSize:'12px', fontWeight:600, color:'#7A9098', width:'60px', flexShrink:0 }}>Option {i+1}{i === 0 ? ' *' : ''}</span>
-                      <input type="datetime-local" value={proposedSlots[i]}
-                        onChange={e => { const s = [...proposedSlots]; s[i] = e.target.value; setProposedSlots(s) }}
-                        min={new Date().toISOString().slice(0,16)}
-                        style={{ ...inp, flex:1 }} />
-                    </div>
-                  ))}
-                </div>
-                <div style={{ display:'flex', gap:'10px' }}>
-                  <button type="button" onClick={proposeConsultDate}
-                    disabled={!proposedSlots[0] || savingDate}
-                    style={{ flex:1, background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedSlots[0] || savingDate ? 0.5 : 1 }}>
-                    {savingDate ? 'Sending...' : 'Send times to ' + theirLabel + ' →'}
-                  </button>
-                  {proposingDate && (
-                    <button type="button" onClick={() => setProposingDate(false)}
-                      style={{ fontSize:'13px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', padding:'10px 14px', cursor:'pointer' }}>
-                      Cancel
-                    </button>
-                  )}
-                </div>
-                <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'8px' }}>* At least one time required. Options 2 and 3 are optional.</p>
-              </div>
-            )}
-            {/* Slot confirmation - shown to the party who didn't propose */}
-            {assessment?.proposed_slots && assessment.proposed_slots.length > 0 &&
-             assessment.slot_proposed_by && assessment.slot_proposed_by !== (isTradie ? 'tradie' : 'client') &&
-             !assessment.slot_confirmed_at && (
-              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
-                <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'8px' }}>
-                  {theirLabel} has proposed these times — select one to confirm:
-                </p>
-                <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
-                  {assessment.proposed_slots.filter(Boolean).map((slot: string, i: number) => (
-                    <button key={i} type="button" onClick={() => confirmSlot(slot)}
-                      style={{ textAlign:'left' as const, padding:'12px 16px', borderRadius:'8px', border:'1.5px solid rgba(155,107,155,0.3)', background:'rgba(155,107,155,0.05)', cursor:'pointer', fontSize:'13px', color:'#1C2B32', fontWeight:500 }}>
-                      <span style={{ color:'#9B6B9B', marginRight:'8px' }}>✓</span>
-                      {new Date(slot).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long' })} at {new Date(slot).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            </div>
+
             {assessment?.consult_date && (
               <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
                 <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Who attended</p>
