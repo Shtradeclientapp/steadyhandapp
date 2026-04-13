@@ -198,7 +198,7 @@ sessionStorage.removeItem('diy_project_id')
                   <option value="">Not sure — select closest match</option>
                   {TRADES.map(t => <option key={t}>{t}</option>)}
                 </select>
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — Steadyhand will confirm during matching.</span>
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — you can clarify during the consult.</span>
               </label>
               {submitError && step === 0 && (
                 <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
@@ -305,7 +305,7 @@ sessionStorage.removeItem('diy_project_id')
               <div style={{ marginTop:'20px', padding:'14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'9px' }}>
                 <p style={{ fontSize:'11px', fontWeight:'500', textTransform:'uppercase' as const, letterSpacing:'0.8px', color:'#2E7D60', marginBottom:'6px' }}>What happens next</p>
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-                  Claude will review your request and build a shortlist of 3–5 verified tradies matched to your trade, suburb, and job complexity.
+                  Once submitted, you can invite any tradie you trust — or one recommended by someone you know. Steadyhand verifies them, onboards them, and layers them into our system of documentation and trust. Your request is shared with whoever you invite.
                 </p>
               </div>
               {submitError && (
@@ -320,7 +320,7 @@ sessionStorage.removeItem('diy_project_id')
                   onClick={submitJob}
                   disabled={submitting || !form.title || !form.description || !form.trade_category || !form.suburb}
                   style={{ flex:1, background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:submitting ? 0.6 : 1, fontFamily:'sans-serif' }}>
-                  {submitting ? 'Submitting...' : 'Submit request & build shortlist →'}
+                  {submitting ? 'Submitting...' : 'Submit request →'}
                 </button>
               </div>
             </>
@@ -333,15 +333,15 @@ sessionStorage.removeItem('diy_project_id')
         stageColor="#2E7D60"
         stageLabel="Request"
         headline="Write a request that gets you the right tradies"
-        intro="Your request is the foundation of everything. Tradies use it to decide whether to quote, and Steadyhand uses it to match you with the right ones."
+        intro="Your request is the foundation of everything. Tradies use it to decide whether to quote. Be specific — the more detail you include, the better the conversation starts."
         checklist={[
           { text: 'Describe the problem and how long it has been an issue', emphasis: true },
           { text: 'Include your property age, type and any access restrictions', emphasis: false },
           { text: 'Mention anything unusual — previous repairs, asbestos, heritage overlay', emphasis: false },
-          { text: 'Pick the closest trade category — Steadyhand confirms during matching', emphasis: false },
+          { text: 'Pick the closest trade category — you can clarify during the consult', emphasis: false },
           { text: 'A budget range is optional but helps tradies assess fit before visiting', emphasis: false },
         ]}
-        warning="Vague requests attract vague quotes. The more specific you are, the more accurate your shortlist."
+        warning="Vague requests attract vague quotes. The more specific you are, the better tradies can respond."
         ctaLabel="Write my request"
       />
     </>

@@ -137,6 +137,7 @@ export default function TradieDashboard() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
+  const [showSetupWizard, setShowSetupWizard] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -161,6 +162,10 @@ export default function TradieDashboard() {
       })
       const stripeData = await stripeRes.json()
       setStripeConnected(stripeData.connected || false)
+      // Show setup wizard if profile incomplete or subscription inactive
+      if (typeof window !== 'undefined' && !localStorage.getItem('tradie_setup_complete')) {
+        setShowSetupWizard(true)
+      }
 
       // Assigned jobs
       const { data: assignedJobs } = await supabase
@@ -275,6 +280,73 @@ export default function TradieDashboard() {
       </div>
 
       <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
+
+      {/* ── Setup wizard ── */}
+      {showSetupWizard && (
+        <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+          <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 28px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>WELCOME TO STEADYHAND</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Let's get your profile ready</p>
+            </div>
+            <div style={{ padding:'28px' }}>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', marginBottom:'24px' }}>
+                {[
+                  {
+                    done: !!(profile?.tradie?.business_name && profile?.tradie?.trade_categories?.length && profile?.tradie?.service_areas?.length),
+                    label: 'Complete your business profile',
+                    sub: 'Business name, trade category and service area',
+                    href: '/tradie/profile',
+                    cta: 'Complete profile →'
+                  },
+                  {
+                    done: profile?.tradie?.subscription_active === true,
+                    label: 'Choose a subscription plan',
+                    sub: 'Select the plan that fits your business — start free',
+                    href: '/tradie/subscribe',
+                    cta: 'View plans →'
+                  },
+                  {
+                    done: stripeConnected,
+                    label: 'Connect your bank account',
+                    sub: 'Required to receive milestone payments via Steadyhand',
+                    href: null,
+                    cta: 'Connect →'
+                  },
+                ].map((item, i) => (
+                  <div key={i} style={{ display:'flex', alignItems:'center', gap:'14px', padding:'14px 16px', background: item.done ? 'rgba(46,125,96,0.06)' : 'white', border:'1px solid ' + (item.done ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px' }}>
+                    <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: item.done ? '#2E7D60' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', flexShrink:0 }}>
+                      {item.done ? '✓' : (i + 1)}
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#1C2B32', margin:'0 0 2px' }}>{item.label}</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{item.sub}</p>
+                    </div>
+                    {!item.done && (
+                      item.href
+                        ? <a href={item.href} style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, textDecoration:'none', flexShrink:0 }}>{item.cta}</a>
+                        : <button type="button" onClick={async () => {
+                            const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
+                            const data = await res.json()
+                            if (data.url) window.location.href = data.url
+                          }} style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, background:'none', border:'none', cursor:'pointer', padding:0, flexShrink:0 }}>{item.cta}</button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:'flex', gap:'10px' }}>
+                <button type="button" onClick={() => {
+                  if (typeof window !== 'undefined') localStorage.setItem('tradie_setup_complete', '1')
+                  setShowSetupWizard(false)
+                }} style={{ flex:1, background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  Go to my dashboard →
+                </button>
+              </div>
+              <p style={{ fontSize:'11px', color:'#9AA5AA', textAlign:'center' as const, marginTop:'12px' }}>You can complete these steps any time from your dashboard</p>
+            </div>
+          </div>
+        </div>
+      )}
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
 
       {/* ── Nav ── */}
