@@ -113,7 +113,7 @@ export default function Home() {
               </button>
             </Link>
             <Link href="/signup?role=tradie">
-              <button style={{ background:'transparent', color:'rgba(216,228,225,0.8)', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(216,228,225,0.2)', cursor:'pointer' }}>
+              <button style={{ background:'#2E7D60', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(216,228,225,0.2)', cursor:'pointer' }}>
                 I&apos;m a trade business &rarr;
               </button>
             </Link>
