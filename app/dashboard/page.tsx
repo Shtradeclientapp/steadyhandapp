@@ -466,7 +466,7 @@ export default function DashboardPage() {
                     done: !!(profile?.full_name && profile?.suburb),
                     label: 'Complete your profile',
                     sub: 'Your name, suburb and property details',
-                    href: '/profile',
+                    href: '/profile?required=true',
                     cta: 'Complete →'
                   },
                   {

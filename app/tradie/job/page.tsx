@@ -144,6 +144,14 @@ export default function TradieJobPage() {
     })
   }, [])
 
+  const profileComplete = !!(
+    profile?.tradie?.business_name &&
+    (profile?.tradie?.trade_categories || []).length > 0 &&
+    (profile?.tradie?.service_areas || []).length > 0 &&
+    profile?.tradie?.abn &&
+    profile?.tradie?.licence_number
+  )
+
   const submitQuote = async () => {
     const total = calcTotal()
     if (!job || total === 0) return

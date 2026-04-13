@@ -18,6 +18,11 @@ export default function TradieProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [required, setRequired] = useState(false)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    if (p.get('required') === 'true') setRequired(true)
+  }, [])
   const [saveError, setSaveError] = useState<string|null>(null)
   const [form, setForm] = useState<any>({})
   const [activeTab, setActiveTab] = useState<'profile'|'business'|'availability'>('profile')

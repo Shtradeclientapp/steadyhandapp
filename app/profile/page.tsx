@@ -12,6 +12,11 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [required, setRequired] = useState(false)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    if (p.get('required') === 'true') setRequired(true)
+  }, [])
   const [form, setForm] = useState<any>({})
 
   useEffect(() => {
@@ -73,6 +78,12 @@ export default function ProfilePage() {
           <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Your profile</span>
         </div>
         <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: '#1C2B32', letterSpacing: '1.5px', marginBottom: '6px' }}>HOME PROFILE</h1>
+        {required && (
+          <div style={{ background:'rgba(212,82,42,0.06)', border:'2px solid rgba(212,82,42,0.25)', borderRadius:'10px', padding:'14px 18px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px' }}>
+            <span style={{ fontSize:'20px' }}>📋</span>
+            <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, margin:0 }}>Please complete your profile before posting a job request — your address and contact details are needed for tradies to quote accurately.</p>
+          </div>
+        )}
         <p style={{ fontSize: '15px', color: '#4A5E64', fontWeight: 300, marginBottom: '32px', lineHeight: '1.6' }}>Your profile helps Steadyhand match you with the right tradies and pre-fills job details automatically. Your address is kept private and only shared with a tradie after the scope is signed.</p>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden', marginBottom: '20px' }}>

@@ -296,7 +296,7 @@ export default function TradieDashboard() {
                     done: !!(profile?.tradie?.business_name && profile?.tradie?.trade_categories?.length && profile?.tradie?.service_areas?.length),
                     label: 'Complete your business profile',
                     sub: 'Business name, trade category and service area',
-                    href: '/tradie/profile',
+                    href: '/tradie/profile?required=true',
                     cta: 'Complete profile →'
                   },
                   {
