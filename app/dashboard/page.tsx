@@ -138,7 +138,6 @@ export default function DashboardPage() {
   const activeJobs = jobs.filter(j => j.status !== 'complete' && j.status !== 'cancelled')
   const quotesSent = jobs.filter(j => j.quote_request_sent_at).length
   const isHomeMember = profile?.subscription_plan === 'home'
-  const [showClientWizard, setShowClientWizard] = useState(false)
   const atQuoteLimit = quotesSent >= 3 && !isHomeMember
   const doneJobs = jobs.filter(j => j.status === 'complete' || j.status === 'cancelled')
 
