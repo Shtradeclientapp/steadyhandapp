@@ -42,7 +42,7 @@ export default function SignupPage() {
     const { data, error: authErr } = await supabase.auth.signUp({ email: form.email, password: form.password })
     if (authErr || !data.user) { setError(authErr?.message ?? 'Signup failed'); setLoading(false); return }
     const uid = data.user.id
-    await supabase.from('profiles').insert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb })
+    await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })
     if (role === 'tradie') {
       await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, subscription_active: false })
     }
