@@ -60,10 +60,11 @@ export default function HomePlanPage() {
         body: JSON.stringify({ action: 'create_checkout', price_id: priceId, client_id: profile.id, email: profile.email, tier: 'home' }),
       })
       const data = await res.json()
+      console.log('Stripe checkout response:', data)
       if (data.client_secret) {
         setClientSecret(data.client_secret)
       } else {
-        setCheckoutError('Could not start checkout — please try again.')
+        setCheckoutError(data.error || 'Could not start checkout — please try again.')
       }
     } catch {
       setCheckoutError('Could not start checkout — please try again.')
