@@ -47,6 +47,9 @@ export default function DashboardPage() {
         .eq('client_id', session.user.id)
         .order('created_at', { ascending: false })
       setJobs(data || [])
+      if (typeof window !== 'undefined' && !localStorage.getItem('client_setup_complete')) {
+        setShowClientWizard(true)
+      }
 
       const { data: buildsData } = await supabase
         .from('diy_projects')
@@ -107,6 +110,7 @@ export default function DashboardPage() {
   const activeJobs = jobs.filter(j => j.status !== 'complete')
   const quotesSent = jobs.filter(j => j.quote_request_sent_at).length
   const isHomeMember = profile?.subscription_plan === 'home'
+  const [showClientWizard, setShowClientWizard] = useState(false)
   const atQuoteLimit = quotesSent >= 3 && !isHomeMember
   const doneJobs = jobs.filter(j => j.status === 'complete')
 
@@ -414,6 +418,65 @@ export default function DashboardPage() {
         <a href="/privacy" style={{ fontSize:'11px', color:'#9AA5AA', textDecoration:'none' }}>Privacy Policy</a>
         <span style={{ fontSize:'11px', color:'#9AA5AA' }}>© 2026 Steadyhand Digital Pty Ltd</span>
       </div>
+      {/* ── Client setup wizard ── */}
+      {showClientWizard && (
+        <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+          <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 28px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>WELCOME TO STEADYHAND</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>A few things to get you started</p>
+            </div>
+            <div style={{ padding:'28px' }}>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', marginBottom:'24px' }}>
+                {[
+                  {
+                    done: !!(profile?.full_name && profile?.suburb),
+                    label: 'Complete your profile',
+                    sub: 'Your name, suburb and property details',
+                    href: '/profile',
+                    cta: 'Complete →'
+                  },
+                  {
+                    done: jobs.length > 0,
+                    label: 'Post your first job request',
+                    sub: 'Describe the work — invite a tradie you trust to quote',
+                    href: '/request',
+                    cta: 'Start a request →'
+                  },
+                  {
+                    done: isHomeMember,
+                    label: 'Explore Steadyhand Home',
+                    sub: 'Build Journal, Document Vault and extended warranty — $19/month',
+                    href: '/home-plan',
+                    cta: 'Learn more →'
+                  },
+                ].map((item, i) => (
+                  <div key={i} style={{ display:'flex', alignItems:'center', gap:'14px', padding:'14px 16px', background: item.done ? 'rgba(46,125,96,0.06)' : 'white', border:'1px solid ' + (item.done ? 'rgba(46,125,96,0.2)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px' }}>
+                    <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: item.done ? '#2E7D60' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', flexShrink:0 }}>
+                      {item.done ? '✓' : (i + 1)}
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#1C2B32', margin:'0 0 2px' }}>{item.label}</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{item.sub}</p>
+                    </div>
+                    {!item.done && (
+                      <a href={item.href} style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, textDecoration:'none', flexShrink:0 }}>{item.cta}</a>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <button type="button" onClick={() => {
+                if (typeof window !== 'undefined') localStorage.setItem('client_setup_complete', '1')
+                setShowClientWizard(false)
+              }} style={{ width:'100%', background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Go to my dashboard →
+              </button>
+              <p style={{ fontSize:'11px', color:'#9AA5AA', textAlign:'center' as const, marginTop:'12px' }}>You can complete these steps any time from your dashboard</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <OnboardingModal storageKey="seen_client_onboarding" slides={[
         {
           icon: '🏠',
