@@ -12,6 +12,9 @@ export default function WalletPage() {
   const [noteText, setNoteText] = useState('')
   const [loading, setLoading] = useState(true)
   const [activeJob, setActiveJob] = useState<string|null>(null)
+  const [activeTab, setActiveTab] = useState<'jobs'|'calculator'>('jobs')
+  const [calcBudget, setCalcBudget] = useState('')
+  const [calcMilestones, setCalcMilestones] = useState('3')
 
   useEffect(() => {
     const supabase = createClient()
@@ -215,6 +218,8 @@ export default function WalletPage() {
           })}
         </div>
       </div>
+    </div>
+      )}
     </div>
   )
 }
