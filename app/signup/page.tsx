@@ -24,7 +24,13 @@ const SUBURBS = [
 const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', display:'block' }
 const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }
 export default function SignupPage() {
-  const [role, setRole] = useState<'client'|'tradie'|'org'>('client')
+  const [role, setRole] = useState<'client'|'tradie'|'org'>(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search).get('role')
+      if (p === 'tradie' || p === 'org') return p as 'tradie'|'org'
+    }
+    return 'client'
+  })
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
