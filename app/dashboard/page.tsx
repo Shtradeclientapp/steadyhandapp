@@ -6,13 +6,16 @@ import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
   draft:       { label: 'Draft',             path: '/request',   color: '#7A9098' },
+  draft:       { label: 'Draft',          path: '/request',    color: '#7A9098' },
   matching:    { label: 'Matching',        path: '/shortlist',  color: '#2E6A8F' },
-  shortlisted: { label: 'Match',   path: '/shortlist',  color: '#2E6A8F' },
-  agreement:   { label: 'Confirm',     path: '/agreement',  color: '#6B4FA8' },
-  delivery:    { label: 'Build',        path: '/delivery',   color: '#C07830' },
-  signoff:     { label: 'Done', path: '/signoff',    color: '#D4522A' },
-  warranty:    { label: 'Protect',     path: '/warranty',   color: '#1A6B5A' },
-  complete:    { label: 'Done',           path: '/warranty',   color: '#2E7D60' },
+  shortlisted: { label: 'Match',           path: '/shortlist',  color: '#2E6A8F' },
+  consult:     { label: 'Consult',         path: '/consult',    color: '#9B6B9B' },
+  compare:     { label: 'Compare',         path: '/compare',    color: '#C07830' },
+  agreement:   { label: 'Agreement',       path: '/agreement',  color: '#6B4FA8' },
+  delivery:    { label: 'Delivery',        path: '/delivery',   color: '#C07830' },
+  signoff:     { label: 'Sign off',        path: '/signoff',    color: '#D4522A' },
+  warranty:    { label: 'Warranty',        path: '/warranty',   color: '#1A6B5A' },
+  complete:    { label: 'Complete',        path: '/warranty',   color: '#2E7D60' },
 }
 
 export default function DashboardPage() {
@@ -419,7 +422,7 @@ export default function DashboardPage() {
         {
           icon: '💳',
           title: 'Pay in milestones',
-          body: 'You only release payment when you\'re satisfied each stage is complete. Steadyhand takes 5% — only when the tradie gets paid.',
+          body: 'You only release payment when you\'re satisfied each stage is complete. Steadyhand takes 3.5% — only when the tradie gets paid.',
         },
       ]} />
     </div>
