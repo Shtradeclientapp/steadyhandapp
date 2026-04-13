@@ -21,6 +21,7 @@ export default function VaultPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string|null>(null)
   const [showUpload, setShowUpload] = useState(false)
+  const [activeTab, setActiveTab] = useState<'documents'|'templates'>('documents')
   const [filter, setFilter] = useState('all')
   const [form, setForm] = useState({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
   const fileRef = useRef<HTMLInputElement>(null)
@@ -306,6 +307,7 @@ export default function VaultPage() {
           </div>
         )}
 
+          )}
       </div>
     </div>
   )
