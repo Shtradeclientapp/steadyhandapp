@@ -32,12 +32,19 @@ export default function JoinPage() {
     if (!uid) { setError('Signup failed'); setSubmitting(false); return }
     await supabase.from('profiles').insert({ id: uid, role: 'tradie', full_name: form.fullName, email: invitation.email, suburb: invitation.job?.suburb || '' })
     await supabase.from('tradie_profiles').insert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false })
-    await supabase.from('jobs').update({ tradie_id: uid, status: 'agreement' }).eq('id', invitation.job_id)
-    await supabase.from('tradie_invitations').update({ status: 'accepted', accepted_at: new Date().toISOString() }).eq('id', invitation.id)
+    // Create quote_request row so tradie sees job on their dashboard
+    await supabase.from('quote_requests').upsert({
+      job_id: invitation.job_id,
+      tradie_id: uid,
+      status: 'requested',
+      requested_at: new Date().toISOString(),
+    }, { onConflict: 'job_id,tradie_id' })
+    // Update invitation status
+    await supabase.from('tradie_invitations').update({ status: 'accepted', tradie_id: uid, accepted_at: new Date().toISOString() }).eq('id', invitation.id)
+    // Leave job status as shortlisted — tradie needs to be verified before agreement
     setStep('done')
     setSubmitting(false)
-    const redirectPath = invitation.role === 'org' ? '/org/dashboard' : invitation.role === 'client' ? '/dashboard' : '/tradie/dashboard'
-    setTimeout(() => { window.location.href = redirectPath }, 2000)
+    setTimeout(() => { window.location.href = '/tradie/dashboard' }, 2000)
   }
 
   if (loading) return (
