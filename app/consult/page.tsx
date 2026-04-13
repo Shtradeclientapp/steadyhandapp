@@ -139,7 +139,7 @@ export default function AssessPage() {
       job_id: job?.id,
       sender_id: session?.user.id,
       body: label + ' has set the consult date to ' + new Date(date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Use the message thread to confirm or suggest a different time.',
-    }).catch(() => {})
+    }).then(() => {}).catch(() => {})
     setSavingDate(false)
   }
 
