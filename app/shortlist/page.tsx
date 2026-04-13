@@ -462,10 +462,7 @@ export default function ShortlistPage() {
 
             {tab === 'invite' && (
               <div style={{ padding:'20px' }}>
-                <button type="button" onClick={() => setTab('matches')}
-                  style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0, marginBottom:'16px', textDecoration:'underline' }}>
-                  ← Back to matches
-                </button>
+
                 <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px', lineHeight:'1.6' }}>
                   Have a tradie you already trust? Add them below — they will receive an email with your job details and a link to submit a quote through Steadyhand.
                 </p>
