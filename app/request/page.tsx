@@ -50,6 +50,8 @@ export default function RequestPage() {
   const [step, setStep] = useState(0)
   const [showHints, setShowHints] = useState(0)
   const [submitting, setSubmitting] = useState(false)
+  const [quotesSent, setQuotesSent] = useState(0)
+  const [isHomeMember, setIsHomeMember] = useState(false)
   const [submitError, setSubmitError] = useState<string|null>(null)
   const [orgId, setOrgId] = useState<string | null>(null)
   const [propertyId, setPropertyId] = useState<string | null>(null)

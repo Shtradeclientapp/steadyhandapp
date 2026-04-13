@@ -105,6 +105,9 @@ export default function DashboardPage() {
   )
 
   const activeJobs = jobs.filter(j => j.status !== 'complete')
+  const quotesSent = jobs.filter(j => j.quote_request_sent_at).length
+  const isHomeMember = profile?.subscription_plan === 'home'
+  const atQuoteLimit = quotesSent >= 3 && !isHomeMember
   const doneJobs = jobs.filter(j => j.status === 'complete')
 
   const justSubmitted = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('submitted') === 'true'
@@ -359,7 +362,16 @@ export default function DashboardPage() {
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>YOUR HOME</h2>
 
           {/* HUB CARDS */}
-          <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+          {!isHomeMember && (
+            <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 2px' }}>Steadyhand Home features</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Build Journal, Document Vault and Finance tools are included in the Steadyhand Home plan.</p>
+              </div>
+              <a href="/home-plan" style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, textDecoration:'none', flexShrink:0, border:'1px solid rgba(212,82,42,0.3)', borderRadius:'6px', padding:'6px 12px' }}>Upgrade →</a>
+            </div>
+          )}
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', opacity: isHomeMember ? 1 : 0.4, pointerEvents: isHomeMember ? 'auto' : 'none' as const }}>
 
             {/* Build Journal */}
             <a href="/diy" style={{ textDecoration:'none' }}>
