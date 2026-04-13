@@ -23,15 +23,29 @@ export default function JoinPage() {
   }, [])
 
   const handleSignup = async () => {
-    if (!form.fullName || !form.password) return
+    if (!form.password) return
     setSubmitting(true)
     const supabase = createClient()
+    // Try signup first — if user exists, fall back to sign in
+    let uid: string | undefined
     const { data, error: signupError } = await supabase.auth.signUp({ email: invitation.email, password: form.password })
-    if (signupError) { setError(signupError.message); setSubmitting(false); return }
-    const uid = data.user?.id
-    if (!uid) { setError('Signup failed'); setSubmitting(false); return }
-    await supabase.from('profiles').insert({ id: uid, role: 'tradie', full_name: form.fullName, email: invitation.email, suburb: invitation.job?.suburb || '' })
-    await supabase.from('tradie_profiles').insert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false })
+    if (signupError?.message?.includes('already registered') || signupError?.message?.includes('already exists')) {
+      // Existing user — sign them in instead
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: invitation.email, password: form.password })
+      if (signInError) { setError('Account exists but password incorrect — try signing in at /login'); setSubmitting(false); return }
+      uid = signInData.user?.id
+    } else if (signupError) {
+      setError(signupError.message); setSubmitting(false); return
+    } else {
+      uid = data.user?.id
+    }
+    if (!uid) { setError('Could not establish session'); setSubmitting(false); return }
+    // Only insert profile/tradie rows if this is a new signup
+    const { data: existingProfile } = await supabase.from('profiles').select('id').eq('id', uid).single().catch(() => ({ data: null }))
+    if (!existingProfile) {
+      await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
+      await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
+    }
     // Create quote_request row so tradie sees job on their dashboard
     await supabase.from('quote_requests').upsert({
       job_id: invitation.job_id,
@@ -151,7 +165,7 @@ export default function JoinPage() {
             {error && <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'12px' }}>{error}</p>}
             <div style={{ display:'flex', gap:'10px' }}>
               <button type="button" onClick={() => setStep('view')} style={{ background:'transparent', color:'#1C2B32', padding:'12px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
-              <button type="button" onClick={handleSignup} disabled={submitting || !form.fullName || !form.password}
+              <button type="button" onClick={handleSignup} disabled={submitting || !form.password}
                 style={{ flex:1, background:'#D4522A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: submitting || !form.fullName || !form.password ? 0.6 : 1 }}>
                 {submitting ? 'Creating account...' : 'Create account and view job →'}
               </button>
