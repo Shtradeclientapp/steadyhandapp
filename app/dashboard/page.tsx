@@ -26,6 +26,7 @@ export default function DashboardPage() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [builds, setBuilds] = useState<any[]>([])
+  const [showClientWizard, setShowClientWizard] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
