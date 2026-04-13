@@ -85,7 +85,8 @@ export async function POST(request: NextRequest) {
 
     // ── Embedded subscription checkout ───────────────────────────
     if (action === 'create_checkout') {
-      if (!price_id || !tradie_id) return NextResponse.json({ error: 'price_id and tradie_id required' }, { status: 400 })
+      if (!price_id || (!tradie_id && !client_id)) return NextResponse.json({ error: 'price_id and user_id required' }, { status: 400 })
+      const userId = tradie_id || client_id
 
       // Find or create Stripe customer
       const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id, business_name').eq('id', tradie_id).single()
@@ -107,8 +108,8 @@ export async function POST(request: NextRequest) {
         mode: 'subscription',
         customer: customerId,
         line_items: [{ price: price_id, quantity: 1 }],
-        return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe/return?session_id={CHECKOUT_SESSION_ID}',
-        metadata: { tradie_id, tier },
+        return_url: process.env.NEXT_PUBLIC_APP_URL + (client_id ? '/home-plan/return?session_id={CHECKOUT_SESSION_ID}' : '/tradie/subscribe/return?session_id={CHECKOUT_SESSION_ID}'),
+        metadata: { tradie_id: tradie_id || null, client_id: client_id || null, tier },
       })
       return NextResponse.json({ client_secret: session.client_secret })
     }

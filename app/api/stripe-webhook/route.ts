@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
     const tradieId = session.metadata?.tradie_id
+    const clientId = session.metadata?.client_id
     const tier = session.metadata?.tier
     const customerId = session.customer as string
     const subscriptionId = session.subscription as string
@@ -33,14 +34,27 @@ export async function POST(request: NextRequest) {
         stripe_subscription_id: subscriptionId,
       }).eq('id', tradieId)
     }
+
+    if (clientId && tier === 'home') {
+      await supabase.from('profiles').update({
+        subscription_plan: 'home',
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId,
+      }).eq('id', clientId)
+    }
   }
 
   if (event.type === 'customer.subscription.deleted') {
     const sub = event.data.object as Stripe.Subscription
     const customerId = sub.customer as string
-    // Downgrade to basic when subscription cancelled
+    // Downgrade tradie to basic
     await supabase.from('tradie_profiles').update({
       subscription_tier: 'basic',
+      stripe_subscription_id: null,
+    }).eq('stripe_customer_id', customerId)
+    // Downgrade client home plan
+    await supabase.from('profiles').update({
+      subscription_plan: 'free',
       stripe_subscription_id: null,
     }).eq('stripe_customer_id', customerId)
   }
