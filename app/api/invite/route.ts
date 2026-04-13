@@ -9,7 +9,7 @@ const supabase = createClient(
 )
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://steadyhandapp.vercel.app'
-const FROM = 'Steadyhand <notifications@steadyhanddigital.com>'
+const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 
 export async function POST(request: NextRequest) {
   try {
