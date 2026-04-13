@@ -89,18 +89,23 @@ export async function POST(request: NextRequest) {
       const userId = tradie_id || client_id
 
       // Find or create Stripe customer
-      const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id, business_name').eq('id', tradie_id).single()
-      const { data: prof } = await supabase.from('profiles').select('email, full_name').eq('id', tradie_id).single()
-
-      let customerId = tp?.stripe_customer_id
+      const { data: prof } = await supabase.from('profiles').select('email, full_name, stripe_customer_id').eq('id', userId).single()
+      let customerId = prof?.stripe_customer_id
+      if (!customerId && tradie_id) {
+        const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id, business_name').eq('id', tradie_id).single()
+        customerId = tp?.stripe_customer_id
+      }
       if (!customerId) {
         const customer = await stripe.customers.create({
           email: prof?.email || email,
-          name: tp?.business_name || prof?.full_name || undefined,
-          metadata: { tradie_id },
+          name: prof?.full_name || undefined,
+          metadata: { user_id: userId },
         })
         customerId = customer.id
-        await supabase.from('tradie_profiles').update({ stripe_customer_id: customerId }).eq('id', tradie_id)
+        await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', userId)
+        if (tradie_id) {
+          await supabase.from('tradie_profiles').update({ stripe_customer_id: customerId }).eq('id', tradie_id)
+        }
       }
 
       const session = await (stripe.checkout.sessions.create as any)({
