@@ -145,11 +145,11 @@ export default function TradieJobPage() {
   }, [])
 
   const profileComplete = !!(
-    profile?.tradie?.business_name &&
-    (profile?.tradie?.trade_categories || []).length > 0 &&
-    (profile?.tradie?.service_areas || []).length > 0 &&
-    profile?.tradie?.abn &&
-    profile?.tradie?.licence_number
+    job?.tradie?.business_name &&
+    (job?.tradie?.trade_categories || []).length > 0 &&
+    (job?.tradie?.service_areas || []).length > 0 &&
+    job?.tradie?.abn &&
+    job?.tradie?.licence_number
   )
 
   const submitQuote = async () => {
