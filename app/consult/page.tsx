@@ -135,11 +135,13 @@ export default function AssessPage() {
     setAssessment((a: any) => ({ ...a, consult_date: date, slot_confirmed_at: new Date().toISOString() }))
     const { data: { session } } = await supabase.auth.getSession()
     const label = isTradie ? (profile?.tradie?.business_name || 'Tradie') : (profile?.full_name || 'Client')
-    await supabase.from('job_messages').insert({
-      job_id: job?.id,
-      sender_id: session?.user.id,
-      body: label + ' has set the consult date to ' + new Date(date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Use the message thread to confirm or suggest a different time.',
-    }).then(() => {}).catch(() => {})
+    try {
+      await supabase.from('job_messages').insert({
+        job_id: job?.id,
+        sender_id: session?.user.id,
+        body: label + ' has set the consult date to ' + new Date(date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Use the message thread to confirm or suggest a different time.',
+      })
+    } catch (_) {}
     setSavingDate(false)
   }
 
