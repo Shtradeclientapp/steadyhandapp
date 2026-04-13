@@ -29,8 +29,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient()
+    // Safety net — never hang on loading
+    const loadingTimeout = setTimeout(() => setLoading(false), 5000)
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { window.location.href = '/login'; return }
+      if (!session) { clearTimeout(loadingTimeout); window.location.href = '/login'; return }
 
       // Handle session expiry
       supabase.auth.onAuthStateChange((event) => {
@@ -82,6 +84,7 @@ export default function DashboardPage() {
         upcoming.sort((a: any, b: any) => new Date(a.consult_date).getTime() - new Date(b.consult_date).getTime())
         setConsults(upcoming)
       }
+      clearTimeout(loadingTimeout)
       setLoading(false)
     })
   }, [])
