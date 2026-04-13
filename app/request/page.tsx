@@ -83,7 +83,10 @@ export default function RequestPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) return
-      const { data: prof } = await supabase.from('profiles').select('org_id').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('org_id, subscription_plan').eq('id', session.user.id).single()
+      setIsHomeMember(prof?.subscription_plan === 'home')
+      const { data: sentJobs } = await supabase.from('jobs').select('id').eq('client_id', session.user.id).not('quote_request_sent_at', 'is', null)
+      setQuotesSent(sentJobs?.length || 0)
       if (prof?.org_id) setOrgId(prof.org_id)
     })
   }, [])
