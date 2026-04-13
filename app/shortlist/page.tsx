@@ -259,37 +259,29 @@ export default function ShortlistPage() {
           )}
 
           {selectedJob && (
-            <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px', position:'relative', overflow:'hidden' }}>
-              <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
-              <div style={{ position:'relative', zIndex:1 }}>
-                <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'3px' }}>{selectedJob.title}</h3>
-                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)' }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
-              </div>
+            <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', paddingBottom:'14px', marginBottom:'16px' }}>
+              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 3px' }}>{selectedJob.title}</h3>
+              <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
             </div>
           )}
 
           {/* REQUEST CARD — shown when tradies are selected */}
           {selectedJob && totalSelected > 0 && !sent && !pendingConfirm && (
-            <div style={{ background:'#E8F0EE', border:'2px solid #D4522A', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-                <div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected</p>
-                  <p style={{ fontSize:'12px', color:'#7A9098' }}>Steadyhand recommends requesting 2–4 quotes for best results.</p>
-                </div>
-                <button type="button" onClick={() => { setPendingConfirm(true); setTab('requested') }}
-                  style={{ background:'#D4522A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-                  Review selections →
-                </button>
-              </div>
+            <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', paddingBottom:'14px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+              <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>{totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected</p>
+              <button type="button" onClick={() => { setPendingConfirm(true); setTab('requested') }}
+                style={{ background:'#D4522A', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                Review selections →
+              </button>
             </div>
           )}
 
           {selectedJob && pendingConfirm && !sent && (
-            <div style={{ background:'rgba(212,82,42,0.06)', border:'2px solid #D4522A', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+            <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', paddingBottom:'14px', marginBottom:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
                 <div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#D4522A', marginBottom:'3px' }}>Ready to send {totalSelected} quote request{totalSelected > 1 ? 's' : ''}?</p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64' }}>Each tradie will be notified and invited to book a consult time.</p>
+                  <p style={{ fontSize:'13px', color:'#1C2B32', marginBottom:'3px' }}>Ready to send {totalSelected} quote request{totalSelected > 1 ? 's' : ''}?</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098' }}>Each tradie will be notified and invited to book a consult time.</p>
                 </div>
                 <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
                   <button type="button" onClick={() => setPendingConfirm(false)}
@@ -347,7 +339,22 @@ export default function ShortlistPage() {
                       </div>
                     </a>
                     <div style={{ background:'white', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'12px', padding:'16px 18px', cursor:'pointer' }}
-                      onClick={() => setShowNextStepModal(false)}>
+                      onClick={async () => {
+                        if (!selectedJob) { setShowNextStepModal(false); return }
+                        const supabase = (await import('@/lib/supabase/client')).createClient()
+                        const { data: { session } } = await supabase.auth.getSession()
+                        await supabase.from('site_assessments').upsert({
+                          job_id: selectedJob.id,
+                          client_what_discussed: 'Consult skipped by client — proceeded directly to quoting.',
+                        }, { onConflict: 'job_id' })
+                        await supabase.from('jobs').update({ status: 'compare' }).eq('id', selectedJob.id)
+                        await supabase.from('job_messages').insert({
+                          job_id: selectedJob.id,
+                          sender_id: session?.user.id,
+                          body: 'Consult skipped — client has proceeded directly to quoting.',
+                        })
+                        window.location.href = '/compare'
+                      }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'6px' }}>
                         <span style={{ fontSize:'20px' }}>⚡</span>
                         <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', margin:0 }}>Skip consult — go straight to quotes</p>
