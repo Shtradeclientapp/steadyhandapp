@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       }
 
       const session = await (stripe.checkout.sessions.create as any)({
-        ui_mode: 'embedded',
+        ui_mode: 'embedded_page',
         mode: 'subscription',
         customer: customerId,
         line_items: [{ price: price_id, quantity: 1 }],
