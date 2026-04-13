@@ -232,7 +232,8 @@ export default function Home() {
 
       <div style={{ background:'#E8F0EE' }}>
         <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'64px 48px' }}>
-          <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, marginBottom:'32px', textAlign:'center' as const }}>From the field</p>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'8px', textAlign:'center' as const }}>WHAT PEOPLE SAY</h2>
+          <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'32px', textAlign:'center' as const }}>From homeowners and trade businesses who have used Steadyhand</p>
           <div className="values-grid" style={{ alignItems:'stretch' }}>
 
             {/* Homeowner testimonial */}
@@ -314,8 +315,8 @@ export default function Home() {
         <div className="footer-inner footer-pad">
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.7)', letterSpacing:'2px' }}>STEADYHAND</div>
           <div className="footer-links">
-            {['About', 'For homeowners', 'For trade businesses', 'For organisations', 'Privacy'].map(l => (
-              <span key={l} style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', cursor:'pointer' }}>{l}</span>
+            {[['About','#about'], ['For homeowners','#for-homeowners'], ['For trade businesses','#for-trade-businesses'], ['For organisations','#for-organisations'], ['Privacy','/privacy']].map(([l,href]) => (
+              <a key={l} href={href} style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', cursor:'pointer', textDecoration:'none' }}>{l}</a>
             ))}
           </div>
           <div style={{ fontSize:'12px', color:'rgba(216,228,225,0.3)' }}>2026 Steadyhand Digital. Western Australia.</div>
