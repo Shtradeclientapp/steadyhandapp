@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
-const FROM = 'Steadyhand <noreply@steadyhand.com.au>'
+const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 const URL = process.env.NEXT_PUBLIC_APP_URL || 'https://steadyhandapp.vercel.app'
 
 function wrap(body: string) {
