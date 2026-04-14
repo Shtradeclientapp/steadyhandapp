@@ -717,7 +717,7 @@ export default function TradieJobPage() {
                       </div>
                     ) : (
                       <>
-                        <div className='quote-grid-row' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '4px' }}>
+                        <div className='quote-grid-row quote-header' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '4px' }}>
                           {['Description', 'Qty', 'Unit', 'Unit $', 'Total', ''].map(h => (
                             <p key={h} style={{ fontSize: '10px', color: '#9AA5AA', margin: 0, padding: '0 2px' }}>{h}</p>
                           ))}
