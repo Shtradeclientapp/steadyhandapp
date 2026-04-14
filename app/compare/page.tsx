@@ -60,7 +60,7 @@ export default function ComparePage() {
   }
 
   const acceptQuote = async (quote: any) => {
-    if (!confirm('Accept this quote from ' + quote.tradie?.business_name + '? The other tradies will be notified.')) return
+    if (!confirm('Proceed to scope agreement with ' + quote.tradie?.business_name + '? You can review and negotiate the full scope before anything is signed.')) return
     setAccepting(quote.id)
     setAcceptError(null)
     try {
@@ -98,7 +98,7 @@ export default function ComparePage() {
     setSendingRevise(false)
   }
 
-  const fmt = (n: number) => '$' + Number(n).toLocaleString('en-AU', { minimumFractionDigits: 0 })
+  const fmt = (n: any) => '$' + Number(n).toLocaleString('en-AU', { minimumFractionDigits: 0 })
 
   if (loading) return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center' }}>
