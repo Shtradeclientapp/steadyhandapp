@@ -298,3 +298,278 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   .agreement-2col { grid-template-columns: 1fr !important; }
   .agreement-2col > div:first-child { position: static !important; }
 }
+
+/* ── Comprehensive mobile polish ──────────────────────────────────────────── */
+
+/* Base touch targets and spacing */
+@media (max-width: 768px) {
+
+  /* Page containers — tighter padding on small screens */
+  div[style*="padding:'32px 24px'"],
+  div[style*='padding: "32px 24px"'] {
+    padding: 16px !important;
+  }
+
+  /* Max-width containers full width on mobile */
+  div[style*="maxWidth:'800px'"],
+  div[style*="maxWidth:'860px'"],
+  div[style*="maxWidth:'900px'"],
+  div[style*="maxWidth:'960px'"],
+  div[style*="maxWidth:'1200px'"],
+  div[style*="maxWidth:'1400px'"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Quote builder — the 6-col grid breaks entirely on mobile */
+  .quote-line-item {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  /* Milestone editor grid */
+  div[style*="grid-template-columns: '1fr 1fr 80px 24px'"],
+  div[style*='gridTemplateColumns: "1fr 1fr 80px 24px"'] {
+    grid-template-columns: 1fr 60px 24px !important;
+  }
+
+  /* Stage rail — larger touch targets */
+  .stage-nav-item {
+    padding: 10px 12px !important;
+    min-width: 60px !important;
+  }
+  .stage-nav-label {
+    font-size: 9px !important;
+  }
+
+  /* Nav — hide text labels, keep icons */
+  .nav-text-hide { display: none !important; }
+
+  /* Hero sections — reduce padding */
+  div[style*="padding:'48px 24px'"],
+  div[style*="padding:'40px 24px'"] {
+    padding: 28px 16px !important;
+  }
+
+  /* Dark hero headers */
+  div[style*="padding:'32px 24px'"][style*="background:'#1C2B32'"] {
+    padding: 20px 16px !important;
+  }
+
+  /* Cards and panels */
+  div[style*="padding:'24px 32px'"] {
+    padding: 16px !important;
+  }
+  div[style*="padding:'20px 24px'"],
+  div[style*="padding:'16px 20px'"] {
+    padding: 12px 16px !important;
+  }
+
+  /* Two-column grids → single column */
+  div[style*="gridTemplateColumns:'1fr 1fr'"],
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Three-column grids → single column */
+  div[style*="gridTemplateColumns:'repeat(3"],
+  div[style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Org dashboard 3-col stats */
+  .org-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Flex rows that should stack */
+  .stack-mobile {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* Buttons — ensure minimum touch target */
+  button, a[style*="borderRadius"] {
+    min-height: 40px;
+  }
+
+  /* Full-width CTAs on mobile */
+  .btn-full-mobile {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* Signature boxes stack */
+  div[style*="display:'grid'"][style*="'220px 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Modal dialogs — full screen on mobile */
+  div[style*="maxWidth:'900px'"][style*="position:'fixed'"],
+  div[style*="maxWidth:'860px'"][style*="position:'fixed'"] {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 12px 12px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    top: auto !important;
+  }
+
+  /* Document viewer modal — stack panels vertically */
+  div[style*="grid-template-columns:'1fr 280px'"],
+  div[style*="gridTemplateColumns:'1fr 280px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tradie job page — quote builder inputs */
+  div[style*="gridTemplateColumns: '1fr 60px 60px 80px 80px 24px'"],
+  div[style*="grid-template-columns: '1fr 60px 60px 80px 80px 24px'"] {
+    grid-template-columns: 1fr 70px 24px !important;
+  }
+
+  /* Hide quantity and unit columns on mobile quote builder */
+  .quote-col-qty,
+  .quote-col-unit { display: none !important; }
+
+  /* Tradie dashboard wizard steps — stack */
+  div[style*="gridTemplateColumns:'260px 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Org property cards — single column */
+  div[style*="gridTemplateColumns:'repeat(auto-fill, minmax(280px,1fr))'"],
+  div[style*="gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Reports table — allow horizontal scroll */
+  .reports-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Tier selector — stack on mobile */
+  div[style*="gridTemplateColumns:'repeat(3,1fr)'"],
+  div[style*="grid-template-columns: repeat(3,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Subscribe page tier cards */
+  .tier-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Profile/form fields */
+  div[style*="gridTemplateColumns:'1fr 1fr'"] input,
+  div[style*="gridTemplateColumns:'1fr 1fr'"] select {
+    font-size: 16px !important; /* prevents iOS zoom */
+  }
+
+  /* All inputs — prevent iOS auto-zoom */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Vault document viewer — stack */
+  div[style*="gridTemplateColumns:'1fr 280px'"] {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto !important;
+  }
+
+  /* Stage rail active indicator — more visible on mobile */
+  .stage-nav-item.active .stage-nav-num {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  /* Org dashboard tabs — scrollable */
+  .org-tabs {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex-wrap: nowrap !important;
+  }
+  .org-tab-item {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Agreement page single column when past agreement */
+  .agreement-readonly {
+    max-width: 100% !important;
+    padding: 16px !important;
+  }
+
+  /* Milestone editor — stack percentage input */
+  .milestone-row {
+    flex-wrap: wrap !important;
+  }
+
+  /* Delivery page — approve buttons full width */
+  div[style*="width:'100%'"][style*="borderRadius:'8px'"] {
+    margin-bottom: 8px !important;
+  }
+
+  /* Compare page quote cards — single column */
+  div[style*="gridTemplateColumns: allQuotes"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Shortlist page tradie cards */
+  div[style*="gridTemplateColumns:'1fr 1fr'"].tradie-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Progress notes textarea */
+  textarea[style*="minHeight:'72px'"] {
+    min-height: 80px !important;
+  }
+}
+
+/* ── Small mobile (375px and below) ───────────────────────────────────────── */
+@media (max-width: 375px) {
+  div[style*="fontSize:'40px'"] { font-size: 28px !important; }
+  div[style*="fontSize:'32px'"] { font-size: 24px !important; }
+  .stage-nav-label { display: none !important; }
+  .stage-nav-item { padding: 10px 10px !important; min-width: 44px !important; }
+}
+
+/* ── Touch device improvements ─────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase tap targets */
+  button { min-height: 44px; }
+  a { min-height: 44px; display: inline-flex; align-items: center; }
+
+  /* Remove hover states that look broken on touch */
+  button:hover { opacity: 1 !important; }
+
+  /* Smooth momentum scrolling on iOS */
+  div[style*="overflowX:'auto'"],
+  div[style*="overflow-x: auto"] {
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* ── Skeleton loading animation ────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #E8F0EE 25%, #F4F8F7 50%, #E8F0EE 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse { animation: pulse 1.5s ease-in-out infinite; }
