@@ -323,7 +323,6 @@ export default function VaultPage() {
         )}
 
       </div>
-    </div>
 
       {/* DOCUMENT VIEWER MODAL */}
       {selectedDoc && (
