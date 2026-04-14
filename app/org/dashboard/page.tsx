@@ -39,6 +39,9 @@ export default function OrgDashboardPage() {
   const [inviteSent, setInviteSent] = useState(false)
   const [filterStatus, setFilterStatus] = useState('')
   const [filterProperty, setFilterProperty] = useState('')
+  const [xeroConnected, setXeroConnected] = useState(false)
+  const [xeroTenant, setXeroTenant] = useState<string|null>(null)
+  const [xeroDisconnecting, setXeroDisconnecting] = useState(false)
   const [showContractorImport, setShowContractorImport] = useState(false)
   const [csvImporting, setCsvImporting] = useState(false)
   const [csvResult, setCsvResult] = useState<string|null>(null)
@@ -77,6 +80,16 @@ export default function OrgDashboardPage() {
         .select('*, tradie:tradie_profiles(business_name, trade_categories, suburb, rating_avg, jobs_completed, licence_verified)')
         .eq('org_id', prof.org_id)
       setPreferredTradies(preferred || [])
+      // Check Xero connection
+      const xeroRes = await fetch('/api/xero/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: session.user.id }),
+      })
+      const xeroData = await xeroRes.json()
+      setXeroConnected(xeroData.connected || false)
+      if (xeroData.tenant_name) setXeroTenant(xeroData.tenant_name)
+
       setLoading(false)
     })
   }, [])

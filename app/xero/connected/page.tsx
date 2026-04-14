@@ -22,8 +22,13 @@ export default function XeroConnectedPage() {
       if (data.success) {
         setStatus('Xero connected successfully!')
         setDone(true)
+        // Redirect to correct dashboard based on role
+        const supabase2 = createClient()
+        const { data: prof } = await supabase2.from('profiles').select('role, org_id').eq('id', session.user.id).single()
         setTimeout(() => {
-          window.location.href = '/tradie/dashboard?xero=connected'
+          if (prof?.org_id) window.location.href = '/org/dashboard?xero=connected'
+          else if (prof?.role === 'tradie') window.location.href = '/tradie/dashboard?xero=connected'
+          else window.location.href = '/dashboard?xero=connected'
         }, 2000)
       } else {
         setStatus('Connection failed — please try again.')
