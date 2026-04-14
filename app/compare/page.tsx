@@ -51,7 +51,7 @@ export default function ComparePage() {
     setQuoteRequests(qrs || [])
     const { data } = await supabase
       .from('quotes')
-      .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible, licence_number, insurance_expiry, dialogue_score_avg, id), quote_requests(status)')
+      .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible, licence_number, insurance_expiry, dialogue_score_avg, id)')
       .eq('job_id', jobId)
       .order('created_at', { ascending: true })
     setQuotes(data || [])
