@@ -289,8 +289,13 @@ export default function DeliveryPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'create_payment_intent', job_id: job.id, milestone_id: id }),
     })
-    const { client_secret } = await res.json()
-    if (client_secret) { setClientSecret(client_secret); setPayingMilestone(id) }
+    const data = await res.json()
+    if (data.client_secret) {
+      setClientSecret(data.client_secret)
+      setPayingMilestone(id)
+    } else {
+      alert('Payment could not be initiated — the tradie may not have completed their Stripe account setup. You can still approve the milestone to record completion, and arrange payment separately until Stripe is configured.')
+    }
   }
 
   const approveM = async (id: string) => {
