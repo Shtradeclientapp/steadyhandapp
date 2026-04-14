@@ -19,7 +19,7 @@ export default function ShortlistPage() {
   const [sent, setSent] = useState(false)
   const [tab, setTab] = useState<'invite'|'requested'>('invite')
   const [showNextStepModal, setShowNextStepModal] = useState(false)
-  const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'' })
+  const [inviteForm, setInviteForm] = useState({ business_name:'', email:'', trade_category:'', phone:'', personal_message:'' })
   const [inviteSent, setInviteSent] = useState(false)
   const [pendingInvites, setPendingInvites] = useState<any[]>([])
   const [allQuotes, setAllQuotes] = useState<any[]>([])
@@ -137,11 +137,17 @@ export default function ShortlistPage() {
 
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR JOB</h1>
 
-          {!isPastStage && <HintPanel color="#2E6A8F" hints={[
-            "Invite a tradie you already trust — enter their business name and email below and they will receive your job details with a link to submit a quote through Steadyhand.",
-            "You can invite multiple tradies to compare quotes side by side.",
-            "Once invited, tradies appear in the Requested tab. You will be notified when their quote arrives.",
-          ]} />}
+          {!isPastStage && (
+            <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'18px 20px', marginBottom:'20px' }}>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', marginBottom:'8px', letterSpacing:'0.2px' }}>Why invite-only?</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'10px' }}>
+                Algorithms that rank tradies often prioritise the wrong things — ad spend, review volume, or proximity. The most reliable signal is still the one you already have: someone you know, or someone a trusted person knows.
+              </p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:0 }}>
+                The act of invitation matters. It begins the relationship with accountability on both sides. Steadyhand then wraps that relationship in documentation, milestone payments and warranty — so the trust you already have is protected by structure.
+              </p>
+            </div>
+          )}
 
           {jobs.length > 1 && (
             <div style={{ marginBottom:'20px' }}>
@@ -322,6 +328,12 @@ export default function ShortlistPage() {
                       <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Phone (optional)</label>
                       <input type="tel" placeholder="0400 000 000" value={inviteForm.phone} onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))} style={inpStyle} />
                     </div>
+                  </div>
+                  <div style={{ marginBottom:'10px' }}>
+                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Personal message <span style={{ fontWeight:400, color:'#7A9098' }}>(optional)</span></label>
+                    <textarea placeholder="e.g. Hi — I've worked with you before and would love to get a quote on this job through Steadyhand." value={inviteForm.personal_message} onChange={e => setInviteForm(f => ({ ...f, personal_message: e.target.value }))}
+                      style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, minHeight:'72px', fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                    <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'4px' }}>This will appear at the top of the invitation email the tradie receives.</p>
                   </div>
                   <button type="button" onClick={addInvite} disabled={!inviteForm.business_name || !inviteForm.email}
                     style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
