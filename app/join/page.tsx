@@ -58,15 +58,27 @@ export default function JoinPage() {
       await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
       await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
     }
+    // Wait for session to be established before writing
+    let sessionReady = false
+    for (let i = 0; i < 10; i++) {
+      const { data: { session: s } } = await supabase.auth.getSession()
+      if (s) { sessionReady = true; break }
+      await new Promise(r => setTimeout(r, 300))
+    }
+    if (!sessionReady) { setError('Session not established — please try again'); setSubmitting(false); return }
+
     // Create quote_request row so tradie sees job on their dashboard
-    await supabase.from('quote_requests').upsert({
+    const { error: qrError } = await supabase.from('quote_requests').upsert({
       job_id: invitation.job_id,
       tradie_id: uid,
       status: 'requested',
       requested_at: new Date().toISOString(),
     }, { onConflict: 'job_id,tradie_id' })
+    if (qrError) console.error('quote_request error:', qrError)
+
     // Update invitation status
-    await supabase.from('tradie_invitations').update({ status: 'accepted', tradie_id: uid, accepted_at: new Date().toISOString() }).eq('id', invitation.id)
+    const { error: invError } = await supabase.from('tradie_invitations').update({ status: 'accepted', tradie_id: uid, accepted_at: new Date().toISOString() }).eq('id', invitation.id)
+    if (invError) console.error('invitation update error:', invError)
     // Leave job status as shortlisted — tradie needs to be verified before agreement
     setStep('done')
     setSubmitting(false)
