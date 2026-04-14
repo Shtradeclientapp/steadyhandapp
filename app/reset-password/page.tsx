@@ -8,15 +8,26 @@ export default function ResetPasswordPage() {
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    // Supabase puts the token in the URL hash — just need to be on this page
     const supabase = createClient()
-    supabase.auth.onAuthStateChange((event) => {
+    // Check for hash fragment — Supabase puts access_token in hash on password reset
+    const hash = window.location.hash
+    if (hash && hash.includes('access_token')) {
+      setReady(true)
+      setStatus('Enter your new password below.')
+    }
+    // Also listen for the auth state change as fallback
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
+        setReady(true)
         setStatus('Enter your new password below.')
       }
     })
+    // Show form after short delay regardless — avoid blank screen
+    const timer = setTimeout(() => setReady(true), 800)
+    return () => { subscription.unsubscribe(); clearTimeout(timer) }
   }, [])
 
   const handleReset = async () => {
@@ -40,7 +51,9 @@ export default function ResetPasswordPage() {
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', marginBottom:'8px' }}>STEADYHAND</h1>
         <h2 style={{ fontSize:'20px', fontWeight:600, color:'#1C2B32', marginBottom:'6px' }}>Set new password</h2>
         <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>Choose a new password for your account.</p>
-        {done ? (
+        {!ready ? (
+          <p style={{ fontSize:'14px', color:'#4A5E64' }}>Loading...</p>
+        ) : done ? (
           <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'14px', fontSize:'14px', color:'#2E7D60' }}>
             ✓ Password updated — redirecting to login...
           </div>
