@@ -299,7 +299,7 @@ export default function WarrantyPage() {
 
         <div style={{ marginTop:'24px', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px' }}>
           <p style={{ fontSize:'11px', fontWeight:'500', textTransform:'uppercase', letterSpacing:'0.8px', color:'#7A9098', marginBottom:'8px' }}>Warranty terms</p>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
+          <div className='warranty-action-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px' }}>
             {[
               { label:'Period', value:'90 days from sign-off' },
               { label:'Response SLA', value:'5 business days' },
