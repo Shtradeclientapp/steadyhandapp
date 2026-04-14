@@ -226,7 +226,7 @@ export default function ComparePage() {
                       {/* Price */}
                       <div style={{ padding:'20px 20px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                         <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.5px' }}>Total quote</p>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>{fmt(q.total_amount || 0)}</p>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>{fmt(q.total_price || 0)}</p>
                         {q.gst_included && <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>GST included</p>}
                       </div>
 
