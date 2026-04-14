@@ -340,15 +340,38 @@ export default function DashboardPage() {
         )}
 
         {jobs.length === 0 && (
-          <div style={{ textAlign:'center', padding:'48px', background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)' }}>
-            <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🏗</div>
-            <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>No jobs yet</p>
-            <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>Post your first job request to get started.</p>
-            <a href="/request">
-              <button style={{ background:'#D4522A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer' }}>
-                Post a request →
-              </button>
-            </a>
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'24px' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 24px', position:'relative', overflow:'hidden' }}>
+              <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
+              <div style={{ position:'relative', zIndex:1 }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>YOUR FIRST JOB</p>
+                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Describe the work — we'll handle the rest</p>
+              </div>
+            </div>
+            <div style={{ padding:'24px' }}>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'20px' }}>
+                Steadyhand takes your job from first request all the way through to a 90-day warranty — with a signed scope agreement, milestone payments, and a permanent document record at every step.
+              </p>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'10px', marginBottom:'20px' }}>
+                {[
+                  { icon:'📋', title:'Describe the work', body:'Tell us what needs doing and where. The more detail, the better your quotes.' },
+                  { icon:'🤝', title:'Invite a tradie', body:'Invite a tradie you already trust, or ask Steadyhand to suggest one.' },
+                  { icon:'✍️', title:'Sign a scope agreement', body:'Both parties sign before work starts. No more verbal agreements.' },
+                  { icon:'🛡', title:'Warranty included', body:'Every completed job comes with a 90-day warranty, tracked automatically.' },
+                ].map(item => (
+                  <div key={item.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px' }}>
+                    <span style={{ fontSize:'20px', display:'block', marginBottom:'8px' }}>{item.icon}</span>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>{item.title}</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.body}</p>
+                  </div>
+                ))}
+              </div>
+              <a href="/request">
+                <button style={{ width:'100%', background:'#D4522A', color:'white', padding:'14px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', letterSpacing:'0.5px' }}>
+                  POST YOUR FIRST REQUEST →
+                </button>
+              </a>
+            </div>
           </div>
         )}
 

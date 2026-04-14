@@ -593,10 +593,39 @@ export default function TradieDashboard() {
         </div>
 
         {activeJobs.length === 0 && (
-          <div style={{ textAlign:'center', padding:'48px', background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)', marginBottom:'32px' }}>
-            <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🔧</div>
-            <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>No active jobs</p>
-            <p style={{ fontSize:'13px', color:'#7A9098' }}>When a client selects you from the shortlist, jobs will appear here.</p>
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'32px' }}>
+            <div style={{ background:'#1C2B32', padding:'20px 24px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:'0 0 4px' }}>WELCOME TO STEADYHAND</p>
+              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Your job pipeline starts here</p>
+            </div>
+            <div style={{ padding:'24px' }}>
+              <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'20px' }}>
+                Jobs appear here when a client invites you to quote. Steadyhand works by invitation — clients post a job, then personally invite the tradies they want to hear from. Your profile and Dialogue Rating are what get you invited.
+              </p>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'20px' }}>
+                {[
+                  { step:'1', title:'Complete your profile', body:'A complete profile — with your trade category, licence number, and business description — is what clients see before deciding whether to invite you.', href:'/tradie/profile', cta:'Complete profile →', color:'#D4522A' },
+                  { step:'2', title:'Connect your bank account', body:'Set up Stripe so you can receive milestone payments automatically when clients approve completed work.', href:null, cta:null, color:'#2E7D60' },
+                  { step:'3', title:'Share your profile link', body:'Ask past clients to find you on Steadyhand and post their next job. A direct invitation from a familiar client is the fastest way to your first job on the platform.', href:null, cta:null, color:'#2E6A8F' },
+                ].map(s => (
+                  <div key={s.step} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px 16px', display:'flex', gap:'12px', alignItems:'flex-start' }}>
+                    <div style={{ width:'24px', height:'24px', borderRadius:'50%', background:s.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:'white', flexShrink:0, marginTop:'1px' }}>{s.step}</div>
+                    <div style={{ flex:1 }}>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>{s.title}</p>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 8px', lineHeight:'1.5' }}>{s.body}</p>
+                      {s.href && s.cta && (
+                        <a href={s.href} style={{ fontSize:'12px', color:s.color, textDecoration:'none', fontWeight:500 }}>{s.cta}</a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'8px', padding:'12px 14px' }}>
+                <p style={{ fontSize:'12px', color:'#2E7D60', margin:0, lineHeight:'1.5' }}>
+                  <strong>Your Dialogue Rating</strong> — a score that reflects how clearly and transparently you communicate — builds with every job. Tradies with higher ratings get invited more often.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 

@@ -165,8 +165,11 @@ export default function ComparePage() {
                   </div>
                 </div>
               )}
-              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
-                <a href="/shortlist" style={{ fontSize:'13px', color:'#7A9098', textDecoration:'none' }}>← Back to shortlist to invite more tradies</a>
+              <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                <a href="/shortlist" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>+ Invite another tradie →</a>
+                <p style={{ fontSize:'12px', color:'#9AA5AA', margin:0 }}>
+                  Most clients invite 2–3 tradies. You only need one good quote to proceed — you are not obligated to accept the lowest price.
+                </p>
               </div>
             </div>
           )}

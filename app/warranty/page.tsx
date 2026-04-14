@@ -218,9 +218,24 @@ export default function WarrantyPage() {
 
         {issues.length === 0 && !showForm && (
           <div style={{ textAlign:'center', padding:'48px', background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)' }}>
-            <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🛡</div>
-            <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:'500' }}>No issues logged</p>
-            <p style={{ fontSize:'13px', color:'#7A9098' }}>If you notice any defects, log them here and the tradie will be notified.</p>
+            <div style={{ fontSize:'36px', marginBottom:'12px' }}>🛡</div>
+            <p style={{ fontSize:'15px', color:'#2E7D60', marginBottom:'6px', fontWeight:600 }}>Warranty active — no issues logged</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6', maxWidth:'380px', margin:'0 auto 16px' }}>
+              Your warranty period is running. If you notice any defects or incomplete work, log it here — the tradie is obligated to respond within 5 business days.
+            </p>
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'4px', textAlign:'left' as const, maxWidth:'340px', margin:'0 auto' }}>
+              {[
+                'Check that all work matches the agreed scope',
+                'Test any installed fixtures, fittings or systems',
+                'Note any unfinished edges, gaps, or surface defects',
+                'Review compliance certificates are in your Document Vault',
+              ].map((item, i) => (
+                <div key={i} style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                  <span style={{ color:'#2E7D60', fontSize:'12px', flexShrink:0, marginTop:'1px' }}>✓</span>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
