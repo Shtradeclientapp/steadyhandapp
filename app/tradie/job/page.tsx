@@ -973,20 +973,37 @@ export default function TradieJobPage() {
               })}
             </div>
 
-            {/* PROGRESS NOTES */}
-            <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
-              <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', marginBottom: '6px', letterSpacing: '0.3px' }}>Post a progress update</p>
-              <p style={{ fontSize: '11px', color: '#7A9098', marginBottom: '10px' }}>Keep the client informed as work progresses — updates are added to the job thread.</p>
-              <textarea value={progressNote} onChange={e => setProgressNote(e.target.value)}
-                placeholder="e.g. First fix wiring complete — all cable runs installed, ready for wall lining..."
-                style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#1C2B32', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '72px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-                <button type="button" onClick={sendProgressNote} disabled={!progressNote.trim() || sendingNote}
-                  style={{ background: noteSent ? '#2E7D60' : '#1C2B32', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
-                  {noteSent ? '✓ Sent' : sendingNote ? 'Sending...' : 'Send update →'}
-                </button>
+            {/* PROGRESS / HANDOVER NOTES */}
+            {!['warranty','complete'].includes(job?.status) && (
+              <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', marginBottom: '6px', letterSpacing: '0.3px' }}>Post a progress update</p>
+                <p style={{ fontSize: '11px', color: '#7A9098', marginBottom: '10px' }}>Keep the client informed as work progresses — updates are added to the job thread.</p>
+                <textarea value={progressNote} onChange={e => setProgressNote(e.target.value)}
+                  placeholder="e.g. First fix wiring complete — all cable runs installed, ready for wall lining..."
+                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#1C2B32', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '72px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button type="button" onClick={sendProgressNote} disabled={!progressNote.trim() || sendingNote}
+                    style={{ background: noteSent ? '#2E7D60' : '#1C2B32', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
+                    {noteSent ? '✓ Sent' : sendingNote ? 'Sending...' : 'Send update →'}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
+            {['warranty','complete'].includes(job?.status) && (
+              <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', marginBottom: '6px', letterSpacing: '0.3px' }}>Write a handover note</p>
+                <p style={{ fontSize: '11px', color: '#7A9098', marginBottom: '10px' }}>Summarise the completed work for the client — this becomes part of the permanent job record and supports your warranty obligations.</p>
+                <textarea value={progressNote} onChange={e => setProgressNote(e.target.value)}
+                  placeholder="e.g. All works completed as per scope. Circuits tested and certified. Switchboard labelled. Please find compliance certificate in the document vault..."
+                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#1C2B32', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '96px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button type="button" onClick={sendProgressNote} disabled={!progressNote.trim() || sendingNote}
+                    style={{ background: noteSent ? '#2E7D60' : '#1C2B32', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
+                    {noteSent ? '✓ Sent' : sendingNote ? 'Sending...' : 'Send handover note →'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {milestones.every(m => m.status === 'approved') && (
               <div style={{ padding: '20px', background: 'rgba(46,125,96,0.06)', borderTop: '1px solid rgba(46,125,96,0.15)' }}>
