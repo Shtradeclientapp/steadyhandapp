@@ -295,7 +295,7 @@ export default function AgreementPage() {
   return (
     <>{nav}
     <div style={{ minHeight:'calc(100vh - 110px)', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <div style={{ maxWidth:'1200px', margin:'0 auto', padding:'32px 24px', display:'grid', gridTemplateColumns:'260px 1fr', gap:'24px', alignItems:'start' }} className="agreement-2col">
+      <div style={{ maxWidth: isPastAgreement ? '860px' : '1200px', margin:'0 auto', padding:'32px 24px', display: isPastAgreement ? 'block' : 'grid', gridTemplateColumns:'260px 1fr', gap:'24px', alignItems:'start' }} className={isPastAgreement ? '' : 'agreement-2col'}>
 
         {/* LEFT SIDEBAR */}
         <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px', position:'sticky' as const, top:'130px' }}>
