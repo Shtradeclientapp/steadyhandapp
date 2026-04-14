@@ -614,15 +614,15 @@ export default function TradieJobPage() {
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6' }}>The client will review your quote and respond by email. This usually takes 1-2 business days.</p>
               </div>
               <div style={{ background:'#F4F8F7', borderRadius:'10px', padding:'16px', marginBottom:'16px' }}>
-                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>What happens next</p>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>While you wait</p>
                 {[
-                  { step:'1', text:'The client reviews your quote and may request changes or accept it.' },
-                  { step:'2', text:'If accepted, you will both sign a scope agreement before work begins.' },
-                  { step:'3', text:'Once signed, milestones are set and you can begin work.' },
-                  { step:'4', text:'Payment is released at each milestone when the client approves.' },
+                  { step:'✓', text:'Confirm your availability for the estimated start date — if circumstances change, message the client now rather than later.', action: null },
+                  { step:'✓', text:'Check your licence and insurance are current — the client may ask before signing the scope agreement.', action: null },
+                  { step:'✓', text:'Review the job description once more — if you have spotted anything that may affect your price, send a message to the client before they accept.', action: null },
+                  { step:'✓', text:'If 3 business days pass without a response, it is reasonable to follow up via the job thread.', action: null },
                 ].map(s => (
                   <div key={s.step} style={{ display:'flex', gap:'10px', marginBottom:'8px', alignItems:'flex-start' }}>
-                    <div style={{ width:'20px', height:'20px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', fontWeight:600, flexShrink:0, marginTop:'1px' }}>{s.step}</div>
+                    <div style={{ width:'20px', height:'20px', borderRadius:'50%', background:'#2E7D60', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', fontWeight:600, flexShrink:0, marginTop:'1px' }}>{s.step}</div>
                     <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.5', margin:0 }}>{s.text}</p>
                   </div>
                 ))}
