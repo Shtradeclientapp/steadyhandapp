@@ -54,10 +54,9 @@ export default function JoinPage() {
       const { data: ep } = await supabase.from('profiles').select('id').eq('id', uid).single()
       existingProfile = ep
     } catch (_) {}
-    if (!existingProfile) {
-      await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
-      await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
-    }
+    // Always update role to tradie — trigger may have created a client profile
+    await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
+    await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category || 'General'], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
     // Wait for session to be established before writing
     let sessionReady = false
     for (let i = 0; i < 10; i++) {
