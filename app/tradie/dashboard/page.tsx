@@ -137,6 +137,9 @@ export default function TradieDashboard() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
+  const [xeroConnected, setXeroConnected] = useState(false)
+  const [xeroTenant, setXeroTenant] = useState<string|null>(null)
+  const [xeroDisconnecting, setXeroDisconnecting] = useState(false)
   const [showSetupWizard, setShowSetupWizard] = useState(false)
 
   useEffect(() => {
@@ -154,6 +157,16 @@ export default function TradieDashboard() {
 
       setUser(session.user)
       setProfile(prof)
+
+      // Check Xero connection status
+      const xeroRes = await fetch('/api/xero/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: session.user.id }),
+      })
+      const xeroData = await xeroRes.json()
+      setXeroConnected(xeroData.connected || false)
+      if (xeroData.tenant_name) setXeroTenant(xeroData.tenant_name)
 
       const stripeRes  = await fetch('/api/stripe', {
         method: 'POST',
@@ -484,6 +497,39 @@ export default function TradieDashboard() {
         )}
 
         {/* ── Stripe banners ── */}
+        {/* Xero integration banner */}
+        {xeroConnected ? (
+          <div style={{ margin:'0 0 12px', background:'rgba(19,183,117,0.08)', border:'1px solid rgba(19,183,117,0.25)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#138a52', margin:'0 0 2px' }}>✓ Xero connected — {xeroTenant}</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quotes and invoices sync automatically to your Xero account.</p>
+            </div>
+            <button type="button" onClick={async () => {
+              setXeroDisconnecting(true)
+              const supabase = createClient()
+              const { data: { session } } = await supabase.auth.getSession()
+              await fetch('/api/xero/disconnect', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session?.user.id }) })
+              setXeroConnected(false)
+              setXeroTenant(null)
+              setXeroDisconnecting(false)
+            }} disabled={xeroDisconnecting}
+              style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>
+              {xeroDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+            </button>
+          </div>
+        ) : (
+          <div style={{ margin:'0 0 12px', background:'rgba(19,183,117,0.04)', border:'1px solid rgba(19,183,117,0.15)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Connect Xero</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Sync quotes and invoices directly to your Xero account.</p>
+            </div>
+            <a href="/api/xero/connect"
+              style={{ fontSize:'12px', color:'white', background:'#13B875', border:'none', borderRadius:'6px', padding:'7px 14px', cursor:'pointer', textDecoration:'none', fontWeight:500 }}>
+              Connect Xero →
+            </a>
+          </div>
+        )}
+
         {!stripeConnected && (
           <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
             <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Bank account not connected — milestone payments are on hold.</p>

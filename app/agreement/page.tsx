@@ -95,6 +95,11 @@ export default function AgreementPage() {
         }
       }
       setLoading(false)
+    // Check Xero connection
+    if (session?.user.id) {
+      fetch('/api/xero/status', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session.user.id }) })
+        .then(r => r.json()).then(d => setXeroConnected(d.connected || false))
+    }
     })
   }, [])
 
@@ -493,6 +498,22 @@ export default function AgreementPage() {
                 <span style={{ fontSize:'12px', color:'#7A9098', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px' }}>{job.suburb}</span>
                 <span style={{ fontSize:'12px', color:'#7A9098', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px' }}>{job.property_type}</span>
                 {currentQuote && <span style={{ fontSize:'12px', color:'#1C2B32', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px', fontWeight:600 }}>Quoted: ${Number(currentQuote.total_price).toLocaleString()}</span>}
+                {isPastAgreement && xeroConnected && currentQuote && (
+                  <button type="button" onClick={async () => {
+                    setXeroSyncing(true)
+                    setXeroError(null)
+                    const supabase = createClient()
+                    const { data: { session } } = await supabase.auth.getSession()
+                    const res = await fetch('/api/xero/sync', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session?.user.id, job_id: job?.id }) })
+                    const data = await res.json()
+                    if (data.success) { setXeroSynced(true) } else { setXeroError(data.error || 'Sync failed') }
+                    setXeroSyncing(false)
+                  }} disabled={xeroSyncing || xeroSynced}
+                    style={{ fontSize:'12px', color:'white', background: xeroSynced ? '#2E7D60' : '#13B875', border:'none', borderRadius:'6px', padding:'6px 14px', cursor:'pointer', fontWeight:500 }}>
+                    {xeroSynced ? '✓ Pushed to Xero' : xeroSyncing ? 'Syncing...' : 'Push to Xero →'}
+                  </button>
+                )}
+                {xeroError && <p style={{ fontSize:'12px', color:'#D4522A', margin:0 }}>{xeroError}</p>}
               </div>
             </div>
 
