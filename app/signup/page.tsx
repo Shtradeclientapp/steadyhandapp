@@ -121,7 +121,7 @@ export default function SignupPage() {
           </div>
         </div>
         <div className="sr" style={{ background:'#1C2B32', alignItems:'center', justifyContent:'center', padding:'60px 48px', position:'relative', overflow:'hidden' }}>
-          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 30%, rgba(46,125,96,0.25), transparent 55%)' }} />
+          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 30%, rgba(212,82,42,0.15), transparent 55%)' }} />
           <blockquote style={{ position:'relative', zIndex:1, maxWidth:'360px' }}>
             <p style={{ fontFamily:'sans-serif', fontSize:'18px', fontStyle:'italic', fontWeight:300, lineHeight:1.7, color:'rgba(216,228,225,0.85)', marginBottom:'20px' }}>"The scope agreement meant there were no surprises. Both sides knew exactly what was happening and when."</p>
             <cite style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', fontStyle:'normal', fontFamily:'sans-serif' }}>— Emma, Homeowner, Subiaco WA</cite>
