@@ -312,12 +312,12 @@ export default function TradieJobPage() {
       {/* TRADIE STAGE RAIL */}
       {(() => {
         const TRADIE_STAGES = [
-          {n:1,l:'Consult',p:'/consult',c:'#9B6B9B'},
-          {n:2,l:'Quote',p:'quote',c:'#C07830'},
-          {n:3,l:'Confirm',p:'confirm',c:'#6B4FA8'},
-          {n:4,l:'Build',p:'build',c:'#C07830'},
-          {n:5,l:'Complete',p:'complete',c:'#D4522A'},
-          {n:6,l:'Protect',p:'protect',c:'#D4522A'},
+          {n:1,l:'Consult',  c:'#9B6B9B'},
+          {n:2,l:'Quote',    c:'#C07830'},
+          {n:3,l:'Agreement',c:'#6B4FA8'},
+          {n:4,l:'Build',    c:'#C07830'},
+          {n:5,l:'Sign off', c:'#D4522A'},
+          {n:6,l:'Warranty', c:'#1A6B5A'},
         ]
         // Determine tradie's actual stage based on their actions (not job status)
         const hasQuote = quotes && quotes.length > 0
@@ -325,10 +325,10 @@ export default function TradieJobPage() {
         const allMilestonesApproved = milestones.length > 0 && milestones.every((m: any) => m.status === 'approved')
         const inWarranty = ['warranty', 'complete'].includes(job.status)
         const currentStageN = inWarranty ? 6
-          : (allMilestonesApproved || job.status === 'signoff') ? 5
-          : (milestones.length > 0 || (scopeSigned && job.status === 'delivery')) ? 4
+          : job.status === 'signoff' ? 5
+          : (milestones.length > 0 || job.status === 'delivery') ? 4
           : (scopeSigned || job.status === 'agreement') ? 3
-          : (hasQuote || job.status === 'quote') ? 2
+          : (hasQuote || job.status === 'compare') ? 2
           : 1
         return (
           <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
