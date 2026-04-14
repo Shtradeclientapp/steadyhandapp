@@ -236,7 +236,7 @@ sessionStorage.removeItem('diy_project_id')
                 <datalist id="suburbs-list">{SUBURBS.map(s => <option key={s} value={s} />)}</datalist>
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Type your suburb — if it is not in the list, type it in manually.</span>
               </label>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
+              <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
                 <label style={labelStyle}>
                   Property type
                   <select value={form.property_type} onChange={set('property_type')} style={inputStyle}>

@@ -138,7 +138,7 @@ export default function VaultPage() {
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
                   Most homeowners lose this paper trail. It gets emailed once and never filed. When something goes wrong — or when you sell the property — there is nothing to show. The Document Vault changes that. It accumulates automatically as you use Steadyhand, and you can add your own documents from jobs done outside the platform too.
                 </p>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+                <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
                   {[
                     { icon:'📋', stage:'Consult', desc:'Site visit notes — what was observed, agreed and flagged before quoting began.' },
                     { icon:'📄', stage:'Contract', desc:'Signed scope agreement — the written record of what the tradie committed to deliver.' },
@@ -188,7 +188,7 @@ export default function VaultPage() {
                   placeholder="e.g. Walsh Plumbing — hot water compliance certificate"
                   style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+              <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
                 <div>
                   <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Document type *</label>
                   <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))}
@@ -308,7 +308,7 @@ export default function VaultPage() {
         )}
 
         {docs.length > 0 && (
-          <div style={{ marginTop:'24px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'10px' }}>
+          <div className='vault-stats-grid' style={{ marginTop:'24px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'10px' }}>
             {[
               { label:'Total documents', value:docs.length },
               { label:'With files', value:docs.filter(d => d.file_url).length },
