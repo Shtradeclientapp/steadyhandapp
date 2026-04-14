@@ -12,6 +12,7 @@ interface NavHeaderProps {
 
 export function NavHeader({ profile, isTradie, showBack = true, backLabel, backHref }: NavHeaderProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [notifs, setNotifs] = useState<any[]>([])
   const [unread, setUnread] = useState(0)

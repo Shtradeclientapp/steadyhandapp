@@ -343,7 +343,7 @@ export default function VaultPage() {
                   style={{ background:'none', border:'none', color:'rgba(216,228,225,0.6)', cursor:'pointer', fontSize:'20px', lineHeight:1, padding:'0 4px' }}>×</button>
               </div>
             </div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 280px', flex:1, overflow:'hidden', minHeight:0 }}>
+            <div className='vault-viewer-grid' style={{ display:'grid', gridTemplateColumns:'1fr 280px', flex:1, overflow:'hidden', minHeight:0 }}>
               <div style={{ overflow:'auto', background:'#F4F8F7', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'16px' }}>
                 {selectedDoc.file_url?.match(/\.(jpg|jpeg|png|gif|webp)/i) ? (
                   <img src={selectedDoc.file_url} alt={selectedDoc.title} style={{ maxWidth:'100%', borderRadius:'8px', boxShadow:'0 4px 20px rgba(28,43,50,0.15)' }} />
@@ -360,7 +360,7 @@ export default function VaultPage() {
                   </div>
                 )}
               </div>
-              <div style={{ padding:'16px', borderLeft:'1px solid #F0F0F0', display:'flex', flexDirection:'column' as const, gap:'12px', overflow:'auto' }}>
+              <div className='vault-viewer-sidebar' style={{ padding:'16px', borderLeft:'1px solid #F0F0F0', display:'flex', flexDirection:'column' as const, gap:'12px', overflow:'auto' }}>
                 <div>
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Document details</p>
                   {selectedDoc.issued_date && <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'4px' }}>Issued: {new Date(selectedDoc.issued_date).toLocaleDateString('en-AU')}</p>}

@@ -127,7 +127,7 @@ export default function OrgSubscribePage() {
       </div>
 
       <div style={{ maxWidth:'960px', margin:'0 auto', padding:'48px 24px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px', marginBottom:'32px' }}>
+        <div className='tier-cards-grid' style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px', marginBottom:'32px' }}>
           {TIERS.map(tier => (
             <div key={tier.id} onClick={() => setSelectedTier(tier.id)}
               style={{ background: selectedTier === tier.id ? '#1C2B32' : 'white', border: tier.recommended ? '2px solid ' + tier.color : '1px solid rgba(28,43,50,0.12)', borderRadius:'16px', padding:'28px 24px', cursor:'pointer', position:'relative', transition:'all 0.15s' }}>

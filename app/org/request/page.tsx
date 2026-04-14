@@ -144,7 +144,7 @@ export default function OrgRequestPage() {
                     return (
                       <div key={suburb} style={{ marginBottom:'16px' }}>
                         <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase', marginBottom:'8px' }}>{suburb}</p>
-                        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px,1fr))', gap:'8px' }}>
+                        <div className='property-select-grid' style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px,1fr))', gap:'8px' }}>
                           {suburbProps.map(p => (
                             <div key={p.id} onClick={() => toggleProperty(p.id)}
                               style={{ padding:'12px 14px', border:'1.5px solid ' + (selectedProperties.includes(p.id) ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', cursor:'pointer', background: selectedProperties.includes(p.id) ? 'rgba(46,106,143,0.06)' : 'white', display:'flex', alignItems:'center', gap:'10px' }}>

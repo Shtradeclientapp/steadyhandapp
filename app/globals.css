@@ -573,3 +573,115 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   50% { opacity: 0.5; }
 }
 .pulse { animation: pulse 1.5s ease-in-out infinite; }
+
+/* ── Quote builder grid responsive ─────────────────────────────────────────── */
+.quote-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 80px 80px 24px;
+  gap: 4px;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .quote-grid-row {
+    grid-template-columns: 1fr 70px 24px !important;
+  }
+  .quote-grid-row > *:nth-child(2),
+  .quote-grid-row > *:nth-child(3),
+  .quote-grid-row > *:nth-child(5) {
+    display: none !important;
+  }
+  .quote-grid-row > *:nth-child(4) {
+    grid-column: 2 !important;
+  }
+}
+
+/* ── Form 2-col responsive ─────────────────────────────────────────────────── */
+.form-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .form-2col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Mobile page padding ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-pad {
+    padding: 16px !important;
+  }
+  .page-pad-top {
+    padding: 20px 16px 16px !important;
+  }
+}
+
+/* ── Tradie dashboard mobile nav ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .tradie-nav-links {
+    display: none !important;
+  }
+  .tradie-nav-mobile-btn {
+    display: flex !important;
+  }
+}
+.tradie-nav-mobile-btn {
+  display: none;
+}
+
+/* ── Org request page — property grid ─────────────────────────────────────── */
+@media (max-width: 600px) {
+  .property-select-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Delivery page — approve buttons ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .milestone-actions {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .milestone-actions button {
+    width: 100% !important;
+  }
+}
+
+/* ── Compare page — quote cards ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .quote-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Vault viewer modal — stack on mobile ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .vault-viewer-grid {
+    grid-template-columns: 1fr !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+  .vault-viewer-sidebar {
+    border-left: none !important;
+    border-top: 1px solid #F0F0F0 !important;
+  }
+}
+
+/* ── Org subscribe tier cards ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .tier-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Step indicators wrap on mobile ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .step-indicators {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .step-indicators > div > div:first-child {
+    display: none !important; /* hide connector lines */
+  }
+}

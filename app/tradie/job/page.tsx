@@ -681,7 +681,7 @@ export default function TradieJobPage() {
                 </div>
 
                 {showTemplates && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                  <div className='form-2col' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
                     {TEMPLATES.map(t => (
                       <div key={t.id} onClick={() => switchTemplate(t.id)}
                         style={{ padding: '12px', background: activeTemplate === t.id ? 'rgba(46,106,143,0.08)' : '#C8D5D2', border: '1.5px solid ' + (activeTemplate === t.id ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), borderRadius: '8px', cursor: 'pointer' }}>
@@ -717,13 +717,13 @@ export default function TradieJobPage() {
                       </div>
                     ) : (
                       <>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '4px' }}>
+                        <div className='quote-grid-row' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '4px' }}>
                           {['Description', 'Qty', 'Unit', 'Unit $', 'Total', ''].map(h => (
                             <p key={h} style={{ fontSize: '10px', color: '#9AA5AA', margin: 0, padding: '0 2px' }}>{h}</p>
                           ))}
                         </div>
                         {items.map(item => (
-                          <div key={item.i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
+                          <div key={item.i} className='quote-grid-row' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
                             <input type="text" placeholder="Description" value={item.label} onChange={e => updateLineItem(item.i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
                             <input type="number" placeholder="1" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
                             <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
@@ -745,7 +745,7 @@ export default function TradieJobPage() {
                   <div style={{ padding: '10px 14px', borderBottom: '1px solid rgba(28,43,50,0.06)' }}>
                     <p style={{ fontSize: '11px', fontWeight: 600, color: '#7A9098', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: '0 0 8px' }}>Other items</p>
                     {quoteForm.lineItems.map((item, i) => !template.categories.includes(item.category) && (
-                      <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
+                      <div key={i} className='quote-grid-row' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
                         <input type="text" value={item.label} onChange={e => updateLineItem(i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
                         <input type="number" value={item.quantity} onChange={e => updateLineItem(i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
                         <select value={item.unit} onChange={e => updateLineItem(i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
@@ -767,7 +767,7 @@ export default function TradieJobPage() {
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+              <div className='form-2col' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '5px' }}>Estimated start date</label>
                   <input type="date" value={quoteForm.estimated_start} onChange={e => setQuoteForm(f => ({ ...f, estimated_start: e.target.value }))} style={inp} />
