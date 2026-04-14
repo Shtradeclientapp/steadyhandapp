@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         const sub = event.data.object as Stripe.Subscription
         const { data: profile } = await supabase
           .from('profiles')
-          .select('id')
+          .select('id, org_id')
           .eq('stripe_customer_id', sub.customer as string)
           .single()
         if (profile) {
