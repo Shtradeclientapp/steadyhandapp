@@ -93,7 +93,7 @@ export default function OrgRequestPage() {
     if (!acc[key]) acc[key] = []
     acc[key].push(p)
     return acc
-  }, {})
+  }, {} as Record<string, any[]>)
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
