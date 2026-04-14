@@ -17,6 +17,7 @@ function MessagesPageInner() {
   const [lastMessages, setLastMessages] = useState<Record<string, any>>({})
   const [unread, setUnread] = useState<Record<string, number>>({})  // per-job unread counts
   const bottomRef = useRef<HTMLDivElement>(null)
+  const [mobilePanelView, setMobilePanelView] = useState<'list'|'thread'>('list')
 
   useEffect(() => {
     const supabase = createClient()
@@ -188,6 +189,18 @@ function MessagesPageInner() {
         <a href={dashboardPath} style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
+      {/* Mobile tab bar */}
+      <div className="messages-mobile-tabs" style={{ display:'none', borderBottom:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE' }}>
+        <button type="button" onClick={() => setMobilePanelView('list')}
+          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'list' ? 600 : 400, color: mobilePanelView === 'list' ? '#1C2B32' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'list' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
+          Jobs ({jobs.length})
+        </button>
+        <button type="button" onClick={() => setMobilePanelView('thread')}
+          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'thread' ? 600 : 400, color: mobilePanelView === 'thread' ? '#1C2B32' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'thread' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
+          {selectedJob ? selectedJob.title.length > 20 ? selectedJob.title.slice(0,20) + '…' : selectedJob.title : 'Select a job'}
+        </button>
+      </div>
+
       <div style={{ flex:1, display:'grid', gridTemplateColumns:'300px 1fr', overflow:'hidden', height:'calc(100vh - 64px)' }} className="messages-grid">
 
         <div className="messages-sidebar" style={{ borderRight:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE', overflowY:'auto' }}>
@@ -228,7 +241,7 @@ function MessagesPageInner() {
           })}
         </div>
 
-        <div style={{ display:'flex', flexDirection:'column', overflow:'hidden' }}>
+        <div className={'messages-right-panel' + (mobilePanelView === 'list' ? ' messages-panel-hidden' : '')} style={{ display:'flex', flexDirection:'column', overflow:'hidden' }}>
           {!selectedJob ? (
             <div style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center' }}>
               <p style={{ fontSize:'15px', color:'#7A9098' }}>Select a job to view messages</p>
@@ -236,6 +249,10 @@ function MessagesPageInner() {
           ) : (
             <>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE', flexShrink:0 }}>
+                <button type="button" className="messages-back-btn" onClick={() => setMobilePanelView('list')}
+                  style={{ display:'none', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'0 0 8px 0', alignItems:'center', gap:'4px' }}>
+                  ← All jobs
+                </button>
                 <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>{selectedJob.title}</div>
                 <div style={{ fontSize:'12px', color:'#7A9098' }}>
                   {selectedJob.trade_category} · {selectedJob.suburb} · {isTradie ? selectedJob.client?.full_name : selectedJob.tradie?.business_name}
