@@ -38,7 +38,7 @@ const PRESETS = [
 export function MilestoneEditor({ scope, currentQuote, onSave }: any) {
   const [mode, setMode] = useState<string>('custom')
   const [milestones, setMilestones] = useState<any[]>(scope?.milestones || [])
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -94,17 +94,6 @@ export function MilestoneEditor({ scope, currentQuote, onSave }: any) {
 
       {editing && (
         <div style={{ marginBottom: '16px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '8px' }}>Payment structure</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '14px' }}>
-            {PRESETS.map(p => (
-              <div key={p.id} onClick={() => applyPreset(p.id)}
-                style={{ padding: '10px 12px', border: '1.5px solid ' + (mode === p.id ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), borderRadius: '8px', cursor: 'pointer', background: mode === p.id ? 'rgba(46,106,143,0.06)' : '#F4F8F7' }}>
-                <p style={{ fontSize: '12px', fontWeight: 600, color: mode === p.id ? '#2E6A8F' : '#1C2B32', margin: '0 0 2px' }}>{p.label}</p>
-                <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>{p.description}</p>
-              </div>
-            ))}
-          </div>
-
           <div style={{ marginBottom: '12px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 80px 24px', gap: '6px', marginBottom: '4px' }}>
               {['Milestone', 'Description', '%', ''].map(h => (
