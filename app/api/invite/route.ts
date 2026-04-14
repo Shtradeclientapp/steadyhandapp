@@ -13,7 +13,7 @@ const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 
 export async function POST(request: NextRequest) {
   try {
-    const { job_id, client_id, business_name, email, trade_category, phone } = await request.json()
+    const { job_id, client_id, business_name, email, trade_category, phone, personal_message } = await request.json()
     if (!job_id || !email || !business_name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         '<h1 style="font-size:24px;color:#1C2B32;letter-spacing:2px;">STEADYHAND</h1>' +
         '<p style="color:#4A5E64;">Hi ' + business_name + ',</p>' +
         '<p style="color:#4A5E64;"><strong>' + job.client.full_name + '</strong> has submitted a job request and would like to work with you specifically.</p>' +
+        (personal_message ? '<div style="background:#F4F8F7;border-left:3px solid #2E6A8F;padding:14px 16px;margin:16px 0;border-radius:6px;"><p style="color:#4A5E64;font-style:italic;margin:0;">\u201c' + personal_message + '\u201d</p><p style="color:#9AA5AA;font-size:12px;margin:6px 0 0;">— ' + job.client.full_name + '</p></div>' : '') + +
         '<div style="background:#F4F8F7;border-left:3px solid #D4522A;padding:16px;margin:20px 0;border-radius:6px;">' +
         '<h2 style="font-size:18px;color:#1C2B32;margin:0 0 8px;">' + job.title + '</h2>' +
         '<p style="color:#4A5E64;margin:0 0 4px;">' + job.trade_category + ' · ' + job.suburb + '</p>' +
