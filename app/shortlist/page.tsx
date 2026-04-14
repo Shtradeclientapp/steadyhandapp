@@ -91,7 +91,7 @@ export default function ShortlistPage() {
   const addInvite = () => {
     if (!inviteForm.business_name || !inviteForm.email) return
     setPendingInvites(prev => [...prev, { ...inviteForm }])
-    setInviteForm({ business_name:'', email:'', trade_category:'', phone:'' })
+    setInviteForm({ business_name:'', email:'', trade_category:'', phone:'', personal_message:'' })
     setInviteSent(true)
     setTimeout(() => setInviteSent(false), 2000)
   }
