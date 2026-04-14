@@ -2,6 +2,12 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const TIER_LIMITS: Record<string, number> = {
+  property_starter: 10,
+  property_growth: 50,
+  property_enterprise: Infinity,
+}
+
 const STATUS_LABEL: Record<string, string> = {
   draft: 'Draft', matching: 'Matching', shortlisted: 'Shortlisted',
   assess: 'Consult', compare: 'Compare', agreement: 'Agreement',
@@ -240,6 +246,7 @@ export default function OrgDashboardPage() {
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
         <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
           <a href="/org/properties/new" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#D4522A', borderRadius:'6px' }}>+ Add property</a>
+          <a href="/org/request" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#2E7D60', borderRadius:'6px' }}>+ New job request</a>
           <a href="/request" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>New job</a>
           <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Personal dashboard</a>
         </div>
@@ -342,9 +349,25 @@ export default function OrgDashboardPage() {
 
         {activeTab === 'properties' && (
           <div>
-            <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'16px' }}>
-              <a href="/org/properties/new"><button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
-            </div>
+            {(() => {
+              const tier = org?.subscription_tier || 'property_starter'
+              const limit = TIER_LIMITS[tier] || 10
+              const atLimit = properties.length >= limit
+              return (
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px' }}>
+                  <div>
+                    {limit < Infinity && <p style={{ fontSize:'12px', color: atLimit ? '#D4522A' : '#7A9098', margin:0 }}>{properties.length} / {limit} properties used{atLimit ? ' — upgrade to add more' : ''}</p>}
+                  </div>
+                  <div style={{ display:'flex', gap:'8px' }}>
+                    {atLimit ? (
+                      <a href="/org/subscribe"><button type="button" style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Upgrade plan →</button></a>
+                    ) : (
+                      <a href="/org/properties/new"><button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
             {properties.length === 0 ? (
               <div style={{ textAlign:'center' as const, padding:'48px', background:'#E8F0EE', borderRadius:'14px' }}>
                 <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🏢</div>
