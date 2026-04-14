@@ -163,6 +163,7 @@ function MessagesPageInner() {
     setSelectedJob(job)
     setMessages([])
     setUnread(prev => ({ ...prev, [job.id]: 0 }))
+    setMobilePanelView('thread')
     await loadMessages(job.id)
   }
 
