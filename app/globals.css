@@ -685,3 +685,13 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     display: none !important; /* hide connector lines */
   }
 }
+
+/* ── NavHeader mobile ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .nav-back-link { display: none !important; }
+  .nav-avatar-desktop { display: none !important; }
+  .nav-hamburger { display: flex !important; }
+}
+@media (min-width: 769px) {
+  .nav-hamburger { display: none !important; }
+}
