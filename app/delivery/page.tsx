@@ -294,10 +294,8 @@ export default function DeliveryPage() {
       setClientSecret(data.client_secret)
       setPayingMilestone(id)
     } else {
-      // Stripe not connected — approve milestone directly and note payment pending
-      if (confirm('Stripe payment could not be initiated (tradie bank account not yet connected). Approve this milestone now and arrange payment separately?')) {
-        approveM(id)
-      }
+      // Stripe not connected — fall through to record-only approval below
+      approveM(id)
     }
   }
 
