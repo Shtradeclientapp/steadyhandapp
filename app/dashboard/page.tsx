@@ -155,10 +155,10 @@ export default function DashboardPage() {
           <a href="/shortlist" style={{ fontSize:'12px', color:'rgba(255,255,255,0.8)', textDecoration:'none', border:'1px solid rgba(255,255,255,0.3)', borderRadius:'6px', padding:'4px 10px', flexShrink:0 }}>View shortlist →</a>
         </div>
       )}
-      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
+      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'#1C2B32', borderBottom:'1px solid rgba(216,228,225,0.08)', position:'sticky', top:0, zIndex:100 }}>
         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</div>
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <a href="/messages" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px', display:'inline-flex', alignItems:'center', gap:'6px' }}>
+          <a href="/messages" style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'6px', display:'inline-flex', alignItems:'center', gap:'6px' }}>
             Messages
             {unreadCount > 0 && <span style={{ background:'#D4522A', color:'white', borderRadius:'100px', fontSize:'10px', fontWeight:700, padding:'1px 6px', lineHeight:'1.4' }}>{unreadCount}</span>}
           </a>
@@ -196,7 +196,7 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'40px 0', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#1C2B32', padding:'28px 0 40px', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 50%, rgba(212,82,42,0.12), transparent 55%)' }} />
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Client dashboard</p>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
         <div style={{ background:'#2E7D60', borderRadius:'14px', padding:'24px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'20px' }}>
           <div>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'white', letterSpacing:'1px', marginBottom:'4px' }}>START A NEW REQUEST</h2>
-            <p style={{ fontSize:'13px', color:'rgba(255,255,255,0.7)' }}>Define your job, get AI-matched tradies, set the scope.</p>
+            <p style={{ fontSize:'13px', color:'rgba(255,255,255,0.7)' }}>Describe the work, invite a tradie you trust, set the scope.</p>
           </div>
           <a href="/request" style={{ background:'white', color:'#2E7D60', padding:'13px 24px', borderRadius:'10px', fontSize:'14px', fontWeight:600, textDecoration:'none', fontFamily:'var(--font-aboreto), sans-serif', letterSpacing:'1px', whiteSpace:'nowrap' as const }}>
             NEW REQUEST
