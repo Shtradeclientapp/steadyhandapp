@@ -737,3 +737,66 @@ html, body { overflow-x: hidden; max-width: 100vw; }
 @media (min-width: 769px) {
   .nav-hamburger { display: none !important; }
 }
+
+/* ── Delivery page mobile ──────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .delivery-btn-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Agreement page mobile ─────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Client / tradie sign boxes stack */
+  .sign-boxes-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .sign-boxes-grid > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid #F0F0F0 !important;
+  }
+
+  /* Quote meta (start date, duration, version) */
+  .quote-meta-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Milestone info grid */
+  .milestone-info-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Scope inclusions/exclusions */
+  .scope-2col {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Agreement document header — reduce font sizes */
+  .scope-document-header h1 {
+    font-size: 28px !important;
+    letter-spacing: 1px !important;
+  }
+
+  /* Agreement sidebar sticky → static on mobile */
+  .agreement-2col > div:first-child {
+    position: static !important;
+    top: auto !important;
+  }
+
+  /* Padding inside scope document */
+  .scope-document-section {
+    padding: 16px !important;
+  }
+}
+
+/* ── Agreement sidebar hidden on very small screens ────────────────────────── */
+@media (max-width: 480px) {
+  .agreement-2col {
+    grid-template-columns: 1fr !important;
+  }
+  .agreement-2col > div:first-child {
+    display: none !important;
+  }
+}

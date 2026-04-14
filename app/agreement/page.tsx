@@ -411,7 +411,7 @@ export default function AgreementPage() {
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#2E6A8F', letterSpacing:'0.5px' }}>SELECT A QUOTE TO PROCEED</p>
                 <p style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>{allQuotes.length} quotes received — accept one to begin the scope agreement</p>
               </div>
-              <div style={{ padding:'16px', display:'grid', gridTemplateColumns: allQuotes.length === 1 ? '1fr' : '1fr 1fr', gap:'10px' }}>
+              <div style={{ padding:'16px', display:'grid', gridTemplateColumns: allQuotes.length === 1 ? '1fr' : 'repeat(auto-fill, minmax(260px,1fr))', gap:'10px' }}>
                 {allQuotes.map((q, i) => {
                   const isLowest = Number(q.total_price) === Math.min(...allQuotes.map((x: any) => Number(x.total_price)))
                   return (
@@ -470,7 +470,7 @@ export default function AgreementPage() {
             </div>
 
             {/* Parties */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom:'1px solid #F0F0F0' }}>
+            <div className='sign-boxes-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom:'1px solid #F0F0F0' }}>
               <div style={{ padding:'24px 32px', borderRight:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'10px', fontWeight:600 }}>Client</p>
                 <p style={{ fontSize:'16px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{job.client?.full_name}</p>
@@ -566,7 +566,7 @@ export default function AgreementPage() {
                   <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'40px', color:'#1C2B32', letterSpacing:'1px' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
                   <span style={{ fontSize:'14px', color:'#7A9098' }}>AUD inc. GST</span>
                 </div>
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(3, auto)', gap:'20px', marginBottom: currentQuote.breakdown?.length > 0 ? '20px' : '0' }}>
+                <div className='quote-meta-grid' style={{ display:'grid', gridTemplateColumns:'repeat(3, auto)', gap:'20px', marginBottom: currentQuote.breakdown?.length > 0 ? '20px' : '0' }}>
                   {currentQuote.estimated_start && (
                     <div>
                       <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>START DATE</p>
@@ -742,7 +742,7 @@ export default function AgreementPage() {
 
                 <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'14px', fontWeight:600 }}>Warranty terms</p>
-                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'16px' }}>
+                  <div className='milestone-info-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'16px' }}>
                     {[
                       { label:'Warranty period', value: (scope.warranty_days || 90) + ' days' },
                       { label:'Response SLA', value: (scope.response_sla_days || 5) + ' business days' },
@@ -759,7 +759,7 @@ export default function AgreementPage() {
                 {/* Signature blocks */}
                 <div style={{ padding:'32px', background:'#FAFBFB' }}>
                   <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'20px', fontWeight:600 }}>Signatures</p>
-                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', marginBottom:'24px' }}>
+                  <div className='scope-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px', marginBottom:'24px' }}>
                     {[
                       { label:'Client', name: job.client?.full_name, signed: scope.client_signed_at, role:'client' },
                       { label:'Tradie', name: job.tradie?.business_name || job.tradie?.profile?.full_name, signed: scope.tradie_signed_at, role:'tradie' },

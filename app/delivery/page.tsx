@@ -551,7 +551,7 @@ export default function DeliveryPage() {
                   rows={2}
                   style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }}
                 />
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+                <div className='delivery-btn-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
                   <input
                     type="number"
                     placeholder="Cost impact ($)"
