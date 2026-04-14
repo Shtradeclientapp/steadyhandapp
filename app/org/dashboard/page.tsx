@@ -33,6 +33,11 @@ export default function OrgDashboardPage() {
   const [inviteSent, setInviteSent] = useState(false)
   const [filterStatus, setFilterStatus] = useState('')
   const [filterProperty, setFilterProperty] = useState('')
+  const [showContractorImport, setShowContractorImport] = useState(false)
+  const [csvImporting, setCsvImporting] = useState(false)
+  const [csvResult, setCsvResult] = useState<string|null>(null)
+  const [manualContractor, setManualContractor] = useState({ name:'', email:'' })
+  const [addingManual, setAddingManual] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -99,6 +104,60 @@ export default function OrgDashboardPage() {
     const supabase = createClient()
     await supabase.from('org_preferred_tradies').delete().eq('id', id)
     setPreferredTradies(prev => prev.filter(p => p.id !== id))
+  }
+
+  const importContractorsCSV = async (file: File) => {
+    setCsvImporting(true)
+    setCsvResult(null)
+    const text = await file.text()
+    const lines = text.split('\n').filter(l => l.trim())
+    const headers = lines[0].toLowerCase().split(',').map(h => h.replace(/"/g,'').trim())
+    const nameIdx = headers.findIndex(h => h.includes('name'))
+    const emailIdx = headers.findIndex(h => h.includes('email'))
+    const tradeIdx = headers.findIndex(h => h.includes('trade'))
+    const licenceIdx = headers.findIndex(h => h.includes('licen'))
+    if (nameIdx === -1 || emailIdx === -1) { setCsvResult('CSV must have name and email columns'); setCsvImporting(false); return }
+    const supabase = createClient()
+    let imported = 0
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',').map(c => c.replace(/"/g,'').trim())
+      const name = cols[nameIdx] || ''
+      const email = cols[emailIdx] || ''
+      if (!name || !email) continue
+      const trade = tradeIdx >= 0 ? cols[tradeIdx] : null
+      const licence = licenceIdx >= 0 ? cols[licenceIdx] : null
+      await supabase.from('org_preferred_tradies').upsert({
+        org_id: org.id,
+        added_by: profile.id,
+        contractor_name: name,
+        contractor_email: email,
+        trade_category: trade,
+        licence_number: licence,
+        import_source: 'csv',
+      }, { onConflict: 'org_id,contractor_email' })
+      imported++
+    }
+    const { data: preferred } = await supabase.from('org_preferred_tradies').select('*, tradie:tradie_profiles(business_name, trade_category)').eq('org_id', org.id)
+    setPreferredTradies(preferred || [])
+    setCsvResult('✓ Imported ' + imported + ' contractor' + (imported !== 1 ? 's' : ''))
+    setCsvImporting(false)
+  }
+
+  const addManualContractor = async () => {
+    if (!manualContractor.name || !manualContractor.email) return
+    setAddingManual(true)
+    const supabase = createClient()
+    await supabase.from('org_preferred_tradies').upsert({
+      org_id: org.id,
+      added_by: profile.id,
+      contractor_name: manualContractor.name,
+      contractor_email: manualContractor.email,
+      import_source: 'manual',
+    }, { onConflict: 'org_id,contractor_email' })
+    const { data: preferred } = await supabase.from('org_preferred_tradies').select('*, tradie:tradie_profiles(business_name, trade_category)').eq('org_id', org.id)
+    setPreferredTradies(preferred || [])
+    setManualContractor({ name:'', email:'' })
+    setAddingManual(false)
   }
 
   const exportJobsCSV = () => {
@@ -397,6 +456,10 @@ export default function OrgDashboardPage() {
               <button type="button" onClick={() => setShowAddTradie(!showAddTradie)}
                 style={{ background: showAddTradie ? 'rgba(28,43,50,0.08)' : '#1C2B32', color: showAddTradie ? '#1C2B32' : 'white', padding:'9px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {showAddTradie ? 'Cancel' : '+ Add preferred tradie'}
+                </button>
+                <button type="button" onClick={() => setShowContractorImport(!showContractorImport)}
+                  style={{ background:'rgba(46,106,143,0.1)', color:'#2E6A8F', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', fontWeight:500, border:'1px solid rgba(46,106,143,0.2)', cursor:'pointer' }}>
+                  {showContractorImport ? 'Cancel import' : '↑ Import CSV'}
               </button>
             </div>
             {showAddTradie && (
@@ -420,6 +483,35 @@ export default function OrgDashboardPage() {
                 )}
               </div>
             )}
+            {showContractorImport && (
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(46,106,143,0.04)' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'12px' }}>Import contractor list</p>
+                <div style={{ marginBottom:'16px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'6px', textTransform:'uppercase' as const }}>CSV Upload</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'8px' }}>CSV must include columns: <strong>name</strong>, <strong>email</strong>. Optional: trade, licence.</p>
+                  <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && importContractorsCSV(e.target.files[0])}
+                    style={{ fontSize:'13px', color:'#1C2B32' }} />
+                  {csvImporting && <p style={{ fontSize:'12px', color:'#C07830', marginTop:'6px' }}>Importing...</p>}
+                  {csvResult && <p style={{ fontSize:'12px', color: csvResult.startsWith('✓') ? '#2E7D60' : '#D4522A', marginTop:'6px', fontWeight:500 }}>{csvResult}</p>}
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'6px', textTransform:'uppercase' as const }}>Or add manually</p>
+                  <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+                    <input type="text" value={manualContractor.name} onChange={e => setManualContractor(m => ({ ...m, name: e.target.value }))}
+                      placeholder="Contractor name"
+                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'160px' }} />
+                    <input type="email" value={manualContractor.email} onChange={e => setManualContractor(m => ({ ...m, email: e.target.value }))}
+                      placeholder="Email address"
+                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'160px' }} />
+                    <button type="button" onClick={addManualContractor} disabled={!manualContractor.name || !manualContractor.email || addingManual}
+                      style={{ background:'#2E6A8F', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !manualContractor.name || !manualContractor.email ? 0.5 : 1 }}>
+                      {addingManual ? 'Adding...' : 'Add'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {preferredTradies.length === 0 && !showAddTradie ? (
               <div style={{ textAlign:'center' as const, padding:'40px', background:'#E8F0EE', borderRadius:'12px' }}>
                 <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.4 }}>⭐</div>
