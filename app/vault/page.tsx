@@ -26,6 +26,10 @@ export default function VaultPage() {
   const [form, setForm] = useState({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
   const fileRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedDoc, setSelectedDoc] = useState<any>(null)
+  const [annotationText, setAnnotationText] = useState('')
+  const [savingAnnotation, setSavingAnnotation] = useState(false)
+  const [annotationSaved, setAnnotationSaved] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -86,6 +90,17 @@ export default function VaultPage() {
     const supabase = createClient()
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
+  }
+
+  const saveAnnotation = async () => {
+    if (!selectedDoc) return
+    setSavingAnnotation(true)
+    const supabase = createClient()
+    await supabase.from('vault_documents').update({ notes: annotationText }).eq('id', selectedDoc.id)
+    setDocs(prev => prev.map(d => d.id === selectedDoc.id ? { ...d, notes: annotationText } : d))
+    setAnnotationSaved(true)
+    setTimeout(() => setAnnotationSaved(false), 2000)
+    setSavingAnnotation(false)
   }
 
   const filteredDocs = filter === 'all' ? docs : docs.filter(d => d.document_type === filter)
@@ -308,6 +323,66 @@ export default function VaultPage() {
         )}
 
       </div>
+    </div>
+
+      {/* DOCUMENT VIEWER MODAL */}
+      {selectedDoc && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(28,43,50,0.7)', zIndex:500, display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}
+          onClick={e => { if (e.target === e.currentTarget) setSelectedDoc(null) }}>
+          <div style={{ background:'white', borderRadius:'16px', width:'100%', maxWidth:'900px', maxHeight:'90vh', overflow:'hidden', display:'flex', flexDirection:'column' as const }}>
+            <div style={{ padding:'16px 20px', borderBottom:'1px solid #F0F0F0', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#1C2B32' }}>
+              <div>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', margin:0 }}>{selectedDoc.title}</p>
+                <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:'2px 0 0' }}>{selectedDoc.document_type}</p>
+              </div>
+              <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
+                <a href={selectedDoc.file_url} target="_blank" rel="noreferrer"
+                  style={{ fontSize:'12px', color:'rgba(216,228,225,0.7)', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'6px' }}>
+                  Open in new tab ↗
+                </a>
+                <button type="button" onClick={() => setSelectedDoc(null)}
+                  style={{ background:'none', border:'none', color:'rgba(216,228,225,0.6)', cursor:'pointer', fontSize:'20px', lineHeight:1, padding:'0 4px' }}>×</button>
+              </div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 280px', flex:1, overflow:'hidden', minHeight:0 }}>
+              <div style={{ overflow:'auto', background:'#F4F8F7', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'16px' }}>
+                {selectedDoc.file_url?.match(/\.(jpg|jpeg|png|gif|webp)/i) ? (
+                  <img src={selectedDoc.file_url} alt={selectedDoc.title} style={{ maxWidth:'100%', borderRadius:'8px', boxShadow:'0 4px 20px rgba(28,43,50,0.15)' }} />
+                ) : selectedDoc.file_url?.match(/\.pdf/i) ? (
+                  <iframe src={selectedDoc.file_url} style={{ width:'100%', height:'600px', border:'none', borderRadius:'8px' }} title={selectedDoc.title} />
+                ) : (
+                  <div style={{ textAlign:'center' as const, padding:'40px' }}>
+                    <p style={{ fontSize:'40px', marginBottom:'12px' }}>📎</p>
+                    <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>Preview not available for this file type</p>
+                    <a href={selectedDoc.file_url} target="_blank" rel="noreferrer"
+                      style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
+                      Download file →
+                    </a>
+                  </div>
+                )}
+              </div>
+              <div style={{ padding:'16px', borderLeft:'1px solid #F0F0F0', display:'flex', flexDirection:'column' as const, gap:'12px', overflow:'auto' }}>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Document details</p>
+                  {selectedDoc.issued_date && <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'4px' }}>Issued: {new Date(selectedDoc.issued_date).toLocaleDateString('en-AU')}</p>}
+                  {selectedDoc.expiry_date && <p style={{ fontSize:'12px', color: new Date(selectedDoc.expiry_date) < new Date() ? '#D4522A' : '#4A5E64', marginBottom:'4px' }}>Expires: {new Date(selectedDoc.expiry_date).toLocaleDateString('en-AU')}</p>}
+                  {selectedDoc.tradie_name && <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'4px' }}>Tradie: {selectedDoc.tradie_name}</p>}
+                </div>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Notes &amp; annotations</p>
+                  <textarea value={annotationText} onChange={e => setAnnotationText(e.target.value)}
+                    placeholder="Add notes, observations or annotations about this document..."
+                    style={{ width:'100%', minHeight:'160px', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', color:'#1C2B32', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                  <button type="button" onClick={saveAnnotation} disabled={savingAnnotation}
+                    style={{ width:'100%', marginTop:'8px', background: annotationSaved ? '#2E7D60' : '#1C2B32', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    {annotationSaved ? '✓ Saved' : savingAnnotation ? 'Saving...' : 'Save notes →'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
