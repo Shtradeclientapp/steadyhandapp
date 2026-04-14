@@ -334,26 +334,7 @@ export default function DeliveryPage() {
     <div>
       <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/delivery" jobStatus={job?.status} />
-      <div style={{ position:'sticky', top:'64px', zIndex:90, background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' }}>
-        {[
-          { num:1, label:'Request', path:'/request', color:'#2E7D60' },
-          { num:2, label:'Match', path:'/shortlist', color:'#2E6A8F' },
-          { num:3, label:'Consult', path:'/consult', color:'#9B6B9B' },
-          { num:4, label:'Quote', path:'/quotes', color:'#C07830' },
-          { num:5, label:'Confirm', path:'/agreement', color:'#6B4FA8' },
-          { num:6, label:'Build', path:'/delivery', color:'#C07830' },
-          { num:7, label:'Complete', path:'/signoff', color:'#D4522A' },
-          { num:8, label:'Protect', path:'/warranty', color:'#1A6B5A' },
-        ].map(s => (
-          <a key={s.num} href={s.path} style={{ flexShrink:0, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'3px', padding:'10px 16px', borderRight:'1px solid rgba(28,43,50,0.1)', textDecoration:'none', position:'relative' as const }}>
-            {s.path === '/delivery' && <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'2px', background:s.color }} />}
-            <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:700, border:'1.5px solid ' + (s.num < 6 ? s.color : s.path === '/delivery' ? s.color : 'rgba(28,43,50,0.2)'), background: s.num < 6 ? s.color : '#C8D5D2', color: s.num < 6 ? 'white' : s.path === '/delivery' ? s.color : '#7A9098' }}>
-              {s.num < 6 ? '✓' : s.num}
-            </div>
-            <div style={{ fontSize:'12px', color: s.path === '/delivery' ? '#1C2B32' : s.num < 4 ? s.color : '#7A9098', fontWeight: s.path === '/delivery' ? 600 : 400 }}>{s.label}</div>
-          </a>
-        ))}
-      </div>
+
     </div>
   )
 
