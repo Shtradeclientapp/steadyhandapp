@@ -184,6 +184,9 @@ export default function TradieJobPage() {
         sender_id: user.id,
         body: 'Quote v' + latestVersion + ' submitted: $' + total.toLocaleString() + (quoteForm.estimated_days ? ' · Est. ' + quoteForm.estimated_days + ' days' : '') + (quoteForm.estimated_start ? ' · Starting ' + new Date(quoteForm.estimated_start).toLocaleDateString('en-AU') : ''),
       })
+      // Move job to compare stage so client sees quote is ready
+      const supabase3 = createClient()
+      await supabase3.from('jobs').update({ status: 'compare' }).eq('id', job.id).eq('status', 'shortlisted')
       await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
