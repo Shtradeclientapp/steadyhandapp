@@ -189,6 +189,11 @@ export default function TradieJobPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'quote_submitted', job_id: job.id }),
       })
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'quote_submitted', job_id: job.id }),
+      })
     }
     setShowQuoteForm(false)
     setSubmittingQuote(false)
