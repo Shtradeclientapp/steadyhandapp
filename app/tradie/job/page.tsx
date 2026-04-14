@@ -146,10 +146,7 @@ export default function TradieJobPage() {
 
   const profileComplete = !!(
     job?.tradie?.business_name &&
-    (job?.tradie?.trade_categories || []).length > 0 &&
-    (job?.tradie?.service_areas || []).length > 0 &&
-    job?.tradie?.abn &&
-    job?.tradie?.licence_number
+    (job?.tradie?.trade_categories || []).length > 0
   )
 
   const submitQuote = async () => {
@@ -186,7 +183,7 @@ export default function TradieJobPage() {
       })
       // Move job to compare stage so client sees quote is ready
       const supabase3 = createClient()
-      await supabase3.from('jobs').update({ status: 'compare' }).eq('id', job.id).eq('status', 'shortlisted')
+      await supabase3.from('jobs').update({ status: 'compare' }).eq('id', job.id).in('status', ['shortlisted', 'matching', 'consult'])
       await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
