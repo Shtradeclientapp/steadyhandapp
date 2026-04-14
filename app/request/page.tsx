@@ -200,10 +200,10 @@ sessionStorage.removeItem('diy_project_id')
               <label style={labelStyle}>
                 Trade category
                 <select value={form.trade_category} onChange={set('trade_category')} style={inputStyle}>
-                  <option value="">Not sure — select closest match</option>
+                  <option value="">Select trade category</option>
                   {TRADES.map(t => <option key={t}>{t}</option>)}
                 </select>
-                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Not sure? Pick the closest trade — you can clarify during the consult.</span>
+
               </label>
               {submitError && step === 0 && (
                 <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
@@ -356,7 +356,7 @@ sessionStorage.removeItem('diy_project_id')
           { text: 'Describe the problem and how long it has been an issue', emphasis: true },
           { text: 'Include your property age, type and any access restrictions', emphasis: false },
           { text: 'Mention anything unusual — previous repairs, asbestos, heritage overlay', emphasis: false },
-          { text: 'Pick the closest trade category — you can clarify during the consult', emphasis: false },
+          { text: 'Select the trade category that best fits your job', emphasis: false },
           { text: 'A budget range is optional but helps tradies assess fit before visiting', emphasis: false },
         ]}
         warning="Vague requests attract vague quotes. The more specific you are, the better tradies can respond."
