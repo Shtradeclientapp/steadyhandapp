@@ -25,6 +25,13 @@ export default function AdminPage() {
   const [sendingMsg, setSendingMsg] = useState(false)
   const [disputingJob, setDisputingJob] = useState<string|null>(null)
   const [jobFilter, setJobFilter] = useState('')
+  const [metrics, setMetrics] = useState<any>(null)
+  const [selectedJob, setSelectedJob] = useState<any>(null)
+  const [jobMessages, setJobMessages] = useState<any[]>([])
+  const [adminMessage, setAdminMessage] = useState('')
+  const [sendingMsg, setSendingMsg] = useState(false)
+  const [disputingJob, setDisputingJob] = useState<string|null>(null)
+  const [jobFilter, setJobFilter] = useState('')
 
   useEffect(() => {
     const supabase = createClient()
@@ -35,6 +42,15 @@ export default function AdminPage() {
       const { data: tradieData } = await supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, suburb, created_at)').order('created_at', { ascending: false })
       setTradies(tradieData || [])
       const { data: clientData } = await supabase.from('profiles').select('*').eq('role', 'client').order('created_at', { ascending: false })
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      const { data: allJobs } = await supabase.from('jobs').select('status, created_at')
+      const { data: recentSignups } = await supabase.from('profiles').select('id').gte('created_at', thirtyDaysAgo)
+      const { data: recentJobs } = await supabase.from('jobs').select('id').gte('created_at', thirtyDaysAgo)
+      const { data: paidMilestones } = await supabase.from('milestones').select('amount').eq('status', 'approved')
+      const statusCounts: Record<string, number> = {}
+      ;(allJobs || []).forEach((j: any) => { statusCounts[j.status] = (statusCounts[j.status] || 0) + 1 })
+      const totalRevenue = (paidMilestones || []).reduce((sum: number, m: any) => sum + (Number(m.amount) * 0.03), 0)
+      setMetrics({ totalJobs: (allJobs || []).length, recentJobs: (recentJobs || []).length, recentSignups: (recentSignups || []).length, totalRevenue, statusCounts })
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
       const { data: allJobs } = await supabase.from('jobs').select('status, created_at')
       const { data: recentSignups } = await supabase.from('profiles').select('id').gte('created_at', thirtyDaysAgo)
@@ -87,6 +103,36 @@ export default function AdminPage() {
     const supabase = createClient()
     await supabase.from('tradie_profiles').update({ subscription_active: value }).eq('id', id)
     setTradies(prev => prev.map(t => t.id === id ? { ...t, subscription_active: value } : t))
+  }
+
+  const loadJobThread = async (job: any) => {
+    setSelectedJob(job)
+    setJobMessages([])
+    const supabase = createClient()
+    const { data } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', job.id).order('created_at', { ascending: true })
+    setJobMessages(data || [])
+  }
+
+  const postAsAdmin = async () => {
+    if (!adminMessage.trim() || !selectedJob) return
+    setSendingMsg(true)
+    const supabase = createClient()
+    await supabase.from('job_messages').insert({ job_id: selectedJob.id, sender_id: null, body: '📢 Steadyhand: ' + adminMessage.trim() })
+    setAdminMessage('')
+    await loadJobThread(selectedJob)
+    setSendingMsg(false)
+  }
+
+  const flagDispute = async (jobId: string, currentStatus: string) => {
+    if (!confirm(currentStatus === 'disputed' ? 'Remove dispute flag?' : 'Flag as disputed? This will freeze payments.')) return
+    setDisputingJob(jobId)
+    const supabase = createClient()
+    const newStatus = currentStatus === 'disputed' ? 'delivery' : 'disputed'
+    await supabase.from('jobs').update({ status: newStatus }).eq('id', jobId)
+    await supabase.from('job_messages').insert({ job_id: jobId, sender_id: null, body: newStatus === 'disputed' ? '⚠️ This job has been flagged as disputed by Steadyhand. Payments are frozen pending resolution.' : '✅ The dispute flag has been removed by Steadyhand. Normal job flow has resumed.' })
+    setJobs(prev => prev.map((j: any) => j.id === jobId ? { ...j, status: newStatus } : j))
+    if (selectedJob?.id === jobId) setSelectedJob((prev: any) => ({ ...prev, status: newStatus }))
+    setDisputingJob(null)
   }
 
   const loadJobThread = async (job: any) => {
@@ -263,6 +309,39 @@ export default function AdminPage() {
                     )}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+          {tab === 'metrics' && metrics && (
+            <div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px,1fr))', gap:'12px', marginBottom:'24px' }}>
+                {[
+                  { label:'Total jobs', value: metrics.totalJobs },
+                  { label:'Jobs this month', value: metrics.recentJobs },
+                  { label:'Signups this month', value: metrics.recentSignups },
+                  { label:'Platform revenue (est.)', value: '$' + Number(metrics.totalRevenue).toLocaleString(undefined, { maximumFractionDigits:0 }) },
+                ].map((s: any) => (
+                  <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px' }}>
+                    <p style={{ fontSize:'11px', color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>{s.label}</p>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', margin:0 }}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
+                <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>JOBS BY STATUS</p>
+                </div>
+                <div style={{ padding:'14px 18px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                  {Object.entries(metrics.statusCounts).sort(([,a],[,b]) => (b as number) - (a as number)).map(([status, count]) => (
+                    <div key={status} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <span style={{ fontSize:'12px', color:'#4A5E64', width:'90px', flexShrink:0, textTransform:'capitalize' as const }}>{status}</span>
+                      <div style={{ flex:1, height:'6px', background:'rgba(28,43,50,0.08)', borderRadius:'3px', overflow:'hidden' }}>
+                        <div style={{ height:'100%', background: status === 'disputed' ? '#D4522A' : status === 'complete' ? '#2E7D60' : status === 'delivery' ? '#C07830' : '#2E6A8F', borderRadius:'3px', width: ((count as number) / metrics.totalJobs * 100) + '%' }} />
+                      </div>
+                      <span style={{ fontSize:'12px', color:'#1C2B32', fontWeight:500, width:'30px', textAlign:'right' as const }}>{count as number}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
