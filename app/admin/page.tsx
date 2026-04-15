@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 const ADMIN_EMAIL = 'anthony.coxeter@gmail.com'
 
 export default function AdminPage() {
-  const [tab, setTab] = useState<'tradies'|'clients'|'jobs'>('tradies')
+  const [tab, setTab] = useState<'tradies'|'clients'|'jobs'|'metrics'>('tradies')
   const [page, setPage] = useState(0)
   const PAGE_SIZE = 20
   const [tradies, setTradies] = useState<any[]>([])
@@ -18,6 +18,13 @@ export default function AdminPage() {
   const [savingNote, setSavingNote] = useState(false)
   const [adminId, setAdminId] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  const [metrics, setMetrics] = useState<any>(null)
+  const [selectedJob, setSelectedJob] = useState<any>(null)
+  const [jobMessages, setJobMessages] = useState<any[]>([])
+  const [adminMessage, setAdminMessage] = useState('')
+  const [sendingMsg, setSendingMsg] = useState(false)
+  const [disputingJob, setDisputingJob] = useState<string|null>(null)
+  const [jobFilter, setJobFilter] = useState('')
 
   useEffect(() => {
     const supabase = createClient()
@@ -28,6 +35,15 @@ export default function AdminPage() {
       const { data: tradieData } = await supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, suburb, created_at)').order('created_at', { ascending: false })
       setTradies(tradieData || [])
       const { data: clientData } = await supabase.from('profiles').select('*').eq('role', 'client').order('created_at', { ascending: false })
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      const { data: allJobs } = await supabase.from('jobs').select('status, created_at')
+      const { data: recentSignups } = await supabase.from('profiles').select('id').gte('created_at', thirtyDaysAgo)
+      const { data: recentJobs } = await supabase.from('jobs').select('id').gte('created_at', thirtyDaysAgo)
+      const { data: paidMilestones } = await supabase.from('milestones').select('amount').eq('status', 'approved')
+      const statusCounts: Record<string, number> = {}
+      ;(allJobs || []).forEach((j: any) => { statusCounts[j.status] = (statusCounts[j.status] || 0) + 1 })
+      const totalRevenue = (paidMilestones || []).reduce((sum: number, m: any) => sum + (Number(m.amount) * 0.03), 0)
+      setMetrics({ totalJobs: (allJobs || []).length, recentJobs: (recentJobs || []).length, recentSignups: (recentSignups || []).length, totalRevenue, statusCounts })
       setClients(clientData || [])
       const { data: jobData } = await supabase.from('jobs').select('*, client:profiles!jobs_client_id_fkey(full_name, email), tradie:tradie_profiles(business_name)').order('created_at', { ascending: false }).limit(50)
       setJobs(jobData || [])
@@ -73,6 +89,36 @@ export default function AdminPage() {
     setTradies(prev => prev.map(t => t.id === id ? { ...t, subscription_active: value } : t))
   }
 
+  const loadJobThread = async (job: any) => {
+    setSelectedJob(job)
+    setJobMessages([])
+    const supabase = createClient()
+    const { data } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', job.id).order('created_at', { ascending: true })
+    setJobMessages(data || [])
+  }
+
+  const postAsAdmin = async () => {
+    if (!adminMessage.trim() || !selectedJob) return
+    setSendingMsg(true)
+    const supabase = createClient()
+    await supabase.from('job_messages').insert({ job_id: selectedJob.id, sender_id: null, body: '📢 Steadyhand: ' + adminMessage.trim() })
+    setAdminMessage('')
+    await loadJobThread(selectedJob)
+    setSendingMsg(false)
+  }
+
+  const flagDispute = async (jobId: string, currentStatus: string) => {
+    if (!confirm(currentStatus === 'disputed' ? 'Remove dispute flag?' : 'Flag as disputed? This will freeze payments.')) return
+    setDisputingJob(jobId)
+    const supabase = createClient()
+    const newStatus = currentStatus === 'disputed' ? 'delivery' : 'disputed'
+    await supabase.from('jobs').update({ status: newStatus }).eq('id', jobId)
+    await supabase.from('job_messages').insert({ job_id: jobId, sender_id: null, body: newStatus === 'disputed' ? '⚠️ This job has been flagged as disputed by Steadyhand. Payments are frozen pending resolution.' : '✅ The dispute flag has been removed by Steadyhand. Normal job flow has resumed.' })
+    setJobs(prev => prev.map((j: any) => j.id === jobId ? { ...j, status: newStatus } : j))
+    if (selectedJob?.id === jobId) setSelectedJob((prev: any) => ({ ...prev, status: newStatus }))
+    setDisputingJob(null)
+  }
+
   const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
 
   if (loading) return (
@@ -104,10 +150,10 @@ export default function AdminPage() {
             ))}
           </div>
           <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)', marginBottom: '20px' }}>
-            {(['tradies', 'clients', 'jobs'] as const).map(t => (
+            {(['tradies', 'clients', 'jobs', 'metrics'] as const).map(t => (
               <button key={t} type="button" onClick={() => { setTab(t); setPage(0) }}
                 style={{ padding: '10px 20px', border: 'none', borderBottom: tab === t ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: tab === t ? 600 : 400, color: tab === t ? '#1C2B32' : '#7A9098', textTransform: 'capitalize' as const }}>
-                {t} ({t === 'tradies' ? tradies.length : t === 'clients' ? clients.length : jobs.length})
+                {t === 'metrics' ? 'Metrics' : t + ' (' + (t === 'tradies' ? tradies.length : t === 'clients' ? clients.length : jobs.length) + ')'}
               </button>
             ))}
           </div>
@@ -167,19 +213,90 @@ export default function AdminPage() {
             </div>
           )}
           {tab === 'jobs' && (
-            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
-              {jobs.map(j => (
-                <div key={j.id} style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' as const }}>
-                  <div>
-                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', marginBottom: '3px' }}>{j.title}</p>
-                    <p style={{ fontSize: '12px', color: '#7A9098' }}>{j.trade_category} · {j.suburb} · {j.client?.full_name}{j.tradie?.business_name ? ' → ' + j.tradie.business_name : ''}</p>
+            <div>
+              <input type="text" placeholder="Filter by title, suburb, client, tradie..." value={jobFilter} onChange={e => setJobFilter(e.target.value)}
+                style={{ width:'100%', padding:'10px 14px', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.15)', fontSize:'13px', background:'white', marginBottom:'14px', boxSizing:'border-box' as const, color:'#1C2B32' }} />
+              <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px' }}>
+                {jobs.filter((j: any) => !jobFilter || [j.title, j.suburb, j.trade_category, j.client?.full_name, j.tradie?.business_name].some((v: any) => v?.toLowerCase().includes(jobFilter.toLowerCase()))).map((j: any) => (
+                  <div key={j.id} style={{ background: j.status === 'disputed' ? 'rgba(212,82,42,0.04)' : '#E8F0EE', border: selectedJob?.id === j.id ? '1.5px solid #D4522A' : j.status === 'disputed' ? '1px solid rgba(212,82,42,0.3)' : '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 18px' }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+                      <div style={{ flex:1, cursor:'pointer' }} onClick={() => loadJobThread(j)}>
+                        <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', marginBottom: '3px' }}>{j.title}</p>
+                        <p style={{ fontSize: '12px', color: '#7A9098' }}>{j.trade_category} · {j.suburb} · {j.client?.full_name}{j.tradie?.business_name ? ' → ' + j.tradie.business_name : ''}</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0, flexWrap:'wrap' as const }}>
+                        <span style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '100px', background: j.status === 'disputed' ? 'rgba(212,82,42,0.1)' : 'rgba(28,43,50,0.08)', color: j.status === 'disputed' ? '#D4522A' : '#4A5E64', textTransform: 'capitalize' as const, fontWeight: j.status === 'disputed' ? 600 : 400 }}>{j.status}</span>
+                        <span style={{ fontSize: '11px', color: '#9AA5AA' }}>{new Date(j.created_at).toLocaleDateString('en-AU')}</span>
+                        <button type="button" onClick={() => loadJobThread(j)} style={{ fontSize:'11px', padding:'4px 10px', borderRadius:'6px', border:'1px solid rgba(28,43,50,0.2)', background:'white', cursor:'pointer', color:'#1C2B32' }}>View thread</button>
+                        <button type="button" onClick={() => flagDispute(j.id, j.status)} disabled={disputingJob === j.id}
+                          style={{ fontSize:'11px', padding:'4px 10px', borderRadius:'6px', border:'none', background: j.status === 'disputed' ? '#2E7D60' : '#D4522A', cursor:'pointer', color:'white', opacity: disputingJob === j.id ? 0.5 : 1 }}>
+                          {j.status === 'disputed' ? 'Resolve' : '⚠ Dispute'}
+                        </button>
+                      </div>
+                    </div>
+                    {selectedJob?.id === j.id && (
+                      <div style={{ marginTop:'14px', borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'14px' }}>
+                        <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'10px' }}>Job Thread</p>
+                        <div style={{ maxHeight:'320px', overflowY:'auto' as const, display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
+                          {jobMessages.length === 0 && <p style={{ fontSize:'12px', color:'#9AA5AA' }}>No messages yet.</p>}
+                          {jobMessages.map((msg: any) => {
+                            const isAdmin = !msg.sender_id || msg.body.startsWith('📢')
+                            return (
+                              <div key={msg.id} style={{ padding:'8px 12px', borderRadius:'8px', background: isAdmin ? '#1C2B32' : 'white', border:'1px solid rgba(28,43,50,0.08)', maxWidth:'80%', alignSelf: isAdmin ? 'flex-end' as const : 'flex-start' as const }}>
+                                <p style={{ fontSize:'11px', color: isAdmin ? 'rgba(216,228,225,0.5)' : '#7A9098', margin:'0 0 3px' }}>{isAdmin ? 'Steadyhand' : (msg.sender?.full_name || 'System')} · {new Date(msg.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</p>
+                                <p style={{ fontSize:'12px', color: isAdmin ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:0, lineHeight:'1.5' }}>{msg.body}</p>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        <div style={{ display:'flex', gap:'8px' }}>
+                          <input type="text" value={adminMessage} onChange={e => setAdminMessage(e.target.value)}
+                            placeholder="Post as Steadyhand into this thread..."
+                            onKeyDown={e => e.key === 'Enter' && postAsAdmin()}
+                            style={{ flex:1, padding:'9px 12px', borderRadius:'7px', border:'1px solid rgba(28,43,50,0.2)', fontSize:'12px', background:'white', color:'#1C2B32' }} />
+                          <button type="button" onClick={postAsAdmin} disabled={sendingMsg || !adminMessage.trim()}
+                            style={{ padding:'9px 16px', background:'#1C2B32', color:'white', border:'none', borderRadius:'7px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity: sendingMsg || !adminMessage.trim() ? 0.5 : 1 }}>
+                            {sendingMsg ? '...' : 'Send'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
-                    <span style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '100px', background: 'rgba(28,43,50,0.08)', color: '#4A5E64', textTransform: 'capitalize' as const }}>{j.status}</span>
-                    <span style={{ fontSize: '11px', color: '#9AA5AA' }}>{new Date(j.created_at).toLocaleDateString('en-AU')}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {tab === 'metrics' && metrics && (
+            <div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px,1fr))', gap:'12px', marginBottom:'24px' }}>
+                {[
+                  { label:'Total jobs', value: metrics.totalJobs },
+                  { label:'Jobs this month', value: metrics.recentJobs },
+                  { label:'Signups this month', value: metrics.recentSignups },
+                  { label:'Platform revenue (est.)', value: '$' + Number(metrics.totalRevenue).toLocaleString(undefined, { maximumFractionDigits:0 }) },
+                ].map((s: any) => (
+                  <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px' }}>
+                    <p style={{ fontSize:'11px', color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>{s.label}</p>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', margin:0 }}>{s.value}</p>
                   </div>
+                ))}
+              </div>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
+                <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>JOBS BY STATUS</p>
                 </div>
-              ))}
+                <div style={{ padding:'14px 18px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                  {Object.entries(metrics.statusCounts).sort(([,a],[,b]) => (b as number) - (a as number)).map(([status, count]) => (
+                    <div key={status} style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <span style={{ fontSize:'12px', color:'#4A5E64', width:'90px', flexShrink:0, textTransform:'capitalize' as const }}>{status}</span>
+                      <div style={{ flex:1, height:'6px', background:'rgba(28,43,50,0.08)', borderRadius:'3px', overflow:'hidden' }}>
+                        <div style={{ height:'100%', background: status === 'disputed' ? '#D4522A' : status === 'complete' ? '#2E7D60' : status === 'delivery' ? '#C07830' : '#2E6A8F', borderRadius:'3px', width: ((count as number) / metrics.totalJobs * 100) + '%' }} />
+                      </div>
+                      <span style={{ fontSize:'12px', color:'#1C2B32', fontWeight:500, width:'30px', textAlign:'right' as const }}>{count as number}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
