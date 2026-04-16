@@ -208,11 +208,11 @@ sessionStorage.removeItem('diy_project_id')
 
               {/* Multi-trade prompt — shows when category suggests multiple trades needed */}
               {['Bathroom', 'Kitchen', 'Laundry', 'General Building', 'Renovation', 'Extension', 'New Build'].some(t => form.trade_category.toLowerCase().includes(t.toLowerCase())) && (
-                <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'4px' }}>
+                <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'8px' }}>
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 6px' }}>
                     🏗 This type of job often needs more than one trade
                   </p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 10px' }}>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
                     Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade — or use the <strong>Reno Planner</strong> to manage them all as one project, with a single scope and coordinated milestones.
                   </p>
                   <a href="/diy" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#9B6B9B', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
@@ -223,6 +223,19 @@ sessionStorage.removeItem('diy_project_id')
                   </button>
                 </div>
               )}
+
+              {/* Property manager prompt — always visible */}
+              <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'4px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 6px' }}>
+                  🏢 Managing more than one property?
+                </p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
+                  If you manage multiple properties — whether as a landlord, body corporate, or facilities manager — a <strong>Property Manager account</strong> lets you post jobs across your entire portfolio, manage preferred contractors, and track spend by property.
+                </p>
+                <a href="/org/setup" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#2E6A8F', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
+                  Set up a Property Manager account →
+                </a>
+              </div>
 
               {submitError && step === 0 && (
                 <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
