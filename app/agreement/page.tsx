@@ -18,6 +18,7 @@ export default function AgreementPage() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [drafting, setDrafting] = useState(false)
+  const [signing, setSigning] = useState(false)
   const [draftError, setDraftError] = useState<string|null>(null)
   const [sending, setSending] = useState(false)
   const [pushingMsg, setPushingMsg] = useState<string|null>(null)

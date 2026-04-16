@@ -497,56 +497,78 @@ export default function TradieDashboard() {
         )}
 
         {/* ── Stripe banners ── */}
-        {/* Xero integration banner */}
-        {xeroConnected ? (
-          <div style={{ margin:'0 0 12px', background:'rgba(19,183,117,0.08)', border:'1px solid rgba(19,183,117,0.25)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#138a52', margin:'0 0 2px' }}>✓ Xero connected — {xeroTenant}</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quotes and invoices sync automatically to your Xero account.</p>
-            </div>
-            <button type="button" onClick={async () => {
-              setXeroDisconnecting(true)
-              const supabase = createClient()
-              const { data: { session } } = await supabase.auth.getSession()
-              await fetch('/api/xero/disconnect', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session?.user.id }) })
-              setXeroConnected(false)
-              setXeroTenant(null)
-              setXeroDisconnecting(false)
-            }} disabled={xeroDisconnecting}
-              style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer' }}>
-              {xeroDisconnecting ? 'Disconnecting...' : 'Disconnect'}
-            </button>
-          </div>
-        ) : (
-          <div style={{ margin:'0 0 12px', background:'rgba(19,183,117,0.04)', border:'1px solid rgba(19,183,117,0.15)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Connect Xero</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Sync quotes and invoices directly to your Xero account.</p>
-            </div>
-            <a href="/api/xero/connect"
-              style={{ fontSize:'12px', color:'white', background:'#13B875', border:'none', borderRadius:'6px', padding:'7px 14px', cursor:'pointer', textDecoration:'none', fontWeight:500 }}>
-              Connect Xero →
-            </a>
-          </div>
-        )}
 
-        {!stripeConnected && (
-          <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
-            <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Bank account not connected — milestone payments are on hold.</p>
-            <button type="button" onClick={async () => {
-              const res  = await fetch('/api/stripe', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
-              const data = await res.json()
-              if (data.url) window.location.href = data.url
-            }} style={{ background:'none', color:'#2E7D60', padding:'0', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0, textDecoration:'underline' }}>
-              Connect bank account →
-            </button>
-          </div>
-        )}
 
-        {profile?.tradie?.subscription_active === false && (
-          <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'14px', marginBottom:'24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
-            <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Profile pending verification — we will notify you when live.</p>
-            <a href="/tradie/subscribe" style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, textDecoration:'underline', flexShrink:0 }}>Manage subscription →</a>
+        {/* ── Registration status block ── */}
+        {(!stripeConnected || !xeroConnected || !profile?.tradie?.subscription_active || !profile?.tradie?.licence_verified) && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'24px' }}>
+            <div style={{ padding:'12px 16px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', margin:0 }}>ACCOUNT STATUS</p>
+            </div>
+            <div style={{ padding:'8px 0' }}>
+              {[
+                {
+                  ok: !!profile?.tradie?.licence_verified,
+                  label: 'Profile verification',
+                  action: !profile?.tradie?.licence_verified ? 'Pending — we will notify you when live' : null,
+                  href: null,
+                  cta: null,
+                },
+                {
+                  ok: !!profile?.tradie?.subscription_active,
+                  label: 'Subscription',
+                  action: !profile?.tradie?.subscription_active ? 'No active plan' : null,
+                  href: '/tradie/subscribe',
+                  cta: 'Manage →',
+                },
+                {
+                  ok: stripeConnected,
+                  label: 'Bank account',
+                  action: !stripeConnected ? 'Not connected — milestone payments on hold' : null,
+                  href: null,
+                  cta: null,
+                  onClick: !stripeConnected ? async () => {
+                    const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
+                    const data = await res.json()
+                    if (data.url) window.location.href = data.url
+                  } : null,
+                },
+                {
+                  ok: xeroConnected,
+                  label: 'Xero',
+                  action: !xeroConnected ? 'Not connected' : xeroTenant || 'Connected',
+                  href: !xeroConnected ? '/api/xero/connect' : null,
+                  cta: !xeroConnected ? 'Connect →' : null,
+                },
+              ].map((item, i) => (
+                <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 16px', borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                    <span style={{ fontSize:'14px' }}>{item.ok ? '✓' : '○'}</span>
+                    <div>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.ok ? '#2E7D60' : '#1C2B32', margin:0 }}>{item.label}</p>
+                      {item.action && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{item.action}</p>}
+                    </div>
+                  </div>
+                  {!item.ok && item.href && (
+                    <a href={item.href} style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, textDecoration:'none' }}>{item.cta}</a>
+                  )}
+                  {!item.ok && item.onClick && (
+                    <button type="button" onClick={item.onClick} style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500, background:'none', border:'none', cursor:'pointer', padding:0 }}>Connect →</button>
+                  )}
+                  {item.ok && item.label === 'Xero' && xeroTenant && (
+                    <button type="button" onClick={async () => {
+                      setXeroDisconnecting(true)
+                      const supabase = createClient()
+                      const { data: { session } } = await supabase.auth.getSession()
+                      await fetch('/api/xero/disconnect', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session?.user.id }) })
+                      setXeroConnected(false); setXeroTenant(null); setXeroDisconnecting(false)
+                    }} style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'5px', padding:'4px 8px', cursor:'pointer' }}>
+                      {xeroDisconnecting ? '...' : 'Disconnect'}
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -657,13 +679,20 @@ export default function TradieDashboard() {
                   transition: 'box-shadow 0.15s',
                 }}>
                   {/* Top row: title + stage badge */}
-                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const, marginBottom:'10px' }}>
+                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const, marginBottom: next ? '8px' : '10px' }}>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
                       <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</div>
                     </div>
-                    <span style={{ fontSize:'11px', color, fontWeight:500, flexShrink:0 }}>{label}</span>
+                    <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: color + '18', border:'1px solid ' + color + '40', color, fontWeight:500, flexShrink:0 }}>{label}</span>
                   </div>
+                  {/* Next action — prominent highlight */}
+                  {next && (
+                    <div style={{ background: color + '10', border:'1px solid ' + color + '30', borderRadius:'8px', padding:'8px 12px', marginBottom:'10px', display:'flex', alignItems:'center', gap:'8px' }}>
+                      <span style={{ fontSize:'13px' }}>→</span>
+                      <p style={{ fontSize:'13px', fontWeight:600, color, margin:0 }}>{next}</p>
+                    </div>
+                  )}
 
                   {/* Milestone bar (delivery stage) */}
                   {milestonesTotal > 0 && (
