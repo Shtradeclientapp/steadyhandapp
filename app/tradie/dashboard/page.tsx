@@ -687,10 +687,13 @@ export default function TradieDashboard() {
                     <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: color + '18', border:'1px solid ' + color + '40', color, fontWeight:500, flexShrink:0 }}>{label}</span>
                   </div>
                   {/* Next action — prominent highlight */}
-                  {next && (
-                    <div style={{ background: color + '10', border:'1px solid ' + color + '30', borderRadius:'8px', padding:'8px 12px', marginBottom:'10px', display:'flex', alignItems:'center', gap:'8px' }}>
-                      <span style={{ fontSize:'13px' }}>→</span>
-                      <p style={{ fontSize:'13px', fontWeight:600, color, margin:0 }}>{next}</p>
+                  {next?.headline && (
+                    <div style={{ background: next.urgent ? color + '15' : 'rgba(28,43,50,0.04)', border:'1px solid ' + (next.urgent ? color + '40' : 'rgba(28,43,50,0.1)'), borderRadius:'8px', padding:'8px 12px', marginBottom:'10px', display:'flex', alignItems:'center', gap:'8px' }}>
+                      <span style={{ fontSize:'14px', flexShrink:0 }}>{next.icon}</span>
+                      <div>
+                        <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? color : '#1C2B32', margin:'0 0 1px' }}>{next.headline}</p>
+                        {next.sub && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{next.sub}</p>}
+                      </div>
                     </div>
                   )}
 
