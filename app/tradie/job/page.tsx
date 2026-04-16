@@ -725,12 +725,24 @@ export default function TradieJobPage() {
                         {items.map(item => (
                           <div key={item.i} className='quote-grid-row' style={{ display: 'grid', gridTemplateColumns: '1fr 60px 60px 80px 80px 24px', gap: '4px', marginBottom: '5px', alignItems: 'center' }}>
                             <input type="text" placeholder="Description" value={item.label} onChange={e => updateLineItem(item.i, 'label', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                            <input type="number" placeholder="1" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                            <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
-                              {['hrs', 'days', 'wks', 'lot', 'm', 'm²', 'm³', 'each', 'kg', 'L'].map(u => <option key={u} value={u}>{u}</option>)}
-                            </select>
-                            <input type="number" placeholder="0.00" value={item.unit_price} onChange={e => updateLineItem(item.i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
-                            <input type="number" placeholder="0.00" value={item.amount} onChange={e => updateLineItem(item.i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            <div style={{ display:'flex', flexDirection:'column' as const, gap:'2px' }}>
+                              <span className="quote-field-label" style={{ fontSize:'9px', color:'#9AA5AA', textTransform:'uppercase' as const, letterSpacing:'0.5px', display:'none' }}>Qty</span>
+                              <input type="number" placeholder="1" value={item.quantity} onChange={e => updateLineItem(item.i, 'quantity', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            </div>
+                            <div style={{ display:'flex', flexDirection:'column' as const, gap:'2px' }}>
+                              <span className="quote-field-label" style={{ fontSize:'9px', color:'#9AA5AA', textTransform:'uppercase' as const, letterSpacing:'0.5px', display:'none' }}>Unit</span>
+                              <select value={item.unit} onChange={e => updateLineItem(item.i, 'unit', e.target.value)} style={{ ...inp, marginBottom: 0, padding: '9px 4px' }}>
+                                {['hrs', 'days', 'wks', 'lot', 'm', 'm²', 'm³', 'each', 'kg', 'L'].map(u => <option key={u} value={u}>{u}</option>)}
+                              </select>
+                            </div>
+                            <div style={{ display:'flex', flexDirection:'column' as const, gap:'2px' }}>
+                              <span className="quote-field-label" style={{ fontSize:'9px', color:'#9AA5AA', textTransform:'uppercase' as const, letterSpacing:'0.5px', display:'none' }}>Unit $</span>
+                              <input type="number" placeholder="0.00" value={item.unit_price} onChange={e => updateLineItem(item.i, 'unit_price', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            </div>
+                            <div style={{ display:'flex', flexDirection:'column' as const, gap:'2px' }}>
+                              <span className="quote-field-label" style={{ fontSize:'9px', color:'#9AA5AA', textTransform:'uppercase' as const, letterSpacing:'0.5px', display:'none' }}>Total</span>
+                              <input type="number" placeholder="0.00" value={item.amount} onChange={e => updateLineItem(item.i, 'amount', e.target.value)} style={{ ...inp, marginBottom: 0 }} />
+                            </div>
                             <button type="button" onClick={() => removeLineItem(item.i)} style={{ background: 'none', border: 'none', color: '#D4522A', cursor: 'pointer', fontSize: '16px', padding: 0, lineHeight: 1 }}>×</button>
                           </div>
                         ))}
