@@ -366,18 +366,6 @@ export default function AgreementPage() {
             </div>
           )}
 
-          {/* Your turn to sign CTA */}
-          {scope && !scope[profile?.role === 'tradie' ? 'tradie_signed_at' : 'client_signed_at'] &&
-           scope[profile?.role === 'tradie' ? 'client_signed_at' : 'tradie_signed_at'] && (
-            <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
-              <span style={{ fontSize:'20px', flexShrink:0 }}>✍️</span>
-              <div style={{ flex:1 }}>
-                <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', margin:'0 0 2px' }}>Your turn to sign</p>
-                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>The other party has signed. Review the scope above and add your signature to proceed.</p>
-              </div>
-            </div>
-          )}
-
           <a href="/messages" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'13px 16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', textDecoration:'none', transition:'all 0.15s' }}>
             <span style={{ fontSize:'18px' }}>💬</span>
             <div>
