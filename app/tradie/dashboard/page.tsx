@@ -281,15 +281,30 @@ export default function TradieDashboard() {
 
   return (
     <>
-      {/* Quick action links */}
-      <div style={{ maxWidth:'900px', margin:'0 auto', padding:'12px 24px', display:'flex', gap:'8px', flexWrap:'wrap', background:'#C8D5D2' }}>
-        {[
-          { label:'+ Invite a client', href:'/tradie/lead' },
-          { label:'Availability status', href:'/tradie/availability' },
-          { label:'Dialogue Rating', href:'/tradie/dialogue' },
-        ].map(l => (
-          <a key={l.href} href={l.href} style={{ fontSize:'13px', color:'#1C2B32', background:'#E8F0EE', border:'1.5px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'8px 16px', textDecoration:'none', fontWeight:500 }}>{l.label}</a>
-        ))}
+      {/* ── Invite a client — primary action ── */}
+      <div style={{ background:'#1C2B32', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
+          <div style={{ flex:1, minWidth:0 }}>
+            <p style={{ fontSize:'14px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 3px' }}>Invite a client to Steadyhand</p>
+            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>
+              Working with a client who values extra care and transparency? Invite them to run the job through Steadyhand — they get a signed scope, milestone payments, and a warranty record. You get a stronger professional reputation.
+            </p>
+          </div>
+          <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0, flexWrap:'wrap' as const }}>
+            <a href="/tradie/lead"
+              style={{ fontSize:'13px', fontWeight:600, color:'white', background:'#D4522A', border:'none', borderRadius:'8px', padding:'10px 20px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+              + Invite a client
+            </a>
+            <a href="/tradie/availability"
+              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+              Availability
+            </a>
+            <a href="/tradie/dialogue"
+              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+              Dialogue Rating
+            </a>
+          </div>
+        </div>
       </div>
 
       <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
