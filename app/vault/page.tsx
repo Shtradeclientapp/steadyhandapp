@@ -28,6 +28,8 @@ export default function VaultPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedDoc, setSelectedDoc] = useState<any>(null)
   const [annotationText, setAnnotationText] = useState('')
+  const [signedUrl, setSignedUrl] = useState<string|null>(null)
+  const [loadingSignedUrl, setLoadingSignedUrl] = useState(false)
   const [savingAnnotation, setSavingAnnotation] = useState(false)
   const [annotationSaved, setAnnotationSaved] = useState(false)
 
@@ -345,15 +347,17 @@ export default function VaultPage() {
             </div>
             <div className='vault-viewer-grid' style={{ display:'grid', gridTemplateColumns:'1fr 280px', flex:1, overflow:'hidden', minHeight:0 }}>
               <div style={{ overflow:'auto', background:'#F4F8F7', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'16px' }}>
-                {selectedDoc.file_url?.match(/\.(jpg|jpeg|png|gif|webp)/i) ? (
-                  <img src={selectedDoc.file_url} alt={selectedDoc.title} style={{ maxWidth:'100%', borderRadius:'8px', boxShadow:'0 4px 20px rgba(28,43,50,0.15)' }} />
-                ) : selectedDoc.file_url?.match(/\.pdf/i) ? (
-                  <iframe src={selectedDoc.file_url} style={{ width:'100%', height:'600px', border:'none', borderRadius:'8px' }} title={selectedDoc.title} />
+                {loadingSignedUrl ? (
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'center', width:'100%', height:'200px' }}><p style={{ color:'#7A9098', fontSize:'13px' }}>Loading document...</p></div>
+                ) : signedUrl?.match(/\.(jpg|jpeg|png|gif|webp)/i) ? (
+                  <img src={signedUrl} alt={selectedDoc.title} style={{ maxWidth:'100%', borderRadius:'8px', boxShadow:'0 4px 20px rgba(28,43,50,0.15)' }} />
+                ) : signedUrl?.match(/\.pdf/i) ? (
+                  <iframe src={signedUrl} style={{ width:'100%', height:'600px', border:'none', borderRadius:'8px' }} title={selectedDoc.title} />
                 ) : (
                   <div style={{ textAlign:'center' as const, padding:'40px' }}>
                     <p style={{ fontSize:'40px', marginBottom:'12px' }}>📎</p>
                     <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>Preview not available for this file type</p>
-                    <a href={selectedDoc.file_url} target="_blank" rel="noreferrer"
+                    <a href={signedUrl || selectedDoc.file_url} target="_blank" rel="noreferrer"
                       style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
                       Download file →
                     </a>
