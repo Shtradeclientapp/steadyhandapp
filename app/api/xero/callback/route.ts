@@ -15,8 +15,6 @@ export async function GET(request: NextRequest) {
   const host = request.headers.get('host') || 'www.steadyhandtrade.app'
   const appUrl = 'https://' + host
 
-  console.log('Xero callback - code:', code ? 'present' : 'missing', 'appUrl:', appUrl)
-
   if (!code) {
     return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_code')
   }
@@ -37,9 +35,7 @@ export async function GET(request: NextRequest) {
     })
 
     const tokens = await tokenRes.json()
-    console.log('Xero token response keys:', Object.keys(tokens))
     if (!tokens.access_token) {
-      console.error('Xero token error:', tokens)
       return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_token')
     }
 
@@ -48,12 +44,10 @@ export async function GET(request: NextRequest) {
       headers: { 'Authorization': 'Bearer ' + tokens.access_token, 'Content-Type': 'application/json' },
     })
     const tenants = await tenantsRes.json()
-    console.log('Xero tenants:', JSON.stringify(tenants))
     const tenant = Array.isArray(tenants) ? tenants[0] : null
     // Use fallback tenant if none found — user may not have a Xero org yet
     const tenantId = tenant?.tenantId || 'pending'
     const tenantName = tenant?.tenantName || 'Xero Account'
-    console.log('Using tenant:', tenantId, tenantName)
 
     // Get user from cookie/session — use the state param to find user
     // We'll use the referer to find the right user redirect
