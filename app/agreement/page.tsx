@@ -19,6 +19,7 @@ export default function AgreementPage() {
   const [loading, setLoading] = useState(true)
   const [drafting, setDrafting] = useState(false)
   const [signing, setSigning] = useState(false)
+  const [showDoneModal, setShowDoneModal] = useState(false)
   const [draftError, setDraftError] = useState<string|null>(null)
   const [sending, setSending] = useState(false)
   const [pushingMsg, setPushingMsg] = useState<string|null>(null)
@@ -215,6 +216,7 @@ export default function AgreementPage() {
 
 
   const signScope = async () => {
+    setSigning(true)
     if (!job || !scope) return
     const supabase = createClient()
     const field = profile?.role === 'tradie' ? 'tradie_signed_at' : 'client_signed_at'
@@ -674,10 +676,17 @@ export default function AgreementPage() {
                 {draftError && (
                   <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {draftError}</p>
                 )}
-                <button type="button" onClick={() => draftScope()} disabled={drafting}
-                  style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
-                  {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
-                </button>
+                {isTradie ? (
+                  <button type="button" onClick={() => draftScope()} disabled={drafting}
+                    style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
+                    {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
+                  </button>
+                ) : (
+                  <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', margin:'0 0 4px' }}>Waiting for tradie to draft the scope</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Your tradie will prepare the scope agreement. You will be notified when it is ready to review and sign.</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -788,7 +797,7 @@ export default function AgreementPage() {
                           <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Generate a scope agreement with Steadyhand or upload your own document before signing.</p>
                         </div>
                       ) : (
-                        <button type="button" onClick={signScope}
+                        <button type="button" onClick={signScope} disabled={signing}
                           style={{ width:'100%', background:'#1C2B32', color:'white', padding:'15px', borderRadius:'10px', fontSize:'15px', fontWeight:600, border:'none', cursor:'pointer', letterSpacing:'0.3px', marginBottom:'10px' }}>
                           Sign as {profile?.role === 'tradie' ? job.tradie?.business_name : job.client?.full_name} →
                         </button>
