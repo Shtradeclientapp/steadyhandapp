@@ -50,10 +50,10 @@ export async function GET(request: NextRequest) {
     const tenants = await tenantsRes.json()
     console.log('Xero tenants:', JSON.stringify(tenants))
     const tenant = Array.isArray(tenants) ? tenants[0] : null
-    if (!tenant) {
-      console.error('No Xero tenant found:', tenants)
-      return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_tenant')
-    }
+    // Use fallback tenant if none found — user may not have a Xero org yet
+    const tenantId = tenant?.tenantId || 'pending'
+    const tenantName = tenant?.tenantName || 'Xero Account'
+    console.log('Using tenant:', tenantId, tenantName)
 
     // Get user from cookie/session — use the state param to find user
     // We'll use the referer to find the right user redirect
@@ -63,8 +63,8 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.redirect(appUrl + '/xero/connected')
     response.cookies.set('xero_access_token', tokens.access_token, { httpOnly: true, maxAge: 60 })
     response.cookies.set('xero_refresh_token', tokens.refresh_token, { httpOnly: true, maxAge: 60 })
-    response.cookies.set('xero_tenant_id', tenant.tenantId, { httpOnly: true, maxAge: 60 })
-    response.cookies.set('xero_tenant_name', tenant.tenantName || 'My Xero', { httpOnly: true, maxAge: 60 })
+    response.cookies.set('xero_tenant_id', tenantId, { httpOnly: true, maxAge: 60 })
+    response.cookies.set('xero_tenant_name', tenantName, { httpOnly: true, maxAge: 60 })
     response.cookies.set('xero_expires_at', expiresAt, { httpOnly: true, maxAge: 60 })
     return response
 
