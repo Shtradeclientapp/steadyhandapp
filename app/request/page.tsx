@@ -205,6 +205,25 @@ sessionStorage.removeItem('diy_project_id')
                 </select>
 
               </label>
+
+              {/* Multi-trade prompt — shows when category suggests multiple trades needed */}
+              {['Bathroom', 'Kitchen', 'Laundry', 'General Building', 'Renovation', 'Extension', 'New Build'].some(t => form.trade_category.toLowerCase().includes(t.toLowerCase())) && (
+                <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'4px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 6px' }}>
+                    🏗 This type of job often needs more than one trade
+                  </p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 10px' }}>
+                    Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade — or use the <strong>Reno Planner</strong> to manage them all as one project, with a single scope and coordinated milestones.
+                  </p>
+                  <a href="/diy" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#9B6B9B', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
+                    Go to Reno Planner →
+                  </a>
+                  <button type="button" onClick={() => {}} style={{ marginLeft:'10px', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'8px 0' }}>
+                    No thanks, single trade only
+                  </button>
+                </div>
+              )}
+
               {submitError && step === 0 && (
                 <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
                   <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>{submitError}</p>
