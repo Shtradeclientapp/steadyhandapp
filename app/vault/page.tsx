@@ -118,7 +118,7 @@ export default function VaultPage() {
       tradie_id: job.tradie_id,
       job_id: shareJobId,
       shared_with: job.tradie_id,
-      shared_by: user?.id,
+      shared_by: profile?.id,
       document_title: selectedDoc.title,
       permission: 'view',
     }, { onConflict: 'vault_document_id,tradie_id,job_id' })
