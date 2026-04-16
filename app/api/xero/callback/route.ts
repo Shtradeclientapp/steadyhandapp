@@ -6,13 +6,19 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL!
+  // Use the actual request host to avoid www vs non-www mismatch
+  const host = request.headers.get('host') || 'www.steadyhandtrade.app'
+  const appUrl = 'https://' + host
+
+  console.log('Xero callback - code:', code ? 'present' : 'missing', 'appUrl:', appUrl)
 
   if (!code) {
-    return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error')
+    return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_code')
   }
 
   try {
@@ -31,18 +37,22 @@ export async function GET(request: NextRequest) {
     })
 
     const tokens = await tokenRes.json()
+    console.log('Xero token response keys:', Object.keys(tokens))
     if (!tokens.access_token) {
-      return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error')
+      console.error('Xero token error:', tokens)
+      return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_token')
     }
 
     // Get Xero tenant/org info
     const tenantsRes = await fetch('https://api.xero.com/connections', {
-      headers: { 'Authorization': 'Bearer ' + tokens.access_token },
+      headers: { 'Authorization': 'Bearer ' + tokens.access_token, 'Content-Type': 'application/json' },
     })
     const tenants = await tenantsRes.json()
-    const tenant = tenants[0]
+    console.log('Xero tenants:', JSON.stringify(tenants))
+    const tenant = Array.isArray(tenants) ? tenants[0] : null
     if (!tenant) {
-      return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error')
+      console.error('No Xero tenant found:', tenants)
+      return NextResponse.redirect(appUrl + '/tradie/dashboard?xero=error&reason=no_tenant')
     }
 
     // Get user from cookie/session — use the state param to find user
