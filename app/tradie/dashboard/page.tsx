@@ -282,7 +282,7 @@ export default function TradieDashboard() {
   return (
     <>
       {/* ── Invite a client — primary action ── */}
-      <div style={{ background:'#1C2B32', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ background:'#243540', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
           <div style={{ flex:1, minWidth:0 }}>
             <p style={{ fontSize:'14px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 3px' }}>Invite a client to Steadyhand</p>
@@ -422,7 +422,6 @@ export default function TradieDashboard() {
 
       {/* ── Hero ── */}
       <div style={{ background:'#1C2B32', padding:'40px 0', position:'relative', overflow:'hidden' }}>
-        <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 50%, rgba(46,125,96,0.2), transparent 53.5%)' }} />
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Tradie dashboard</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(20px, 4vw, 30px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', marginBottom:'4px' }}>
