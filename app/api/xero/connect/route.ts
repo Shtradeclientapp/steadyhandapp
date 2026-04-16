@@ -15,5 +15,8 @@ export async function GET(request: NextRequest) {
   })
 
   const url = 'https://login.xero.com/identity/connect/authorize?' + params.toString()
+  console.log('Xero connect URL:', url)
+  console.log('Client ID:', clientId ? clientId.substring(0, 8) + '...' : 'MISSING')
+  console.log('Redirect URI:', redirectUri || 'MISSING')
   return NextResponse.redirect(url)
 }
