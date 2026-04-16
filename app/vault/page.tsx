@@ -32,6 +32,10 @@ export default function VaultPage() {
   const [loadingSignedUrl, setLoadingSignedUrl] = useState(false)
   const [savingAnnotation, setSavingAnnotation] = useState(false)
   const [annotationSaved, setAnnotationSaved] = useState(false)
+  const [shareJobId, setShareJobId] = useState('')
+  const [sharing, setSharing] = useState(false)
+  const [shareSuccess, setShareSuccess] = useState(false)
+  const [jobs, setJobs] = useState<any[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -45,6 +49,15 @@ export default function VaultPage() {
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
       setDocs(vaultDocs || [])
+      // Load jobs for sharing
+      const { data: jobsData } = await supabase
+        .from('jobs')
+        .select('id, title, tradie_id, tradie:tradie_profiles(business_name)')
+        .eq('client_id', session.user.id)
+        .not('tradie_id', 'is', null)
+        .in('status', ['agreement','delivery','signoff','warranty','complete'])
+      setJobs(jobsData || [])
+
       setLoading(false)
     })
   }, [])
@@ -92,6 +105,31 @@ export default function VaultPage() {
     const supabase = createClient()
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
+  }
+
+  const shareWithTradie = async () => {
+    if (!selectedDoc || !shareJobId) return
+    setSharing(true)
+    const supabase = createClient()
+    const job = jobs.find((j: any) => j.id === shareJobId)
+    if (!job) { setSharing(false); return }
+    await supabase.from('vault_document_shares').upsert({
+      vault_document_id: selectedDoc.id,
+      tradie_id: job.tradie_id,
+      job_id: shareJobId,
+      shared_with: job.tradie_id,
+      shared_by: user?.id,
+      document_title: selectedDoc.title,
+      permission: 'view',
+    }, { onConflict: 'vault_document_id,tradie_id,job_id' })
+    // Notify tradie
+    await supabase.from('notifications').insert({
+      user_id: job.tradie_id,
+      message: (profile?.full_name || 'Your client') + ' shared a document with you: ' + selectedDoc.title,
+      job_id: shareJobId,
+    })
+    setShareSuccess(true)
+    setSharing(false)
   }
 
   const saveAnnotation = async () => {
@@ -381,7 +419,28 @@ export default function VaultPage() {
                     {annotationSaved ? '✓ Saved' : savingAnnotation ? 'Saving...' : 'Save notes →'}
                   </button>
                 </div>
+
+                {/* Share with tradie */}
+                {jobs.length > 0 && (
+                  <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Share with tradie</p>
+                    <select value={shareJobId} onChange={e => setShareJobId(e.target.value)}
+                      style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', marginBottom:'8px', boxSizing:'border-box' as const }}>
+                      <option value="">Select a job...</option>
+                      {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.tradie?.business_name}</option>)}
+                    </select>
+                    {shareSuccess ? (
+                      <p style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500, margin:0 }}>✓ Shared with tradie</p>
+                    ) : (
+                      <button type="button" onClick={shareWithTradie} disabled={sharing || !shareJobId}
+                        style={{ width:'100%', background: sharing || !shareJobId ? 'rgba(28,43,50,0.2)' : '#2E6A8F', color:'white', padding:'8px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                        {sharing ? 'Sharing...' : 'Share with tradie →'}
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
+            </div>
             </div>
           </div>
         </div>
