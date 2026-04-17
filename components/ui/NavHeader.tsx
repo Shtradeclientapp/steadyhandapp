@@ -145,6 +145,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                       <a href="/org/setup" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#2E6A8F', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Set up organisation →</a>
                     )}
                     <a href="/messages" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Messages</a>
+                    <a href="/help" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Help & support</a>
                     <button type="button" onClick={signOut} style={{ display:'block', width:'100%', padding:'10px 14px', fontSize:'13px', color:'#D4522A', textAlign:'left' as const, background:'none', border:'none', cursor:'pointer' }}>Sign out</button>
                   </div>
                 </>
@@ -195,6 +196,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
               <>
                 <a href={dashboardHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dashboard</a>
                 <a href="/messages" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Messages</a>
+                <a href="/help" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Help & support</a>
                 <a href={profileHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>My profile</a>
                 <a href="/trust" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dialogue Rating</a>
                 {profile?.org_id && (
