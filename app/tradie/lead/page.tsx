@@ -228,7 +228,7 @@ export default function TradieLead() {
                   <div><label style={lbl}>Phone</label><input type="tel" placeholder="04xx xxx xxx" value={imp.client_phone} onChange={setM('client_phone')} style={inp} /></div>
                 </div>
                 <div style={{ marginBottom:'12px' }}><label style={lbl}>Email (required to invite client)</label><input type="email" placeholder="jane@example.com" value={imp.client_email} onChange={setM('client_email')} style={inp} /></div>
-                <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'12px' }}>
+                <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'12px' }}>
                   <div><label style={lbl}>Street address</label><input type="text" placeholder="123 Example St" value={imp.address} onChange={setM('address')} style={inp} /></div>
                   <div><label style={lbl}>Suburb</label><input type="text" placeholder="Fremantle" value={imp.suburb} onChange={setM('suburb')} style={inp} /></div>
                 </div>
@@ -238,7 +238,7 @@ export default function TradieLead() {
               <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'16px' }}>
                 <p style={{ fontSize:'12px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'12px' }}>Job details</p>
                 <div style={{ marginBottom:'12px' }}><label style={lbl}>Job title *</label><input type="text" placeholder="e.g. Bathroom retile — Cottesloe" value={imp.job_title} onChange={setM('job_title')} style={inp} /></div>
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'12px' }}>
+                <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'12px' }}>
                   <div><label style={lbl}>Trade category</label>
                     <select value={imp.trade_category} onChange={setM('trade_category')} style={inp}>
                       <option value="">Select trade</option>
