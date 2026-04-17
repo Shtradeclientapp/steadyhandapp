@@ -101,6 +101,7 @@ export default function SteadytoolsPage() {
             { icon:'👤', label:'Invite or import a lead', sub:'From Simpro, Tradify, paper or phone', href:'/tradie/lead', color:'#D4522A' },
             { icon:'📊', label:'Dialogue Rating', sub:'Your communication score', href:'/tradie/dialogue', color:'#2E6A8F' },
             { icon:'📅', label:'Availability', sub:'Set when you can take jobs', href:'/tradie/availability', color:'#C07830' },
+            { icon:'👷', label:'Workers', sub:'Manage your field team', href:'/tradie/workers', color:'#2E7D60' },
             { icon:'📋', label:'Active jobs', sub:'Milestones, consults, delivery', href:'/tradie/dashboard', color:'#2E7D60' },
           ].map(item => (
             <a key={item.label} href={item.href} style={{ textDecoration:'none' }}>
