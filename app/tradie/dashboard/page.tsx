@@ -752,34 +752,20 @@ export default function TradieDashboard() {
           </>
         )}
 
-        <div style={{ marginTop:'32px', paddingTop:'20px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>For your business — sourcing quotes from suppliers?</p>
-          <a href="/diy" style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500, textDecoration:'none', flexShrink:0 }}>Build Journal →</a>
-        </div>
-
-        {/* BUILD YOUR CAPABILITY */}
-        <div style={{ marginTop:'32px', paddingTop:'28px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
-            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>About our approach →</a>
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))', gap:'10px' }}>
-            {[
-              { icon:'⭐', title:'Improve your Dialogue Rating', body:'Your Dialogue Rating is built through how you communicate before signing. Pricing transparency and risk disclosure matter most.', href:'https://www.steadyhanddigital.com', label:'How scoring works →' },
-              { icon:'📄', title:'Writing better scope agreements', body:'Clear inclusions and exclusions protect you from scope creep and disputes. A well-written scope is your best legal protection.', href:'https://www.steadyhanddigital.com', label:'Scope writing guide →' },
-              { icon:'✅', title:'Licence and compliance — WA', body:'The WA Building Commission sets compliance requirements for licensed trades. Stay current with the standards that apply to your category.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
-              { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty, your existing CRM for quoting. Build a simple digital stack that saves you time.', href:'https://www.steadyhanddigital.com', label:'Steadyhand Digital →' },
-            ].map(c => (
-              <a key={c.title} href={c.href} target="_blank" style={{ textDecoration:'none' }}>
-                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px', cursor:'pointer' }}>
-                  <div style={{ fontSize:'20px', marginBottom:'8px' }}>{c.icon}</div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>{c.title}</p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'8px' }}>{c.body}</p>
-                  <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{c.label}</p>
-                </div>
-              </a>
-            ))}
-          </div>
+        {/* Steadytools entry point */}
+        <div style={{ marginTop:'32px', paddingTop:'24px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+          <a href="/tradie/steadytools" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', textDecoration:'none', gap:'16px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
+              <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontSize:'18px' }}>🔧</span>
+              </div>
+              <div>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 3px' }}>STEADYTOOLS</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Finance calculators, document vault, lead management and capability resources</p>
+              </div>
+            </div>
+            <span style={{ fontSize:'18px', color:'#7A9098', flexShrink:0 }}>→</span>
+          </a>
         </div>
 
       </div>
