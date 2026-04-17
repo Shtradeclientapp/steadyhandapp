@@ -422,7 +422,7 @@ export async function POST(request: NextRequest) {
         if (notifyEmail) {
           const html = wrap(
             greeting(notifyName) +
-            para(`<strong>${signerName}</strong> has signed the scope agreement for your job. ${isFullySigned ? 'Both parties have now signed — work can begin.' : 'Your signature is now needed to proceed.'}`),
+            para(`<strong>${signerName}</strong> has signed the scope agreement for your job. ${isFullySigned ? 'Both parties have now signed — work can begin.' : 'Your signature is now needed to proceed.'}`) +
             jobCard(job.title, job.trade_category, job.suburb, '#6B4FA8') +
             (isFullySigned
               ? para('The scope is fully signed and locked. Milestones have been set and work can now begin. You will be notified at each milestone for approval.')
