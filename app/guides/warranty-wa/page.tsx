@@ -86,7 +86,7 @@ export default function WarrantyGuide() {
         <div style={{ marginBottom:'32px' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
             <div style={{ width:'3px', height:'20px', background:'#D4522A', borderRadius:'2px', flexShrink:0 }} />
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>THE DATA GAP — THE DATA GAP — WHY RECORDED DISPUTES UNDERCOUNT THE REAL PICTURE</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>THE DATA GAP — WHY RECORDED DISPUTES UNDERCOUNT THE REAL PICTURE</h2>
           </div>
           <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
             The WA Magistrates Court processes several thousand small claims each year, a portion of which relate to trade disputes. These figures are frequently cited as an indicator of the trade dispute rate in WA. They are not. They are an indicator of the disputes that survived the following filters:
