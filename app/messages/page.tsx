@@ -186,18 +186,18 @@ function MessagesPageInner() {
       `}</style>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100, flexShrink:0 }}>
         <a href={dashboardPath} style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>MESSAGES</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px' }}>MESSAGES</div>
         <a href={dashboardPath} style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
       {/* Mobile tab bar */}
       <div className="messages-mobile-tabs" style={{ display:'none', borderBottom:'1px solid rgba(28,43,50,0.1)', background:'#E8F0EE' }}>
         <button type="button" onClick={() => setMobilePanelView('list')}
-          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'list' ? 600 : 400, color: mobilePanelView === 'list' ? '#1C2B32' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'list' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
+          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'list' ? 600 : 400, color: mobilePanelView === 'list' ? '#0A0A0A' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'list' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
           Jobs ({jobs.length})
         </button>
         <button type="button" onClick={() => setMobilePanelView('thread')}
-          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'thread' ? 600 : 400, color: mobilePanelView === 'thread' ? '#1C2B32' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'thread' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
+          style={{ flex:1, padding:'12px', fontSize:'13px', fontWeight: mobilePanelView === 'thread' ? 600 : 400, color: mobilePanelView === 'thread' ? '#0A0A0A' : '#7A9098', background:'none', border:'none', borderBottom: mobilePanelView === 'thread' ? '2px solid #D4522A' : '2px solid transparent', cursor:'pointer' }}>
           {selectedJob ? selectedJob.title.length > 20 ? selectedJob.title.slice(0,20) + '…' : selectedJob.title : 'Select a job'}
         </button>
       </div>
@@ -221,7 +221,7 @@ function MessagesPageInner() {
             return (
               <div key={job.id} onClick={() => selectJob(job)}
                 style={{ padding:'16px', borderBottom:'1px solid rgba(28,43,50,0.08)', cursor:'pointer', background: isSelected ? 'rgba(28,43,50,0.06)' : 'transparent', borderLeft: isSelected ? '3px solid #D4522A' : '3px solid transparent', transition:'all 0.15s' }}>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
                 <div style={{ fontSize:'11px', color:'#7A9098', marginBottom:'3px' }}>{job.trade_category} · {job.suburb}</div>
                 <div style={{ fontSize:'11px', color:'#4A5E64' }}>
                   {isTradie ? job.client?.full_name : job.tradie?.business_name || 'No tradie yet'}
@@ -254,7 +254,7 @@ function MessagesPageInner() {
                   style={{ display:'none', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'0 0 8px 0', alignItems:'center', gap:'4px' }}>
                   ← All jobs
                 </button>
-                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>{selectedJob.title}</div>
+                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>{selectedJob.title}</div>
                 <div style={{ fontSize:'12px', color:'#7A9098' }}>
                   {selectedJob.trade_category} · {selectedJob.suburb} · {isTradie ? selectedJob.client?.full_name : selectedJob.tradie?.business_name}
                 </div>
@@ -295,8 +295,8 @@ function MessagesPageInner() {
                           </div>
                           <div style={{
                             maxWidth:'70%', padding:'10px 14px', borderRadius:'12px',
-                            background: isMine ? '#1C2B32' : '#E8F0EE',
-                            color: isMine ? 'rgba(216,228,225,0.9)' : '#1C2B32',
+                            background: isMine ? '#0A0A0A' : '#E8F0EE',
+                            color: isMine ? 'rgba(216,228,225,0.9)' : '#0A0A0A',
                             border: isMine ? 'none' : '1px solid rgba(28,43,50,0.1)',
                             fontSize:'14px', lineHeight:'1.5',
                             borderBottomRightRadius: isMine ? '4px' : '12px',
@@ -323,7 +323,7 @@ function MessagesPageInner() {
                     onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
                     placeholder="Type a message... (Enter to send)"
                     rows={2}
-                    style={{ flex:1, padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'none', fontFamily:'sans-serif', lineHeight:'1.5' }}
+                    style={{ flex:1, padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'none', fontFamily:'sans-serif', lineHeight:'1.5' }}
                   />
                   <button type="button" onClick={sendMessage} disabled={sending || !newMessage.trim()}
                     style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'10px', border:'none', cursor:'pointer', fontSize:'14px', fontWeight:500, opacity: sending || !newMessage.trim() ? 0.5 : 1, flexShrink:0, height:'44px' }}>

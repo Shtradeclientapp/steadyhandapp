@@ -70,11 +70,11 @@ export default function WalletPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <a href={dashPath} style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>WALLET</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px' }}>WALLET</div>
         <a href={dashPath} style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'32px 0', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'32px 0', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 60%, rgba(46,125,96,0.2), transparent 55%)' }} />
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>{isTradie ? 'Tradie wallet' : 'Client wallet'}</p>
@@ -100,7 +100,7 @@ export default function WalletPage() {
         <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'24px' }}>
           {([['jobs','Jobs & Payments'],['calculator','Finance Calculator']] as const).map(([key,label]) => (
             <button key={key} type="button" onClick={() => setActiveTab(key)}
-              style={{ padding:'14px 20px', border:'none', borderBottom: activeTab === key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === key ? 600 : 400, color: activeTab === key ? '#1C2B32' : '#7A9098' }}>
+              style={{ padding:'14px 20px', border:'none', borderBottom: activeTab === key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === key ? 600 : 400, color: activeTab === key ? '#0A0A0A' : '#7A9098' }}>
               {label}
             </button>
           ))}
@@ -110,16 +110,16 @@ export default function WalletPage() {
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'20px', paddingBottom:'48px' }}>
             {/* Fee calculator */}
             <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>STEADYHAND FEE CALCULATOR</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'4px' }}>STEADYHAND FEE CALCULATOR</p>
               <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'20px' }}>Estimate the platform fee on your total job cost.</p>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px', marginBottom:'16px' }}>
                 <div>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Total job value ($)</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>Total job value ($)</label>
                   <input type="number" placeholder="e.g. 15000" value={calcBudget} onChange={e => setCalcBudget(e.target.value)}
                     style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', outline:'none', boxSizing:'border-box' as const }} />
                 </div>
                 <div>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Number of milestones</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>Number of milestones</label>
                   <select value={calcMilestones} onChange={e => setCalcMilestones(e.target.value)}
                     style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', outline:'none' }}>
                     {['2','3','4','5','6'].map(n => <option key={n} value={n}>{n} milestones</option>)}
@@ -131,7 +131,7 @@ export default function WalletPage() {
                   <div style={{ background:'#F4F8F7', borderRadius:'10px', padding:'16px', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'16px', marginBottom:'16px' }}>
                     <div style={{ textAlign:'center' as const }}>
                       <p style={{ fontSize:'11px', color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Total job value</p>
-                      <p style={{ fontSize:'20px', fontWeight:600, color:'#1C2B32', margin:0 }}>${Number(calcBudget).toLocaleString()}</p>
+                      <p style={{ fontSize:'20px', fontWeight:600, color:'#0A0A0A', margin:0 }}>${Number(calcBudget).toLocaleString()}</p>
                     </div>
                     <div style={{ textAlign:'center' as const }}>
                       <p style={{ fontSize:'11px', color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Steadyhand fee (3.5%)</p>
@@ -142,7 +142,7 @@ export default function WalletPage() {
                       <p style={{ fontSize:'20px', fontWeight:600, color:'#2E7D60', margin:0 }}>${(Number(calcBudget) * 0.965).toLocaleString('en-AU', { minimumFractionDigits:2, maximumFractionDigits:2 })}</p>
                     </div>
                   </div>
-                  <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'8px' }}>Milestone breakdown ({calcMilestones} equal payments)</p>
+                  <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'8px' }}>Milestone breakdown ({calcMilestones} equal payments)</p>
                   <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
                     {Array.from({ length: Number(calcMilestones) }, (_, i) => {
                       const ms = Number(calcBudget) / Number(calcMilestones)
@@ -150,7 +150,7 @@ export default function WalletPage() {
                       return (
                         <div key={i} style={{ display:'flex', justifyContent:'space-between', padding:'8px 12px', background: i % 2 === 0 ? '#F4F8F7' : 'white', borderRadius:'6px', fontSize:'13px' }}>
                           <span style={{ color:'#4A5E64' }}>Milestone {i + 1}</span>
-                          <span style={{ color:'#1C2B32', fontWeight:500 }}>${ms.toLocaleString('en-AU', { minimumFractionDigits:2, maximumFractionDigits:2 })} <span style={{ color:'#D4522A', fontWeight:400 }}>(−${fee.toFixed(2)} fee)</span></span>
+                          <span style={{ color:'#0A0A0A', fontWeight:500 }}>${ms.toLocaleString('en-AU', { minimumFractionDigits:2, maximumFractionDigits:2 })} <span style={{ color:'#D4522A', fontWeight:400 }}>(−${fee.toFixed(2)} fee)</span></span>
                         </div>
                       )
                     })}
@@ -161,7 +161,7 @@ export default function WalletPage() {
 
             {/* WA trade cost guide */}
             <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>WA TRADE COST GUIDE</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'4px' }}>WA TRADE COST GUIDE</p>
               <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'20px' }}>Indicative ranges for common residential jobs in Western Australia. Always get at least 2 quotes.</p>
               <div style={{ display:'flex', flexDirection:'column' as const, gap:'4px' }}>
                 {[
@@ -177,7 +177,7 @@ export default function WalletPage() {
                 ].map((item, i) => (
                   <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background: i % 2 === 0 ? '#F4F8F7' : 'white', borderRadius:'6px', gap:'12px' }}>
                     <div>
-                      <span style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500 }}>{item.job}</span>
+                      <span style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500 }}>{item.job}</span>
                       <span style={{ fontSize:'11px', color:'#9AA5AA', marginLeft:'8px' }}>{item.trade}</span>
                     </div>
                     <span style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, flexShrink:0 }}>${item.low.toLocaleString()} – ${item.high.toLocaleString()}</span>
@@ -208,12 +208,12 @@ export default function WalletPage() {
               <div key={job.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
                 <div onClick={() => setActiveJob(isOpen ? null : job.id)} style={{ padding:'18px 20px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
+                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
                     <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb} · {isTradie ? job.client?.full_name : job.tradie?.business_name || 'No tradie'}</div>
                   </div>
                   <div style={{ display:'flex', alignItems:'center', gap:'16px', flexShrink:0 }}>
                     {latestQuote && <div style={{ textAlign:'right' }}>
-                      <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32' }}>${Number(latestQuote.total_price).toLocaleString()}</div>
+                      <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A' }}>${Number(latestQuote.total_price).toLocaleString()}</div>
                       <div style={{ fontSize:'11px', color:'#7A9098' }}>quoted</div>
                     </div>}
                     <span style={{ fontSize:'16px', color:'#7A9098' }}>{isOpen ? '▲' : '▼'}</span>
@@ -230,7 +230,7 @@ export default function WalletPage() {
                       ].map(s => (
                         <div key={s.label} style={{ textAlign:'center', background:'#C8D5D2', borderRadius:'8px', padding:'12px' }}>
                           <div style={{ fontSize:'11px', color:'#7A9098', marginBottom:'4px' }}>{s.label}</div>
-                          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32' }}>{s.value}</div>
+                          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A' }}>{s.value}</div>
                         </div>
                       ))}
                     </div>
@@ -241,7 +241,7 @@ export default function WalletPage() {
                         {jobMilestones.map(m => (
                           <div key={m.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', flexWrap:'wrap' as const }}>
                             <div style={{ flex:1 }}>
-                              <div style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{m.label}</div>
+                              <div style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{m.label}</div>
                               <div style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>{m.percent}%{m.amount > 0 ? ' · $' + Number(m.amount).toLocaleString() : ''}</div>
                             </div>
                             <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
@@ -269,7 +269,7 @@ export default function WalletPage() {
                         {jobQuotes.map(q => (
                           <div key={q.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'7px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', flexWrap:'wrap' as const, gap:'8px' }}>
                             <div>
-                              <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>v{q.version} · ${Number(q.total_price).toLocaleString()}</span>
+                              <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>v{q.version} · ${Number(q.total_price).toLocaleString()}</span>
                               {q.estimated_days && <span style={{ fontSize:'12px', color:'#7A9098', marginLeft:'8px' }}>{q.estimated_days} days</span>}
                             </div>
                             <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>

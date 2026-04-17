@@ -41,10 +41,10 @@ export default function XeroConnectedPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'sans-serif' }}>
       <div style={{ background:'white', borderRadius:'16px', padding:'48px', textAlign:'center', maxWidth:'400px', width:'100%', margin:'0 24px' }}>
         <div style={{ fontSize:'48px', marginBottom:'16px' }}>{done ? '✓' : error ? '✗' : '⏳'}</div>
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color: error ? '#D4522A' : '#1C2B32', marginBottom:'8px' }}>XERO</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color: error ? '#D4522A' : '#0A0A0A', marginBottom:'8px' }}>XERO</h2>
         <p style={{ fontSize:'14px', color:'#4A5E64' }}>{status}</p>
         {error && (
-          <a href="/tradie/dashboard" style={{ display:'inline-block', marginTop:'20px', background:'#1C2B32', color:'white', padding:'10px 24px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>Back to dashboard</a>
+          <a href="/tradie/dashboard" style={{ display:'inline-block', marginTop:'20px', background:'#0A0A0A', color:'white', padding:'10px 24px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>Back to dashboard</a>
         )}
       </div>
     </div>

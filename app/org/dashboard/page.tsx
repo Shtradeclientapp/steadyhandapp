@@ -265,7 +265,7 @@ export default function OrgDashboardPage() {
         </div>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'36px 0', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'36px 0', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 55%)' }} />
         <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>{org?.type?.replace('_',' ')} · Organisation dashboard</p>
@@ -284,7 +284,7 @@ export default function OrgDashboardPage() {
           ].map(s => (
             <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px' }}>
               <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'6px' }}>{s.label}</p>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32' }}>{s.value}</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A' }}>{s.value}</p>
             </div>
           ))}
         </div>
@@ -298,7 +298,7 @@ export default function OrgDashboardPage() {
             { id:'reports', label:'Reports', count: undefined },
           ] as const).map(t => (
             <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-              style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#1C2B32' : '#7A9098', display:'flex', alignItems:'center', gap:'6px' }}>
+              style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#0A0A0A' : '#7A9098', display:'flex', alignItems:'center', gap:'6px' }}>
               {t.label}
               <span style={{ background: activeTab === t.id ? '#D4522A' : 'rgba(28,43,50,0.1)', color: activeTab === t.id ? 'white' : '#7A9098', fontSize:'10px', padding:'1px 6px', borderRadius:'100px' }}>{t.count}</span>
             </button>
@@ -309,12 +309,12 @@ export default function OrgDashboardPage() {
           <div>
             <div style={{ display:'flex', gap:'10px', marginBottom:'16px', flexWrap:'wrap' as const }}>
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#E8F0EE', color:'#1C2B32', outline:'none' }}>
+                style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#E8F0EE', color:'#0A0A0A', outline:'none' }}>
                 <option value=''>All statuses</option>
                 {Object.entries(STATUS_LABEL).map(([k,v]) => <option key={k} value={k}>{v}</option>)}
               </select>
               <select value={filterProperty} onChange={e => setFilterProperty(e.target.value)}
-                style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#E8F0EE', color:'#1C2B32', outline:'none' }}>
+                style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#E8F0EE', color:'#0A0A0A', outline:'none' }}>
                 <option value=''>All properties</option>
                 {properties.map(p => <option key={p.id} value={p.id}>{p.address}</option>)}
               </select>
@@ -339,7 +339,7 @@ export default function OrgDashboardPage() {
                     {filteredJobs.map(job => (
                       <tr key={job.id} style={{ borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                         <td style={{ padding:'12px 16px' }}>
-                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', margin:'0 0 2px' }}>{job.title}</p>
+                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', margin:'0 0 2px' }}>{job.title}</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{job.trade_category}</p>
                         </td>
                         <td style={{ padding:'12px 16px', fontSize:'12px', color:'#4A5E64' }}>{job.property?.address || job.suburb || '—'}</td>
@@ -349,7 +349,7 @@ export default function OrgDashboardPage() {
                             {STATUS_LABEL[job.status]||job.status}
                           </span>
                         </td>
-                        <td style={{ padding:'12px 16px', fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{job.agreed_price ? '$'+Number(job.agreed_price).toLocaleString() : '—'}</td>
+                        <td style={{ padding:'12px 16px', fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{job.agreed_price ? '$'+Number(job.agreed_price).toLocaleString() : '—'}</td>
                         <td style={{ padding:'12px 16px' }}><a href={'/dashboard/'+job.id} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>View →</a></td>
                       </tr>
                     ))}
@@ -375,7 +375,7 @@ export default function OrgDashboardPage() {
                     {atLimit ? (
                       <a href="/org/subscribe"><button type="button" style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Upgrade plan →</button></a>
                     ) : (
-                      <a href="/org/properties/new"><button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
+                      <a href="/org/properties/new"><button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
                     )}
                   </div>
                 </div>
@@ -395,12 +395,12 @@ export default function OrgDashboardPage() {
                     <a key={p.id} href={'/org/properties/'+p.id} style={{ textDecoration:'none' }}>
                       <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', cursor:'pointer' }}>
                         <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'8px' }}>
-                          <div style={{ width:'36px', height:'36px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                          <div style={{ width:'36px', height:'36px', borderRadius:'8px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                             <span style={{ fontSize:'16px' }}>🏢</span>
                           </div>
                           {activeCount > 0 && <span style={{ fontSize:'11px', background:'rgba(212,82,42,0.1)', border:'1px solid rgba(212,82,42,0.2)', color:'#D4522A', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{activeCount} active</span>}
                         </div>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', marginBottom:'3px' }}>{p.address}</p>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', marginBottom:'3px' }}>{p.address}</p>
                         <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'8px' }}>{p.suburb} · {p.property_type}</p>
                         <p style={{ fontSize:'12px', color:'#4A5E64' }}>{propJobs.length} job{propJobs.length !== 1 ? 's' : ''} total</p>
                       </div>
@@ -416,9 +416,9 @@ export default function OrgDashboardPage() {
           <div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>TEAM MEMBERS</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>TEAM MEMBERS</p>
                 <button type="button" onClick={() => setShowInvite(!showInvite)}
-                  style={{ background:'#1C2B32', color:'white', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  style={{ background:'#0A0A0A', color:'white', padding:'7px 14px', borderRadius:'6px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
                   + Invite member
                 </button>
               </div>
@@ -428,13 +428,13 @@ export default function OrgDashboardPage() {
                     <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:0 }}>✓ Invite sent to {inviteEmail || 'member'}</p>
                   ) : (
                     <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
-                      <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', margin:0 }}>Invite a team member by email</p>
+                      <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', margin:0 }}>Invite a team member by email</p>
                       <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
                         <input type="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)}
                           placeholder="colleague@company.com.au"
-                          style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'200px' }} />
+                          style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minWidth:'200px' }} />
                         <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}
-                          style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }}>
+                          style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
                           <option value="member">Member</option>
                           <option value="admin">Admin</option>
                         </select>
@@ -452,11 +452,11 @@ export default function OrgDashboardPage() {
                 {members.map(m => (
                   <div key={m.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-                      <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0 }}>
+                      <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0 }}>
                         {m.profile?.full_name?.charAt(0)||'?'}
                       </div>
                       <div>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{m.profile?.full_name}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{m.profile?.full_name}</p>
                         <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{m.profile?.email}</p>
                       </div>
                     </div>
@@ -490,7 +490,7 @@ export default function OrgDashboardPage() {
             </div>
             <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:'16px' }}>
               <button type="button" onClick={() => setShowAddTradie(!showAddTradie)}
-                style={{ background: showAddTradie ? 'rgba(28,43,50,0.08)' : '#1C2B32', color: showAddTradie ? '#1C2B32' : 'white', padding:'9px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                style={{ background: showAddTradie ? 'rgba(28,43,50,0.08)' : '#0A0A0A', color: showAddTradie ? '#0A0A0A' : 'white', padding:'9px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {showAddTradie ? 'Cancel' : '+ Add preferred tradie'}
                 </button>
                 <button type="button" onClick={() => setShowContractorImport(!showContractorImport)}
@@ -502,14 +502,14 @@ export default function OrgDashboardPage() {
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px', marginBottom:'16px' }}>
                 <input type="text" placeholder="Search by business name..." value={tradieSearch}
                   onChange={e => searchTradies(e.target.value)}
-                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
                 {tradieResults.length > 0 && (
                   <div style={{ marginTop:'8px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', overflow:'hidden' }}>
                     {tradieResults.map(t => (
                       <div key={t.id} onClick={() => addPreferredTradie(t.id)}
                         style={{ padding:'11px 14px', borderBottom:'1px solid rgba(28,43,50,0.06)', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                         <div>
-                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{t.business_name}</p>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{t.business_name}</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{(t.trade_categories || []).slice(0,2).join(', ')} · {t.suburb}</p>
                         </div>
                         <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>+ Add</span>
@@ -521,12 +521,12 @@ export default function OrgDashboardPage() {
             )}
             {showContractorImport && (
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(46,106,143,0.04)' }}>
-                <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'12px' }}>Import contractor list</p>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'12px' }}>Import contractor list</p>
                 <div style={{ marginBottom:'16px' }}>
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'6px', textTransform:'uppercase' as const }}>CSV Upload</p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'8px' }}>CSV must include columns: <strong>name</strong>, <strong>email</strong>. Optional: trade, licence.</p>
                   <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && importContractorsCSV(e.target.files[0])}
-                    style={{ fontSize:'13px', color:'#1C2B32' }} />
+                    style={{ fontSize:'13px', color:'#0A0A0A' }} />
                   {csvImporting && <p style={{ fontSize:'12px', color:'#C07830', marginTop:'6px' }}>Importing...</p>}
                   {csvResult && <p style={{ fontSize:'12px', color: csvResult.startsWith('✓') ? '#2E7D60' : '#D4522A', marginTop:'6px', fontWeight:500 }}>{csvResult}</p>}
                 </div>
@@ -535,10 +535,10 @@ export default function OrgDashboardPage() {
                   <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
                     <input type="text" value={manualContractor.name} onChange={e => setManualContractor(m => ({ ...m, name: e.target.value }))}
                       placeholder="Contractor name"
-                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'160px' }} />
+                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minWidth:'160px' }} />
                     <input type="email" value={manualContractor.email} onChange={e => setManualContractor(m => ({ ...m, email: e.target.value }))}
                       placeholder="Email address"
-                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minWidth:'160px' }} />
+                      style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minWidth:'160px' }} />
                     <button type="button" onClick={addManualContractor} disabled={!manualContractor.name || !manualContractor.email || addingManual}
                       style={{ background:'#2E6A8F', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !manualContractor.name || !manualContractor.email ? 0.5 : 1 }}>
                       {addingManual ? 'Adding...' : 'Add'}
@@ -559,7 +559,7 @@ export default function OrgDashboardPage() {
                 {preferredTradies.map(pt => (
                   <div key={pt.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'11px', padding:'16px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                     <div>
-                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', margin:'0 0 3px' }}>{pt.tradie?.business_name}</p>
+                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', margin:'0 0 3px' }}>{pt.tradie?.business_name}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
                         {(pt.tradie?.trade_categories || []).slice(0,2).join(', ')}
                         {pt.tradie?.suburb ? ' · ' + pt.tradie.suburb : ''}
@@ -583,22 +583,22 @@ export default function OrgDashboardPage() {
           <div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'16px' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>EXPORT REPORTS</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>EXPORT REPORTS</p>
               </div>
               <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
                   <div>
-                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>All jobs — CSV</p>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 4px' }}>All jobs — CSV</p>
                     <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Job title, trade, property, tradie, status, value and date for all {jobs.length} jobs</p>
                   </div>
                   <button type="button" onClick={exportJobsCSV}
-                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     Download CSV →
                   </button>
                 </div>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
                   <div>
-                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>Spend by property — CSV</p>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 4px' }}>Spend by property — CSV</p>
                     <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Total spend per property across all completed jobs</p>
                   </div>
                   <button type="button" onClick={() => {
@@ -616,13 +616,13 @@ export default function OrgDashboardPage() {
                     a.click()
                     URL.revokeObjectURL(url)
                   }}
-                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     Download CSV →
                   </button>
                 </div>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'16px', background:'#F4F8F7', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)' }}>
                   <div>
-                    <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>Warranty tracking — CSV</p>
+                    <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 4px' }}>Warranty tracking — CSV</p>
                     <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Jobs in warranty period with tradie details and expiry dates</p>
                   </div>
                   <button type="button" onClick={() => {
@@ -642,7 +642,7 @@ export default function OrgDashboardPage() {
                     a.click()
                     URL.revokeObjectURL(url)
                   }}
-                    style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+                    style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
                     Download CSV →
                   </button>
                 </div>

@@ -126,15 +126,15 @@ export default function TradieLead() {
     setImp({ client_name:'', client_email:'', client_phone:'', address:'', suburb:'', trade_category:'', job_title:'', job_description:'', source:'simpro', existing_quote_amount:'', preferred_start:'', internal_notes:'', invite_client: true })
   }
 
-  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif' }
-  const lbl = { fontSize:'12px', fontWeight:500 as const, color:'#1C2B32', display:'block' as const, marginBottom:'4px' }
+  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif' }
+  const lbl = { fontSize:'12px', fontWeight:500 as const, color:'#0A0A0A', display:'block' as const, marginBottom:'4px' }
   const statusColor: Record<string,string> = { invited:'#C07830', imported:'#2E6A8F', submitted:'#2E7D60', expired:'#7A9098' }
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={true} backLabel="← Dashboard" backHref="/tradie/dashboard" />
 
-      <div style={{ background:'#1C2B32', padding:'28px 24px' }}>
+      <div style={{ background:'#0A0A0A', padding:'28px 24px' }}>
         <div style={{ maxWidth:'760px', margin:'0 auto' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>Lead management</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:'0 0 4px' }}>CLIENTS & LEADS</h1>
@@ -151,8 +151,8 @@ export default function TradieLead() {
             { key:'import', label:'📥  Import a lead', sub:'From Simpro, Tradify, paper or phone' },
           ].map(t => (
             <button key={t.key} type="button" onClick={() => { setMode(t.key as any); setSent(false) }}
-              style={{ flex:1, padding:'14px 16px', border:'none', background: mode === t.key ? '#1C2B32' : 'transparent', cursor:'pointer', textAlign:'left' as const, transition:'background 0.15s' }}>
-              <p style={{ fontSize:'13px', fontWeight:600, color: mode === t.key ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>{t.label}</p>
+              style={{ flex:1, padding:'14px 16px', border:'none', background: mode === t.key ? '#0A0A0A' : 'transparent', cursor:'pointer', textAlign:'left' as const, transition:'background 0.15s' }}>
+              <p style={{ fontSize:'13px', fontWeight:600, color: mode === t.key ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>{t.label}</p>
               <p style={{ fontSize:'11px', color: mode === t.key ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>{t.sub}</p>
             </button>
           ))}
@@ -171,7 +171,7 @@ export default function TradieLead() {
         {mode === 'invite' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
             <div style={{ padding:'14px 20px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 2px' }}>INVITE A CLIENT</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>INVITE A CLIENT</p>
               <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Send a personalised invitation. When they respond, the job comes directly to you.</p>
             </div>
             <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
@@ -202,7 +202,7 @@ export default function TradieLead() {
         {mode === 'import' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
             <div style={{ padding:'14px 20px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 2px' }}>IMPORT A LEAD</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>IMPORT A LEAD</p>
               <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Transfer a lead from your existing system into Steadyhand. All fields are stored privately against your account.</p>
             </div>
             <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'14px' }}>
@@ -213,7 +213,7 @@ export default function TradieLead() {
                 <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
                   {SOURCES.map(s => (
                     <button key={s.value} type="button" onClick={() => setImp(f => ({ ...f, source: s.value }))}
-                      style={{ padding:'7px 14px', borderRadius:'100px', border:'1.5px solid ' + (imp.source === s.value ? '#1C2B32' : 'rgba(28,43,50,0.2)'), background: imp.source === s.value ? '#1C2B32' : 'transparent', color: imp.source === s.value ? 'white' : '#4A5E64', fontSize:'12px', cursor:'pointer', display:'flex', alignItems:'center', gap:'5px' }}>
+                      style={{ padding:'7px 14px', borderRadius:'100px', border:'1.5px solid ' + (imp.source === s.value ? '#0A0A0A' : 'rgba(28,43,50,0.2)'), background: imp.source === s.value ? '#0A0A0A' : 'transparent', color: imp.source === s.value ? 'white' : '#4A5E64', fontSize:'12px', cursor:'pointer', display:'flex', alignItems:'center', gap:'5px' }}>
                       <span>{s.icon}</span> {s.label}
                     </button>
                   ))}
@@ -251,7 +251,7 @@ export default function TradieLead() {
                 <div><label style={lbl}>Existing quote / price indication (optional)</label>
                   <div style={{ display:'flex', alignItems:'center', background:'#F4F8F7', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', overflow:'hidden' }}>
                     <span style={{ padding:'10px 12px', fontSize:'13px', color:'#7A9098', borderRight:'1px solid rgba(28,43,50,0.1)', background:'rgba(28,43,50,0.03)' }}>$</span>
-                    <input type="number" placeholder="0" value={imp.existing_quote_amount} onChange={setM('existing_quote_amount')} style={{ flex:1, padding:'10px 12px', border:'none', background:'transparent', fontSize:'14px', color:'#1C2B32', outline:'none' }} />
+                    <input type="number" placeholder="0" value={imp.existing_quote_amount} onChange={setM('existing_quote_amount')} style={{ flex:1, padding:'10px 12px', border:'none', background:'transparent', fontSize:'14px', color:'#0A0A0A', outline:'none' }} />
                   </div>
                 </div>
               </div>
@@ -270,7 +270,7 @@ export default function TradieLead() {
                 <div style={{ background:'rgba(212,82,42,0.05)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'flex-start', gap:'12px' }}>
                   <input type="checkbox" checked={imp.invite_client} onChange={e => setImp(f => ({ ...f, invite_client: e.target.checked }))} style={{ marginTop:'2px', width:'16px', height:'16px', flexShrink:0 }} />
                   <div>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>Also send client a Steadyhand invitation</p>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 3px' }}>Also send client a Steadyhand invitation</p>
                     <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>
                       An email will be sent to <strong>{imp.client_email}</strong> inviting them to confirm the job on Steadyhand. They will be shown the job details you have entered. Uncheck to import privately without notifying them yet.
                     </p>
@@ -279,7 +279,7 @@ export default function TradieLead() {
               )}
 
               <button type="button" onClick={handleImport} disabled={sending || !imp.client_name || !imp.job_title}
-                style={{ background: sending || !imp.client_name || !imp.job_title ? 'rgba(28,43,50,0.3)' : '#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                style={{ background: sending || !imp.client_name || !imp.job_title ? 'rgba(28,43,50,0.3)' : '#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {sending ? 'Importing...' : imp.invite_client && imp.client_email ? 'Import lead & send invitation →' : 'Import lead →'}
               </button>
             </div>
@@ -290,7 +290,7 @@ export default function TradieLead() {
         {leads.length > 0 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
             <div style={{ padding:'12px 16px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>LEAD HISTORY</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>LEAD HISTORY</p>
             </div>
             <div style={{ padding:'8px' }}>
               {leads.map((l: any) => {
@@ -300,7 +300,7 @@ export default function TradieLead() {
                     <div style={{ display:'flex', alignItems:'center', gap:'10px', flex:1, minWidth:0 }}>
                       <span style={{ fontSize:'16px', flexShrink:0 }}>{src?.icon || '📌'}</span>
                       <div style={{ minWidth:0 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{l.client_name || l.client_email}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{l.client_name || l.client_email}</p>
                         <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{l.job_title || 'No job title'} · {src?.label || l.source} · {new Date(l.created_at).toLocaleDateString('en-AU')}</p>
                       </div>
                     </div>

@@ -63,11 +63,11 @@ export default function OrgAcceptPage() {
         {status === 'success' && (
           <>
             <div style={{ fontSize:'48px', marginBottom:'16px' }}>✅</div>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32', marginBottom:'8px' }}>YOU HAVE JOINED</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', marginBottom:'8px' }}>YOU HAVE JOINED</h2>
             <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>{orgName}</p>
             <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'24px' }}>You now have access to the organisation dashboard. Jobs you create will be linked to {orgName}.</p>
             <a href="/org/dashboard">
-              <button style={{ background:'#1C2B32', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+              <button style={{ background:'#0A0A0A', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to dashboard →
               </button>
             </a>
@@ -76,7 +76,7 @@ export default function OrgAcceptPage() {
         {status === 'already' && (
           <>
             <p style={{ fontSize:'15px', color:'#2E7D60', marginBottom:'20px' }}>You are already a member of {orgName}.</p>
-            <a href="/org/dashboard"><button style={{ background:'#1C2B32', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>Go to dashboard →</button></a>
+            <a href="/org/dashboard"><button style={{ background:'#0A0A0A', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>Go to dashboard →</button></a>
           </>
         )}
         {status === 'error' && (

@@ -212,7 +212,7 @@ export default function SignoffPage() {
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Sign off</span>
         </div>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>SIGN OFF</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>SIGN OFF</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'32px' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name}</p>
 
@@ -233,7 +233,7 @@ export default function SignoffPage() {
         {done && (
           <div style={{ marginBottom:'20px' }}>
             {/* Hero celebration */}
-            <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'36px 28px', textAlign:'center' as const, marginBottom:'16px', position:'relative' as const, overflow:'hidden' }}>
+            <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'36px 28px', textAlign:'center' as const, marginBottom:'16px', position:'relative' as const, overflow:'hidden' }}>
               <div style={{ position:'absolute', top:0, left:0, right:0, bottom:0, background:'radial-gradient(ellipse at 50% 0%, rgba(46,125,96,0.3), transparent 70%)', pointerEvents:'none' }} />
               <div style={{ fontSize:'56px', marginBottom:'16px' }}>🏡</div>
               <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'rgba(216,228,225,0.95)', letterSpacing:'1.5px', marginBottom:'8px' }}>JOB COMPLETE</h2>
@@ -278,7 +278,7 @@ export default function SignoffPage() {
                 </button>
               </a>
               <a href="/vault" style={{ flex:1, textDecoration:'none' }}>
-                <button type="button" style={{ width:'100%', background:'transparent', color:'#1C2B32', padding:'13px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
+                <button type="button" style={{ width:'100%', background:'transparent', color:'#0A0A0A', padding:'13px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
                   Document vault
                 </button>
               </a>
@@ -291,7 +291,7 @@ export default function SignoffPage() {
             {/* Checklist */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 4px' }}>SIGN-OFF CHECKLIST</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 4px' }}>SIGN-OFF CHECKLIST</p>
                 <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
                   {dynamicChecks.length > 0
                     ? 'Generated from your job scope and milestones — tick each item to confirm completion'
@@ -314,7 +314,7 @@ export default function SignoffPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
                         {isMilestone && <span style={{ fontSize:'10px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', color:'#2E6A8F', borderRadius:'4px', padding:'1px 6px', fontWeight:500 }}>MILESTONE</span>}
                         {isScope && <span style={{ fontSize:'10px', background:'rgba(107,79,168,0.1)', border:'1px solid rgba(107,79,168,0.2)', color:'#6B4FA8', borderRadius:'4px', padding:'1px 6px', fontWeight:500 }}>SCOPE</span>}
-                        <p style={{ fontSize:'13px', fontWeight:500, color: checks[c.id] ? '#2E7D60' : '#1C2B32', margin:0, textDecoration: checks[c.id] ? 'line-through' : 'none' }}>{c.label}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color: checks[c.id] ? '#2E7D60' : '#0A0A0A', margin:0, textDecoration: checks[c.id] ? 'line-through' : 'none' }}>{c.label}</p>
                       </div>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{c.sub}</p>
                     </div>
@@ -327,7 +327,7 @@ export default function SignoffPage() {
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px', marginBottom:'20px' }}>
               <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginBottom:'6px' }}>
                 <span style={{ color:'#4A5E64' }}>Checklist progress</span>
-                <span style={{ color:'#1C2B32', fontWeight:500 }}>{Object.values(checks).filter(Boolean).length} of {allChecks.length} items</span>
+                <span style={{ color:'#0A0A0A', fontWeight:500 }}>{Object.values(checks).filter(Boolean).length} of {allChecks.length} items</span>
               </div>
               <div style={{ height:'4px', background:'rgba(28,43,50,0.1)', borderRadius:'2px', overflow:'hidden' }}>
                 <div style={{ height:'100%', width: (Object.values(checks).filter(Boolean).length / Math.max(allChecks.length, 1) * 100) + '%', background:'#2E7D60', borderRadius:'2px', transition:'width 0.3s' }} />
@@ -336,7 +336,7 @@ export default function SignoffPage() {
 
             {/* Rating */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'12px' }}>RATE YOUR TRADIE</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'12px' }}>RATE YOUR TRADIE</p>
               <div style={{ display:'flex', gap:'8px', marginBottom:'16px' }}>
                 {[1,2,3,4,5].map(s => (
                   <button key={s} type="button" onClick={() => { setRating(s); if (typeof window !== 'undefined') sessionStorage.setItem('signoff_rating', String(s)) }}
@@ -350,7 +350,7 @@ export default function SignoffPage() {
                 onChange={e => setReview(e.target.value)}
                 placeholder="How did the job go? Your review helps other clients and builds the tradie's Dialogue Rating. (optional)"
                 rows={3}
-                style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, fontFamily:'sans-serif' }}
+                style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, fontFamily:'sans-serif' }}
               />
             </div>
 
@@ -359,7 +359,7 @@ export default function SignoffPage() {
               {rating === 0 && <p style={{ fontSize:'12px', color:'#C07830', margin:'0 0 8px' }}>⚠ Please rate your tradie before signing off</p>}
               {allChecked && rating > 0 && <p style={{ fontSize:'12px', color:'#2E7D60', margin:'0 0 8px' }}>✓ Ready to sign off — your {job?.warranty_period || 90}-day warranty starts from this moment</p>}
               <button type="button" onClick={submitSignoff} disabled={!allChecked || rating === 0 || submitting}
-                style={{ width:'100%', background: allChecked && rating > 0 ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s', marginBottom: !allChecked ? '10px' : '0' }}>
+                style={{ width:'100%', background: allChecked && rating > 0 ? '#0A0A0A' : 'rgba(28,43,50,0.15)', color: allChecked && rating > 0 ? 'white' : '#7A9098', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: allChecked && rating > 0 ? 'pointer' : 'not-allowed', transition:'all 0.2s', marginBottom: !allChecked ? '10px' : '0' }}>
                 {submitting ? 'Signing off...' : 'Sign off and start warranty →'}
               </button>
 
@@ -387,7 +387,7 @@ export default function SignoffPage() {
                         onChange={e => setOutstandingNote(e.target.value)}
                         placeholder="e.g. The bathroom tap still drips slightly and the paint touch-up on the south wall is incomplete."
                         rows={3}
-                        style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(192,120,48,0.25)', borderRadius:'8px', fontSize:'13px', background:'white', color:'#1C2B32', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, marginBottom:'10px', fontFamily:'sans-serif' }}
+                        style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(192,120,48,0.25)', borderRadius:'8px', fontSize:'13px', background:'white', color:'#0A0A0A', outline:'none', resize:'vertical' as const, lineHeight:'1.5', boxSizing:'border-box' as const, marginBottom:'10px', fontFamily:'sans-serif' }}
                       />
                       <div style={{ display:'flex', gap:'8px' }}>
                         <button type="button" onClick={async () => {
@@ -424,11 +424,11 @@ export default function SignoffPage() {
         {/* Messages link */}
         <a href="/messages" style={{ display:'block', marginTop:'24px', textDecoration:'none' }}>
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
-            <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
               <span style={{ fontSize:'16px' }}>💬</span>
             </div>
             <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Questions before signing off?</p>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>Questions before signing off?</p>
               <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Message your tradie directly →</p>
             </div>
           </div>

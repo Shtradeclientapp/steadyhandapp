@@ -191,7 +191,7 @@ export default function DIYPage() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const inp = { width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }
+  const inp = { width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }
 
   if (loading) return <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}><p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p></div>
 
@@ -207,7 +207,7 @@ export default function DIYPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <a href="/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px' }}>BUILD JOURNAL</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px' }}>BUILD JOURNAL</div>
         <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Dashboard</a>
       </nav>
 
@@ -216,14 +216,14 @@ export default function DIYPage() {
         {/* LEFT — Project list */}
         <div style={{ display: isMobile && activeProject ? 'none' : 'block' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>MY BUILDS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>MY BUILDS</h2>
             <a href="/diy/new"><button type="button" style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'6px', padding:'6px 12px', fontSize:'12px', cursor:'pointer', fontWeight:500 }}>+ New</button></a>
           </div>
 
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
             {projects.length === 0 && (
               <div style={{ background:'#E8F0EE', borderRadius:'12px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
-                <div style={{ padding:'20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+                <div style={{ padding:'20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
                   <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 6px' }}>BUILD JOURNAL</p>
                   <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', margin:0, lineHeight:'1.6' }}>Track every trade, cost, task and compliance item for your build project — all in one place.</p>
                 </div>
@@ -237,7 +237,7 @@ export default function DIYPage() {
                     <div key={i} style={{ padding:'10px 12px', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.08)', marginBottom:'8px', background:'white', opacity:0.7 }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px' }}>
                         <span style={{ fontSize:'16px' }}>{ex.icon}</span>
-                        <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{ex.title}</span>
+                        <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{ex.title}</span>
                         <span style={{ fontSize:'10px', background:'rgba(212,82,42,0.08)', color:'#D4522A', padding:'1px 6px', borderRadius:'4px' }}>{ex.type}</span>
                       </div>
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 0 24px', lineHeight:'1.5' }}>{ex.desc}</p>
@@ -258,8 +258,8 @@ export default function DIYPage() {
               const isActive = activeProject === proj.id
               return (
                 <div key={proj.id} onClick={() => { setActiveProject(proj.id); setActiveTab('overview') }}
-                  style={{ background: isActive ? '#1C2B32' : '#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px', cursor:'pointer' }}>
-                  <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color: isActive ? 'rgba(216,228,225,0.9)' : '#1C2B32', marginBottom:'3px' }}>{proj.title}</div>
+                  style={{ background: isActive ? '#0A0A0A' : '#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px', cursor:'pointer' }}>
+                  <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color: isActive ? 'rgba(216,228,225,0.9)' : '#0A0A0A', marginBottom:'3px' }}>{proj.title}</div>
                   {proj.address && <div style={{ fontSize:'11px', color: isActive ? 'rgba(216,228,225,0.45)' : '#7A9098', marginBottom:'6px' }}>{proj.address}</div>}
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px' }}>
                     <span style={{ fontSize:'10px', padding:'2px 7px', borderRadius:'100px', background: proj.status === 'complete' ? 'rgba(46,125,96,0.15)' : 'rgba(212,82,42,0.12)', color: proj.status === 'complete' ? '#2E7D60' : '#D4522A', textTransform:'capitalize' as const }}>{proj.project_type?.replace('_',' ')}</span>
@@ -288,7 +288,7 @@ export default function DIYPage() {
             <div style={{ background:'#E8F0EE', borderRadius:'14px', border:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
               <div style={{ padding:'24px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                 <div style={{ fontSize:'36px', marginBottom:'12px' }}>🏗</div>
-                <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'8px' }}>YOUR BUILD JOURNAL</h2>
+                <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'8px' }}>YOUR BUILD JOURNAL</h2>
                 <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:0 }}>
                   The Build Journal is for homeowners and owner-builders managing complex projects with multiple trades. Create a project to track your permits, tasks, budget, compliance requirements and trade packages — all in one place.
                 </p>
@@ -304,7 +304,7 @@ export default function DIYPage() {
                   <div key={i} style={{ display:'flex', gap:'12px', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                     <span style={{ fontSize:'20px', flexShrink:0 }}>{item.icon}</span>
                     <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{item.title}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{item.title}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default function DIYPage() {
           ) : (
             <>
               {/* Project hero */}
-              <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'22px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
+              <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'22px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
                 <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
                 <div style={{ position:'relative', zIndex:1 }}>
                   <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const, marginBottom:'16px' }}>
@@ -370,7 +370,7 @@ export default function DIYPage() {
                   { id:'compliance', label:'Compliance', count: checklistTotal > 0 ? checklistDone+'/'+checklistTotal : undefined },
                 ] as const).map(t => (
                   <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-                    style={{ padding:'9px 16px', border:'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#1C2B32' : '#7A9098', display:'flex', alignItems:'center', gap:'5px' }}>
+                    style={{ padding:'9px 16px', border:'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'12px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#0A0A0A' : '#7A9098', display:'flex', alignItems:'center', gap:'5px' }}>
                     {t.label}
                     {(t as any).count !== undefined && <span style={{ fontSize:'10px', background: activeTab === t.id ? '#D4522A' : 'rgba(28,43,50,0.1)', color: activeTab === t.id ? 'white' : '#7A9098', padding:'1px 5px', borderRadius:'100px' }}>{(t as any).count}</span>}
                   </button>
@@ -390,7 +390,7 @@ export default function DIYPage() {
                     ].map(d => (
                       <div key={d.label} style={{ display:'flex', justifyContent:'space-between', padding:'7px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', fontSize:'13px' }}>
                         <span style={{ color:'#7A9098' }}>{d.label}</span>
-                        <span style={{ color:'#1C2B32', fontWeight:500, textTransform:'capitalize' as const }}>{d.value}</span>
+                        <span style={{ color:'#0A0A0A', fontWeight:500, textTransform:'capitalize' as const }}>{d.value}</span>
                       </div>
                     ))}
                   </div>
@@ -404,7 +404,7 @@ export default function DIYPage() {
                       <div key={s.label} style={{ marginBottom:'12px' }}>
                         <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', marginBottom:'4px' }}>
                           <span style={{ color:'#4A5E64' }}>{s.label}</span>
-                          <span style={{ color:'#1C2B32', fontWeight:500 }}>{s.value}</span>
+                          <span style={{ color:'#0A0A0A', fontWeight:500 }}>{s.value}</span>
                         </div>
                         <div style={{ height:'4px', background:'rgba(28,43,50,0.1)', borderRadius:'2px', overflow:'hidden' }}>
                           <div style={{ height:'100%', width:(s.pct*100)+'%', background:s.color, borderRadius:'2px', transition:'width 0.3s' }} />
@@ -483,7 +483,7 @@ export default function DIYPage() {
                       <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:600, margin:'0 0 6px' }}>No schedule yet</p>
                       <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 12px', lineHeight:'1.5' }}>Generate the standard WA residential build sequence, then edit durations, resources and dependencies to match your project.</p>
                       <div style={{ display:'flex', gap:'8px', alignItems:'center', marginBottom:'12px' }}>
-                        <input type="date" value={projectStartDate} onChange={e => setProjectStartDate(e.target.value)} style={{ padding:'8px 10px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'7px', fontSize:'12px', color:'#1C2B32', background:'white' }} />
+                        <input type="date" value={projectStartDate} onChange={e => setProjectStartDate(e.target.value)} style={{ padding:'8px 10px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'7px', fontSize:'12px', color:'#0A0A0A', background:'white' }} />
                         <span style={{ fontSize:'12px', color:'#7A9098' }}>Project start date</span>
                       </div>
                       <button type="button" onClick={seedStages} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Generate WA build schedule →</button>
@@ -492,7 +492,7 @@ export default function DIYPage() {
                 )
                 return (
                   <div>
-                    <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'16px', marginBottom:'16px', overflowX:'auto' as const }}>
+                    <div style={{ background:'#0A0A0A', borderRadius:'12px', padding:'16px', marginBottom:'16px', overflowX:'auto' as const }}>
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
                         <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.6)', letterSpacing:'1px', margin:0 }}>SCHEDULE</p>
                         <div style={{ display:'flex', gap:'10px' }}>
@@ -541,7 +541,7 @@ export default function DIYPage() {
                             <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', cursor:'pointer' }} onClick={() => setEditingStage(isEditing ? null : stage.id)}>
                               <div style={{ width:'10px', height:'10px', borderRadius:'50%', background:stage.color, flexShrink:0 }} />
                               <div style={{ flex:1 }}>
-                                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{stage.label}</p>
+                                <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{stage.label}</p>
                                 <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
                                   {stage.start_date ? new Date(stage.start_date).toLocaleDateString('en-AU') : '—'} → {stage.end_date ? new Date(stage.end_date).toLocaleDateString('en-AU') : '—'} · {stage.duration_days}d
                                   {stage.resource ? ' · '+stage.resource : ''}
@@ -644,7 +644,7 @@ export default function DIYPage() {
                             <a key={j.id} href={'/shortlist'} style={{ textDecoration:'none' }}>
                               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                                 <div>
-                                  <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{j.title}</p>
+                                  <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{j.title}</p>
                                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{j.trade_category} · {j.suburb}</p>
                                 </div>
                                 <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background:sc+'18', border:'1px solid '+sc+'40', color:sc, fontWeight:500, flexShrink:0 }}>{sl}</span>
@@ -667,7 +667,7 @@ export default function DIYPage() {
                   </div>
                   {showNewTask && (
                     <div style={{ padding:'12px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', gap:'8px' }}>
-                      <input value={newTask} onChange={e => setNewTask(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTask()} placeholder="Task description..." style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                      <input value={newTask} onChange={e => setNewTask(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTask()} placeholder="Task description..." style={{ flex:1, padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                       <button type="button" onClick={addTask} style={{ background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'8px 14px', fontSize:'13px', cursor:'pointer' }}>Add</button>
                       <button type="button" onClick={() => { setShowNewTask(false); setNewTask('') }} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'8px 10px', fontSize:'13px', cursor:'pointer' }}>×</button>
                     </div>
@@ -681,7 +681,7 @@ export default function DIYPage() {
                         style={{ width:'18px', height:'18px', borderRadius:'4px', border:'1.5px solid '+(task.completed?'#2E7D60':'rgba(28,43,50,0.25)'), background:task.completed?'#2E7D60':'transparent', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0, fontSize:'11px', color:'white' }}>
                         {task.completed?'✓':''}
                       </div>
-                      <span style={{ flex:1, fontSize:'13px', color:task.completed?'#7A9098':'#1C2B32', textDecoration:task.completed?'line-through':'none' }}>{task.label}</span>
+                      <span style={{ flex:1, fontSize:'13px', color:task.completed?'#7A9098':'#0A0A0A', textDecoration:task.completed?'line-through':'none' }}>{task.label}</span>
                       <button type="button" onClick={() => deleteTask(task.id)} style={{ background:'none', border:'none', color:'rgba(212,82,42,0.4)', cursor:'pointer', fontSize:'14px', padding:'0 4px' }}>×</button>
                     </div>
                   ))}
@@ -693,7 +693,7 @@ export default function DIYPage() {
                 <div>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'12px', marginBottom:'16px' }}>
                     {[
-                      { label:'Total budget', value: activeProj.budget_estimate ? '$'+Number(activeProj.budget_estimate).toLocaleString() : '—', color:'#1C2B32' },
+                      { label:'Total budget', value: activeProj.budget_estimate ? '$'+Number(activeProj.budget_estimate).toLocaleString() : '—', color:'#0A0A0A' },
                       { label:'Total spent', value: '$'+totalSpent.toLocaleString(), color: activeProj.budget_estimate && totalSpent > Number(activeProj.budget_estimate) ? '#D4522A' : '#2E7D60' },
                       { label:'Remaining', value: activeProj.budget_estimate ? '$'+(Number(activeProj.budget_estimate)-totalSpent).toLocaleString() : '—', color:'#4A5E64' },
                     ].map(s => (
@@ -711,9 +711,9 @@ export default function DIYPage() {
                     {showNewExpense && (
                       <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                         <div style={{ display:'grid', gridTemplateColumns:'1fr 100px 130px', gap:'8px', marginBottom:'8px' }}>
-                          <input placeholder="Description" value={newExpense.description} onChange={e => setNewExpense(f => ({ ...f, description: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
-                          <input type="number" placeholder="$" value={newExpense.amount} onChange={e => setNewExpense(f => ({ ...f, amount: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
-                          <input type="date" value={newExpense.date} onChange={e => setNewExpense(f => ({ ...f, date: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                          <input placeholder="Description" value={newExpense.description} onChange={e => setNewExpense(f => ({ ...f, description: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
+                          <input type="number" placeholder="$" value={newExpense.amount} onChange={e => setNewExpense(f => ({ ...f, amount: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
+                          <input type="date" value={newExpense.date} onChange={e => setNewExpense(f => ({ ...f, date: e.target.value }))} style={{ padding:'8px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                         </div>
                         <div style={{ display:'flex', gap:'8px' }}>
                           <button type="button" onClick={addExpense} disabled={!newExpense.description||!newExpense.amount} style={{ flex:1, background:'#C07830', color:'white', border:'none', borderRadius:'8px', padding:'8px', fontSize:'13px', cursor:'pointer', opacity:!newExpense.description||!newExpense.amount?0.5:1 }}>Add expense</button>
@@ -727,7 +727,7 @@ export default function DIYPage() {
                     {projExpenses.map(exp => (
                       <div key={exp.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'11px 18px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                         <div>
-                          <div style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500 }}>{exp.description}</div>
+                          <div style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500 }}>{exp.description}</div>
                           <div style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>{new Date(exp.date).toLocaleDateString('en-AU')}</div>
                         </div>
                         <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#C07830' }}>${Number(exp.amount).toLocaleString()}</div>
@@ -771,7 +771,7 @@ export default function DIYPage() {
                     {cocRequiredJobs.length > 0 && (
                       <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'16px' }}>
                         <div style={{ padding:'12px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.02)' }}>
-                          <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Certificates of compliance</p>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Certificates of compliance</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Electrical, plumbing and gas trades must provide a CoC before your final inspection.</p>
                         </div>
                         {cocRequiredJobs.map((j: any) => {
@@ -781,7 +781,7 @@ export default function DIYPage() {
                               <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                                 <div style={{ width:'9px', height:'9px', borderRadius:'50%', background: hasCoc ? '#2E7D60' : j.status === 'warranty' || j.status === 'complete' ? '#D4522A' : '#C07830', flexShrink:0 }} />
                                 <div>
-                                  <p style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500, margin:'0 0 1px' }}>{j.title}</p>
+                                  <p style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500, margin:'0 0 1px' }}>{j.title}</p>
                                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{j.trade_category}</p>
                                 </div>
                               </div>
@@ -795,7 +795,7 @@ export default function DIYPage() {
                     )}
 
                     <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 18px', marginBottom:'16px' }}>
-                      <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 3px' }}>Occupancy permit</p>
+                      <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 3px' }}>Occupancy permit</p>
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 10px', lineHeight:'1.5' }}>Issued by local government after final inspection. Enter the permit number once received — this marks your project complete.</p>
                       {activeProj.occupancy_permit_number ? (
                         <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'7px', padding:'10px 14px' }}>
@@ -805,7 +805,7 @@ export default function DIYPage() {
                       ) : (
                         <div style={{ display:'flex', gap:'8px' }}>
                           <input type="text" placeholder="e.g. OP2026/12345" value={occupancyInput} onChange={e => setOccupancyInput(e.target.value)}
-                            style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                            style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                           <button type="button" onClick={async () => {
                             if (!occupancyInput.trim()) return
                             setSavingPermit(true)
@@ -835,7 +835,7 @@ export default function DIYPage() {
                         return (
                           <div key={cat.category} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'10px' }}>
                             <div style={{ padding:'12px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)', background: catDone === catItems.length && catItems.length > 0 ? 'rgba(46,125,96,0.08)' : 'rgba(28,43,50,0.02)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                              <p style={{ fontSize:'12px', fontWeight:600, color: catDone === catItems.length && catItems.length > 0 ? '#2E7D60' : '#1C2B32', margin:0 }}>{cat.category}</p>
+                              <p style={{ fontSize:'12px', fontWeight:600, color: catDone === catItems.length && catItems.length > 0 ? '#2E7D60' : '#0A0A0A', margin:0 }}>{cat.category}</p>
                               <span style={{ fontSize:'11px', color:'#7A9098' }}>{catDone}/{catItems.length}</span>
                             </div>
                             {catItems.map(item => (
@@ -844,7 +844,7 @@ export default function DIYPage() {
                                 <div style={{ width:'16px', height:'16px', borderRadius:'3px', border:'1.5px solid '+(item.completed?'#2E7D60':'rgba(28,43,50,0.25)'), background:item.completed?'#2E7D60':'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'2px', fontSize:'10px', color:'white' }}>
                                   {item.completed?'✓':''}
                                 </div>
-                                <span style={{ fontSize:'12px', color:item.completed?'#7A9098':'#1C2B32', textDecoration:item.completed?'line-through':'none', lineHeight:'1.55' }}>{item.item}</span>
+                                <span style={{ fontSize:'12px', color:item.completed?'#7A9098':'#0A0A0A', textDecoration:item.completed?'line-through':'none', lineHeight:'1.55' }}>{item.item}</span>
                               </div>
                             ))}
                           </div>

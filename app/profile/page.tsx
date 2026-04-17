@@ -52,11 +52,11 @@ export default function ProfilePage() {
     setTimeout(() => setSaved(false), 3000)
   }
 
-  const inp = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'sans-serif' }
+  const inp = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'sans-serif' }
   const sel = { ...inp, cursor: 'pointer' }
   const lbl = (text: string, sub?: string) => (
     <div style={{ marginBottom: '6px' }}>
-      <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>{text}</p>
+      <p style={{ fontSize: '13px', fontWeight: 500, color: '#0A0A0A', margin: 0 }}>{text}</p>
       {sub && <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>{sub}</p>}
     </div>
   )
@@ -77,7 +77,7 @@ export default function ProfilePage() {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '100px', padding: '4px 12px', marginBottom: '12px' }}>
           <span style={{ fontSize: '11px', color: '#2E7D60', fontWeight: 500, letterSpacing: '0.5px', textTransform: 'uppercase' as const }}>Your profile</span>
         </div>
-        <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: '#1C2B32', letterSpacing: '1.5px', marginBottom: '6px' }}>HOME PROFILE</h1>
+        <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: '#0A0A0A', letterSpacing: '1.5px', marginBottom: '6px' }}>HOME PROFILE</h1>
         {required && (
           <div style={{ background:'rgba(212,82,42,0.06)', border:'2px solid rgba(212,82,42,0.25)', borderRadius:'10px', padding:'14px 18px', marginBottom:'24px', display:'flex', alignItems:'center', gap:'12px' }}>
             <span style={{ fontSize:'20px' }}>📋</span>
@@ -87,7 +87,7 @@ export default function ProfilePage() {
         <p style={{ fontSize: '15px', color: '#4A5E64', fontWeight: 300, marginBottom: '32px', lineHeight: '1.6' }}>Your profile helps Steadyhand match you with the right tradies and pre-fills job details automatically. Your address is kept private and only shared with a tradie after the scope is signed.</p>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden', marginBottom: '20px' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>PERSONAL DETAILS</p>
           </div>
           <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -108,7 +108,7 @@ export default function ProfilePage() {
               <div style={{ display: 'flex', gap: '8px' }}>
                 {CONTACT_PREFS.map(c => (
                   <button key={c} type="button" onClick={() => setF('preferred_contact', c.toLowerCase())}
-                    style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.preferred_contact === c.toLowerCase() ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.preferred_contact === c.toLowerCase() ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.preferred_contact === c.toLowerCase() ? '#2E7D60' : '#1C2B32', cursor: 'pointer' }}>
+                    style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.preferred_contact === c.toLowerCase() ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.preferred_contact === c.toLowerCase() ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.preferred_contact === c.toLowerCase() ? '#2E7D60' : '#0A0A0A', cursor: 'pointer' }}>
                     {c}
                   </button>
                 ))}
@@ -118,7 +118,7 @@ export default function ProfilePage() {
         </div>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden', marginBottom: '20px' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>PROPERTY DETAILS</p>
           </div>
           <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -164,7 +164,7 @@ export default function ProfilePage() {
         </div>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden', marginBottom: '28px' }}>
-          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>NOTES FOR TRADIES</p>
           </div>
           <div style={{ padding: '20px' }}>
@@ -176,7 +176,7 @@ export default function ProfilePage() {
         </div>
 
         <button type="button" onClick={save} disabled={saving}
-          style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+          style={{ width: '100%', background: '#0A0A0A', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
           {saving ? 'Saving...' : saved ? '✓ Profile saved' : 'Save profile →'}
         </button>
 

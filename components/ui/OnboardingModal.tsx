@@ -70,7 +70,7 @@ export function OnboardingModal({ storageKey, slides, onDismiss }: OnboardingMod
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>{slide.icon}</div>
         <h2 style={{
           fontFamily: 'var(--font-aboreto), sans-serif',
-          fontSize: '22px', color: '#1C2B32', letterSpacing: '0.5px',
+          fontSize: '22px', color: '#0A0A0A', letterSpacing: '0.5px',
           marginBottom: '12px', lineHeight: '1.3',
         }}>{slide.title}</h2>
         <p style={{
@@ -95,7 +95,7 @@ export function OnboardingModal({ storageKey, slides, onDismiss }: OnboardingMod
             }}>← Back</button>
           )}
           <button type="button" onClick={isLast ? dismiss : () => setStep(s => s + 1)} style={{
-            flex: 1, background: '#1C2B32', color: 'white',
+            flex: 1, background: '#0A0A0A', color: 'white',
             padding: '13px', borderRadius: '8px', fontSize: '14px',
             fontWeight: 600, border: 'none', cursor: 'pointer',
           }}>

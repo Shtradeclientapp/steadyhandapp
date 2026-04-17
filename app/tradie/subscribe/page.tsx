@@ -143,7 +143,7 @@ export default function TradieSubscribePage() {
       </nav>
 
       {/* Hero */}
-      <div style={{ background:'#1C2B32', padding:'48px 24px', textAlign:'center' as const }}>
+      <div style={{ background:'#0A0A0A', padding:'48px 24px', textAlign:'center' as const }}>
         <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.4)', letterSpacing:'2px', marginBottom:'10px' }}>PLANS & PRICING</p>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>CHOOSE YOUR PLAN</h1>
         <p style={{ fontSize:'14px', color:'rgba(216,228,225,0.55)', maxWidth:'480px', margin:'0 auto', lineHeight:'1.7' }}>
@@ -163,13 +163,13 @@ export default function TradieSubscribePage() {
         {isSubscribed && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'18px 24px', marginBottom:'28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px' }}>
             <div>
-              <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>
                 Current plan: {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)}
               </p>
               <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>Manage your subscription, update payment details or cancel at any time.</p>
             </div>
             <button type="button" onClick={openPortal}
-              style={{ background:'#1C2B32', color:'white', border:'none', borderRadius:'8px', padding:'10px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer', flexShrink:0 }}>
+              style={{ background:'#0A0A0A', color:'white', border:'none', borderRadius:'8px', padding:'10px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer', flexShrink:0 }}>
               Manage subscription →
             </button>
           </div>
@@ -188,7 +188,7 @@ export default function TradieSubscribePage() {
                   </div>
                 )}
                 <div style={{ padding:'24px', flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'4px' }}>{tier.name.toUpperCase()}</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'4px' }}>{tier.name.toUpperCase()}</p>
                   <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
                     <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:tier.color }}>{tier.price}</span>
                     <span style={{ fontSize:'13px', color:'#7A9098' }}>{tier.sub}</span>
@@ -243,7 +243,7 @@ export default function TradieSubscribePage() {
         )}
         {clientSecret && (
           <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'16px', overflow:'hidden', marginBottom:'32px', boxShadow:'0 8px 32px rgba(28,43,50,0.08)' }}>
-            <div style={{ background:'#1C2B32', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ background:'#0A0A0A', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.8)', letterSpacing:'0.5px', margin:0 }}>
                 COMPLETE YOUR SUBSCRIPTION
               </p>
@@ -262,7 +262,7 @@ export default function TradieSubscribePage() {
 
         {/* Fee comparison */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px 24px', marginBottom:'24px' }}>
-          <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>How completion fees work</p>
+          <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'4px' }}>How completion fees work</p>
           <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 16px' }}>
             Steadyhand takes a small percentage only when a job is completed and paid. No upfront costs, no lead fees, no lock-in.
           </p>
@@ -280,7 +280,7 @@ export default function TradieSubscribePage() {
 
         {/* FAQ */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>COMMON QUESTIONS</p>
+          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>COMMON QUESTIONS</p>
           {[
             { q:'When do I get charged the completion fee?', a:'Only when a job is fully completed and the client has approved the final milestone. Never upfront.' },
             { q:'What is a founding member?', a:'Tradies who join Steadyhand during our launch period receive a permanently reduced completion fee — 3% instead of 3.5%. That rate is yours to keep and never increases, regardless of what standard rates do later.' },
@@ -288,7 +288,7 @@ export default function TradieSubscribePage() {
             { q:'Is my payment secure?', a:'Yes. Payments are processed by Stripe, the same infrastructure used by Amazon, Shopify and millions of other businesses. Steadyhand never stores your card details.' },
           ].map((item, i) => (
             <div key={i} style={{ marginBottom: i < 3 ? '16px' : 0, paddingBottom: i < 3 ? '16px' : 0, borderBottom: i < 3 ? '1px solid rgba(28,43,50,0.08)' : 'none' }}>
-              <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'4px' }}>{item.q}</p>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'4px' }}>{item.q}</p>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>{item.a}</p>
             </div>
           ))}

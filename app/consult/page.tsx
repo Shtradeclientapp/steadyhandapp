@@ -265,7 +265,7 @@ export default function AssessPage() {
     setTimeout(() => setInternalSaved(false), 2000)
   }
 
-  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif', lineHeight:'1.6' }
+  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif', lineHeight:'1.6' }
 
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
@@ -325,7 +325,7 @@ export default function AssessPage() {
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#9B6B9B', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Consult</span>
         </div>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'8px' }}>{job.trade_category} · {job.suburb}</p>
         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'32px' }}>
@@ -358,7 +358,7 @@ export default function AssessPage() {
         )}
 
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
-          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <div>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 2px' }}>CONSULTATION DATE</p>
               {job?.tradie?.business_name && (
@@ -367,7 +367,7 @@ export default function AssessPage() {
             </div>
             {/* ── Consult date picker ── */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Consult date</p>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Consult date</p>
               <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px' }}>
                 {assessment?.consult_date
                   ? 'Set to ' + new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Either party can update this.'
@@ -377,7 +377,7 @@ export default function AssessPage() {
                 <input type="datetime-local"
                   defaultValue={assessment?.consult_date ? new Date(assessment.consult_date).toISOString().slice(0,16) : ''}
                   onChange={e => setConsultDate(e.target.value)}
-                  style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                  style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                 <button type="button" onClick={() => saveConsultDate(consultDate)} disabled={!consultDate || savingDate}
                   style={{ background:'#9B6B9B', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !consultDate || savingDate ? 0.5 : 1, flexShrink:0 }}>
                   {savingDate ? 'Saving...' : assessment?.consult_date ? 'Update' : 'Set date'}
@@ -387,7 +387,7 @@ export default function AssessPage() {
 
             {assessment?.consult_date && (
               <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
-                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>Who attended</p>
+                <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>Who attended</p>
                 <input type="text" value={form.consult_attendees || ''} onChange={e => setF('consult_attendees', e.target.value)}
                   style={inp} placeholder="e.g. Homeowner + lead electrician" />
               </div>
@@ -439,7 +439,7 @@ export default function AssessPage() {
 
         {/* ── Appointment card — tradie only ── */}
         {isTradie && assessment?.consult_date && (
-          <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
+          <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
             <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 20%, rgba(212,82,42,0.12), transparent 55%)' }} />
             <div style={{ position:'relative', zIndex:1 }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'8px' }}>Day of consult</p>
@@ -490,11 +490,11 @@ export default function AssessPage() {
 
         <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'20px' }}>
           <button type="button" onClick={() => setActiveTab('mine')}
-            style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'mine' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'mine' ? 600 : 400, color: activeTab === 'mine' ? '#1C2B32' : '#7A9098' }}>
+            style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'mine' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'mine' ? 600 : 400, color: activeTab === 'mine' ? '#0A0A0A' : '#7A9098' }}>
             My notes {myShared ? '✓ Shared' : ''}
           </button>
           <button type="button" onClick={() => setActiveTab('theirs')}
-            style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'theirs' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'theirs' ? 600 : 400, color: activeTab === 'theirs' ? '#1C2B32' : '#7A9098' }}>
+            style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'theirs' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'theirs' ? 600 : 400, color: activeTab === 'theirs' ? '#0A0A0A' : '#7A9098' }}>
             {theirLabel}&apos;s notes {theirShared ? '✓ Shared' : '— not yet shared'}
           </button>
         </div>
@@ -533,13 +533,13 @@ export default function AssessPage() {
             )}
 
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>YOUR CONSULT NOTES</p>
               </div>
               <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
                 {myPrompts.map(prompt => (
                   <div key={prompt.key}>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>{prompt.label}</p>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>{prompt.label}</p>
                     <textarea value={form[prompt.key] || ''} onChange={e => setF(prompt.key, e.target.value)}
                       rows={3} placeholder={prompt.placeholder}
                       style={{ ...inp, resize:'vertical' as const }}
@@ -555,26 +555,26 @@ export default function AssessPage() {
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
                 <div style={{ padding:'14px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.04)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <div>
-                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 2px' }}>INTERNAL NOTES</p>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>INTERNAL NOTES</p>
                     <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Private — never shared with the client. Informs your quote and site brief.</p>
                   </div>
                   <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'100px', padding:'3px 10px' }}>🔒 Private</span>
                 </div>
                 <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'14px' }}>
                   <div>
-                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Materials & quantities</p>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', marginBottom:'5px' }}>Materials & quantities</p>
                     <textarea value={internalNotes.materials} onChange={e => setInternalNotes(n => ({ ...n, materials: e.target.value }))}
                       rows={3} placeholder="e.g. 20m² tiles @ $45/m², 2x taps, 15m copper pipe 15mm, waterproofing membrane..."
                       style={{ ...inp, resize:'vertical' as const }} />
                   </div>
                   <div>
-                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Labour & sequence</p>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', marginBottom:'5px' }}>Labour & sequence</p>
                     <textarea value={internalNotes.labour} onChange={e => setInternalNotes(n => ({ ...n, labour: e.target.value }))}
                       rows={3} placeholder="e.g. Day 1: demo and waterproof. Day 2-3: tiling. Day 4: fixtures and grouting. 2 workers needed day 1..."
                       style={{ ...inp, resize:'vertical' as const }} />
                   </div>
                   <div>
-                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Site brief for workers</p>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', marginBottom:'5px' }}>Site brief for workers</p>
                     <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px' }}>What workers need to know before arriving on site.</p>
                     <textarea value={internalNotes.brief} onChange={e => setInternalNotes(n => ({ ...n, brief: e.target.value }))}
                       rows={4} placeholder="e.g. Access via side gate — call client day before. Asbestos suspected in wall cavity, treat as live. Park in street. Client works from home — keep noise down before 9am..."
@@ -582,7 +582,7 @@ export default function AssessPage() {
                   </div>
                   <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
                     <button type="button" onClick={saveInternalNotes} disabled={savingInternal}
-                      style={{ background: internalSaved ? '#2E7D60' : '#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: savingInternal ? 0.7 : 1 }}>
+                      style={{ background: internalSaved ? '#2E7D60' : '#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: savingInternal ? 0.7 : 1 }}>
                       {internalSaved ? '✓ Saved' : savingInternal ? 'Saving...' : 'Save internal notes'}
                     </button>
                     {internalNotes.brief && (
@@ -595,14 +595,14 @@ export default function AssessPage() {
                   {showBrief && internalNotes.brief && (
                     <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'20px' }}>
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>SITE BRIEF</p>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>SITE BRIEF</p>
                         <button type="button" onClick={() => window.print()}
                           style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'5px 10px', cursor:'pointer' }}>
                           Print / save →
                         </button>
                       </div>
                       <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'12px', marginBottom:'12px' }}>
-                        <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{job?.title}</p>
+                        <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{job?.title}</p>
                         <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
                           {[job?.address, job?.suburb].filter(Boolean).join(', ') || job?.suburb}
                           {assessment?.consult_date && ' · ' + new Date(assessment.consult_date).toLocaleDateString('en-AU')}
@@ -611,18 +611,18 @@ export default function AssessPage() {
                       {internalNotes.materials && (
                         <div style={{ marginBottom:'12px' }}>
                           <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Materials</p>
-                          <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.materials}</p>
+                          <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.materials}</p>
                         </div>
                       )}
                       {internalNotes.labour && (
                         <div style={{ marginBottom:'12px' }}>
                           <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Labour & sequence</p>
-                          <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.labour}</p>
+                          <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.labour}</p>
                         </div>
                       )}
                       <div>
                         <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Site notes for workers</p>
-                        <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.brief}</p>
+                        <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.brief}</p>
                       </div>
                     </div>
                   )}
@@ -632,7 +632,7 @@ export default function AssessPage() {
 
             {/* PHOTO UPLOAD */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'16px' }}>
-              <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+              <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>SITE PHOTOS</p>
               </div>
               <div style={{ padding:'16px' }}>
@@ -680,7 +680,7 @@ export default function AssessPage() {
             {!myShared ? (
               <div style={{ display:'flex', gap:'10px' }}>
                 <button type="button" onClick={save} disabled={saving}
-                  style={{ flex:1, background:'transparent', color:'#1C2B32', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer', opacity: saving ? 0.7 : 1 }}>
+                  style={{ flex:1, background:'transparent', color:'#0A0A0A', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer', opacity: saving ? 0.7 : 1 }}>
                   {saving ? 'Saving...' : 'Save draft'}
                 </button>
                 <button type="button" onClick={async () => {
@@ -706,7 +706,7 @@ export default function AssessPage() {
                 </div>
                 {!theirShared && (
                   <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 18px', marginTop:'10px' }}>
-                    <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>You are done for now — waiting for {theirLabel}</p>
+                    <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>You are done for now — waiting for {theirLabel}</p>
                     <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
                       {[
                         { icon:'📅', text:'The tradie will propose times for the site visit — you will confirm which suits you.' },
@@ -770,7 +770,7 @@ export default function AssessPage() {
               </div>
             ) : (
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-                <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>{theirLabel?.toUpperCase()}&apos;S NOTES</p>
                   <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:0 }}>Shared {new Date(theirShared).toLocaleDateString('en-AU')}</p>
                 </div>
@@ -795,7 +795,7 @@ export default function AssessPage() {
                     return (
                       <div key={prompt.key} style={{ padding:'14px 16px', background:'#F4F8F7', borderRadius:'10px' }}>
                         <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'8px' }}>{prompt.label}</p>
-                        <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0 }}>{value}</p>
+                        <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0 }}>{value}</p>
                       </div>
                     )
                   })}
@@ -803,7 +803,7 @@ export default function AssessPage() {
                 {!myAcknowledged ? (
                   <div style={{ padding:'0 20px 20px' }}>
                     <button type="button" onClick={acknowledge} disabled={acknowledging}
-                      style={{ width:'100%', background:'#1C2B32', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: acknowledging ? 0.7 : 1 }}>
+                      style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: acknowledging ? 0.7 : 1 }}>
                       {acknowledging ? 'Acknowledging...' : '✓ I have read and acknowledge these notes →'}
                     </button>
                     <p style={{ fontSize:'12px', color:'#7A9098', textAlign:'center' as const, marginTop:'8px' }}>Acknowledging does not mean you agree with everything — it means you have read the record.</p>
@@ -849,7 +849,7 @@ export default function AssessPage() {
                   </p>
                   {!isTradie && (
                     <a href="/compare" style={{ textDecoration:'none' }}>
-                      <button type="button" style={{ background:'#1C2B32', color:'white', padding:'10px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                      <button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                         Proceed to compare quotes →
                       </button>
                     </a>
@@ -877,12 +877,12 @@ export default function AssessPage() {
             <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px', display:'flex', gap:'8px', alignItems:'flex-start' }}>
               <span style={{ fontSize:'14px', flexShrink:0 }}>🔒</span>
               <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
-                <strong style={{ color:'#1C2B32' }}>Consult record is locked.</strong> Any observations or follow-up notes after this point go in the job thread below — they are timestamped and visible to both parties, but separate from the locked record.
+                <strong style={{ color:'#0A0A0A' }}>Consult record is locked.</strong> Any observations or follow-up notes after this point go in the job thread below — they are timestamped and visible to both parties, but separate from the locked record.
               </p>
             </div>
           )}
           <a href={'/messages' + (job?.id ? '?job=' + job.id : '')} style={{ display:'block', textDecoration:'none' }}>
-            <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', gap:'12px' }}>
+            <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', gap:'12px' }}>
               <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'rgba(255,255,255,0.1)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontSize:'16px' }}>💬</span>
               </div>
@@ -917,7 +917,7 @@ export default function AssessPage() {
       {showWaitModal && (
         <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.82)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #9B6B9B' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 28px', borderBottom:'2px solid #9B6B9B' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>CONSULT NOTES LOCKED</p>
               <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Your record is saved — waiting for the other party</p>
             </div>
@@ -946,7 +946,7 @@ export default function AssessPage() {
       {showCompleteModal && (
         <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.82)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>CONSULT COMPLETE</p>
               <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Both parties have acknowledged — quoting is now open</p>
             </div>
@@ -979,7 +979,7 @@ export default function AssessPage() {
                 <a href={'/messages' + (job?.id ? '?job=' + job.id : '')} style={{ textDecoration:'none' }}>
                   <div style={{ background:'white', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'10px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                     <div>
-                      <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Add follow-up notes</p>
+                      <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Add follow-up notes</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Job thread — for anything after the locked record</p>
                     </div>
                     <span style={{ fontSize:'18px', color:'#7A9098' }}>→</span>

@@ -21,8 +21,8 @@ const SUBURBS = [
   'South Perth', 'Stirling', 'Subiaco', 'Victoria Park', 'Wagin',
   'Wanneroo', 'Willetton', 'York'
 ]
-const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', display:'block' }
-const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'6px', fontFamily:'sans-serif' }
+const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif', display:'block' }
+const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px', fontFamily:'sans-serif' }
 export default function SignupPage() {
   const [role, setRole] = useState<'client'|'tradie'|'org'>(() => {
     if (typeof window !== 'undefined') {
@@ -64,13 +64,13 @@ export default function SignupPage() {
       <style>{`.sr { display: none; } @media (min-width: 769px) { .sr { display: flex !important; } } @media (max-width: 768px) { .sg { grid-template-columns: 1fr !important; } .rb { grid-template-columns: 1fr 1fr !important; } .sl { padding: 32px 20px !important; } }`}</style>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
         <a href="/" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <a href="/login" style={{ border:'1px solid rgba(28,43,50,0.25)', color:'#1C2B32', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', textDecoration:'none' }}>Log in</a>
+        <a href="/login" style={{ border:'1px solid rgba(28,43,50,0.25)', color:'#0A0A0A', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', textDecoration:'none' }}>Log in</a>
       </nav>
       <div className="sg" style={{ flex:1, display:'grid', gridTemplateColumns:'1fr 1fr' }}>
         <div className="sl" style={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'48px', overflowY:'auto' }}>
           <div style={{ maxWidth:'420px', width:'100%', margin:'0 auto' }}>
             {step === 1 && <>
-              <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>CREATE ACCOUNT</h1>
+              <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>CREATE ACCOUNT</h1>
               <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>What best describes you?</p>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px', marginBottom:'24px' }}>
                 {([
@@ -81,7 +81,7 @@ export default function SignupPage() {
                   <button key={r.id} type="button" onClick={() => setRole(r.id)}
                     style={{ padding:'14px 8px', border:'1.5px solid ' + (role===r.id ? (r.id==='org' ? '#6B4FA8' : '#D4522A') : 'rgba(28,43,50,0.15)'), borderRadius:'12px', background: role===r.id ? (r.id==='org' ? 'rgba(107,79,168,0.06)' : 'rgba(212,82,42,0.05)') : '#E8F0EE', cursor:'pointer', textAlign:'center' as const }}>
                     <div style={{ fontSize:'22px', marginBottom:'6px' }}>{r.icon}</div>
-                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'10px', color:'#1C2B32', letterSpacing:'0.5px' }}>{r.label}</div>
+                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'10px', color:'#0A0A0A', letterSpacing:'0.5px' }}>{r.label}</div>
                     <div style={{ fontSize:'10px', color:'#7A9098', marginTop:'3px' }}>{r.sub}</div>
                   </button>
                 ))}
@@ -104,7 +104,7 @@ export default function SignupPage() {
               <p style={{ marginTop:'16px', fontSize:'13px', color:'#4A5E64', textAlign:'center' }}>Already have an account? <a href="/login" style={{ color:'#D4522A', fontWeight:500 }}>Sign in</a></p>
             </>}
             {step === 2 && <>
-              <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>TRADE DETAILS</h1>
+              <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>TRADE DETAILS</h1>
               <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>Your business and credentials</p>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Business name</label><input style={inp} placeholder="Walsh Plumbing & Gas" value={form.businessName} onChange={set('businessName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Trade category</label><select style={inp} value={form.tradeCategory} onChange={set('tradeCategory')}><option value="">Select...</option>{TRADES.map(t => <option key={t}>{t}</option>)}</select></div>
@@ -114,13 +114,13 @@ export default function SignupPage() {
               <div style={{ padding:'12px', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', fontSize:'12px', color:'#D4522A', marginBottom:'16px' }}>Licence and insurance verified before profile goes live.</div>
               {error && <p style={{ marginBottom:'12px', fontSize:'13px', color:'#D4522A' }}>{error}</p>}
               <div style={{ display:'flex', gap:'10px' }}>
-                <button type="button" onClick={() => setStep(1)} style={{ background:'transparent', color:'#1C2B32', padding:'13px 20px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
+                <button type="button" onClick={() => setStep(1)} style={{ background:'transparent', color:'#0A0A0A', padding:'13px 20px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
                 <button type="button" onClick={handleSignup} disabled={loading||!form.businessName||!form.tradeCategory} style={{ flex:1, background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', opacity: loading||!form.businessName||!form.tradeCategory ? 0.5 : 1 }}>{loading ? 'Creating...' : 'Create account →'}</button>
               </div>
             </>}
           </div>
         </div>
-        <div className="sr" style={{ background:'#1C2B32', alignItems:'center', justifyContent:'center', padding:'60px 48px', position:'relative', overflow:'hidden' }}>
+        <div className="sr" style={{ background:'#0A0A0A', alignItems:'center', justifyContent:'center', padding:'60px 48px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 30%, rgba(212,82,42,0.15), transparent 55%)' }} />
           <blockquote style={{ position:'relative', zIndex:1, maxWidth:'360px' }}>
             <p style={{ fontFamily:'sans-serif', fontSize:'18px', fontStyle:'italic', fontWeight:300, lineHeight:1.7, color:'rgba(216,228,225,0.85)', marginBottom:'20px' }}>"The scope agreement meant there were no surprises. Both sides knew exactly what was happening and when."</p>

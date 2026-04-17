@@ -118,7 +118,7 @@ export default function ComparePage() {
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#6B4FA8', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Stage 4</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>COMPARE QUOTES</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>COMPARE QUOTES</h1>
 
           <HintPanel color="#6B4FA8" hints={[
             "Review each quote carefully — check the inclusions, exclusions and conditions, not just the price.",
@@ -138,7 +138,7 @@ export default function ComparePage() {
               <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
                 <span style={{ fontSize:'24px' }}>⏳</span>
                 <div>
-                  <p style={{ fontSize:'15px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'15px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Waiting for quotes</p>
                   <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>You will be notified as each quote arrives. You can accept the first good one or wait for all to come in.</p>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function ComparePage() {
                       return (
                         <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'white', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.08)' }}>
                           <div>
-                            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{qr.tradie?.business_name || 'Trade business'}</p>
+                            <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{qr.tradie?.business_name || 'Trade business'}</p>
                             {qr.tradie?.availability_visible && qr.tradie?.availability_message && (
                               <p style={{ fontSize:'11px', color:'#C07830', margin:0 }}>⏱ {qr.tradie.availability_message}</p>
                             )}
@@ -208,7 +208,7 @@ export default function ComparePage() {
                     <div key={q.id} style={{ background:'#E8F0EE', border:'2px solid ' + (isAccepted ? '#2E7D60' : isRejected ? 'rgba(28,43,50,0.08)' : 'rgba(28,43,50,0.12)'), borderRadius:'14px', overflow:'hidden', opacity: isRejected ? 0.55 : 1, transition:'opacity 0.3s' }}>
 
                       {/* Header */}
-                      <div style={{ background: isAccepted ? 'rgba(46,125,96,0.08)' : '#1C2B32', padding:'16px 20px' }}>
+                      <div style={{ background: isAccepted ? 'rgba(46,125,96,0.08)' : '#0A0A0A', padding:'16px 20px' }}>
                         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'8px' }}>
                           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: isAccepted ? '#2E7D60' : 'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>{q.tradie?.business_name || 'Trade business'}</p>
                           {isAccepted && <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.15)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'100px', padding:'2px 10px', fontWeight:500 }}>Accepted</span>}
@@ -229,7 +229,7 @@ export default function ComparePage() {
                       {/* Price */}
                       <div style={{ padding:'20px 20px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                         <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.5px' }}>Total quote</p>
-                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>{fmt(q.total_price || 0)}</p>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>{fmt(q.total_price || 0)}</p>
                         {q.gst_included && <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>GST included</p>}
                       </div>
 
@@ -252,7 +252,7 @@ export default function ComparePage() {
                               {q.line_items.map((item: any, i: number) => (
                                 <div key={i} style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:'1px solid rgba(28,43,50,0.06)', fontSize:'13px' }}>
                                   <span style={{ color:'#4A5E64' }}>{item.description}</span>
-                                  <span style={{ color:'#1C2B32', fontWeight:500 }}>{fmt(item.amount || 0)}</span>
+                                  <span style={{ color:'#0A0A0A', fontWeight:500 }}>{fmt(item.amount || 0)}</span>
                                 </div>
                               ))}
                             </div>
@@ -288,7 +288,7 @@ export default function ComparePage() {
                             <div>
                               <textarea value={reviseNote} onChange={e => setReviseNote(e.target.value)}
                                 placeholder="Describe what you'd like the tradie to revise or clarify..."
-                                style={{ width:'100%', padding:'8px 12px', border:'1.5px solid rgba(107,79,168,0.3)', borderRadius:'7px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', outline:'none', minHeight:'70px', resize:'vertical', boxSizing:'border-box', fontFamily:'sans-serif' }} />
+                                style={{ width:'100%', padding:'8px 12px', border:'1.5px solid rgba(107,79,168,0.3)', borderRadius:'7px', fontSize:'12px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minHeight:'70px', resize:'vertical', boxSizing:'border-box', fontFamily:'sans-serif' }} />
                               <div style={{ display:'flex', gap:'8px', marginTop:'6px' }}>
                                 <button type="button" onClick={() => requestRevision(q.id)} disabled={sendingRevise || !reviseNote.trim()}
                                   style={{ flex:1, background:'#6B4FA8', color:'white', padding:'8px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: !reviseNote.trim() ? 0.5 : 1 }}>
@@ -305,7 +305,7 @@ export default function ComparePage() {
                       )}
                       {accepted === q.id && (
                         <div style={{ padding:'14px 20px' }}>
-                          <a href="/agreement"><button style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Go to contract →</button></a>
+                          <a href="/agreement"><button style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Go to contract →</button></a>
                         </div>
                       )}
                     </div>

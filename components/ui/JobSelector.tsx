@@ -18,7 +18,7 @@ export function JobSelector({ jobs, selectedJobId, onSelect }: JobSelectorProps)
           <div key={j.id} onClick={() => onSelect(j.id)}
             style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 12px', borderRadius:'8px', border:'1.5px solid ' + (j.id === selectedJobId ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), background: j.id === selectedJobId ? 'rgba(46,106,143,0.06)' : 'white', cursor:'pointer' }}>
             <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{j.title}</p>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{j.title}</p>
               <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{j.trade_category} · {j.suburb}</p>
             </div>
             {j.id === selectedJobId && (

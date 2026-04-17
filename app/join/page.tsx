@@ -103,14 +103,14 @@ export default function JoinPage() {
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center', padding:'32px', background:'#E8F0EE', borderRadius:'14px', maxWidth:'400px' }}>
         <div style={{ fontSize:'40px', marginBottom:'12px' }}>✅</div>
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32', marginBottom:'8px' }}>Welcome to Steadyhand</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', marginBottom:'8px' }}>Welcome to Steadyhand</h2>
         <p style={{ color:'#4A5E64', fontSize:'14px' }}>Your account is set up and the job is waiting. Taking you to your dashboard...</p>
       </div>
     </div>
   )
 
   const job = invitation?.job
-  const inp = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }
+  const inp = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
@@ -118,7 +118,7 @@ export default function JoinPage() {
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
       </nav>
       <div style={{ maxWidth:'560px', margin:'0 auto', padding:'40px 24px' }}>
-        <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'24px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
+        <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'24px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
           <div style={{ position:'relative', zIndex:1 }}>
             <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(216,228,225,0.1)', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'100px', padding:'3px 10px', marginBottom:'12px' }}>
@@ -136,12 +136,12 @@ export default function JoinPage() {
 
         {step === 'view' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-            <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'8px' }}>YOU HAVE BEEN INVITED</h3>
+            <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'8px' }}>YOU HAVE BEEN INVITED</h3>
             <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
               <strong>{job?.client?.full_name}</strong> wants to work with <strong>{invitation?.business_name}</strong> on this job through Steadyhand.
             </p>
             <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'14px', marginBottom:'20px' }}>
-              <p style={{ fontSize:'13px', color:'#1C2B32', fontWeight:500, marginBottom:'8px' }}>What is Steadyhand?</p>
+              <p style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500, marginBottom:'8px' }}>What is Steadyhand?</p>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>Steadyhand is a request-to-warranty platform for Western Australian trades. It helps you manage scopes, milestone payments and warranties digitally — protecting both you and your client throughout the job.</p>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginBottom:'20px' }}>
@@ -152,7 +152,7 @@ export default function JoinPage() {
                 'Digital warranty tracking — no more phone chasing',
                 'Dialogue Rating builds your professional reputation',
               ].map((item, i) => (
-                <div key={i} style={{ display:'flex', gap:'10px', fontSize:'13px', color:'#1C2B32' }}>
+                <div key={i} style={{ display:'flex', gap:'10px', fontSize:'13px', color:'#0A0A0A' }}>
                   <span style={{ color:'#2E7D60', flexShrink:0 }}>✓</span>{item}
                 </div>
               ))}
@@ -169,25 +169,25 @@ export default function JoinPage() {
 
         {step === 'signup' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-            <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>CREATE YOUR ACCOUNT</h3>
+            <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>CREATE YOUR ACCOUNT</h3>
             <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'12px 14px', marginBottom:'20px' }}>
               <p style={{ fontSize:'13px', color:'#2E7D60', margin:0 }}>Signing up as <strong>{invitation?.business_name}</strong> · {invitation?.email}</p>
             </div>
             <div style={{ marginBottom:'14px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Your full name *</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Your full name *</label>
               <input type="text" placeholder="Jane Smith" value={form.fullName} onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))} style={inp} />
             </div>
             <div style={{ marginBottom:'14px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Password *</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Password *</label>
               <input type="password" placeholder="Min 8 characters" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} style={inp} />
             </div>
             <div style={{ marginBottom:'20px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Phone (optional)</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Phone (optional)</label>
               <input type="tel" placeholder="0400 000 000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} style={inp} />
             </div>
             {error && <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'12px' }}>{error}</p>}
             <div style={{ display:'flex', gap:'10px' }}>
-              <button type="button" onClick={() => setStep('view')} style={{ background:'transparent', color:'#1C2B32', padding:'12px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
+              <button type="button" onClick={() => setStep('view')} style={{ background:'transparent', color:'#0A0A0A', padding:'12px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
               <button type="button" onClick={handleSignup} disabled={submitting || !form.password}
                 style={{ flex:1, background:'#D4522A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: submitting || !form.fullName || !form.password ? 0.6 : 1 }}>
                 {submitting ? 'Creating account...' : 'Create account and view job →'}

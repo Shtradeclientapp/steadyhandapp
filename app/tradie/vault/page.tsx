@@ -155,7 +155,7 @@ export default function TradieVaultPage() {
   }
 
   const filteredDocs = filter === 'all' ? docs : docs.filter((d: any) => d.document_type === filter)
-  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', marginBottom:'12px', boxSizing:'border-box' as const }
+  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', marginBottom:'12px', boxSizing:'border-box' as const }
 
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
@@ -168,7 +168,7 @@ export default function TradieVaultPage() {
       <NavHeader profile={profile} isTradie={true} backLabel="← Dashboard" backHref="/tradie/dashboard" />
 
       {/* Hero */}
-      <div style={{ background:'#1C2B32', padding:'28px 24px' }}>
+      <div style={{ background:'#0A0A0A', padding:'28px 24px' }}>
         <div style={{ maxWidth:'960px', margin:'0 auto' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>Trade Document Vault</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:'0 0 4px' }}>YOUR DOCUMENTS</h1>
@@ -185,7 +185,7 @@ export default function TradieVaultPage() {
             { key:'upload', label:'+ Upload' },
           ].map((t: any) => (
             <button key={t.key} type="button" onClick={() => { setActiveTab(t.key); setSelectedDoc(null) }}
-              style={{ padding:'12px 20px', border:'none', borderBottom: activeTab === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.key ? 600 : 400, color: activeTab === t.key ? '#1C2B32' : '#7A9098' }}>
+              style={{ padding:'12px 20px', border:'none', borderBottom: activeTab === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.key ? 600 : 400, color: activeTab === t.key ? '#0A0A0A' : '#7A9098' }}>
               {t.label}
             </button>
           ))}
@@ -201,7 +201,7 @@ export default function TradieVaultPage() {
             <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' as const, marginBottom:'16px' }}>
               {[{ value:'all', label:'All' }, ...DOC_TYPES].map((t: any) => (
                 <button key={t.value} type="button" onClick={() => setFilter(t.value)}
-                  style={{ fontSize:'11px', padding:'4px 12px', borderRadius:'100px', border:'1px solid ' + (filter === t.value ? '#1C2B32' : 'rgba(28,43,50,0.2)'), background: filter === t.value ? '#1C2B32' : 'transparent', color: filter === t.value ? 'white' : '#4A5E64', cursor:'pointer' }}>
+                  style={{ fontSize:'11px', padding:'4px 12px', borderRadius:'100px', border:'1px solid ' + (filter === t.value ? '#0A0A0A' : 'rgba(28,43,50,0.2)'), background: filter === t.value ? '#0A0A0A' : 'transparent', color: filter === t.value ? 'white' : '#4A5E64', cursor:'pointer' }}>
                   {t.label}
                 </button>
               ))}
@@ -213,7 +213,7 @@ export default function TradieVaultPage() {
                 <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'6px', fontWeight:500 }}>No documents yet</p>
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px' }}>Upload your licence, insurance, compliance certificates and job documents.</p>
                 <button type="button" onClick={() => setActiveTab('upload')}
-                  style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                   Upload first document →
                 </button>
               </div>
@@ -229,7 +229,7 @@ export default function TradieVaultPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:'12px', flex:1, minWidth:0 }}>
                         <span style={{ fontSize:'20px', flexShrink:0 }}>{docType.icon}</span>
                         <div style={{ minWidth:0 }}>
-                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{doc.title}</p>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{doc.title}</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
                             {docType.label}
                             {doc.job?.title && ' · ' + doc.job.title}
@@ -267,7 +267,7 @@ export default function TradieVaultPage() {
                       <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                         <span style={{ fontSize:'20px' }}>{docType.icon}</span>
                         <div>
-                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{doc.title}</p>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{doc.title}</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Shared by client{doc.job?.title ? ' · ' + doc.job.title : ''}</p>
                         </div>
                       </div>
@@ -284,18 +284,18 @@ export default function TradieVaultPage() {
         {activeTab === 'upload' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
             <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>UPLOAD DOCUMENT</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>UPLOAD DOCUMENT</p>
             </div>
             <div style={{ padding:'20px' }}>
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Document title</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Document title</label>
               <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Public liability insurance 2026" style={inp} />
 
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Document type</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Document type</label>
               <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} style={inp}>
                 {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
 
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Linked job (optional)</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Linked job (optional)</label>
               <select value={form.job_id} onChange={e => setForm(f => ({ ...f, job_id: e.target.value }))} style={inp}>
                 <option value="">Not linked to a specific job</option>
                 {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title}</option>)}
@@ -303,27 +303,27 @@ export default function TradieVaultPage() {
 
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
                 <div>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Issue date</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Issue date</label>
                   <input type="date" value={form.issued_date} onChange={e => setForm(f => ({ ...f, issued_date: e.target.value }))} style={inp} />
                 </div>
                 <div>
-                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Expiry date</label>
+                  <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Expiry date</label>
                   <input type="date" value={form.expiry_date} onChange={e => setForm(f => ({ ...f, expiry_date: e.target.value }))} style={inp} />
                 </div>
               </div>
 
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Notes (optional)</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Notes (optional)</label>
               <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Any relevant notes about this document..." rows={2}
                 style={{ ...inp, resize:'none' as const }} />
 
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>File</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>File</label>
               <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 style={{ width:'100%', fontSize:'13px', color:'#4A5E64', marginBottom:'16px' }} />
 
               {uploadError && <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'12px' }}>{uploadError}</p>}
 
               <button type="button" onClick={uploadDoc} disabled={uploading || !form.title.trim()}
-                style={{ width:'100%', background: uploading || !form.title.trim() ? 'rgba(28,43,50,0.3)' : '#1C2B32', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                style={{ width:'100%', background: uploading || !form.title.trim() ? 'rgba(28,43,50,0.3)' : '#0A0A0A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {uploading ? 'Uploading...' : 'Upload document →'}
               </button>
             </div>
@@ -333,7 +333,7 @@ export default function TradieVaultPage() {
         {/* ── Document viewer panel ── */}
         {selectedDoc && (
           <div style={{ position:'sticky' as const, top:'80px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-            <div style={{ background:'#1C2B32', padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ background:'#0A0A0A', padding:'14px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div style={{ minWidth:0 }}>
                 <p style={{ fontSize:'13px', fontWeight:500, color:'rgba(216,228,225,0.9)', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{selectedDoc.title}</p>
                 <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:0 }}>{selectedDoc.document_type}</p>
@@ -355,7 +355,7 @@ export default function TradieVaultPage() {
                 <div style={{ textAlign:'center' as const }}>
                   <p style={{ fontSize:'32px', marginBottom:'8px' }}>📎</p>
                   <a href={signedUrl || selectedDoc.file_url} target="_blank" rel="noreferrer"
-                    style={{ background:'#1C2B32', color:'white', padding:'8px 16px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
+                    style={{ background:'#0A0A0A', color:'white', padding:'8px 16px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
                     Download →
                   </a>
                 </div>
@@ -377,9 +377,9 @@ export default function TradieVaultPage() {
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'6px', textTransform:'uppercase' as const }}>Notes</p>
                   <textarea value={annotationText} onChange={e => setAnnotationText(e.target.value)}
                     placeholder="Add notes about this document..."
-                    style={{ width:'100%', minHeight:'80px', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', color:'#1C2B32', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                    style={{ width:'100%', minHeight:'80px', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', color:'#0A0A0A', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
                   <button type="button" onClick={saveAnnotation} disabled={savingAnnotation}
-                    style={{ width:'100%', marginTop:'6px', background: annotationSaved ? '#2E7D60' : '#1C2B32', color:'white', padding:'8px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    style={{ width:'100%', marginTop:'6px', background: annotationSaved ? '#2E7D60' : '#0A0A0A', color:'white', padding:'8px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
                     {annotationSaved ? '✓ Saved' : savingAnnotation ? 'Saving...' : 'Save notes'}
                   </button>
                 </div>
@@ -390,7 +390,7 @@ export default function TradieVaultPage() {
                 <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Share with client</p>
                   <select value={shareJobId} onChange={e => setShareJobId(e.target.value)}
-                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', marginBottom:'8px', boxSizing:'border-box' as const }}>
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#0A0A0A', marginBottom:'8px', boxSizing:'border-box' as const }}>
                     <option value="">Select a job to share with...</option>
                     {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.client?.full_name}</option>)}
                   </select>

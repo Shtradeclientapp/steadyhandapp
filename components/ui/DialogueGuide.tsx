@@ -145,7 +145,7 @@ export function DialogueGuide({
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <span style={{ fontSize:'16px' }}>🤝</span>
           <div>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>PRE-SIGNING DIALOGUE</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>PRE-SIGNING DIALOGUE</p>
             <p style={{ fontSize:'12px', color:'#7A9098' }}>{completedCount}/{QUESTIONS.length} questions completed</p>
           </div>
         </div>
@@ -188,13 +188,13 @@ export function DialogueGuide({
                 </div>
 
                 <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px', marginBottom:'14px' }}>
-                  <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0 }}>{q.question}</p>
+                  <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0 }}>{q.question}</p>
                 </div>
 
                 {resp?.tradie_response && (
                   <div style={{ marginBottom:'10px' }}>
                     <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>Tradie response</p>
-                    <div style={{ background:'#1C2B32', borderRadius:'10px', padding:'12px 14px', borderBottomLeftRadius:'3px' }}>
+                    <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'12px 14px', borderBottomLeftRadius:'3px' }}>
                       <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.85)', lineHeight:'1.55', margin:0 }}>{resp.tradie_response}</p>
                     </div>
                   </div>
@@ -208,10 +208,10 @@ export function DialogueGuide({
                       onChange={e => setTradieText(e.target.value)}
                       placeholder={q.placeholder}
                       rows={4}
-                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
+                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
                     />
                     <button type="button" onClick={() => saveResponse(i, 'tradie_response')} disabled={saving || !tradieText.trim()}
-                      style={{ marginTop:'8px', background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !tradieText.trim() ? 0.5 : 1 }}>
+                      style={{ marginTop:'8px', background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !tradieText.trim() ? 0.5 : 1 }}>
                       {saving ? 'Saving...' : 'Submit response →'}
                     </button>
                   </div>
@@ -227,7 +227,7 @@ export function DialogueGuide({
                   <div style={{ marginBottom:'10px' }}>
                     <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>Client response</p>
                     <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 14px', borderBottomRightRadius:'3px' }}>
-                      <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.55', margin:0 }}>{resp.client_response}</p>
+                      <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.55', margin:0 }}>{resp.client_response}</p>
                     </div>
                   </div>
                 )}
@@ -240,10 +240,10 @@ export function DialogueGuide({
                       onChange={e => setClientText(e.target.value)}
                       placeholder={q.client_placeholder}
                       rows={3}
-                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
+                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
                     />
                     <button type="button" onClick={() => saveResponse(i, 'client_response')} disabled={saving || !clientText.trim()}
-                      style={{ marginTop:'8px', background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !clientText.trim() ? 0.5 : 1 }}>
+                      style={{ marginTop:'8px', background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !clientText.trim() ? 0.5 : 1 }}>
                       {saving ? 'Saving...' : 'Submit response →'}
                     </button>
                   </div>

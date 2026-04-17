@@ -110,12 +110,12 @@ export default function OrgSubscribePage() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'#1C2B32', position:'sticky', top:0, zIndex:100 }}>
+      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'#0A0A0A', position:'sticky', top:0, zIndex:100 }}>
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
         <a href="/org/dashboard" style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', textDecoration:'none' }}>← Back to dashboard</a>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'48px 24px', textAlign:'center', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'48px 24px', textAlign:'center', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 50%, rgba(212,82,42,0.12), transparent 60%)' }} />
         <div style={{ position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'8px' }}>Steadyhand Property</p>
@@ -130,11 +130,11 @@ export default function OrgSubscribePage() {
         <div className='tier-cards-grid' style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'20px', marginBottom:'32px' }}>
           {TIERS.map(tier => (
             <div key={tier.id} onClick={() => setSelectedTier(tier.id)}
-              style={{ background: selectedTier === tier.id ? '#1C2B32' : 'white', border: tier.recommended ? '2px solid ' + tier.color : '1px solid rgba(28,43,50,0.12)', borderRadius:'16px', padding:'28px 24px', cursor:'pointer', position:'relative', transition:'all 0.15s' }}>
+              style={{ background: selectedTier === tier.id ? '#0A0A0A' : 'white', border: tier.recommended ? '2px solid ' + tier.color : '1px solid rgba(28,43,50,0.12)', borderRadius:'16px', padding:'28px 24px', cursor:'pointer', position:'relative', transition:'all 0.15s' }}>
               {tier.recommended && <div style={{ position:'absolute', top:'-12px', left:'50%', transform:'translateX(-50%)', background:tier.color, color:'white', fontSize:'10px', fontWeight:700, padding:'3px 12px', borderRadius:'100px', letterSpacing:'0.5px' }}>RECOMMENDED</div>}
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color: selectedTier === tier.id ? 'rgba(216,228,225,0.9)' : tier.color, letterSpacing:'0.5px', marginBottom:'4px' }}>{tier.label}</p>
               <div style={{ display:'flex', alignItems:'baseline', gap:'4px', marginBottom:'4px' }}>
-                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: selectedTier === tier.id ? 'rgba(216,228,225,0.9)' : '#1C2B32' }}>{tier.price}</span>
+                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: selectedTier === tier.id ? 'rgba(216,228,225,0.9)' : '#0A0A0A' }}>{tier.price}</span>
                 <span style={{ fontSize:'13px', color: selectedTier === tier.id ? 'rgba(216,228,225,0.4)' : '#7A9098' }}>{tier.period}</span>
               </div>
               <p style={{ fontSize:'12px', color: selectedTier === tier.id ? 'rgba(216,228,225,0.5)' : '#7A9098', marginBottom:'20px' }}>{tier.limit}</p>

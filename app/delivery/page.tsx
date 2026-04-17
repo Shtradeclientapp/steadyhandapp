@@ -56,7 +56,7 @@ function MilestonePaymentForm({ milestoneId, amount, jobId, onSuccess, onCancel 
 
   return (
     <div style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'12px', padding:'20px', marginTop:'12px' }}>
-      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>RELEASE PAYMENT</p>
+      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'4px' }}>RELEASE PAYMENT</p>
       <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'16px' }}>
         ${Number(amount).toLocaleString()} will be transferred to the tradie upon payment confirmation.
       </p>
@@ -83,7 +83,7 @@ function VariationCard({ v, isTradie, onRespond }: { v: any, isTradie: boolean, 
   return (
     <div style={{ background:'#F4F8F7', borderRadius:'10px', padding:'14px 16px', borderLeft:'3px solid ' + statusColor }}>
       <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', marginBottom:'6px' }}>
-        <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:0 }}>{v.title}</p>
+        <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{v.title}</p>
         <span style={{ fontSize:'11px', padding:'2px 8px', borderRadius:'100px', background: statusColor + '18', border:'1px solid ' + statusColor + '40', color:statusColor, fontWeight:500, flexShrink:0, textTransform:'capitalize' as const }}>{v.status}</span>
       </div>
       {v.description && <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{v.description}</p>}
@@ -96,7 +96,7 @@ function VariationCard({ v, isTradie, onRespond }: { v: any, isTradie: boolean, 
         <div style={{ marginTop:'10px' }}>
           <textarea placeholder="Add a note (optional)..." rows={2}
             onChange={e => setResponseText(e.target.value)}
-            style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'white', color:'#1C2B32', outline:'none', resize:'vertical' as const, boxSizing:'border-box' as const, marginBottom:'8px', fontFamily:'sans-serif' }} />
+            style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'white', color:'#0A0A0A', outline:'none', resize:'vertical' as const, boxSizing:'border-box' as const, marginBottom:'8px', fontFamily:'sans-serif' }} />
           <div style={{ display:'flex', gap:'8px' }}>
             <button type="button" onClick={() => onRespond(v.id, true, responseText)}
               style={{ flex:1, background:'#2E7D60', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
@@ -377,7 +377,7 @@ export default function DeliveryPage() {
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center' }}>
         <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job in delivery stage.</p>
-        <a href="/agreement"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to agreement</button></a>
+        <a href="/agreement"><button style={{ background:'#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to agreement</button></a>
       </div>
     </div></>
   )
@@ -408,7 +408,7 @@ export default function DeliveryPage() {
             </a>
           </div>
         )}
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DELIVERY TRACKING</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>DELIVERY TRACKING</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
           You confirm each milestone as it is completed. Payment releases only when you approve.
         </p>
@@ -416,11 +416,11 @@ export default function DeliveryPage() {
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px', marginBottom:'24px' }}>
           <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'16px' }}>
             <div>
-              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'4px' }}>{job.title}</h3>
+              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'4px' }}>{job.title}</h3>
               <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.trade_category} · {job.suburb} · {job.tradie?.business_name}</p>
             </div>
             <div style={{ textAlign:'right' }}>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32' }}>{progress}%</div>
+              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#0A0A0A' }}>{progress}%</div>
               <div style={{ fontSize:'12px', color:'#4A5E64' }}>{done}/{total} milestones</div>
             </div>
           </div>
@@ -432,7 +432,7 @@ export default function DeliveryPage() {
         {milestones.length === 0 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'28px 24px', textAlign:'center' as const, marginBottom:'24px' }}>
             <div style={{ fontSize:'32px', marginBottom:'12px', opacity:0.4 }}>📋</div>
-            <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', marginBottom:'6px' }}>No milestones set up yet</p>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>No milestones set up yet</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
               {isTradie
                 ? 'Add milestones to your quote so the client can track and approve each stage of work.'
@@ -446,7 +446,7 @@ export default function DeliveryPage() {
               </a>
             ) : (
               <a href={'/messages?job=' + job.id}>
-                <button type="button" style={{ background:'#1C2B32', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                <button type="button" style={{ background:'#0A0A0A', color:'white', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                   Message tradie →
                 </button>
               </a>
@@ -466,7 +466,7 @@ export default function DeliveryPage() {
                   <div style={{
                     width:'22px', height:'22px', borderRadius:'50%', border:'2px solid',
                     borderColor: isDone ? '#2E7D60' : isActive ? '#C07830' : 'rgba(28,43,50,0.2)',
-                    background: isDone ? '#2E7D60' : isActive ? '#1C2B32' : '#C8D5D2',
+                    background: isDone ? '#2E7D60' : isActive ? '#0A0A0A' : '#C8D5D2',
                     display:'flex', alignItems:'center', justifyContent:'center',
                     fontSize:'10px', color: isDone || isActive ? 'white' : '#7A9098',
                     flexShrink:0, zIndex:1
@@ -476,7 +476,7 @@ export default function DeliveryPage() {
                 </div>
                 <div style={{ padding:'4px 0 28px', flex:1 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px', flexWrap:'wrap' }}>
-                    <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px' }}>{m.label}</h3>
+                    <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px' }}>{m.label}</h3>
                     {m.due_date && (
                       <p style={{ fontSize:'11px', color: new Date(m.due_date) < new Date() && m.status !== 'approved' ? '#D4522A' : '#7A9098', margin:'2px 0 0' }}>
                         {new Date(m.due_date) < new Date() && m.status !== 'approved' ? '⚠ Overdue · ' : 'Due · '}{new Date(m.due_date).toLocaleDateString('en-AU')}
@@ -495,7 +495,7 @@ export default function DeliveryPage() {
                       {/* Option explainer */}
                       {m.amount > 0 && (
                         <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'12px 14px', marginBottom:'12px' }}>
-                          <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 8px' }}>How would you like to proceed?</p>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 8px' }}>How would you like to proceed?</p>
                           <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
                             <div style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
                               <span style={{ fontSize:'13px', flexShrink:0 }}>✅</span>
@@ -579,7 +579,7 @@ export default function DeliveryPage() {
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginTop:'24px', marginBottom:'16px' }}>
           <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <div>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>VARIATIONS</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>VARIATIONS</p>
               <p style={{ fontSize:'11px', color:'#7A9098', margin:'2px 0 0' }}>Scope changes, additions or unexpected work</p>
             </div>
             <button type="button" onClick={() => setShowVariationForm(v => !v)}
@@ -596,14 +596,14 @@ export default function DeliveryPage() {
                   placeholder="Variation title (required)"
                   value={variationForm.title}
                   onChange={e => setVariationForm(f => ({ ...f, title: e.target.value }))}
-                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }}
+                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }}
                 />
                 <textarea
                   placeholder="Description (optional)"
                   value={variationForm.description}
                   onChange={e => setVariationForm(f => ({ ...f, description: e.target.value }))}
                   rows={2}
-                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }}
+                  style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }}
                 />
                 <div className='delivery-btn-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
                   <input
@@ -611,14 +611,14 @@ export default function DeliveryPage() {
                     placeholder="Cost impact ($)"
                     value={variationForm.cost_impact}
                     onChange={e => setVariationForm(f => ({ ...f, cost_impact: e.target.value }))}
-                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif' }}
+                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif' }}
                   />
                   <input
                     type="number"
                     placeholder="Time impact (days)"
                     value={variationForm.time_impact_days}
                     onChange={e => setVariationForm(f => ({ ...f, time_impact_days: e.target.value }))}
-                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', fontFamily:'sans-serif' }}
+                    style={{ padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif' }}
                   />
                 </div>
                 {variationError && (

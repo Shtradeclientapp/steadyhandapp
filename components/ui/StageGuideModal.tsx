@@ -51,7 +51,7 @@ export function StageGuideModal({
       }}>
         {/* Header band */}
         <div style={{
-          background: '#1C2B32', padding: '20px 28px',
+          background: '#0A0A0A', padding: '20px 28px',
           display: 'flex', alignItems: 'center', gap: '14px',
           borderBottom: '2px solid ' + stageColor,
         }}>
@@ -72,7 +72,7 @@ export function StageGuideModal({
         <div style={{ padding: '24px 28px' }}>
           <h2 style={{
             fontFamily: 'var(--font-aboreto), sans-serif',
-            fontSize: '19px', color: '#1C2B32', letterSpacing: '0.3px',
+            fontSize: '19px', color: '#0A0A0A', letterSpacing: '0.3px',
             marginBottom: '10px', lineHeight: '1.3',
           }}>{headline}</h2>
           <p style={{ fontSize: '14px', color: '#4A5E64', lineHeight: '1.7', marginBottom: '20px' }}>{intro}</p>
@@ -88,7 +88,7 @@ export function StageGuideModal({
                 }}>{i + 1}</div>
                 <p style={{
                   fontSize: '13px', lineHeight: '1.6', margin: 0,
-                  color: item.emphasis ? '#1C2B32' : '#4A5E64',
+                  color: item.emphasis ? '#0A0A0A' : '#4A5E64',
                   fontWeight: item.emphasis ? 600 : 400,
                 }}>{item.text}</p>
               </div>
@@ -107,7 +107,7 @@ export function StageGuideModal({
           )}
 
           <button type="button" onClick={dismiss} style={{
-            width: '100%', background: '#1C2B32', color: 'white',
+            width: '100%', background: '#0A0A0A', color: 'white',
             padding: '14px', borderRadius: '10px', fontSize: '15px',
             fontWeight: 600, border: 'none', cursor: 'pointer',
             letterSpacing: '0.2px',

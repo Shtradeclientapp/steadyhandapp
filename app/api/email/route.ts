@@ -26,7 +26,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${prehead
     <table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;">
 
       <!-- Header -->
-      <tr><td style="background:#1C2B32;padding:28px 36px;border-radius:12px 12px 0 0;">
+      <tr><td style="background:#0A0A0A;padding:28px 36px;border-radius:12px 12px 0 0;">
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td>
@@ -46,7 +46,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${prehead
       </td></tr>
 
       <!-- Footer -->
-      <tr><td style="background:#1C2B32;padding:20px 36px;border-radius:0 0 12px 12px;">
+      <tr><td style="background:#0A0A0A;padding:20px 36px;border-radius:0 0 12px 12px;">
         <p style="margin:0 0 4px;font-size:11px;color:rgba(216,228,225,0.4);font-family:Georgia,serif;">Steadyhand · Western Australia</p>
         <p style="margin:0;font-size:11px;color:rgba(216,228,225,0.25);font-family:Georgia,serif;">You are receiving this because you have an active job on Steadyhand.</p>
       </td></tr>
@@ -59,7 +59,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${prehead
 }
 
 function greeting(name: string) {
-  return `<p style="margin:0 0 16px;font-size:15px;color:#1C2B32;font-family:Georgia,serif;">Hi ${name},</p>`
+  return `<p style="margin:0 0 16px;font-size:15px;color:#0A0A0A;font-family:Georgia,serif;">Hi ${name},</p>`
 }
 
 function para(text: string) {
@@ -69,14 +69,14 @@ function para(text: string) {
 function jobCard(title: string, category: string, suburb: string, accentColor: string, extra = '') {
   return `<table width="100%" cellpadding="0" cellspacing="0" style="background:#F4F8F7;border-left:3px solid ${accentColor};border-radius:6px;margin:20px 0;">
     <tr><td style="padding:16px 18px;">
-      <p style="margin:0 0 4px;font-size:16px;font-weight:600;color:#1C2B32;font-family:Georgia,serif;">${title}</p>
+      <p style="margin:0 0 4px;font-size:16px;font-weight:600;color:#0A0A0A;font-family:Georgia,serif;">${title}</p>
       <p style="margin:0;font-size:13px;color:#7A9098;font-family:Georgia,serif;">${category} · ${suburb}</p>
       ${extra}
     </td></tr>
   </table>`
 }
 
-function btn(href: string, label: string, color = '#1C2B32') {
+function btn(href: string, label: string, color = '#0A0A0A') {
   return `<table cellpadding="0" cellspacing="0" style="margin:20px 0 8px;">
     <tr><td style="background:${color};border-radius:8px;">
       <a href="${href}" style="display:inline-block;padding:13px 28px;font-size:14px;font-weight:600;color:white;text-decoration:none;font-family:Georgia,serif;letter-spacing:0.3px;">${label} →</a>
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
           greeting(clientName) +
           para(`<strong>${milestone.job.tradie?.business_name || 'Your tradie'}</strong> has submitted a milestone for your approval on the following job:`) +
           jobCard(milestone.job.title, milestone.job.trade_category, milestone.job.suburb, '#C07830',
-            `<p style="margin:8px 0 0;font-size:13px;color:#1C2B32;font-family:Georgia,serif;"><strong>Milestone:</strong> ${milestone.label}</p>${milestone.amount > 0 ? `<p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#2E7D60;font-family:Georgia,serif;">$${Number(milestone.amount).toLocaleString()} AUD</p>` : ''}`) +
+            `<p style="margin:8px 0 0;font-size:13px;color:#0A0A0A;font-family:Georgia,serif;"><strong>Milestone:</strong> ${milestone.label}</p>${milestone.amount > 0 ? `<p style="margin:4px 0 0;font-size:15px;font-weight:600;color:#2E7D60;font-family:Georgia,serif;">$${Number(milestone.amount).toLocaleString()} AUD</p>` : ''}`) +
           para('Review the completed work and approve the milestone to release payment. If you have any concerns, you can flag an issue from the delivery page before approving.') +
           btn(APP_URL + '/delivery', 'Review and approve milestone', '#2E7D60'),
           `Milestone ready for your approval — ${milestone.label}`
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
           greeting(tradieName) +
           para(`<strong>${issue.job.client.full_name}</strong> has logged a warranty issue on a job you completed:`) +
           jobCard(issue.job.title, issue.job.trade_category, issue.job.suburb, '#D4522A',
-            `<p style="margin:8px 0 0;font-size:13px;color:#1C2B32;font-family:Georgia,serif;"><strong>Issue:</strong> ${issue.title}</p><p style="margin:4px 0 0;font-size:13px;color:#4A5E64;font-family:Georgia,serif;">${issue.description || ''}</p>`) +
+            `<p style="margin:8px 0 0;font-size:13px;color:#0A0A0A;font-family:Georgia,serif;"><strong>Issue:</strong> ${issue.title}</p><p style="margin:4px 0 0;font-size:13px;color:#4A5E64;font-family:Georgia,serif;">${issue.description || ''}</p>`) +
           para('You have 5 business days to respond. Log in to review the issue and provide a response or arrange a time to return to site.') +
           btn(APP_URL + '/tradie/dashboard', 'View warranty issue', '#D4522A'),
           `Warranty issue logged — ${issue.title}`
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
           para(`<strong>${job.client.full_name}</strong> has decided not to proceed with your quote for the following job:`) +
           jobCard(job.title, job.trade_category, job.suburb, '#7A9098') +
           para('This is part of the process — clients sometimes go in a different direction. Your Dialogue Rating reflects the quality of your communication throughout, regardless of the outcome.') +
-          btn(APP_URL + '/tradie/dashboard', 'Back to your dashboard', '#1C2B32'),
+          btn(APP_URL + '/tradie/dashboard', 'Back to your dashboard', '#0A0A0A'),
           `Quote not accepted on ${job.title}`
         )
         await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Quote not accepted — ${job.title}`, html })
@@ -276,7 +276,7 @@ export async function POST(request: NextRequest) {
           para(`You have sent quote requests to ${tradieNames.length} tradie${tradieNames.length !== 1 ? 's' : ''}: <strong>${tradieNames.join(', ')}</strong>.`) +
           jobCard(job.title, job.trade_category, job.suburb, '#9B6B9B') +
           para('Each tradie will be in touch to arrange a site visit. The consult is where they assess the job in person before quoting. You will be notified when quotes are submitted.') +
-          btn(APP_URL + '/consult', 'Track your job progress', '#1C2B32'),
+          btn(APP_URL + '/consult', 'Track your job progress', '#0A0A0A'),
           `Quote requests sent to ${tradieNames.length} tradie${tradieNames.length !== 1 ? 's' : ''}`
         )
         await resend.emails.send({ from: FROM, to: job.client.email, subject: `Quote requests sent — ${job.title}`, html })
@@ -380,7 +380,7 @@ export async function POST(request: NextRequest) {
           para(`<strong>${job.client.full_name}</strong> has signed off on the completed work. Your warranty period has now started.`) +
           jobCard(job.title, job.trade_category, job.suburb, '#2E7D60') +
           para('If any warranty issues are raised during the warranty period, you will be notified and will have 5 business days to respond. Your Dialogue Rating for this job has been recorded.') +
-          btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32'),
+          btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#0A0A0A'),
           `${job.client.full_name} has signed off on the job`
         )
         await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Job signed off — ${job.title}`, html })
@@ -451,7 +451,7 @@ export async function POST(request: NextRequest) {
             held
               ? `<p style="margin:8px 0 0;font-size:13px;color:#C07830;font-family:Georgia,serif;">⏸ Work approved — payment is being held in Steadyhand pending final settlement.</p>`
               : `<p style="margin:8px 0 0;font-size:13px;color:#2E7D60;font-family:Georgia,serif;">✓ Payment released to your account.</p>`) +
-          btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#1C2B32'),
+          btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#0A0A0A'),
           held ? `Milestone approved — payment held` : `Milestone approved — payment released`
         )
         await resend.emails.send({ from: FROM, to: milestone.job.tradie.profile.email, subject: held ? `Milestone approved, payment held — ${milestone.job.title}` : `Milestone approved — ${milestone.job.title}`, html })

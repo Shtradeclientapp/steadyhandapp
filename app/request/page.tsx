@@ -35,14 +35,14 @@ const inputStyle = {
   width: '100%', padding: '11px 14px',
   border: '1.5px solid rgba(28,43,50,0.18)',
   borderRadius: '8px', fontSize: '14px',
-  background: '#F4F8F7', color: '#1C2B32',
+  background: '#F4F8F7', color: '#0A0A0A',
   outline: 'none', fontFamily: 'sans-serif',
   display: 'block', marginTop: '4px'
 }
 
 const labelStyle = {
   display: 'block', fontSize: '13px',
-  fontWeight: '500' as const, color: '#1C2B32',
+  fontWeight: '500' as const, color: '#0A0A0A',
   marginBottom: '14px', fontFamily: 'sans-serif'
 }
 
@@ -150,8 +150,8 @@ sessionStorage.removeItem('diy_project_id')
 
   const btn = (label: string, onClick: () => void, variant: 'primary'|'ghost' = 'primary', disabled = false) => (
     <button onClick={onClick} disabled={disabled} style={{
-      background: variant === 'primary' ? '#1C2B32' : 'transparent',
-      color: variant === 'primary' ? 'white' : '#1C2B32',
+      background: variant === 'primary' ? '#0A0A0A' : 'transparent',
+      color: variant === 'primary' ? 'white' : '#0A0A0A',
       border: variant === 'ghost' ? '1px solid rgba(28,43,50,0.25)' : 'none',
       padding:'13px 24px', borderRadius:'8px', fontSize:'14px',
       fontWeight:'500', cursor: disabled ? 'not-allowed' : 'pointer',
@@ -167,7 +167,7 @@ sessionStorage.removeItem('diy_project_id')
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#2E7D60', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>Tell us what you need</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>DEFINE YOUR REQUEST</h1>
 
           {dots}
 
@@ -258,7 +258,7 @@ sessionStorage.removeItem('diy_project_id')
               {form.description && (
                 <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px', marginBottom:'20px' }}>
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'0.5px' }}>Your job</p>
-                  <p style={{ fontSize:'13px', color:'#1C2B32', margin:0, lineHeight:'1.5' }}>{form.title}</p>
+                  <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0, lineHeight:'1.5' }}>{form.title}</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:'4px 0 0', lineHeight:'1.5' }}>{form.description.slice(0, 120)}{form.description.length > 120 ? '...' : ''}</p>
                 </div>
               )}
@@ -348,7 +348,7 @@ sessionStorage.removeItem('diy_project_id')
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:'12px', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                     <span style={{ fontSize:'13px', color:'#7A9098', minWidth:'90px', flexShrink:0, fontFamily:'sans-serif' }}>{item.label}</span>
-                    <span style={{ fontSize:'13px', fontWeight:'500', color:'#1C2B32', fontFamily:'sans-serif' }}>{item.value}</span>
+                    <span style={{ fontSize:'13px', fontWeight:'500', color:'#0A0A0A', fontFamily:'sans-serif' }}>{item.value}</span>
                   </div>
                 ))}
               </div>

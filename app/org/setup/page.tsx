@@ -47,7 +47,7 @@ export default function OrgSetupPage() {
     setSubmitting(false)
   }
 
-  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif' }
+  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif' }
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
@@ -55,7 +55,7 @@ export default function OrgSetupPage() {
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
       </nav>
       <div style={{ maxWidth:'560px', margin:'0 auto', padding:'48px 24px' }}>
-        <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'28px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
+        <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'28px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 0%, rgba(212,82,42,0.18), transparent 50%)' }} />
           <div style={{ position:'relative', zIndex:1 }}>
             <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Organisation setup</p>
@@ -68,18 +68,18 @@ export default function OrgSetupPage() {
 
         {step === 1 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>WHAT TYPE OF ORGANISATION?</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>WHAT TYPE OF ORGANISATION?</h2>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'20px' }}>
               {ORG_TYPES.map(t => (
                 <div key={t.value} onClick={() => setF('type', t.value)}
                   style={{ padding:'14px 16px', borderRadius:'10px', border:'2px solid '+(form.type === t.value ? '#D4522A' : 'rgba(28,43,50,0.1)'), background: form.type === t.value ? 'rgba(212,82,42,0.06)' : '#F4F8F7', cursor:'pointer' }}>
-                  <p style={{ fontSize:'14px', fontWeight:500, color: form.type === t.value ? '#D4522A' : '#1C2B32', margin:'0 0 3px' }}>{t.label}</p>
+                  <p style={{ fontSize:'14px', fontWeight:500, color: form.type === t.value ? '#D4522A' : '#0A0A0A', margin:'0 0 3px' }}>{t.label}</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{t.desc}</p>
                 </div>
               ))}
             </div>
             <button type="button" onClick={() => setStep(2)} disabled={!form.type}
-              style={{ width:'100%', background:'#1C2B32', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: !form.type ? 0.5 : 1 }}>
+              style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: !form.type ? 0.5 : 1 }}>
               Continue →
             </button>
           </div>
@@ -87,32 +87,32 @@ export default function OrgSetupPage() {
 
         {step === 2 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>ORGANISATION DETAILS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>ORGANISATION DETAILS</h2>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px', marginBottom:'20px' }}>
               <div>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Organisation name *</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Organisation name *</label>
                 <input type="text" placeholder="e.g. Coastal Strata Management" value={form.name} onChange={e => setF('name', e.target.value)} style={inp} />
               </div>
               <div>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>ABN</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>ABN</label>
                 <input type="text" placeholder="12 345 678 901" value={form.abn} onChange={e => setF('abn', e.target.value)} style={inp} />
               </div>
               <div>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Phone</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Phone</label>
                 <input type="tel" placeholder="08 9000 0000" value={form.phone} onChange={e => setF('phone', e.target.value)} style={inp} />
               </div>
               <div>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Billing email</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Billing email</label>
                 <input type="email" placeholder={profile?.email || 'billing@yourorg.com.au'} value={form.billing_email} onChange={e => setF('billing_email', e.target.value)} style={inp} />
               </div>
               <div>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Website (optional)</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Website (optional)</label>
                 <input type="url" placeholder="https://yourcompany.com.au" value={form.website} onChange={e => setF('website', e.target.value)} style={inp} />
               </div>
             </div>
             <div style={{ display:'flex', gap:'10px' }}>
               <button type="button" onClick={() => setStep(1)}
-                style={{ background:'transparent', color:'#1C2B32', padding:'12px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
+                style={{ background:'transparent', color:'#0A0A0A', padding:'12px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
                 Back
               </button>
               <button type="button" onClick={createOrg} disabled={!form.name || submitting}

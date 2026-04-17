@@ -110,10 +110,10 @@ export default function TradieProfilePage() {
     setTimeout(() => setSaved(false), 3000)
   }
 
-  const inp = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'sans-serif' }
+  const inp = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const, fontFamily: 'sans-serif' }
   const lbl = (text: string, sub?: string) => (
     <div style={{ marginBottom: '6px' }}>
-      <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>{text}</p>
+      <p style={{ fontSize: '13px', fontWeight: 500, color: '#0A0A0A', margin: 0 }}>{text}</p>
       {sub && <p style={{ fontSize: '11px', color: '#7A9098', margin: '2px 0 0' }}>{sub}</p>}
     </div>
   )
@@ -160,7 +160,7 @@ export default function TradieProfilePage() {
       </nav>
 
       {/* PROFILE HEADER CARD */}
-      <div style={{ background: '#1C2B32', padding: '32px 0', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: '#0A0A0A', padding: '32px 0', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' as const }}>
@@ -225,7 +225,7 @@ export default function TradieProfilePage() {
             { id: 'availability', label: 'Availability' },
           ] as const).map(t => (
             <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-              style={{ padding: '10px 20px', border: 'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#1C2B32' : '#7A9098' }}>
+              style={{ padding: '10px 20px', border: 'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#0A0A0A' : '#7A9098' }}>
               {t.label}
             </button>
           ))}
@@ -234,7 +234,7 @@ export default function TradieProfilePage() {
         {activeTab === 'profile' && (
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>YOUR BIO</p>
               </div>
               <div style={{ padding: '20px' }}>
@@ -246,7 +246,7 @@ export default function TradieProfilePage() {
             </div>
 
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>TRADE CATEGORIES</p>
               </div>
               <div style={{ padding: '20px' }}>
@@ -266,7 +266,7 @@ export default function TradieProfilePage() {
             </div>
 
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>SERVICE AREAS</p>
               </div>
               <div style={{ padding: '20px' }}>
@@ -290,7 +290,7 @@ export default function TradieProfilePage() {
         {activeTab === 'business' && (
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>BUSINESS DETAILS</p>
               </div>
               <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
@@ -327,7 +327,7 @@ export default function TradieProfilePage() {
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {CONTACT_PREFS.map(c => (
                       <button key={c} type="button" onClick={() => setF('preferred_contact', c.toLowerCase())}
-                        style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.preferred_contact === c.toLowerCase() ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.preferred_contact === c.toLowerCase() ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.preferred_contact === c.toLowerCase() ? '#2E7D60' : '#1C2B32', cursor: 'pointer' }}>
+                        style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.preferred_contact === c.toLowerCase() ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.preferred_contact === c.toLowerCase() ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.preferred_contact === c.toLowerCase() ? '#2E7D60' : '#0A0A0A', cursor: 'pointer' }}>
                         {c}
                       </button>
                     ))}
@@ -337,7 +337,7 @@ export default function TradieProfilePage() {
             </div>
 
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>VERIFICATION STATUS</p>
               </div>
               <div style={{ padding: '20px', display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
@@ -363,7 +363,7 @@ export default function TradieProfilePage() {
         {activeTab === 'availability' && (
           <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
             <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '14px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
                 <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '13px', color: 'rgba(216,228,225,0.85)', letterSpacing: '0.5px', margin: 0 }}>AVAILABILITY STATUS</p>
               </div>
               <div style={{ padding: '20px' }}>
@@ -389,7 +389,7 @@ export default function TradieProfilePage() {
                   { label: 'Dialogue Rating', value: tradie?.dialogue_score_avg ? Number(tradie.dialogue_score_avg).toFixed(0) : '—' },
                 ].map(s => (
                   <div key={s.label} style={{ background: 'white', borderRadius: '8px', padding: '12px', textAlign: 'center' as const }}>
-                    <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#1C2B32', margin: '0 0 4px' }}>{s.value}</p>
+                    <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#0A0A0A', margin: '0 0 4px' }}>{s.value}</p>
                     <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>{s.label}</p>
                   </div>
                 ))}
@@ -403,7 +403,7 @@ export default function TradieProfilePage() {
             <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'8px' }}>⚠ {saveError}</p>
           )}
           <button type="button" onClick={save} disabled={saving}
-            style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
+            style={{ width: '100%', background: '#0A0A0A', color: 'white', padding: '15px', borderRadius: '10px', fontSize: '15px', fontWeight: 600, border: 'none', cursor: 'pointer', opacity: saving ? 0.7 : 1 }}>
             {saving ? 'Saving...' : saved ? '✓ Profile saved' : 'Save profile →'}
           </button>
           {saved && (

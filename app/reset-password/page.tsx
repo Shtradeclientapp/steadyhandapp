@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'sans-serif' }}>
       <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'40px', width:'100%', maxWidth:'400px' }}>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', marginBottom:'8px' }}>STEADYHAND</h1>
-        <h2 style={{ fontSize:'20px', fontWeight:600, color:'#1C2B32', marginBottom:'6px' }}>Set new password</h2>
+        <h2 style={{ fontSize:'20px', fontWeight:600, color:'#0A0A0A', marginBottom:'6px' }}>Set new password</h2>
         <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>Choose a new password for your account.</p>
         {!ready ? (
           <p style={{ fontSize:'14px', color:'#4A5E64' }}>Loading...</p>
@@ -60,17 +60,17 @@ export default function ResetPasswordPage() {
         ) : (
           <>
             <div style={{ marginBottom:'14px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>New password</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>New password</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)}
                 placeholder="At least 8 characters"
-                style={{ width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                style={{ width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
             </div>
             <div style={{ marginBottom:'20px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Confirm password</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Confirm password</label>
               <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
                 placeholder="Repeat password"
                 onKeyDown={e => e.key === 'Enter' && handleReset()}
-                style={{ width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                style={{ width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
             </div>
             {status && (
               <div style={{ marginBottom:'14px', padding:'10px 14px', borderRadius:'8px', fontSize:'13px',
@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
               </div>
             )}
             <button type="button" onClick={handleReset} disabled={!password || !confirm || loading}
-              style={{ width:'100%', background:'#1C2B32', color:'white', padding:'13px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', opacity:!password || !confirm || loading ? 0.5 : 1 }}>
+              style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', opacity:!password || !confirm || loading ? 0.5 : 1 }}>
               {loading ? 'Updating...' : 'Update password'}
             </button>
           </>

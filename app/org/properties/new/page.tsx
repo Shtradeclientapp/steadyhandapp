@@ -18,7 +18,7 @@ export default function NewPropertyPage() {
   }, [])
 
   const setF = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
-  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }
+  const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }
 
   const save = async () => {
     if (!form.address) return
@@ -46,24 +46,24 @@ export default function NewPropertyPage() {
         <a href="/org/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>← Back to dashboard</a>
       </nav>
       <div style={{ maxWidth:'600px', margin:'0 auto', padding:'40px 24px' }}>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'24px' }}>ADD PROPERTY</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'24px' }}>ADD PROPERTY</h1>
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
           <div>
-            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Street address *</label>
+            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Street address *</label>
             <input type="text" placeholder="e.g. 12/45 King Street" value={form.address} onChange={e => setF('address', e.target.value)} style={inp} />
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
             <div>
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Suburb</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Suburb</label>
               <input type="text" placeholder="e.g. Subiaco" value={form.suburb} onChange={e => setF('suburb', e.target.value)} style={inp} />
             </div>
             <div>
-              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Postcode</label>
+              <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Postcode</label>
               <input type="text" placeholder="6008" value={form.postcode} onChange={e => setF('postcode', e.target.value)} style={inp} />
             </div>
           </div>
           <div>
-            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Property type</label>
+            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Property type</label>
             <select value={form.property_type} onChange={e => setF('property_type', e.target.value)} style={{ ...inp, padding:'10px 12px' }}>
               {['residential','commercial','strata_lot','strata_building','industrial'].map(t => (
                 <option key={t} value={t}>{t.replace(/_/g,' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}</option>
@@ -79,12 +79,12 @@ export default function NewPropertyPage() {
             </div>
           </div>
           <div>
-            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'5px' }}>Notes</label>
+            <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'5px' }}>Notes</label>
             <textarea placeholder="Access instructions, key details..." value={form.notes} onChange={e => setF('notes', e.target.value)} rows={3}
               style={{ ...inp, resize:'vertical' as const, lineHeight:'1.6', fontFamily:'sans-serif' }} />
           </div>
           <button type="button" onClick={save} disabled={!form.address || submitting}
-            style={{ width:'100%', background:'#1C2B32', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: !form.address || submitting ? 0.6 : 1 }}>
+            style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: !form.address || submitting ? 0.6 : 1 }}>
             {submitting ? 'Saving...' : 'Add property →'}
           </button>
         </div>

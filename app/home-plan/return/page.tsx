@@ -33,12 +33,12 @@ export default function HomePlanReturnPage() {
         {status === 'success' && (
           <>
             <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(46,125,96,0.12)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:'28px' }}>✓</div>
-            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'10px' }}>Welcome to Steadyhand Home</h1>
+            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'10px' }}>Welcome to Steadyhand Home</h1>
             <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
               Your account has been upgraded. All Home features are now active.
             </p>
             {email && <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'28px' }}>Confirmation sent to {email}</p>}
-            <a href="/dashboard" style={{ display:'block', background:'#1C2B32', color:'white', padding:'14px', borderRadius:'10px', fontSize:'14px', fontWeight:600, textDecoration:'none' }}>
+            <a href="/dashboard" style={{ display:'block', background:'#0A0A0A', color:'white', padding:'14px', borderRadius:'10px', fontSize:'14px', fontWeight:600, textDecoration:'none' }}>
               Go to dashboard →
             </a>
           </>

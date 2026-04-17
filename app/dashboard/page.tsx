@@ -164,13 +164,13 @@ export default function DashboardPage() {
           </a>
           <div style={{ position:'relative' as const }}>
             <div onClick={() => setDropdownOpen(!dropdownOpen)}
-              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
+              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
               {profile?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'A'}
             </div>
             {dropdownOpen && (
               <div style={{ position:'absolute' as const, right:0, top:'44px', background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'10px', boxShadow:'0 8px 24px rgba(28,43,50,0.12)', minWidth:'200px', zIndex:200, overflow:'hidden' }}>
                 <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#F4F8F7' }}>
-                  <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{profile?.full_name || 'My account'}</p>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{profile?.full_name || 'My account'}</p>
                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{user?.email}</p>
                 </div>
                 {[
@@ -182,7 +182,7 @@ export default function DashboardPage() {
                   { label:'Organisation dashboard', href:'/org/dashboard' },
                 ].map(item => (
                   <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
-                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                     {item.label}
                   </a>
                 ))}
@@ -196,7 +196,7 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'28px 0 40px', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'28px 0 40px', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 50%, rgba(212,82,42,0.12), transparent 55%)' }} />
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Client dashboard</p>
@@ -214,14 +214,14 @@ export default function DashboardPage() {
           ].map(s => (
             <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px' }}>
               <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'6px' }}>{s.label}</p>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:'#1C2B32', letterSpacing:'1px' }}>{s.value}</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'32px', color:'#0A0A0A', letterSpacing:'1px' }}>{s.value}</p>
             </div>
           ))}
         </div>
 
         {consults.length > 0 && (
           <div style={{ marginBottom:'20px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>CONSULTS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'12px' }}>CONSULTS</h2>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
               {consults.map((a: any) => {
                 const date = new Date(a.consult_date)
@@ -232,11 +232,11 @@ export default function DashboardPage() {
                   <a key={a.id} href="/consult" style={{ textDecoration:'none' }}>
                     <div style={{ background:'#E8F0EE', border:'1px solid ' + (isToday ? 'rgba(155,107,155,0.4)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
                       <div style={{ width:'40px', height:'40px', borderRadius:'8px', background: isToday ? 'rgba(155,107,155,0.12)' : 'rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                        <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#1C2B32', margin:0, lineHeight:1 }}>{date.getDate()}</p>
+                        <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#0A0A0A', margin:0, lineHeight:1 }}>{date.getDate()}</p>
                         <p style={{ fontSize:'9px', color:'#7A9098', margin:0, textTransform:'uppercase' as const }}>{date.toLocaleDateString('en-AU', { month:'short' })}</p>
                       </div>
                       <div style={{ flex:1 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{a.job?.title}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{a.job?.title}</p>
                         <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
                           {a.job?.tradie?.business_name} · {date.toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
                           {!isConfirmed && <span style={{ color:'#C07830', marginLeft:'6px' }}>· Awaiting confirmation</span>}
@@ -255,11 +255,11 @@ export default function DashboardPage() {
         {profile && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'18px 20px', marginBottom:'12px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
             <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
-              <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <div style={{ width:'44px', height:'44px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)' }}>{profile.full_name?.charAt(0) || '?'}</span>
               </div>
               <div>
-                <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{profile.full_name || 'Your name'}</p>
+                <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{profile.full_name || 'Your name'}</p>
                 <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
                   {[profile.suburb, profile.property_type, profile.bedrooms ? profile.bedrooms + ' bed' : null].filter(Boolean).join(' · ') || 'Complete your profile →'}
                 </p>
@@ -280,11 +280,11 @@ export default function DashboardPage() {
 
         {/* SUBSCRIPTION CARD */}
         <Link href="/home-plan" style={{ textDecoration:'none', display:'block', marginBottom:'12px' }}>
-          <div style={{ background: profile?.subscription_plan === 'home' ? '#1C2B32' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
+          <div style={{ background: profile?.subscription_plan === 'home' ? '#0A0A0A' : '#E8F0EE', border: profile?.subscription_plan === 'home' ? '2px solid #2E7D60' : '1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
               <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
               <div>
-                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#1C2B32', margin:'0 0 2px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>
                   {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
                 </p>
                 <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
@@ -310,7 +310,7 @@ export default function DashboardPage() {
 
         {activeJobs.length > 0 && (
           <div style={{ marginBottom:'28px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>ACTIVE JOBS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'14px' }}>ACTIVE JOBS</h2>
             <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
               {activeJobs.map(job => {
                 const stage = STAGES[job.status] || STAGES.draft
@@ -318,7 +318,7 @@ export default function DashboardPage() {
                   <a key={job.id} href={stage.path} style={{ textDecoration:'none' }}>
                     <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + stage.color, borderRadius:'11px', padding:'18px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', transition:'background 0.15s', cursor:'pointer' }}>
                       <div style={{ flex:1, minWidth:'200px' }}>
-                        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
+                        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
                         <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
                       </div>
                       <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
@@ -341,7 +341,7 @@ export default function DashboardPage() {
 
         {jobs.length === 0 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'24px' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 24px', position:'relative', overflow:'hidden' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 24px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
               <div style={{ position:'relative', zIndex:1 }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>YOUR FIRST JOB</p>
@@ -361,7 +361,7 @@ export default function DashboardPage() {
                 ].map(item => (
                   <div key={item.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px' }}>
                     <span style={{ fontSize:'20px', display:'block', marginBottom:'8px' }}>{item.icon}</span>
-                    <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>{item.title}</p>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{item.title}</p>
                     <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.body}</p>
                   </div>
                 ))}
@@ -377,12 +377,12 @@ export default function DashboardPage() {
 
         {doneJobs.length > 0 && (
           <div>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>COMPLETED JOBS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'14px' }}>COMPLETED JOBS</h2>
             <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
               {doneJobs.map(job => (
                 <div key={job.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #2E7D60', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', opacity:0.7 }}>
                   <div>
-                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px' }}>{job.title}</div>
+                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px' }}>{job.title}</div>
                     <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>{job.trade_category} · {job.suburb}</div>
                   </div>
                   <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>Complete</span>
@@ -399,7 +399,7 @@ export default function DashboardPage() {
                 {/* BUILD YOUR CAPABILITY */}
         <div style={{ marginTop:'32px', marginBottom:'28px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>BUILD YOUR CAPABILITY</h2>
             <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>About our approach →</a>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:'12px' }}>
@@ -412,7 +412,7 @@ export default function DashboardPage() {
               <a key={c.title} href={c.href} target="_blank" style={{ textDecoration:'none' }}>
                 <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px', height:'100%', cursor:'pointer' }}>
                   <div style={{ fontSize:'22px', marginBottom:'8px' }}>{c.icon}</div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>{c.title}</p>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'5px' }}>{c.title}</p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'10px' }}>{c.body}</p>
                   <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{c.label}</p>
                 </div>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
 
         <div style={{ marginTop:'36px' }}>
           {/* HOME HUB HEADER */}
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>YOUR HOME</h2>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'12px' }}>YOUR HOME</h2>
 
           {/* HUB CARDS */}
           {!isHomeMember && (
@@ -441,7 +441,7 @@ export default function DashboardPage() {
             <a href="/diy" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #D4522A', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Build Journal</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Build Journal</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Trades, permits, tasks, budget and WA compliance.</p>
                 </div>
                 <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
@@ -452,7 +452,7 @@ export default function DashboardPage() {
             <a href="/vault" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #2E7D60', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Document Vault</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Document Vault</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Scope agreements, warranties and certificates.</p>
                 </div>
                 <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
@@ -463,7 +463,7 @@ export default function DashboardPage() {
             <a href="/wallet" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #C07830', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.3px', margin:'0 0 3px' }}>Finance</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Finance</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quotes, milestone payments and invoice history.</p>
                 </div>
                 <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
@@ -482,7 +482,7 @@ export default function DashboardPage() {
       {showClientWizard && (
         <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 28px' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 28px' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>WELCOME TO STEADYHAND</p>
               <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>A few things to get you started</p>
             </div>
@@ -516,7 +516,7 @@ export default function DashboardPage() {
                       {item.done ? '✓' : (i + 1)}
                     </div>
                     <div style={{ flex:1 }}>
-                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#1C2B32', margin:'0 0 2px' }}>{item.label}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#0A0A0A', margin:'0 0 2px' }}>{item.label}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{item.sub}</p>
                     </div>
                     {!item.done && (
@@ -528,7 +528,7 @@ export default function DashboardPage() {
               <button type="button" onClick={() => {
                 if (typeof window !== 'undefined') localStorage.setItem('client_setup_complete', '1')
                 setShowClientWizard(false)
-              }} style={{ width:'100%', background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+              }} style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to my dashboard →
               </button>
               <p style={{ fontSize:'11px', color:'#9AA5AA', textAlign:'center' as const, marginTop:'12px' }}>You can complete these steps any time from your dashboard</p>

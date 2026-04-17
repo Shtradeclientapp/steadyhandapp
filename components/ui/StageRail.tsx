@@ -41,7 +41,7 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
             <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid '+(isComplete?'#2E7D60':isCurrent?color:'rgba(28,43,50,0.2)'), background:isComplete?'#2E7D60':isCurrent?color:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:isComplete||isCurrent?'white':'#7A9098' }}>
               {isComplete ? '✓' : s.n}
             </div>
-            <div style={{ fontSize:'11px', color:isCurrent?'#1C2B32':isComplete?'#2E7D60':'#7A9098', fontWeight:isCurrent?600:400, whiteSpace:'nowrap' as const }}>{s.l}</div>
+            <div style={{ fontSize:'11px', color:isCurrent?'#0A0A0A':isComplete?'#2E7D60':'#7A9098', fontWeight:isCurrent?600:400, whiteSpace:'nowrap' as const }}>{s.l}</div>
           </a>
         )
       })}

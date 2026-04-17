@@ -3,7 +3,7 @@ export default function TermsPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif', padding:'40px 24px' }}>
       <div style={{ maxWidth:'740px', margin:'0 auto' }}>
         <a href="/" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none', display:'block', marginBottom:'40px' }}>STEADYHAND</a>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'8px' }}>TERMS OF SERVICE</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'8px' }}>TERMS OF SERVICE</h1>
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'40px' }}>Last updated: April 2026 · Steadyhand Digital Pty Ltd</p>
         {[
           { title:'1. About Steadyhand', body:'Steadyhand Digital Pty Ltd operates a platform connecting homeowners with licensed trade contractors in Western Australia. Steadyhand facilitates the engagement process but is not a party to any contract between a client and a tradie.' },
@@ -19,7 +19,7 @@ export default function TermsPage() {
           { title:'11. Contact', body:'For questions about these terms, contact legal@steadyhanddigital.com.au.' },
         ].map((s, i) => (
           <div key={i} style={{ marginBottom:'32px', paddingBottom:'32px', borderBottom: i < 10 ? '1px solid rgba(28,43,50,0.1)' : 'none' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'10px' }}>{s.title}</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'10px' }}>{s.title}</h2>
             <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.75', margin:0 }}>{s.body}</p>
           </div>
         ))}

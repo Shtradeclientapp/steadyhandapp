@@ -57,7 +57,7 @@ export function DialogueScore({
       <div style={{ padding:'18px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
           <div>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>DIALOGUE TRUST SCORE</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>DIALOGUE TRUST SCORE</p>
             <p style={{ fontSize:'12px', color:'#7A9098' }}>Powered by Steadyhand</p>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
@@ -105,7 +105,7 @@ export function DialogueScore({
               return (
                 <div key={key}>
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'4px' }}>
-                    <span style={{ fontSize:'12px', color:'#1C2B32', fontWeight:500 }}>{label}</span>
+                    <span style={{ fontSize:'12px', color:'#0A0A0A', fontWeight:500 }}>{label}</span>
                     <span style={{ fontSize:'12px', color: dimColor, fontWeight:600 }}>{dim.score}/5</span>
                   </div>
                   <div style={{ height:'4px', background:'rgba(28,43,50,0.08)', borderRadius:'2px', overflow:'hidden' }}>
@@ -134,7 +134,7 @@ export function DialogueScore({
             {suggestions.map((s, i) => (
               <div key={i} style={{ display:'flex', gap:'10px', alignItems:'flex-start', padding:'10px 12px', background:'rgba(107,79,168,0.04)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'8px' }}>
                 <span style={{ fontSize:'12px', color:'#6B4FA8', flexShrink:0, marginTop:'1px' }}>💬</span>
-                <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.5', margin:0 }}>{s}</p>
+                <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.5', margin:0 }}>{s}</p>
               </div>
             ))}
           </div>

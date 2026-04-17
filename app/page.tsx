@@ -62,38 +62,38 @@ export default function Home() {
           </div>
           <div className="nav-buttons" style={{ display:'flex', gap:'10px' }}>
             <Link href="/login">
-              <button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#1C2B32', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer' }}>Log in</button>
+              <button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#0A0A0A', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer' }}>Log in</button>
             </Link>
             <Link href="/signup">
-              <button style={{ background:'#1C2B32', color:'white', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer', border:'none' }}>Get started</button>
+              <button style={{ background:'#0A0A0A', color:'white', padding:'8px 18px', borderRadius:'6px', fontSize:'13px', cursor:'pointer', border:'none' }}>Get started</button>
             </Link>
           </div>
           <button type="button" className="hamburger" onClick={() => setMenuOpen(o => !o)}
             style={{ display:'none', flexDirection:'column' as const, gap:'5px', background:'none', border:'none', cursor:'pointer', padding:'8px' }}>
-            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
-            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
-            <span style={{ width:'22px', height:'2px', background:'#1C2B32', display:'block', borderRadius:'2px' }} />
+            <span style={{ width:'22px', height:'2px', background:'#0A0A0A', display:'block', borderRadius:'2px' }} />
+            <span style={{ width:'22px', height:'2px', background:'#0A0A0A', display:'block', borderRadius:'2px' }} />
+            <span style={{ width:'22px', height:'2px', background:'#0A0A0A', display:'block', borderRadius:'2px' }} />
           </button>
         </div>
         {menuOpen && (
           <div style={{ borderTop:'1px solid rgba(28,43,50,0.1)', background:'rgba(200,213,210,0.98)', padding:'16px 24px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
-            <a href="#how-it-works" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For homeowners</a>
-            <a href="#for-trade-businesses" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For trade businesses</a>
-            <a href="#for-organisations" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>For organisations</a>
-            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'14px', color:'#1C2B32', textDecoration:'none', fontWeight:500 }}>About</a>
+            <a href="#how-it-works" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#0A0A0A', textDecoration:'none', fontWeight:500 }}>For homeowners</a>
+            <a href="#for-trade-businesses" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#0A0A0A', textDecoration:'none', fontWeight:500 }}>For trade businesses</a>
+            <a href="#for-organisations" onClick={() => setMenuOpen(false)} style={{ fontSize:'14px', color:'#0A0A0A', textDecoration:'none', fontWeight:500 }}>For organisations</a>
+            <a href="https://www.steadyhanddigital.com" target="_blank" style={{ fontSize:'14px', color:'#0A0A0A', textDecoration:'none', fontWeight:500 }}>About</a>
             <div style={{ display:'flex', gap:'10px', paddingTop:'8px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
               <Link href="/login" style={{ flex:1 }}>
-                <button style={{ width:'100%', background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#1C2B32', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer' }}>Log in</button>
+                <button style={{ width:'100%', background:'transparent', border:'1px solid rgba(28,43,50,0.25)', color:'#0A0A0A', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer' }}>Log in</button>
               </Link>
               <Link href="/signup" style={{ flex:1 }}>
-                <button style={{ width:'100%', background:'#1C2B32', color:'white', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer', border:'none' }}>Get started</button>
+                <button style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'10px', borderRadius:'6px', fontSize:'14px', cursor:'pointer', border:'none' }}>Get started</button>
               </Link>
             </div>
           </div>
         )}
       </nav>
 
-      <div style={{ background:'#1C2B32', position:'relative', overflow:'hidden', textAlign:'center' }}>
+      <div style={{ background:'#0A0A0A', position:'relative', overflow:'hidden', textAlign:'center' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 50% 60%, rgba(212,82,42,0.15), transparent 60%)' }} />
         <div className="hero-inner" style={{ position:'relative', zIndex:1 }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(216,228,225,0.08)', border:'1px solid rgba(216,228,225,0.15)', borderRadius:'100px', padding:'6px 16px', marginBottom:'28px' }}>
@@ -137,7 +137,7 @@ export default function Home() {
           ].map(s => (
             <div key={s.label} style={{ textAlign:'center' as const }}>
               <div style={{ fontSize:'24px', marginBottom:'6px' }}>{s.icon}</div>
-              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'3px' }}>{s.title}</div>
+              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'3px' }}>{s.title}</div>
               <div style={{ fontSize:'12px', color:'#4A5E64', maxWidth:'160px', margin:'0 auto', lineHeight:'1.4' }}>{s.label}</div>
             </div>
           ))}
@@ -146,7 +146,7 @@ export default function Home() {
 
       <div className="section-inner" id="how-it-works">
         <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E7D60', fontWeight:'500', marginBottom:'10px' }}>How it works</p>
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST TO WARRANTY</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'12px' }}>REQUEST TO WARRANTY</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'520px', marginBottom:'40px' }}>
           Most platforms find you a tradie and disappear. Steadyhand stays present through every stage — guiding you, protecting you, and making sure you always know what happens next.
         </p>
@@ -174,7 +174,7 @@ export default function Home() {
             <div key={s.phase} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
               <div style={{ fontSize:'32px', marginBottom:'16px' }}>{s.icon}</div>
               <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'1px', textTransform:'uppercase' as const, marginBottom:'8px' }}>{s.phase}</p>
-              <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'8px' }}>{s.stages}</h3>
+              <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#0A0A0A', marginBottom:'8px' }}>{s.stages}</h3>
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65' }}>{s.body}</p>
             </div>
           ))}
@@ -184,7 +184,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div style={{ background:'#1C2B32' }}>
+      <div style={{ background:'#0A0A0A' }}>
         <div className="section-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'10px' }}>Why Steadyhand is different</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'12px' }}>A DIFFERENT KIND OF PLATFORM</h2>
@@ -211,7 +211,7 @@ export default function Home() {
       <div style={{ background:'#E8F0EE' }} id="for-trade-businesses">
         <div className="section-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#2E6A8F', fontWeight:'500', marginBottom:'10px' }}>For trade businesses</p>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT TO SUPPORT YOUR PRACTICE</h2>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT TO SUPPORT YOUR PRACTICE</h2>
           <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', lineHeight:'1.7', maxWidth:'560px', marginBottom:'40px' }}>
             Steadyhand helps trade businesses become more professional, more compliant and more digitally capable — without disrupting the way you already work.
           </p>
@@ -222,7 +222,7 @@ export default function Home() {
               { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.5% — only when you get paid.' },
             ].map(s => (
               <div key={s.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.06)' }}>
-                <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#1C2B32', marginBottom:'10px' }}>{s.title}</h3>
+                <h3 style={{ fontSize:'17px', fontWeight:'600', color:'#0A0A0A', marginBottom:'10px' }}>{s.title}</h3>
                 <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65' }}>{s.body}</p>
               </div>
             ))}
@@ -232,7 +232,7 @@ export default function Home() {
 
       <div style={{ background:'#E8F0EE' }}>
         <div className="section-inner" style={{ maxWidth:'900px', margin:'0 auto', padding:'64px 48px' }}>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'8px', textAlign:'center' as const }}>WHAT PEOPLE SAY</h2>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'8px', textAlign:'center' as const }}>WHAT PEOPLE SAY</h2>
           <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'32px', textAlign:'center' as const }}>From homeowners and trade businesses who have used Steadyhand</p>
           <div className="values-grid" style={{ alignItems:'stretch' }}>
 
@@ -241,7 +241,7 @@ export default function Home() {
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
                 <span style={{ fontSize:'10px', color:'#2E6A8F', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Homeowner — Case study</span>
               </div>
-              <blockquote style={{ fontSize:'17px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'24px', flex:1 }}>
+              <blockquote style={{ fontSize:'17px', fontStyle:'italic', fontWeight:300, color:'#0A0A0A', lineHeight:'1.75', marginBottom:'24px', flex:1 }}>
                 &ldquo;The scope agreement meant there were no surprises. I knew exactly what was included and what would happen at each milestone. I felt in control for the first time hiring a tradie.&rdquo;
               </blockquote>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
@@ -257,7 +257,7 @@ export default function Home() {
               <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'3px 10px', marginBottom:'20px', alignSelf:'flex-start' as const }}>
                 <span style={{ fontSize:'10px', color:'#D4522A', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Trade business — Case study</span>
               </div>
-              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#1C2B32', lineHeight:'1.75', marginBottom:'20px', flex:1 }}>
+              <blockquote style={{ fontSize:'15px', fontStyle:'italic', fontWeight:300, color:'#0A0A0A', lineHeight:'1.75', marginBottom:'20px', flex:1 }}>
                 &ldquo;From the get-go, Steadyhand developed sensitive ways of creating processes from the ground up across worksites, office and client comms, but they were also great at recognising and supporting my intuitions as an owner-operator going through a period of change. I recommend Steadyhand wholeheartedly as digital operations professionals.&rdquo;
               </blockquote>
               <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
@@ -274,7 +274,7 @@ export default function Home() {
       </div>
 
       {/* FAQ */}
-      <div style={{ background:'#1C2B32' }}>
+      <div style={{ background:'#0A0A0A' }}>
         <div className="section-inner">
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', fontWeight:500, marginBottom:'10px' }}>Common questions</p>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'1.5px', marginBottom:'40px' }}>GOOD QUESTIONS.</h2>
@@ -297,7 +297,7 @@ export default function Home() {
       </div>
 
       <div className="cta-inner">
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT FOR WA. BUILT FOR TRUST.</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'12px' }}>BUILT FOR WA. BUILT FOR TRUST.</h2>
         <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:'300', marginBottom:'32px', maxWidth:'480px', margin:'0 auto 32px', lineHeight:'1.7' }}>
           Steadyhand is for Western Australian homeowners and trade businesses who believe that good work deserves a proper process.
         </p>
@@ -306,12 +306,12 @@ export default function Home() {
             <button style={{ background:'#D4522A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', fontWeight:'500', border:'none', cursor:'pointer' }}>Start a job request</button>
           </Link>
           <Link href="/signup">
-            <button style={{ background:'#1C2B32', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer' }}>Get started as a tradie</button>
+            <button style={{ background:'#0A0A0A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer' }}>Get started as a tradie</button>
           </Link>
         </div>
       </div>
 
-      <div style={{ background:'#1C2B32' }}>
+      <div style={{ background:'#0A0A0A' }}>
         <div className="footer-inner footer-pad">
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.7)', letterSpacing:'2px' }}>STEADYHAND</div>
           <div className="footer-links">

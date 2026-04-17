@@ -65,7 +65,7 @@ export default function OrgRequestPage() {
     else setSubmitError('Failed to create jobs — please try again')
   }
 
-  const inp: React.CSSProperties = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box', fontFamily:'sans-serif' }
+  const inp: React.CSSProperties = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box', fontFamily:'sans-serif' }
 
   const suburbs = Array.from(new Set(properties.map(p => p.suburb || 'Other'))).sort()
 
@@ -79,23 +79,23 @@ export default function OrgRequestPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ background:'white', borderRadius:'16px', padding:'48px', textAlign:'center', maxWidth:'480px', width:'100%', margin:'0 24px' }}>
         <div style={{ fontSize:'48px', marginBottom:'16px' }}>✓</div>
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#1C2B32', marginBottom:'8px' }}>Jobs created</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', marginBottom:'8px' }}>Jobs created</h2>
         <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>
           {selectedProperties.length} job request{selectedProperties.length !== 1 ? 's' : ''} created across {selectedProperties.length} {selectedProperties.length !== 1 ? 'properties' : 'property'}.
         </p>
-        <a href="/org/dashboard" style={{ background:'#1C2B32', color:'white', padding:'12px 28px', borderRadius:'8px', textDecoration:'none', fontSize:'14px', fontWeight:500 }}>Back to dashboard →</a>
+        <a href="/org/dashboard" style={{ background:'#0A0A0A', color:'white', padding:'12px 28px', borderRadius:'8px', textDecoration:'none', fontSize:'14px', fontWeight:500 }}>Back to dashboard →</a>
       </div>
     </div>
   )
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'#1C2B32', position:'sticky', top:0, zIndex:100 }}>
+      <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'#0A0A0A', position:'sticky', top:0, zIndex:100 }}>
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
         <a href="/org/dashboard" style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', textDecoration:'none' }}>← Back to dashboard</a>
       </nav>
 
-      <div style={{ background:'#1C2B32', padding:'32px 24px', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'32px 24px', position:'relative', overflow:'hidden' }}>
         <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 70% 50%, rgba(212,82,42,0.12), transparent 55%)' }} />
         <div style={{ maxWidth:'860px', margin:'0 auto', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Portfolio Job Request</p>
@@ -114,8 +114,8 @@ export default function OrgRequestPage() {
               <div key={s} style={{ display:'flex', alignItems:'center', gap:'8px' }}>
                 {i > 0 && <div style={{ width:'24px', height:'1px', background:'rgba(28,43,50,0.2)' }} />}
                 <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                  <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:600, background: step === s ? '#1C2B32' : 'rgba(28,43,50,0.15)', color: step === s ? 'white' : '#7A9098' }}>{i+1}</div>
-                  <span style={{ fontSize:'12px', color: step === s ? '#1C2B32' : '#7A9098', fontWeight: step === s ? 600 : 400 }}>{labels[s]}</span>
+                  <div style={{ width:'22px', height:'22px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:600, background: step === s ? '#0A0A0A' : 'rgba(28,43,50,0.15)', color: step === s ? 'white' : '#7A9098' }}>{i+1}</div>
+                  <span style={{ fontSize:'12px', color: step === s ? '#0A0A0A' : '#7A9098', fontWeight: step === s ? 600 : 400 }}>{labels[s]}</span>
                 </div>
               </div>
             )
@@ -127,7 +127,7 @@ export default function OrgRequestPage() {
           <div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>SELECT PROPERTIES</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>SELECT PROPERTIES</p>
                 <div style={{ display:'flex', gap:'8px' }}>
                   <button type="button" onClick={() => setSelectedProperties(properties.map(p => p.id))} style={{ fontSize:'12px', color:'#2E6A8F', background:'none', border:'none', cursor:'pointer', padding:'4px 8px' }}>Select all</button>
                   <button type="button" onClick={() => setSelectedProperties([])} style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'4px 8px' }}>Clear</button>
@@ -152,7 +152,7 @@ export default function OrgRequestPage() {
                                 {selectedProperties.includes(p.id) && <span style={{ color:'white', fontSize:'10px', fontWeight:700 }}>✓</span>}
                               </div>
                               <div>
-                                <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{p.address}</p>
+                                <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{p.address}</p>
                                 <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{p.property_type}</p>
                               </div>
                             </div>
@@ -166,7 +166,7 @@ export default function OrgRequestPage() {
             </div>
             <div style={{ display:'flex', justifyContent:'flex-end' }}>
               <button type="button" onClick={() => setStep('details')} disabled={selectedProperties.length === 0}
-                style={{ background: selectedProperties.length > 0 ? '#1C2B32' : 'rgba(28,43,50,0.2)', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: selectedProperties.length > 0 ? 'pointer' : 'not-allowed' }}>
+                style={{ background: selectedProperties.length > 0 ? '#0A0A0A' : 'rgba(28,43,50,0.2)', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: selectedProperties.length > 0 ? 'pointer' : 'not-allowed' }}>
                 Continue with {selectedProperties.length} {selectedProperties.length === 1 ? 'property' : 'properties'} →
               </button>
             </div>
@@ -177,7 +177,7 @@ export default function OrgRequestPage() {
         {step === 'details' && (
           <div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px', marginBottom:'20px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'20px' }}>JOB DETAILS</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'20px' }}>JOB DETAILS</p>
               <div style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
                 <div>
                   <p style={{ fontSize:'12px', fontWeight:500, color:'#4A5E64', marginBottom:'6px' }}>Job title *</p>
@@ -217,7 +217,7 @@ export default function OrgRequestPage() {
             <div style={{ display:'flex', justifyContent:'space-between' }}>
               <button type="button" onClick={() => setStep('select')} style={{ background:'transparent', color:'#4A5E64', padding:'12px 20px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>← Back</button>
               <button type="button" onClick={() => setStep('confirm')} disabled={!form.title}
-                style={{ background: form.title ? '#1C2B32' : 'rgba(28,43,50,0.2)', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: form.title ? 'pointer' : 'not-allowed' }}>
+                style={{ background: form.title ? '#0A0A0A' : 'rgba(28,43,50,0.2)', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor: form.title ? 'pointer' : 'not-allowed' }}>
                 Review & confirm →
               </button>
             </div>
@@ -236,7 +236,7 @@ export default function OrgRequestPage() {
               </p>
             </div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'14px' }}>JOB SUMMARY</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'14px' }}>JOB SUMMARY</p>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'16px' }}>
                 {[
                   { label:'Title', value: form.title },
@@ -247,7 +247,7 @@ export default function OrgRequestPage() {
                 ].map(item => (
                   <div key={item.label}>
                     <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'2px', textTransform:'uppercase' }}>{item.label}</p>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{item.value}</p>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{item.value}</p>
                   </div>
                 ))}
               </div>

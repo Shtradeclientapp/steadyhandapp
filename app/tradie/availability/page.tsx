@@ -62,7 +62,7 @@ export default function TradieAvailability() {
   ]
 
   return (
-    <div style={{ minHeight:'100vh', background:'#1C2B32', fontFamily:'sans-serif' }}>
+    <div style={{ minHeight:'100vh', background:'#0A0A0A', fontFamily:'sans-serif' }}>
       <div style={{ maxWidth:'680px', margin:'0 auto', padding:'32px 24px' }}>
         <a href="/tradie/dashboard" style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', display:'block', marginBottom:'24px' }}>← Dashboard</a>
         <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.35)', marginBottom:'6px' }}>Status broadcast</p>

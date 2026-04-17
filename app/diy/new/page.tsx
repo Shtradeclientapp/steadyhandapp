@@ -73,7 +73,7 @@ export default function NewDIYProjectPage() {
   const inp: React.CSSProperties = {
     width: '100%', padding: '11px 13px',
     border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px',
-    fontSize: '14px', background: '#F4F8F7', color: '#1C2B32',
+    fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A',
     outline: 'none', fontFamily: 'sans-serif', boxSizing: 'border-box',
   }
 
@@ -112,7 +112,7 @@ export default function NewDIYProjectPage() {
 
   const backBtn = (toStep: number) => (
     <button type="button" onClick={() => setStep(toStep)}
-      style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'11px 16px', fontSize:'13px', cursor:'pointer', color:'#1C2B32' }}>← Back</button>
+      style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'11px 16px', fontSize:'13px', cursor:'pointer', color:'#0A0A0A' }}>← Back</button>
   )
 
   const nextBtn = (toStep: number, disabled = false, label = 'Continue →') => (
@@ -122,7 +122,7 @@ export default function NewDIYProjectPage() {
 
   const card = (content: React.ReactNode) => (
     <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
-      <div style={{ background:'#1C2B32', padding:'16px 24px', borderBottom:'2px solid #D4522A' }}>
+      <div style={{ background:'#0A0A0A', padding:'16px 24px', borderBottom:'2px solid #D4522A' }}>
         <p style={{ fontSize:'10px', color:'rgba(216,228,225,0.4)', letterSpacing:'1.5px', textTransform:'uppercase' as const, margin:'0 0 2px' }}>Step {step + 1} of {STEP_LABELS.length}</p>
         <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:0 }}>{STEP_LABELS[step].toUpperCase()}</p>
       </div>
@@ -134,7 +134,7 @@ export default function NewDIYProjectPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <a href="/diy" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
-        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'1px' }}>NEW PROJECT</div>
+        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'1px' }}>NEW PROJECT</div>
         <a href="/diy" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Cancel</a>
       </nav>
 
@@ -144,7 +144,7 @@ export default function NewDIYProjectPage() {
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
             <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Build Journal</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color:'#1C2B32', letterSpacing:'1px', margin:'0 0 6px' }}>SET UP YOUR PROJECT</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color:'#0A0A0A', letterSpacing:'1px', margin:'0 0 6px' }}>SET UP YOUR PROJECT</h1>
           <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>Steadyhand will build your compliance checklist, Gantt schedule and document vault automatically.</p>
         </div>
 
@@ -167,7 +167,7 @@ export default function NewDIYProjectPage() {
               ].map(opt => (
                 <div key={opt.value} onClick={() => set('project_type', opt.value)}
                   style={{ padding:'14px 16px', borderRadius:'10px', border:'1.5px solid ' + (form.project_type === opt.value ? '#D4522A' : 'rgba(28,43,50,0.15)'), background: form.project_type === opt.value ? 'rgba(212,82,42,0.06)' : 'white', cursor:'pointer' }}>
-                  <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>{opt.label}</p>
+                  <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 3px' }}>{opt.label}</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{opt.desc}</p>
                 </div>
               ))}
@@ -300,7 +300,7 @@ export default function NewDIYProjectPage() {
                     style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 14px', borderRadius:'10px', border:'1.5px solid '+(selected ? stage.color+'60' : 'rgba(28,43,50,0.1)'), background: selected ? stage.color+'08' : 'rgba(28,43,50,0.02)', cursor:'pointer' }}>
                     <div style={{ width:'18px', height:'18px', borderRadius:'4px', border:'1.5px solid '+(selected ? stage.color : 'rgba(28,43,50,0.2)'), background: selected ? stage.color : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', color:'white', flexShrink:0 }}>{selected ? '✓' : ''}</div>
                     <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{stage.label}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{stage.label}</p>
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{stage.desc}</p>
                     </div>
                   </div>

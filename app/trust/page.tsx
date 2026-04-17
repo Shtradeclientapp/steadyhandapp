@@ -137,14 +137,14 @@ export default function TrustPage() {
 
       <div style={{ maxWidth:'720px', margin:'0 auto', padding:'32px 24px' }}>
 
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>TRUST SCORE</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>TRUST SCORE</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'32px', lineHeight:'1.6' }}>
           Your Dialogue Rating reflects the quality of your communication across the full request-to-warranty cycle. It is built from behavioural signals at each stage — not self-assessment.
         </p>
 
         {/* SCORE CARD */}
         {score ? (
-          <div style={{ background:'#1C2B32', borderRadius:'16px', padding:'28px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
+          <div style={{ background:'#0A0A0A', borderRadius:'16px', padding:'28px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
             <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(107,79,168,0.2), transparent 60%)' }} />
             <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', gap:'24px', flexWrap:'wrap' as const }}>
               <div>
@@ -173,7 +173,7 @@ export default function TrustPage() {
         {/* STAGE BREAKDOWN */}
         {breakdown && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'24px' }}>
-            <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+            <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>SCORE BY STAGE</p>
             </div>
             <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
@@ -185,7 +185,7 @@ export default function TrustPage() {
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'4px' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
                         <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:info.color, flexShrink:0 }} />
-                        <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{info.label}</span>
+                        <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{info.label}</span>
                         <span style={{ fontSize:'11px', color:'#7A9098' }}>{info.weight}% weight</span>
                       </div>
                       <span style={{ fontSize:'13px', fontWeight:600, color:getScoreColor(stageScore) }}>{stageScore}/100</span>
@@ -201,13 +201,13 @@ export default function TrustPage() {
         )}
 
         {/* HOW TO IMPROVE */}
-        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'16px' }}>HOW YOUR SCORE IS BUILT</h2>
+        <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'16px' }}>HOW YOUR SCORE IS BUILT</h2>
         <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
           {STAGE_INFO.map(info => (
             <div key={info.stage} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
               <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.06)', display:'flex', alignItems:'center', gap:'10px' }}>
                 <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:info.color, flexShrink:0 }} />
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.3px', margin:0 }}>{info.label.toUpperCase()} — {info.weight}%</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.3px', margin:0 }}>{info.label.toUpperCase()} — {info.weight}%</p>
               </div>
               <div style={{ padding:'14px 18px' }}>
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'10px' }}>{info.description}</p>

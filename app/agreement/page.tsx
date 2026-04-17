@@ -298,7 +298,7 @@ export default function AgreementPage() {
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 110px)', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center' }}>
         <p style={{ color:'#4A5E64', marginBottom:'16px', fontFamily:'sans-serif' }}>No job in agreement stage.</p>
-        <a href="/shortlist"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to shortlist</button></a>
+        <a href="/shortlist"><button style={{ background:'#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to shortlist</button></a>
       </div>
     </div>
   </>
@@ -313,7 +313,7 @@ export default function AgreementPage() {
         <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px', position:'sticky' as const, top:'130px' }}>
 
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
-            <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+            <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'rgba(216,228,225,0.4)', letterSpacing:'1px', marginBottom:'2px' }}>DOCUMENT</p>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px' }}>{jobRef}</p>
             </div>
@@ -326,7 +326,7 @@ export default function AgreementPage() {
               ].map(item => (
                 <div key={item.label} style={{ display:'flex', flexDirection:'column' as const, padding:'6px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                   <span style={{ fontSize:'10px', color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>{item.label}</span>
-                  <span style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginTop:'1px' }}>{item.value}</span>
+                  <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginTop:'1px' }}>{item.value}</span>
                 </div>
               ))}
               {saving && <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px' }}>Saving...</p>}
@@ -337,7 +337,7 @@ export default function AgreementPage() {
 
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
             <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px' }}>SIGNING STATUS</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px' }}>SIGNING STATUS</p>
             </div>
             <div style={{ padding:'14px 16px', display:'flex', flexDirection:'column' as const, gap:'10px' }}>
               {[
@@ -349,7 +349,7 @@ export default function AgreementPage() {
                     {party.signed ? '✓' : ''}
                   </div>
                   <div>
-                    <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', margin:0 }}>{party.label}</p>
+                    <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{party.label}</p>
                     <p style={{ fontSize:'10px', color: party.signed ? '#2E7D60' : '#9AA5AA', margin:0 }}>{party.signed ? 'Signed ' + new Date(party.signed).toLocaleDateString('en-AU') : 'Not yet signed'}</p>
                   </div>
                 </div>
@@ -372,7 +372,7 @@ export default function AgreementPage() {
           <a href="/messages" style={{ display:'flex', alignItems:'center', gap:'10px', padding:'13px 16px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', textDecoration:'none', transition:'all 0.15s' }}>
             <span style={{ fontSize:'18px' }}>💬</span>
             <div>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Job messages</p>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>Job messages</p>
               <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Continue the conversation →</p>
             </div>
           </a>
@@ -408,8 +408,8 @@ export default function AgreementPage() {
                   return (
                     <div key={q.id} style={{ border:'1.5px solid ' + (isLowest ? '#2E6A8F' : 'rgba(28,43,50,0.12)'), borderRadius:'10px', padding:'14px', background:'#C8D5D2', position:'relative' as const }}>
                       {isLowest && <div style={{ position:'absolute', top:'-9px', left:'12px', background:'#2E6A8F', color:'white', fontSize:'9px', fontWeight:700, padding:'2px 8px', borderRadius:'100px' }}>LOWEST</div>}
-                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', marginBottom:'4px' }}>{q.tradie?.business_name}</p>
-                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#1C2B32', marginBottom:'6px' }}>${Number(q.total_price).toLocaleString()}</p>
+                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', marginBottom:'4px' }}>{q.tradie?.business_name}</p>
+                      <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'24px', color:'#0A0A0A', marginBottom:'6px' }}>${Number(q.total_price).toLocaleString()}</p>
                       {q.estimated_days && <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'2px' }}>{q.estimated_days} days</p>}
                       {q.breakdown?.map((b: any, bi: number) => (
                         <div key={bi} style={{ display:'flex', justifyContent:'space-between', fontSize:'11px', color:'#4A5E64', padding:'2px 0' }}>
@@ -417,7 +417,7 @@ export default function AgreementPage() {
                         </div>
                       ))}
                       <button type="button" onClick={() => acceptQuote(q)} disabled={acceptingQuote}
-                        style={{ width:'100%', background:'#1C2B32', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', marginTop:'10px', opacity: acceptingQuote ? 0.7 : 1 }}>
+                        style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', marginTop:'10px', opacity: acceptingQuote ? 0.7 : 1 }}>
                         Select this quote and review scope →
                       </button>
                     </div>
@@ -438,7 +438,7 @@ export default function AgreementPage() {
           <div id="scope-document" style={{ background:'white', borderRadius:'16px', boxShadow:'0 4px 40px rgba(28,43,50,0.12), 0 1px 8px rgba(28,43,50,0.08)', overflow:'hidden', marginBottom:'20px' }}>
 
             {/* Document header */}
-            <div style={{ background:'#1C2B32', padding:'28px 36px', position:'relative', overflow:'hidden' }}>
+            <div style={{ background:'#0A0A0A', padding:'28px 36px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 90% 0%, rgba(212,82,42,0.2), transparent 55%)' }} />
               <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'20px', flexWrap:'wrap' as const }}>
                 <div>
@@ -464,7 +464,7 @@ export default function AgreementPage() {
             <div className='sign-boxes-grid' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom:'1px solid #F0F0F0' }}>
               <div style={{ padding:'24px 32px', borderRight:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'10px', fontWeight:600 }}>Client</p>
-                <p style={{ fontSize:'16px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{job.client?.full_name}</p>
+                <p style={{ fontSize:'16px', fontWeight:600, color:'#0A0A0A', marginBottom:'3px' }}>{job.client?.full_name}</p>
                 <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.client?.suburb || job.suburb}</p>
                 <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.client?.email}</p>
               </div>
@@ -472,7 +472,7 @@ export default function AgreementPage() {
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'10px', fontWeight:600 }}>Tradie</p>
                 {job.tradie ? (
                   <>
-                    <p style={{ fontSize:'16px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{job.tradie.business_name}</p>
+                    <p style={{ fontSize:'16px', fontWeight:600, color:'#0A0A0A', marginBottom:'3px' }}>{job.tradie.business_name}</p>
                     <p style={{ fontSize:'13px', color:'#7A9098' }}>{job.tradie.profile?.full_name}</p>
                     {job.tradie.licence_number && <p style={{ fontSize:'13px', color:'#7A9098' }}>Lic. {job.tradie.licence_number}</p>}
                     {job.tradie.abn && <p style={{ fontSize:'13px', color:'#7A9098' }}>ABN {job.tradie.abn}</p>}
@@ -486,13 +486,13 @@ export default function AgreementPage() {
             {/* Job summary */}
             <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0', background:'#FAFBFB' }}>
               <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'12px', fontWeight:600 }}>Job description</p>
-              <p style={{ fontSize:'17px', fontWeight:600, color:'#1C2B32', marginBottom:'6px' }}>{job.title}</p>
+              <p style={{ fontSize:'17px', fontWeight:600, color:'#0A0A0A', marginBottom:'6px' }}>{job.title}</p>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'10px' }}>{job.description}</p>
               <div style={{ display:'flex', gap:'16px', flexWrap:'wrap' as const }}>
                 <span style={{ fontSize:'12px', color:'#7A9098', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px' }}>{job.trade_category}</span>
                 <span style={{ fontSize:'12px', color:'#7A9098', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px' }}>{job.suburb}</span>
                 <span style={{ fontSize:'12px', color:'#7A9098', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px' }}>{job.property_type}</span>
-                {currentQuote && <span style={{ fontSize:'12px', color:'#1C2B32', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px', fontWeight:600 }}>Quoted: ${Number(currentQuote.total_price).toLocaleString()}</span>}
+                {currentQuote && <span style={{ fontSize:'12px', color:'#0A0A0A', background:'#F0F4F3', padding:'4px 10px', borderRadius:'6px', fontWeight:600 }}>Quoted: ${Number(currentQuote.total_price).toLocaleString()}</span>}
                 {isPastAgreement && xeroConnected && currentQuote && (
                   <button type="button" onClick={async () => {
                     setXeroSyncing(true)
@@ -529,7 +529,7 @@ export default function AgreementPage() {
                     <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px' }}>
                       <span style={{ fontSize:'20px' }}>📄</span>
                       <div style={{ flex:1 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadedDoc.name}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{uploadedDoc.name}</p>
                         <p style={{ fontSize:'11px', color:'#2E7D60', margin:0 }}>✓ Stored against this job</p>
                       </div>
                       <label style={{ fontSize:'12px', color:'#7A9098', cursor:'pointer', textDecoration:'underline' }}>
@@ -541,7 +541,7 @@ export default function AgreementPage() {
                     <label style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', padding:'16px', border:'2px dashed rgba(28,43,50,0.15)', borderRadius:'10px', cursor:'pointer', background:'white' }}>
                       <span style={{ fontSize:'20px' }}>📎</span>
                       <div style={{ textAlign:'center' as const }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{uploadingDoc ? 'Uploading...' : 'Upload signed agreement or quote'}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{uploadingDoc ? 'Uploading...' : 'Upload signed agreement or quote'}</p>
                         <p style={{ fontSize:'11px', color:'#7A9098', marginTop:'2px' }}>PDF, Word or image · Max 10MB</p>
                       </div>
                       <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" onChange={e => e.target.files?.[0] && uploadDocument(e.target.files[0])} style={{ display:'none' }} disabled={uploadingDoc} />
@@ -554,25 +554,25 @@ export default function AgreementPage() {
               <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'16px', fontWeight:600 }}>Agreed price</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginBottom:'16px' }}>
-                  <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'40px', color:'#1C2B32', letterSpacing:'1px' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                  <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'40px', color:'#0A0A0A', letterSpacing:'1px' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
                   <span style={{ fontSize:'14px', color:'#7A9098' }}>AUD inc. GST</span>
                 </div>
                 <div className='quote-meta-grid' style={{ display:'grid', gridTemplateColumns:'repeat(3, auto)', gap:'20px', marginBottom: currentQuote.breakdown?.length > 0 ? '20px' : '0' }}>
                   {currentQuote.estimated_start && (
                     <div>
                       <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>START DATE</p>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{new Date(currentQuote.estimated_start).toLocaleDateString('en-AU')}</p>
                     </div>
                   )}
                   {currentQuote.estimated_days && (
                     <div>
                       <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>DURATION</p>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>{currentQuote.estimated_days} days</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{currentQuote.estimated_days} days</p>
                     </div>
                   )}
                   <div>
                     <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'3px' }}>QUOTE VERSION</p>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32' }}>v{currentQuote.version}</p>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>v{currentQuote.version}</p>
                   </div>
                 </div>
                 {currentQuote.breakdown?.length > 0 && (
@@ -582,13 +582,13 @@ export default function AgreementPage() {
                     </div>
                     {currentQuote.breakdown.map((b: any, i: number) => (
                       <div key={i} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', borderBottom:'1px solid #F0F0F0' }}>
-                        <span style={{ fontSize:'13px', color:'#1C2B32' }}>{b.label}</span>
-                        <span style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
+                        <span style={{ fontSize:'13px', color:'#0A0A0A' }}>{b.label}</span>
+                        <span style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A' }}>${Number(b.amount).toLocaleString()}</span>
                       </div>
                     ))}
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 14px', background:'#F0F4F3' }}>
-                      <span style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32' }}>Total</span>
-                      <span style={{ fontSize:'15px', fontWeight:700, color:'#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                      <span style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A' }}>Total</span>
+                      <span style={{ fontSize:'15px', fontWeight:700, color:'#0A0A0A' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
                     </div>
                   </div>
                 )}
@@ -613,7 +613,7 @@ export default function AgreementPage() {
           {allQuotes.length > 1 && job?.tradie_id && (
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
               <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'2px' }}>QUOTE VERSION HISTORY</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>QUOTE VERSION HISTORY</p>
                 <p style={{ fontSize:'12px', color:'#7A9098' }}>Full revision trail — available to both parties for contract variation reference</p>
               </div>
               <div style={{ padding:'16px 18px' }}>
@@ -627,7 +627,7 @@ export default function AgreementPage() {
                         <span style={{ fontSize:'12px', color:'#7A9098' }}>{new Date(q.created_at).toLocaleDateString('en-AU')} at {new Date(q.created_at).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}</span>
                         {q.tradie?.business_name && <span style={{ fontSize:'12px', color:'#7A9098' }}>· {q.tradie.business_name}</span>}
                       </div>
-                      <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color: i === 0 ? '#1C2B32' : '#7A9098' }}>${Number(q.total_price).toLocaleString()}</span>
+                      <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color: i === 0 ? '#0A0A0A' : '#7A9098' }}>${Number(q.total_price).toLocaleString()}</span>
                     </div>
                     {q.breakdown?.length > 0 && (
                       <div style={{ background: i === 0 ? '#F4F8F7' : 'rgba(28,43,50,0.03)', borderRadius:'8px', overflow:'hidden', marginBottom:'8px' }}>
@@ -643,7 +643,7 @@ export default function AgreementPage() {
                                 <span style={{ fontSize:'12px', color:'#4A5E64' }}>{b.category ? b.category + ' — ' : ''}{b.label}</span>
                               </div>
                               <div style={{ textAlign:'right' as const }}>
-                                <span style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
+                                <span style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A' }}>${Number(b.amount).toLocaleString()}</span>
                                 {changed && prev && <p style={{ fontSize:'10px', color:'#C07830', margin:0 }}>was ${Number(prev.amount).toLocaleString()}</p>}
                               </div>
                             </div>
@@ -700,7 +700,7 @@ export default function AgreementPage() {
                         <span style={{ color:'#2E7D60', fontSize:'14px', flexShrink:0 }}>✓</span>
                         <input type="text" defaultValue={item}
                           onBlur={e => { const updated = [...scope.inclusions]; updated[i] = e.target.value; saveEdit({ inclusions: updated }) }}
-                          style={{ flex:1, border:'none', background:'transparent', fontSize:'14px', color:'#1C2B32', outline:'none', padding:'3px 6px', borderRadius:'4px', cursor:'text', fontFamily:'sans-serif' }}
+                          style={{ flex:1, border:'none', background:'transparent', fontSize:'14px', color:'#0A0A0A', outline:'none', padding:'3px 6px', borderRadius:'4px', cursor:'text', fontFamily:'sans-serif' }}
                           onFocus={e => { e.target.style.background = '#F4F8F7'; e.target.style.outline = '1px solid #C8D5D2' }}
                           onBlurCapture={e => { e.target.style.background = 'transparent'; e.target.style.outline = 'none' }} />
                         <button type="button" onClick={() => saveEdit({ inclusions: scope.inclusions.filter((_: string, idx: number) => idx !== i) })}
@@ -722,7 +722,7 @@ export default function AgreementPage() {
                         <span style={{ color:'#D4522A', fontSize:'14px', flexShrink:0 }}>×</span>
                         <input type="text" defaultValue={item}
                           onBlur={e => { const updated = [...scope.exclusions]; updated[i] = e.target.value; saveEdit({ exclusions: updated }) }}
-                          style={{ flex:1, border:'none', background:'transparent', fontSize:'14px', color:'#1C2B32', outline:'none', padding:'3px 6px', borderRadius:'4px', cursor:'text', fontFamily:'sans-serif' }}
+                          style={{ flex:1, border:'none', background:'transparent', fontSize:'14px', color:'#0A0A0A', outline:'none', padding:'3px 6px', borderRadius:'4px', cursor:'text', fontFamily:'sans-serif' }}
                           onFocus={e => { e.target.style.background = '#F4F8F7' }}
                           onBlurCapture={e => { e.target.style.background = 'transparent' }} />
                         <button type="button" onClick={() => saveEdit({ exclusions: scope.exclusions.filter((_: string, idx: number) => idx !== i) })}
@@ -748,7 +748,7 @@ export default function AgreementPage() {
                     ].map(item => (
                       <div key={item.label} style={{ padding:'12px', background:'#F0F4F3', borderRadius:'8px' }}>
                         <p style={{ fontSize:'10px', color:'#7A9098', marginBottom:'4px', letterSpacing:'0.5px' }}>{item.label.toUpperCase()}</p>
-                        <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32' }}>{item.value}</p>
+                        <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A' }}>{item.value}</p>
                       </div>
                     ))}
                   </div>
@@ -765,7 +765,7 @@ export default function AgreementPage() {
                       <div key={party.label} style={{ border:'1px solid ' + (party.signed ? '#2E7D60' : '#E0E8E6'), borderRadius:'10px', overflow:'hidden' }}>
                         <div style={{ padding:'12px 16px', background: party.signed ? 'rgba(46,125,96,0.06)' : '#F8FAFA', borderBottom:'1px solid ' + (party.signed ? 'rgba(46,125,96,0.15)' : '#EEF0F0') }}>
                           <p style={{ fontSize:'10px', color:'#7A9098', letterSpacing:'0.5px', marginBottom:'2px' }}>{party.label.toUpperCase()}</p>
-                          <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32' }}>{party.name || 'Not assigned'}</p>
+                          <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A' }}>{party.name || 'Not assigned'}</p>
                         </div>
                         <div style={{ padding:'16px', minHeight:'60px', display:'flex', alignItems:'center', justifyContent:'center' }}>
                           {party.signed ? (
@@ -798,7 +798,7 @@ export default function AgreementPage() {
                         </div>
                       ) : (
                         <button type="button" onClick={signScope} disabled={signing}
-                          style={{ width:'100%', background:'#1C2B32', color:'white', padding:'15px', borderRadius:'10px', fontSize:'15px', fontWeight:600, border:'none', cursor:'pointer', letterSpacing:'0.3px', marginBottom:'10px' }}>
+                          style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'15px', borderRadius:'10px', fontSize:'15px', fontWeight:600, border:'none', cursor:'pointer', letterSpacing:'0.3px', marginBottom:'10px' }}>
                           Sign as {profile?.role === 'tradie' ? job.tradie?.business_name : job.client?.full_name} →
                         </button>
                       )}

@@ -97,7 +97,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                   <div style={{ position:'fixed', inset:0, zIndex:150 }} onClick={() => setNotifOpen(false)} />
                   <div style={{ position:'absolute', top:'44px', right:0, background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', boxShadow:'0 4px 20px rgba(28,43,50,0.12)', width:'300px', maxWidth:'calc(100vw - 32px)', zIndex:200, overflow:'hidden' }}>
                     <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>Notifications</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>Notifications</p>
                       {unread > 0 && <button type="button" onClick={markAllRead} style={{ fontSize:'11px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0 }}>Mark all read</button>}
                     </div>
                     {notifs.length === 0 && (
@@ -110,7 +110,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                         <a key={n.id} href={n.job_id ? (isTradie ? '/tradie/dashboard' : '/dashboard') : '#'}
                           style={{ display:'block', padding:'10px 14px', borderBottom:'1px solid rgba(28,43,50,0.05)', textDecoration:'none', background: n.read ? 'white' : 'rgba(46,125,96,0.04)' }}
                           onClick={() => setNotifOpen(false)}>
-                          <p style={{ fontSize:'13px', color:'#1C2B32', margin:'0 0 2px', fontWeight: n.read ? 400 : 500 }}>{n.message}</p>
+                          <p style={{ fontSize:'13px', color:'#0A0A0A', margin:'0 0 2px', fontWeight: n.read ? 400 : 500 }}>{n.message}</p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{new Date(n.created_at).toLocaleDateString('en-AU')}</p>
                         </a>
                       ))}
@@ -125,7 +125,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
           {profile && (
             <div className="nav-avatar-desktop" style={{ position:'relative' }}>
               <button type="button" onClick={() => setDropdownOpen(!dropdownOpen)}
-                style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#0A0A0A', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.9)' }}>{initial}</span>
               </button>
               {dropdownOpen && (
@@ -133,18 +133,18 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                   <div style={{ position:'fixed', inset:0, zIndex:150 }} onClick={() => setDropdownOpen(false)} />
                   <div style={{ position:'absolute', top:'44px', right:0, background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', boxShadow:'0 4px 20px rgba(28,43,50,0.12)', minWidth:'180px', zIndex:200, overflow:'hidden' }}>
                     <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{displayName}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{displayName}</p>
                       <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>{profile.email}</p>
                     </div>
-                    <a href={profileHref} style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>My profile</a>
-                    <a href="/trust" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Dialogue Rating</a>
+                    <a href={profileHref} style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>My profile</a>
+                    <a href="/trust" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Dialogue Rating</a>
                     {profile?.org_id && (
-                      <a href="/org/dashboard" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Organisation dashboard</a>
+                      <a href="/org/dashboard" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Organisation dashboard</a>
                     )}
                     {!profile?.org_id && (
                       <a href="/org/setup" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#2E6A8F', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Set up organisation →</a>
                     )}
-                    <a href="/messages" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Messages</a>
+                    <a href="/messages" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Messages</a>
                     <button type="button" onClick={signOut} style={{ display:'block', width:'100%', padding:'10px 14px', fontSize:'13px', color:'#D4522A', textAlign:'left' as const, background:'none', border:'none', cursor:'pointer' }}>Sign out</button>
                   </div>
                 </>
@@ -157,9 +157,9 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
             className="nav-hamburger"
             onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setDropdownOpen(false); setNotifOpen(false) }}
             style={{ width:'36px', height:'36px', borderRadius:'8px', background:'rgba(28,43,50,0.08)', border:'none', cursor:'pointer', display:'none', alignItems:'center', justifyContent:'center', flexShrink:0, flexDirection:'column' as const, gap:'4px', padding:'8px' }}>
-            <span style={{ display:'block', width:'18px', height:'2px', background:'#1C2B32', borderRadius:'1px', transition:'all 0.2s', transform: mobileMenuOpen ? 'rotate(45deg) translate(4px, 4px)' : 'none' }} />
-            <span style={{ display:'block', width:'18px', height:'2px', background:'#1C2B32', borderRadius:'1px', transition:'all 0.2s', opacity: mobileMenuOpen ? 0 : 1 }} />
-            <span style={{ display:'block', width:'18px', height:'2px', background:'#1C2B32', borderRadius:'1px', transition:'all 0.2s', transform: mobileMenuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none' }} />
+            <span style={{ display:'block', width:'18px', height:'2px', background:'#0A0A0A', borderRadius:'1px', transition:'all 0.2s', transform: mobileMenuOpen ? 'rotate(45deg) translate(4px, 4px)' : 'none' }} />
+            <span style={{ display:'block', width:'18px', height:'2px', background:'#0A0A0A', borderRadius:'1px', transition:'all 0.2s', opacity: mobileMenuOpen ? 0 : 1 }} />
+            <span style={{ display:'block', width:'18px', height:'2px', background:'#0A0A0A', borderRadius:'1px', transition:'all 0.2s', transform: mobileMenuOpen ? 'rotate(-45deg) translate(4px, -4px)' : 'none' }} />
           </button>
         </div>
       </nav>
@@ -171,7 +171,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
           <div style={{ position:'fixed', top:'64px', left:0, right:0, background:'white', zIndex:95, boxShadow:'0 8px 24px rgba(28,43,50,0.15)', borderBottom:'1px solid rgba(28,43,50,0.1)', overflow:'hidden' }}>
             {/* User info */}
             {profile && (
-              <div style={{ padding:'16px 20px', background:'#1C2B32', display:'flex', alignItems:'center', gap:'12px' }}>
+              <div style={{ padding:'16px 20px', background:'#0A0A0A', display:'flex', alignItems:'center', gap:'12px' }}>
                 <div style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#D4522A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                   <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white' }}>{initial}</span>
                 </div>
@@ -184,7 +184,7 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
 
             {/* Back link */}
             {showBack && (
-              <a href={defaultBackHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)', fontWeight:500 }}
+              <a href={defaultBackHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)', fontWeight:500 }}
                 onClick={() => setMobileMenuOpen(false)}>
                 {defaultBackLabel}
               </a>
@@ -193,18 +193,18 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
             {/* Nav links */}
             {profile && (
               <>
-                <a href={dashboardHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dashboard</a>
-                <a href="/messages" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Messages</a>
-                <a href={profileHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>My profile</a>
-                <a href="/trust" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dialogue Rating</a>
+                <a href={dashboardHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dashboard</a>
+                <a href="/messages" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Messages</a>
+                <a href={profileHref} style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>My profile</a>
+                <a href="/trust" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Dialogue Rating</a>
                 {profile?.org_id && (
-                  <a href="/org/dashboard" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Organisation dashboard</a>
+                  <a href="/org/dashboard" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Organisation dashboard</a>
                 )}
                 {isTradie && (
-                  <a href="/tradie/vault" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Document vault</a>
+                  <a href="/tradie/vault" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Document vault</a>
                 )}
                 {!isTradie && (
-                  <a href="/vault" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Document vault</a>
+                  <a href="/vault" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setMobileMenuOpen(false)}>Document vault</a>
                 )}
                 <button type="button" onClick={() => { setMobileMenuOpen(false); signOut() }}
                   style={{ display:'flex', alignItems:'center', width:'100%', padding:'14px 20px', fontSize:'14px', color:'#D4522A', background:'none', border:'none', cursor:'pointer', textAlign:'left' as const }}>

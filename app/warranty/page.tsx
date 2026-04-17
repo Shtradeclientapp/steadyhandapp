@@ -128,7 +128,7 @@ export default function WarrantyPage() {
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}>
       <div style={{ textAlign:'center' }}>
         <p style={{ color:'#4A5E64', marginBottom:'16px' }}>No job under warranty.</p>
-        <a href="/signoff"><button style={{ background:'#1C2B32', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to sign-off</button></a>
+        <a href="/signoff"><button style={{ background:'#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to sign-off</button></a>
       </div>
     </div></>
   )
@@ -142,12 +142,12 @@ export default function WarrantyPage() {
         <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(26,107,90,0.08)', border:'1px solid rgba(26,107,90,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
           <span style={{ fontSize:'11px', color:'#1A6B5A', fontWeight:'500', letterSpacing:'0.5px', textTransform:'uppercase' }}>You're covered</span>
         </div>
-        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>WARRANTY PERIOD</h1>
+        <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>WARRANTY PERIOD</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
           Your warranty is active. Log any defects — the tradie must respond within 5 business days.
         </p>
 
-        <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'24px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
+        <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'24px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 20% 80%, rgba(26,107,90,0.35), transparent 50%)' }} />
           <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap' }}>
             <div>
@@ -170,7 +170,7 @@ export default function WarrantyPage() {
           </div>
         )}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
-          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#1C2B32', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
+          <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#0A0A0A', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
           <button type="button" onClick={() => setShowForm(true)}
             style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
             + Log new issue
@@ -179,21 +179,21 @@ export default function WarrantyPage() {
 
         {showForm && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'22px', marginBottom:'20px' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>LOG A WARRANTY ISSUE</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>LOG A WARRANTY ISSUE</p>
             <div style={{ marginBottom:'14px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#1C2B32', marginBottom:'5px' }}>Issue title</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Issue title</label>
               <input type="text" placeholder="Brief description of the defect" value={form.title} onChange={set('title')}
-                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
             </div>
             <div style={{ marginBottom:'14px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#1C2B32', marginBottom:'5px' }}>Detailed description</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Detailed description</label>
               <textarea placeholder="Describe the problem, when it started, and how it affects you." value={form.description} onChange={set('description')}
-                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical', minHeight:'80px', fontFamily:'sans-serif' }} />
+                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical', minHeight:'80px', fontFamily:'sans-serif' }} />
             </div>
             <div style={{ marginBottom:'16px' }}>
-              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#1C2B32', marginBottom:'5px' }}>Severity</label>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Severity</label>
               <select value={form.severity} onChange={set('severity')}
-                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }}>
+                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
                 <option value="minor">Minor — cosmetic or low impact</option>
                 <option value="moderate">Moderate — affecting use but not safety</option>
                 <option value="serious">Serious — affecting use or structural integrity</option>
@@ -202,7 +202,7 @@ export default function WarrantyPage() {
             </div>
             <div style={{ display:'flex', gap:'10px' }}>
               <button type="button" onClick={() => setShowForm(false)}
-                style={{ background:'transparent', color:'#1C2B32', padding:'11px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>
+                style={{ background:'transparent', color:'#0A0A0A', padding:'11px 20px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>
                 Cancel
               </button>
               {issueError && (
@@ -247,7 +247,7 @@ export default function WarrantyPage() {
                 <span style={{ background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'3px 10px', fontSize:'12px', color:'#4A5E64', textTransform:'capitalize' }}>{issue.severity}</span>
                 <span style={{ fontSize:'12px', color:'#7A9098', marginLeft:'auto' }}>Logged {new Date(issue.created_at).toLocaleDateString('en-AU')}</span>
               </div>
-              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
+              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
               {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
                 <p style={{ fontSize:'11px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#C07830', margin:'0 0 8px' }}>
@@ -324,7 +324,7 @@ export default function WarrantyPage() {
             ].map(t => (
               <div key={t.label} style={{ fontSize:'13px' }}>
                 <span style={{ color:'#7A9098' }}>{t.label}: </span>
-                <span style={{ color:'#1C2B32', fontWeight:'500' }}>{t.value}</span>
+                <span style={{ color:'#0A0A0A', fontWeight:'500' }}>{t.value}</span>
               </div>
             ))}
           </div>

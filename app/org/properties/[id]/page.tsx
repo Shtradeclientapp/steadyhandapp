@@ -57,7 +57,7 @@ export default function PropertyDetailPage() {
         <a href="/org/dashboard" style={{ fontSize: '13px', color: '#4A5E64', textDecoration: 'none' }}>← Back to dashboard</a>
       </nav>
 
-      <div style={{ background: '#1C2B32', padding: '36px 0', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: '#0A0A0A', padding: '36px 0', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(46,125,96,0.2), transparent 55%)' }} />
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
           <p style={{ fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase' as const, color: 'rgba(216,228,225,0.4)', marginBottom: '6px' }}>
@@ -84,7 +84,7 @@ export default function PropertyDetailPage() {
         )}
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-          <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', margin: 0 }}>JOB HISTORY</h2>
+          <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', letterSpacing: '0.5px', margin: 0 }}>JOB HISTORY</h2>
           <a href={'/request?property_id=' + property.id}>
             <button type="button" style={{ background: '#D4522A', color: 'white', padding: '8px 16px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
               + New job request
@@ -96,7 +96,7 @@ export default function PropertyDetailPage() {
           <div style={{ textAlign: 'center' as const, padding: '40px', background: '#E8F0EE', borderRadius: '14px' }}>
             <p style={{ fontSize: '14px', color: '#4A5E64', marginBottom: '16px' }}>No jobs for this property yet.</p>
             <a href={'/request?property_id=' + property.id}>
-              <button type="button" style={{ background: '#1C2B32', color: 'white', padding: '11px 24px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+              <button type="button" style={{ background: '#0A0A0A', color: 'white', padding: '11px 24px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                 Create first job request →
               </button>
             </a>
@@ -107,11 +107,11 @@ export default function PropertyDetailPage() {
               <a key={job.id} href={'/dashboard/' + job.id} style={{ textDecoration: 'none' }}>
                 <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderLeft: '3px solid ' + (STATUS_COLOR[job.status] || '#9AA5AA'), borderRadius: '11px', padding: '16px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' as const }}>
                   <div>
-                    <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', margin: '0 0 3px' }}>{job.title}</p>
+                    <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', margin: '0 0 3px' }}>{job.title}</p>
                     <p style={{ fontSize: '12px', color: '#7A9098', margin: 0 }}>{job.trade_category} · {job.tradie?.business_name || 'No tradie yet'}</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                    {job.agreed_price && <span style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32' }}>${Number(job.agreed_price).toLocaleString()}</span>}
+                    {job.agreed_price && <span style={{ fontSize: '14px', fontWeight: 500, color: '#0A0A0A' }}>${Number(job.agreed_price).toLocaleString()}</span>}
                     <span style={{ fontSize: '11px', padding: '3px 8px', borderRadius: '100px', background: (STATUS_COLOR[job.status] || '#9AA5AA') + '18', border: '1px solid ' + (STATUS_COLOR[job.status] || '#9AA5AA') + '40', color: STATUS_COLOR[job.status] || '#9AA5AA', fontWeight: 500 }}>
                       {STATUS_LABEL[job.status] || job.status}
                     </span>

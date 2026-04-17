@@ -5,11 +5,11 @@ import { NavHeader } from '@/components/ui/NavHeader'
 function CalcInput({ label, value, onChange, prefix = '', suffix = '' }: any) {
   return (
     <div style={{ marginBottom:'12px' }}>
-      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>{label}</label>
+      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>{label}</label>
       <div style={{ display:'flex', alignItems:'center', background:'#F4F8F7', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', overflow:'hidden' }}>
         {prefix && <span style={{ padding:'10px 12px', fontSize:'13px', color:'#7A9098', borderRight:'1px solid rgba(28,43,50,0.1)', background:'rgba(28,43,50,0.03)' }}>{prefix}</span>}
         <input type="number" value={value} onChange={e => onChange(e.target.value)}
-          style={{ flex:1, padding:'10px 12px', border:'none', background:'transparent', fontSize:'14px', color:'#1C2B32', outline:'none' }} />
+          style={{ flex:1, padding:'10px 12px', border:'none', background:'transparent', fontSize:'14px', color:'#0A0A0A', outline:'none' }} />
         {suffix && <span style={{ padding:'10px 12px', fontSize:'13px', color:'#7A9098', borderLeft:'1px solid rgba(28,43,50,0.1)', background:'rgba(28,43,50,0.03)' }}>{suffix}</span>}
       </div>
     </div>
@@ -20,7 +20,7 @@ function ResultRow({ label, value, highlight = false }: any) {
   return (
     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', background: highlight ? 'rgba(46,125,96,0.08)' : 'rgba(28,43,50,0.03)', borderRadius:'7px', marginBottom:'6px' }}>
       <span style={{ fontSize:'13px', color: highlight ? '#2E7D60' : '#4A5E64' }}>{label}</span>
-      <span style={{ fontSize:'14px', fontWeight: highlight ? 700 : 500, color: highlight ? '#2E7D60' : '#1C2B32' }}>{value}</span>
+      <span style={{ fontSize:'14px', fontWeight: highlight ? 700 : 500, color: highlight ? '#2E7D60' : '#0A0A0A' }}>{value}</span>
     </div>
   )
 }
@@ -84,7 +84,7 @@ export default function SteadytoolsPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={null} isTradie={true} backLabel="← Dashboard" backHref="/tradie/dashboard" />
 
-      <div style={{ background:'#1C2B32', padding:'28px 24px' }}>
+      <div style={{ background:'#0A0A0A', padding:'28px 24px' }}>
         <div style={{ maxWidth:'960px', margin:'0 auto' }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'4px' }}>Tradie toolkit</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:'0 0 4px' }}>STEADYTOOLS</h1>
@@ -107,7 +107,7 @@ export default function SteadytoolsPage() {
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'14px', display:'flex', gap:'10px', alignItems:'flex-start', cursor:'pointer' }}>
                 <span style={{ fontSize:'20px', flexShrink:0 }}>{item.icon}</span>
                 <div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{item.label}</p>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{item.label}</p>
                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.4' }}>{item.sub}</p>
                 </div>
               </div>
@@ -118,13 +118,13 @@ export default function SteadytoolsPage() {
         {/* Finance calculators */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'24px' }}>
           <div style={{ padding:'16px 20px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 2px' }}>FINANCE CALCULATORS</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>FINANCE CALCULATORS</p>
             <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quick tools for pricing, profitability and tax planning.</p>
           </div>
           <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)' }}>
             {[{ key:'markup', label:'Markup vs Margin' }, { key:'roi', label:'Job ROI' }, { key:'tax', label:'Tax estimator' }].map(t => (
               <button key={t.key} type="button" onClick={() => setActiveCalc(t.key as any)}
-                style={{ padding:'11px 18px', border:'none', borderBottom: activeCalc === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeCalc === t.key ? 600 : 400, color: activeCalc === t.key ? '#1C2B32' : '#7A9098' }}>
+                style={{ padding:'11px 18px', border:'none', borderBottom: activeCalc === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeCalc === t.key ? 600 : 400, color: activeCalc === t.key ? '#0A0A0A' : '#7A9098' }}>
                 {t.label}
               </button>
             ))}
@@ -187,7 +187,7 @@ export default function SteadytoolsPage() {
                 <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, marginBottom:'14px' }}>Your financials</p>
                 <CalcInput label="Annual revenue" value={annualRevenue} onChange={setAnnualRevenue} prefix="$" />
                 <CalcInput label="Annual business expenses" value={annualExpenses} onChange={setAnnualExpenses} prefix="$" />
-                <label style={{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:'#1C2B32', cursor:'pointer', marginBottom:'12px' }}>
+                <label style={{ display:'flex', alignItems:'center', gap:'8px', fontSize:'13px', color:'#0A0A0A', cursor:'pointer', marginBottom:'12px' }}>
                   <input type="checkbox" checked={gstRegistered} onChange={e => setGstRegistered(e.target.checked)} />
                   Registered for GST
                 </label>
@@ -217,7 +217,7 @@ export default function SteadytoolsPage() {
         {/* Capability links */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
           <div style={{ padding:'14px 20px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>BUILD YOUR CAPABILITY</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>BUILD YOUR CAPABILITY</p>
           </div>
           <div style={{ padding:'14px', display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))', gap:'10px' }}>
             {[
@@ -229,7 +229,7 @@ export default function SteadytoolsPage() {
               <a key={card.title} href={card.href} target="_blank" rel="noreferrer" style={{ textDecoration:'none' }}>
                 <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px' }}>
                   <div style={{ fontSize:'18px', marginBottom:'6px' }}>{card.icon}</div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'3px' }}>{card.title}</p>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'3px' }}>{card.title}</p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'6px' }}>{card.body}</p>
                   <p style={{ fontSize:'12px', color:'#2E6A8F', margin:0 }}>{card.label}</p>
                 </div>

@@ -31,7 +31,7 @@ export function HintPanel({ hints, color = '#2E6A8F' }: { hints: string[], color
           {hints.map((hint, i) => (
             <div key={i} style={{ display:'flex', gap:'10px', alignItems:'flex-start' }}>
               <span style={{ fontSize:'11px', fontWeight:700, color, background: color + '15', borderRadius:'100px', padding:'2px 7px', flexShrink:0, marginTop:'1px' }}>{i + 1}</span>
-              <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0 }}>{hint}</p>
+              <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0 }}>{hint}</p>
             </div>
           ))}
         </div>

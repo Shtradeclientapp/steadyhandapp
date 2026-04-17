@@ -315,7 +315,7 @@ export default function TradieJobPage() {
     })
   }
 
-  const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
+  const inp = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '7px', fontSize: '13px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }
   const total = calcTotal()
 
   if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#C8D5D2' }}><p style={{ color: '#4A5E64' }}>Loading...</p></div>
@@ -360,7 +360,7 @@ export default function TradieJobPage() {
                   <div style={{ width:'22px', height:'22px', borderRadius:'50%', border:'1.5px solid ' + (isComplete ? '#2E7D60' : isCurrent ? s.c : 'rgba(28,43,50,0.2)'), background: isComplete ? '#2E7D60' : '#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', fontWeight:700, color: isComplete ? 'white' : isCurrent ? s.c : '#7A9098' }}>
                     {isComplete ? '✓' : s.n}
                   </div>
-                  <div style={{ fontSize:'12px', color: isCurrent ? '#1C2B32' : isComplete ? '#2E7D60' : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
+                  <div style={{ fontSize:'12px', color: isCurrent ? '#0A0A0A' : isComplete ? '#2E7D60' : '#7A9098', fontWeight: isCurrent ? 600 : 400 }}>{s.l}</div>
                 </div>
               )
             })}
@@ -409,7 +409,7 @@ export default function TradieJobPage() {
               </div>
               <div style={{ padding:'20px' }}>
                 <div style={{ fontSize:'28px', marginBottom:'10px' }}>{slide.icon}</div>
-                <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', marginBottom:'8px' }}>{slide.title}</p>
+                <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>{slide.title}</p>
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'16px' }}>{slide.body}</p>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <div style={{ display:'flex', gap:'8px' }}>
@@ -442,7 +442,7 @@ export default function TradieJobPage() {
                             <input type="datetime-local" value={proposedSlots[i]}
                               onChange={e => { const s = [...proposedSlots]; s[i] = e.target.value; setProposedSlots(s) }}
                               min={new Date().toISOString().slice(0,16)}
-                              style={{ flex:1, padding:'7px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                              style={{ flex:1, padding:'7px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'12px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                           </div>
                         ))}
                       </div>
@@ -528,12 +528,12 @@ export default function TradieJobPage() {
             </p>
           </div>
         )}
-        <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '24px', color: '#1C2B32', letterSpacing: '1.5px', marginBottom: '4px' }}>{job.title}</h1>
+        <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '24px', color: '#0A0A0A', letterSpacing: '1.5px', marginBottom: '4px' }}>{job.title}</h1>
         <p style={{ fontSize: '14px', color: '#7A9098', marginBottom: '24px' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</p>
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
           <p style={{ fontSize: '10px', letterSpacing: '1px', textTransform: 'uppercase' as const, color: '#7A9098', marginBottom: '8px', fontWeight: 500 }}>Job description</p>
-          <p style={{ fontSize: '14px', color: '#1C2B32', lineHeight: '1.65', marginBottom: '12px' }}>{job.description}</p>
+          <p style={{ fontSize: '14px', color: '#0A0A0A', lineHeight: '1.65', marginBottom: '12px' }}>{job.description}</p>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' as const }}>
             {job.budget_range && <span style={{ fontSize: '12px', color: '#4A5E64', background: '#C8D5D2', padding: '3px 10px', borderRadius: '6px' }}>Budget: {job.budget_range}</span>}
             {job.urgency && <span style={{ fontSize: '12px', color: '#C07830', background: 'rgba(192,120,48,0.08)', border: '1px solid rgba(192,120,48,0.2)', padding: '3px 10px', borderRadius: '6px' }}>⏱ {job.urgency}</span>}
@@ -545,7 +545,7 @@ export default function TradieJobPage() {
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' as const, gap: '10px' }}>
             <div>
-              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE</p>
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE</p>
               <p style={{ fontSize: '12px', color: '#7A9098' }}>{currentQuote ? 'Version ' + currentQuote.version + ' · ' + new Date(currentQuote.created_at).toLocaleDateString('en-AU') : 'No quote submitted yet'}</p>
             </div>
             {['agreement','delivery','signoff','warranty','complete'].includes(job?.status) ? (
@@ -554,7 +554,7 @@ export default function TradieJobPage() {
               </span>
             ) : (
               <button type="button" onClick={() => setShowQuoteForm(!showQuoteForm)}
-                style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#1C2B32' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                style={{ background: showQuoteForm ? 'rgba(28,43,50,0.08)' : '#2E7D60', color: showQuoteForm ? '#0A0A0A' : 'white', padding: '9px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                 {showQuoteForm ? 'Cancel' : currentQuote ? 'Revise quote' : 'Build quote →'}
               </button>
             )}
@@ -629,7 +629,7 @@ export default function TradieJobPage() {
               </div>
               <div style={{ display:'flex', gap:'10px' }}>
                 <a href="/tradie/dashboard" style={{ flex:1 }}>
-                  <button type="button" style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  <button type="button" style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                     Back to dashboard
                   </button>
                 </a>
@@ -654,7 +654,7 @@ export default function TradieJobPage() {
           {currentQuote && !showQuoteForm && !quoteSubmitted && (
             <div style={{ padding: '16px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '14px' }}>
-                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '32px', color: '#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '32px', color: '#0A0A0A' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
                 <span style={{ fontSize: '13px', color: '#9AA5AA' }}>AUD inc. GST</span>
               </div>
               {currentQuote.breakdown?.length > 0 && (
@@ -662,7 +662,7 @@ export default function TradieJobPage() {
                   {currentQuote.breakdown.map((b: any, i: number) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', borderBottom: '1px solid rgba(28,43,50,0.06)', fontSize: '13px' }}>
                       <span style={{ color: '#4A5E64' }}>{b.category ? b.category + ' — ' : ''}{b.label}</span>
-                      <span style={{ fontWeight: 500, color: '#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
+                      <span style={{ fontWeight: 500, color: '#0A0A0A' }}>${Number(b.amount).toLocaleString()}</span>
                     </div>
                   ))}
                   <div style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 12px', background: '#E8F0EE', fontSize: '13px', fontWeight: 600 }}>
@@ -681,7 +681,7 @@ export default function TradieJobPage() {
               <div style={{ marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <div>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', margin: '0 0 2px' }}>Quote style: <span style={{ color: '#2E7D60' }}>{template.name}</span></p>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 2px' }}>Quote style: <span style={{ color: '#2E7D60' }}>{template.name}</span></p>
                     <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>{template.description}</p>
                   </div>
                   <button type="button" onClick={() => setShowTemplates(!showTemplates)}
@@ -695,7 +695,7 @@ export default function TradieJobPage() {
                     {TEMPLATES.map(t => (
                       <div key={t.id} onClick={() => switchTemplate(t.id)}
                         style={{ padding: '12px', background: activeTemplate === t.id ? 'rgba(46,106,143,0.08)' : '#C8D5D2', border: '1.5px solid ' + (activeTemplate === t.id ? '#2E6A8F' : 'rgba(28,43,50,0.1)'), borderRadius: '8px', cursor: 'pointer' }}>
-                        <p style={{ fontSize: '12px', fontWeight: 600, color: activeTemplate === t.id ? '#2E6A8F' : '#1C2B32', margin: '0 0 3px' }}>{t.name}</p>
+                        <p style={{ fontSize: '12px', fontWeight: 600, color: activeTemplate === t.id ? '#2E6A8F' : '#0A0A0A', margin: '0 0 3px' }}>{t.name}</p>
                         <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 4px', lineHeight: '1.4' }}>{t.description}</p>
                         <p style={{ fontSize: '10px', color: '#9AA5AA', margin: 0 }}>Best for: {t.best_for}</p>
                       </div>
@@ -715,7 +715,7 @@ export default function TradieJobPage() {
                 return (
                   <div key={cat} style={{ marginBottom: '18px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                      <p style={{ fontSize: '11px', fontWeight: 600, color: '#1C2B32', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: 0 }}>{cat}</p>
+                      <p style={{ fontSize: '11px', fontWeight: 600, color: '#0A0A0A', letterSpacing: '0.5px', textTransform: 'uppercase' as const, margin: 0 }}>{cat}</p>
                       <button type="button" onClick={() => addLineItem(cat)}
                         style={{ fontSize: '11px', color: '#2E7D60', background: 'rgba(46,125,96,0.08)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '5px', padding: '2px 8px', cursor: 'pointer' }}>
                         + Add
@@ -782,7 +782,7 @@ export default function TradieJobPage() {
                 )}
               </div>
 
-              <div style={{ background: '#1C2B32', borderRadius: '8px', padding: '14px 18px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ background: '#0A0A0A', borderRadius: '8px', padding: '14px 18px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '13px', color: 'rgba(216,228,225,0.6)' }}>Total (inc. GST)</span>
                 <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: total > 0 ? 'rgba(216,228,225,0.9)' : 'rgba(216,228,225,0.3)' }}>
                   ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -791,18 +791,18 @@ export default function TradieJobPage() {
 
               <div className='form-2col' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '5px' }}>Estimated start date</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Estimated start date</label>
                   <input type="date" value={quoteForm.estimated_start} onChange={e => setQuoteForm(f => ({ ...f, estimated_start: e.target.value }))} style={inp} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#1C2B32', marginBottom: '5px' }}>Estimated duration (days)</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Estimated duration (days)</label>
                   <input type="number" placeholder="14" value={quoteForm.estimated_days} onChange={e => setQuoteForm(f => ({ ...f, estimated_days: e.target.value }))} style={inp} />
                 </div>
               </div>
 
               <div style={{ marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '5px' }}>
-                  <label style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>Terms and conditions</label>
+                  <label style={{ fontSize: '12px', fontWeight: 500, color: '#0A0A0A' }}>Terms and conditions</label>
                   <span style={{ fontSize: '11px', color: '#7A9098' }}>WA defaults · edit as needed</span>
                 </div>
                 <textarea value={quoteForm.conditions} onChange={e => setQuoteForm(f => ({ ...f, conditions: e.target.value }))} rows={8} style={{ ...inp, resize: 'vertical' as const, lineHeight: '1.6', fontSize: '12px' }} />
@@ -827,7 +827,7 @@ export default function TradieJobPage() {
         {quotes.length > 1 && (
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
             <div style={{ padding: '14px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE VERSION HISTORY</p>
+              <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', letterSpacing: '0.5px', marginBottom: '2px' }}>QUOTE VERSION HISTORY</p>
               <p style={{ fontSize: '12px', color: '#7A9098' }}>Full revision trail — visible to both parties</p>
             </div>
             <div style={{ padding: '16px 20px' }}>
@@ -840,7 +840,7 @@ export default function TradieJobPage() {
                       </div>
                       <span style={{ fontSize: '12px', color: '#7A9098' }}>{new Date(q.created_at).toLocaleDateString('en-AU')} at {new Date(q.created_at).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
-                    <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '18px', color: i === 0 ? '#1C2B32' : '#7A9098' }}>${Number(q.total_price).toLocaleString()}</span>
+                    <span style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '18px', color: i === 0 ? '#0A0A0A' : '#7A9098' }}>${Number(q.total_price).toLocaleString()}</span>
                   </div>
                   {q.breakdown?.length > 0 && (
                     <div style={{ background: i === 0 ? '#F4F8F7' : 'rgba(28,43,50,0.03)', borderRadius: '8px', overflow: 'hidden', marginBottom: '8px' }}>
@@ -856,7 +856,7 @@ export default function TradieJobPage() {
                               <span style={{ fontSize: '12px', color: '#4A5E64' }}>{b.category ? b.category + ' — ' : ''}{b.label}</span>
                             </div>
                             <div style={{ textAlign: 'right' as const }}>
-                              <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>${Number(b.amount).toLocaleString()}</span>
+                              <span style={{ fontSize: '12px', fontWeight: 500, color: '#0A0A0A' }}>${Number(b.amount).toLocaleString()}</span>
                               {changed && prev && <p style={{ fontSize: '10px', color: '#C07830', margin: 0 }}>was ${Number(prev.amount).toLocaleString()}</p>}
                             </div>
                           </div>
@@ -885,15 +885,15 @@ export default function TradieJobPage() {
 
         {scope && (
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
-            <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#1C2B32', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>
+            <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>
             <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
               <div style={{ flex: 1, padding: '10px', background: scope.tradie_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.tradie_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
                 <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 3px' }}>Tradie</p>
-                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.tradie_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.tradie_signed_at ? '✓ Signed' : 'Not signed'}</p>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.tradie_signed_at ? '#2E7D60' : '#0A0A0A', margin: 0 }}>{scope.tradie_signed_at ? '✓ Signed' : 'Not signed'}</p>
               </div>
               <div style={{ flex: 1, padding: '10px', background: scope.client_signed_at ? 'rgba(46,125,96,0.06)' : '#C8D5D2', border: '1px solid ' + (scope.client_signed_at ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.15)'), borderRadius: '8px', textAlign: 'center' as const }}>
                 <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 3px' }}>Client</p>
-                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.client_signed_at ? '#2E7D60' : '#1C2B32', margin: 0 }}>{scope.client_signed_at ? '✓ Signed' : 'Not signed'}</p>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: scope.client_signed_at ? '#2E7D60' : '#0A0A0A', margin: 0 }}>{scope.client_signed_at ? '✓ Signed' : 'Not signed'}</p>
               </div>
             </div>
             {!scope.tradie_signed_at ? (
@@ -916,7 +916,7 @@ export default function TradieJobPage() {
 
         {milestones.length > 0 && scope?.client_signed_at && scope?.tradie_signed_at && (
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#1C2B32' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#0A0A0A' }}>
               <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: 'rgba(216,228,225,0.9)', letterSpacing: '0.5px', marginBottom: '4px' }}>DELIVERY</p>
               <p style={{ fontSize: '12px', color: 'rgba(216,228,225,0.5)', margin: 0 }}>Mark each milestone complete when done — client approves and payment releases automatically</p>
             </div>
@@ -929,7 +929,7 @@ export default function TradieJobPage() {
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                     <span style={{ fontSize: '12px', color: '#4A5E64' }}>{approved} of {total} milestones approved</span>
-                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>{pct}% complete</span>
+                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#0A0A0A' }}>{pct}% complete</span>
                   </div>
                   <div style={{ height: '6px', background: 'rgba(28,43,50,0.1)', borderRadius: '100px', overflow: 'hidden' }}>
                     <div style={{ height: '100%', width: pct + '%', background: pct === 100 ? '#2E7D60' : '#C07830', borderRadius: '100px', transition: 'width 0.3s' }} />
@@ -937,7 +937,7 @@ export default function TradieJobPage() {
                   {currentQuote && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
                       <span style={{ fontSize: '11px', color: '#7A9098' }}>Total contract value</span>
-                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#1C2B32' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 500, color: '#0A0A0A' }}>${Number(currentQuote.total_price).toLocaleString()}</span>
                     </div>
                   )}
                 </div>
@@ -957,7 +957,7 @@ export default function TradieJobPage() {
                           <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: m.status === 'approved' ? '#2E7D60' : isActive ? '#C07830' : 'rgba(28,43,50,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', flexShrink: 0 }}>
                             {m.status === 'approved' ? '✓' : i + 1}
                           </div>
-                          <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>{m.label}</p>
+                          <p style={{ fontSize: '14px', fontWeight: 500, color: '#0A0A0A', margin: 0 }}>{m.label}</p>
                         </div>
                         <p style={{ fontSize: '12px', color: '#7A9098', marginBottom: '4px', paddingLeft: '28px' }}>{m.description}</p>
                         <p style={{ fontSize: '12px', color: '#4A5E64', paddingLeft: '28px' }}>
@@ -998,14 +998,14 @@ export default function TradieJobPage() {
             {/* PROGRESS / HANDOVER NOTES */}
             {!['warranty','complete'].includes(job?.status) && (
               <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
-                <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', marginBottom: '6px', letterSpacing: '0.3px' }}>Post a progress update</p>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: '#0A0A0A', marginBottom: '6px', letterSpacing: '0.3px' }}>Post a progress update</p>
                 <p style={{ fontSize: '11px', color: '#7A9098', marginBottom: '10px' }}>Keep the client informed as work progresses — updates are added to the job thread.</p>
                 <textarea value={progressNote} onChange={e => setProgressNote(e.target.value)}
                   placeholder="e.g. First fix wiring complete — all cable runs installed, ready for wall lining..."
-                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#1C2B32', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '72px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
+                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#0A0A0A', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '72px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
                   <button type="button" onClick={sendProgressNote} disabled={!progressNote.trim() || sendingNote}
-                    style={{ background: noteSent ? '#2E7D60' : '#1C2B32', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
+                    style={{ background: noteSent ? '#2E7D60' : '#0A0A0A', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
                     {noteSent ? '✓ Sent' : sendingNote ? 'Sending...' : 'Send update →'}
                   </button>
                 </div>
@@ -1013,14 +1013,14 @@ export default function TradieJobPage() {
             )}
             {['warranty','complete'].includes(job?.status) && (
               <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(28,43,50,0.08)', background: '#F4F8F7' }}>
-                <p style={{ fontSize: '12px', fontWeight: 600, color: '#1C2B32', marginBottom: '6px', letterSpacing: '0.3px' }}>Write a handover note</p>
+                <p style={{ fontSize: '12px', fontWeight: 600, color: '#0A0A0A', marginBottom: '6px', letterSpacing: '0.3px' }}>Write a handover note</p>
                 <p style={{ fontSize: '11px', color: '#7A9098', marginBottom: '10px' }}>Summarise the completed work for the client — this becomes part of the permanent job record and supports your warranty obligations.</p>
                 <textarea value={progressNote} onChange={e => setProgressNote(e.target.value)}
                   placeholder="e.g. All works completed as per scope. Circuits tested and certified. Switchboard labelled. Please find compliance certificate in the document vault..."
-                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#1C2B32', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '96px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
+                  style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', color: '#0A0A0A', background: 'white', outline: 'none', resize: 'vertical' as const, minHeight: '96px', fontFamily: 'sans-serif', boxSizing: 'border-box' as const }} />
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
                   <button type="button" onClick={sendProgressNote} disabled={!progressNote.trim() || sendingNote}
-                    style={{ background: noteSent ? '#2E7D60' : '#1C2B32', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
+                    style={{ background: noteSent ? '#2E7D60' : '#0A0A0A', color: 'white', padding: '9px 18px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: !progressNote.trim() ? 'not-allowed' : 'pointer', opacity: !progressNote.trim() ? 0.5 : 1 }}>
                     {noteSent ? '✓ Sent' : sendingNote ? 'Sending...' : 'Send handover note →'}
                   </button>
                 </div>
@@ -1049,7 +1049,7 @@ export default function TradieJobPage() {
                   ))}
                 </div>
                 <a href={"/messages?job=" + (job?.id || "")}>
-                  <button type="button" style={{ width: '100%', background: '#1C2B32', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                  <button type="button" style={{ width: '100%', background: '#0A0A0A', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                     Message the client →
                   </button>
                 </a>
@@ -1084,7 +1084,7 @@ export default function TradieJobPage() {
                       {isOverdue && <span style={{ fontSize: '11px', color: '#D4522A', fontWeight: 500 }}>⚠ Response overdue</span>}
                       <span style={{ fontSize: '11px', color: '#9AA5AA', marginLeft: 'auto' }}>Logged {new Date(issue.created_at).toLocaleDateString('en-AU')}</span>
                     </div>
-                    <p style={{ fontSize: '14px', fontWeight: 500, color: '#1C2B32', marginBottom: '4px' }}>{issue.title}</p>
+                    <p style={{ fontSize: '14px', fontWeight: 500, color: '#0A0A0A', marginBottom: '4px' }}>{issue.title}</p>
                     <p style={{ fontSize: '13px', color: '#4A5E64', lineHeight: '1.55', marginBottom: '10px' }}>{issue.description}</p>
                     {issue.tradie_response ? (
                       <div style={{ background: 'rgba(46,125,96,0.06)', border: '1px solid rgba(46,125,96,0.2)', borderRadius: '8px', padding: '10px 12px' }}>
@@ -1100,11 +1100,11 @@ export default function TradieJobPage() {
                               value={responseForm[issue.id] || ''}
                               onChange={e => setResponseForm(prev => ({ ...prev, [issue.id]: e.target.value }))}
                               rows={3} placeholder="Describe how you plan to address this issue and your proposed timeline..."
-                              style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', background: 'white', color: '#1C2B32', outline: 'none', resize: 'vertical' as const, lineHeight: '1.5', boxSizing: 'border-box' as const, marginBottom: '8px', fontFamily: 'sans-serif' }}
+                              style={{ width: '100%', padding: '10px 12px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '8px', fontSize: '13px', background: 'white', color: '#0A0A0A', outline: 'none', resize: 'vertical' as const, lineHeight: '1.5', boxSizing: 'border-box' as const, marginBottom: '8px', fontFamily: 'sans-serif' }}
                             />
                             <div style={{ display: 'flex', gap: '8px' }}>
                               <button type="button" onClick={() => respondToIssue(issue.id)}
-                                style={{ flex: 1, background: '#1C2B32', color: 'white', padding: '9px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
+                                style={{ flex: 1, background: '#0A0A0A', color: 'white', padding: '9px', borderRadius: '7px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                                 Submit response →
                               </button>
                               <button type="button" onClick={() => setRespondingTo(null)}
@@ -1130,11 +1130,11 @@ export default function TradieJobPage() {
 
         <a href={"/messages?job=" + (job?.id || "")} style={{ display: 'block', marginBottom: '20px', textDecoration: 'none' }}>
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#1C2B32', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: '16px' }}>💬</span>
             </div>
             <div>
-              <p style={{ fontSize: '13px', fontWeight: 500, color: '#1C2B32', margin: 0 }}>Messages</p>
+              <p style={{ fontSize: '13px', fontWeight: 500, color: '#0A0A0A', margin: 0 }}>Messages</p>
               <p style={{ fontSize: '11px', color: '#7A9098', margin: 0 }}>Chat with the client about this job →</p>
             </div>
           </div>

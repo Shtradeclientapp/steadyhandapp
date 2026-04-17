@@ -117,7 +117,7 @@ export default function ShortlistPage() {
   )
 
   const totalSelected = selectedTradies.length + pendingInvites.length
-  const inpStyle = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }
+  const inpStyle = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }
 
   return (
     <>
@@ -135,7 +135,7 @@ export default function ShortlistPage() {
             </div>
           )}
 
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR JOB</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>YOUR JOB</h1>
 
           {!isPastStage && (
             <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'18px 20px', marginBottom:'20px' }}>
@@ -151,7 +151,7 @@ export default function ShortlistPage() {
 
           {jobs.length > 1 && (
             <div style={{ marginBottom:'20px' }}>
-              <label style={{ fontSize:'13px', fontWeight:'500', color:'#1C2B32', marginBottom:'6px', display:'block' }}>Select job</label>
+              <label style={{ fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'6px', display:'block' }}>Select job</label>
               <select value={selectedJob?.id || ''} onChange={async e => {
                 const job = jobs.find((j: any) => j.id === e.target.value)
                 setSelectedJob(job)
@@ -159,7 +159,7 @@ export default function ShortlistPage() {
                 setSent(false)
                 setTab('invite')
                 await loadQuoteRequests(job.id)
-              }} style={{ padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#1C2B32', outline:'none', width:'100%' }}>
+              }} style={{ padding:'10px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', width:'100%' }}>
                 {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.suburb}</option>)}
               </select>
             </div>
@@ -167,7 +167,7 @@ export default function ShortlistPage() {
 
           {selectedJob && (
             <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', paddingBottom:'14px', marginBottom:'16px' }}>
-              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 3px' }}>{selectedJob.title}</h3>
+              <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 3px' }}>{selectedJob.title}</h3>
               <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>{selectedJob.trade_category} · {selectedJob.suburb}</p>
             </div>
           )}
@@ -186,12 +186,12 @@ export default function ShortlistPage() {
             <div style={{ borderBottom:'1px solid rgba(28,43,50,0.1)', paddingBottom:'14px', marginBottom:'16px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
                 <div>
-                  <p style={{ fontSize:'13px', color:'#1C2B32', marginBottom:'3px' }}>Ready to send {totalSelected} quote request{totalSelected > 1 ? 's' : ''}?</p>
+                  <p style={{ fontSize:'13px', color:'#0A0A0A', marginBottom:'3px' }}>Ready to send {totalSelected} quote request{totalSelected > 1 ? 's' : ''}?</p>
                   <p style={{ fontSize:'12px', color:'#7A9098' }}>Each tradie will be notified and invited to book a consult time.</p>
                 </div>
                 <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
                   <button type="button" onClick={() => setPendingConfirm(false)}
-                    style={{ background:'transparent', color:'#1C2B32', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
+                    style={{ background:'transparent', color:'#0A0A0A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>
                     ← Edit
                   </button>
                   <button type="button" onClick={sendQuoteRequests} disabled={sending}
@@ -216,7 +216,7 @@ export default function ShortlistPage() {
           {showNextStepModal && (
             <div style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(28,43,50,0.8)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
               <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'500px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
-                <div style={{ background:'#1C2B32', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
+                <div style={{ background:'#0A0A0A', padding:'20px 28px', borderBottom:'2px solid #2E7D60' }}>
                   <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>QUOTE REQUESTS SENT</p>
                   <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Your selected tradies have been notified</p>
                 </div>
@@ -256,7 +256,7 @@ export default function ShortlistPage() {
                       }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'6px' }}>
                         <span style={{ fontSize:'20px' }}>⚡</span>
-                        <p style={{ fontSize:'14px', fontWeight:600, color:'#1C2B32', margin:0 }}>Skip consult — go straight to quotes</p>
+                        <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:0 }}>Skip consult — go straight to quotes</p>
                       </div>
                       <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
                         Tradies will quote from your written request only. Faster but no shared site record before work is priced.
@@ -295,11 +295,11 @@ export default function ShortlistPage() {
                 </p>
                 {pendingInvites.length > 0 && (
                   <div style={{ marginBottom:'20px' }}>
-                    <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'8px' }}>Added to quote request ({pendingInvites.length})</p>
+                    <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'8px' }}>Added to quote request ({pendingInvites.length})</p>
                     {pendingInvites.map((inv: any, i: number) => (
                       <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', marginBottom:'6px' }}>
                         <div>
-                          <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{inv.business_name}</p>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{inv.business_name}</p>
                           <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{inv.email}</p>
                         </div>
                         <button type="button" onClick={() => removeInvite(i)} style={{ background:'none', border:'none', color:'#D4522A', cursor:'pointer', fontSize:'16px', padding:'0 4px' }}>×</button>
@@ -308,35 +308,35 @@ export default function ShortlistPage() {
                   </div>
                 )}
                 <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'16px' }}>
-                  <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', marginBottom:'14px' }}>Add a tradie</p>
+                  <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'14px' }}>Add a tradie</p>
                   <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
                     <div>
-                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Business name *</label>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Business name *</label>
                       <input type="text" placeholder="e.g. Smith Electrical" value={inviteForm.business_name} onChange={e => setInviteForm(f => ({ ...f, business_name: e.target.value }))} style={inpStyle} />
                     </div>
                     <div>
-                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Email address *</label>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Email address *</label>
                       <input type="email" placeholder="tradie@email.com" value={inviteForm.email} onChange={e => setInviteForm(f => ({ ...f, email: e.target.value }))} style={inpStyle} />
                     </div>
                   </div>
                   <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'14px' }}>
                     <div>
-                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Trade category</label>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Trade category</label>
                       <input type="text" placeholder="e.g. Electrical" value={inviteForm.trade_category} onChange={e => setInviteForm(f => ({ ...f, trade_category: e.target.value }))} style={inpStyle} />
                     </div>
                     <div>
-                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Phone (optional)</label>
+                      <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Phone (optional)</label>
                       <input type="tel" placeholder="0400 000 000" value={inviteForm.phone} onChange={e => setInviteForm(f => ({ ...f, phone: e.target.value }))} style={inpStyle} />
                     </div>
                   </div>
                   <div style={{ marginBottom:'10px' }}>
-                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'4px' }}>Personal message <span style={{ fontWeight:400, color:'#7A9098' }}>(optional)</span></label>
+                    <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Personal message <span style={{ fontWeight:400, color:'#7A9098' }}>(optional)</span></label>
                     <textarea placeholder="e.g. Hi — I've worked with you before and would love to get a quote on this job through Steadyhand." value={inviteForm.personal_message} onChange={e => setInviteForm(f => ({ ...f, personal_message: e.target.value }))}
-                      style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, minHeight:'72px', fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                      style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, minHeight:'72px', fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
                     <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'4px' }}>This will appear at the top of the invitation email the tradie receives.</p>
                   </div>
                   <button type="button" onClick={addInvite} disabled={!inviteForm.business_name || !inviteForm.email}
-                    style={{ width:'100%', background:'#1C2B32', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
+                    style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !inviteForm.business_name || !inviteForm.email ? 0.5 : 1 }}>
                     {inviteSent ? '✓ Added' : '+ Add to quote request'}
                   </button>
                 </div>
@@ -358,11 +358,11 @@ export default function ShortlistPage() {
                       {pendingInvites.map((inv: any, idx: number) => (
                         <div key={idx} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 16px', borderBottom: idx < pendingInvites.length - 1 ? '1px solid rgba(28,43,50,0.06)' : 'none' }}>
                           <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
                               {inv.business_name?.charAt(0) || '?'}
                             </div>
                             <div>
-                              <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{inv.business_name}</p>
+                              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{inv.business_name}</p>
                               <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{inv.email}</p>
                             </div>
                           </div>
@@ -395,10 +395,10 @@ export default function ShortlistPage() {
                       {quoteRequests.map((qr: any) => (
                         <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px' }}>
                           <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'white', flexShrink:0 }}>
+                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'white', flexShrink:0 }}>
                               {qr.tradie?.business_name?.charAt(0) || '?'}
                             </div>
-                            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{qr.tradie?.business_name}</p>
+                            <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{qr.tradie?.business_name}</p>
                           </div>
                           <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px', background: qr.status === 'accepted' ? 'rgba(46,125,96,0.1)' : 'rgba(192,120,48,0.1)', color: qr.status === 'accepted' ? '#2E7D60' : '#C07830' }}>
                             {qr.status === 'requested' ? '⏳ Awaiting quote' : qr.status === 'accepted' ? '✓ Accepted' : qr.status}
@@ -422,7 +422,7 @@ export default function ShortlistPage() {
           </div>
 
           {!sent && totalSelected > 0 && (
-            <div style={{ marginTop:'16px', background:'#1C2B32', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+            <div style={{ marginTop:'16px', background:'#0A0A0A', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
               <div>
                 <p style={{ fontSize:'14px', fontWeight:500, color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>
                   {totalSelected} tradie{totalSelected > 1 ? 's' : ''} selected

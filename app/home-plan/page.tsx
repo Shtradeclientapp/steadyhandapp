@@ -94,7 +94,7 @@ export default function HomePlanPage() {
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'5px 14px', marginBottom:'16px' }}>
             <span style={{ fontSize:'11px', color:'#2E7D60', fontWeight:600, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Steadyhand Home</span>
           </div>
-          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(24px,4vw,40px)', color:'#1C2B32', letterSpacing:'2px', marginBottom:'12px' }}>YOUR HOME, LOOKED AFTER.</h1>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(24px,4vw,40px)', color:'#0A0A0A', letterSpacing:'2px', marginBottom:'12px' }}>YOUR HOME, LOOKED AFTER.</h1>
           <p style={{ fontSize:'16px', color:'#4A5E64', fontWeight:300, lineHeight:'1.7', maxWidth:'480px', margin:'0 auto' }}>
             Steadyhand Home turns a single job platform into a long-term relationship with your property — every job documented, every warranty tracked, every tradie rated.
           </p>
@@ -103,7 +103,7 @@ export default function HomePlanPage() {
         {isHome ? (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'14px', padding:'28px', textAlign:'center', marginBottom:'32px' }}>
             <p style={{ fontSize:'20px', marginBottom:'8px' }}>✓</p>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', marginBottom:'6px' }}>You are on Steadyhand Home</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', marginBottom:'6px' }}>You are on Steadyhand Home</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'20px' }}>All features are active on your account.</p>
             <a href="/dashboard" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none' }}>← Back to dashboard</a>
           </div>
@@ -115,7 +115,7 @@ export default function HomePlanPage() {
                 {(['monthly', 'annual'] as const).map(b => (
                   <button key={b} type="button" onClick={() => setBilling(b)}
                     style={{ padding:'8px 20px', borderRadius:'7px', border:'none', cursor:'pointer', fontSize:'13px', fontWeight:500,
-                      background: billing === b ? '#1C2B32' : 'transparent',
+                      background: billing === b ? '#0A0A0A' : 'transparent',
                       color: billing === b ? 'white' : '#7A9098' }}>
                     {b === 'monthly' ? 'Monthly' : 'Annual'}
                     {b === 'annual' && <span style={{ fontSize:'10px', color: billing === 'annual' ? 'rgba(216,228,225,0.6)' : '#2E7D60', marginLeft:'6px' }}>2 months free</span>}
@@ -130,7 +130,7 @@ export default function HomePlanPage() {
               {/* Free */}
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'16px', padding:'28px' }}>
                 <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'1px', textTransform:'uppercase' as const, marginBottom:'8px' }}>Standard</p>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'36px', color:'#1C2B32', marginBottom:'4px' }}>Free</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'36px', color:'#0A0A0A', marginBottom:'4px' }}>Free</p>
                 <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'24px' }}>No credit card required</p>
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'24px' }}>
                   {FEATURES_FREE.map(f => (
@@ -146,7 +146,7 @@ export default function HomePlanPage() {
               </div>
 
               {/* Home */}
-              <div style={{ background:'#1C2B32', border:'2px solid #2E7D60', borderRadius:'16px', padding:'28px', position:'relative' as const, overflow:'hidden' }}>
+              <div style={{ background:'#0A0A0A', border:'2px solid #2E7D60', borderRadius:'16px', padding:'28px', position:'relative' as const, overflow:'hidden' }}>
                 <div style={{ position:'relative' as const, zIndex:1 }}>
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
                     <p style={{ fontSize:'11px', fontWeight:600, color:'rgba(216,228,225,0.5)', letterSpacing:'1px', textTransform:'uppercase' as const }}>Steadyhand Home</p>
@@ -195,7 +195,7 @@ export default function HomePlanPage() {
 
         {/* Feature preview sections */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px', marginBottom:'20px' }}>
-          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 6px' }}>HOME DOCUMENT VAULT</p>
+          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 6px' }}>HOME DOCUMENT VAULT</p>
           <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'16px' }}>Store warranties, compliance certificates, permits, receipts — all in one place.</p>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'10px' }}>
             {[
@@ -205,7 +205,7 @@ export default function HomePlanPage() {
             ].map(d => (
               <div key={d.label} style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px', textAlign:'center' as const }}>
                 <div style={{ fontSize:'24px', marginBottom:'6px' }}>{d.icon}</div>
-                <p style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', marginBottom:'3px' }}>{d.label}</p>
+                <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'3px' }}>{d.label}</p>
                 <p style={{ fontSize:'11px', color:'#7A9098' }}>{d.sub}</p>
               </div>
             ))}
@@ -213,7 +213,7 @@ export default function HomePlanPage() {
         </div>
 
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
-          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 6px' }}>ANNUAL HOME HEALTH CHECK</p>
+          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 6px' }}>ANNUAL HOME HEALTH CHECK</p>
           <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'12px' }}>Maintenance reminders based on your property history and job records.</p>
           <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6' }}>
             Based on the jobs you have completed through Steadyhand, we will remind you when maintenance is due — gutters before winter, air conditioning before summer, hot water systems approaching end of life.

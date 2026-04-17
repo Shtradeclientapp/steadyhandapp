@@ -282,7 +282,7 @@ export default function TradieDashboard() {
   return (
     <>
       {/* ── Invite a client — primary action ── */}
-      <div style={{ background:'#243540', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ background:'#141414', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
           <div style={{ flex:1, minWidth:0 }}>
             <p style={{ fontSize:'14px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 3px' }}>Invite a client to Steadyhand</p>
@@ -313,7 +313,7 @@ export default function TradieDashboard() {
       {showSetupWizard && (
         <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 28px' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 28px' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>WELCOME TO STEADYHAND</p>
               <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:'4px 0 0' }}>Let's get your profile ready</p>
             </div>
@@ -347,7 +347,7 @@ export default function TradieDashboard() {
                       {item.done ? '✓' : (i + 1)}
                     </div>
                     <div style={{ flex:1 }}>
-                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#1C2B32', margin:'0 0 2px' }}>{item.label}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.done ? '#2E7D60' : '#0A0A0A', margin:'0 0 2px' }}>{item.label}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{item.sub}</p>
                     </div>
                     {!item.done && (
@@ -366,7 +366,7 @@ export default function TradieDashboard() {
                 <button type="button" onClick={() => {
                   if (typeof window !== 'undefined') localStorage.setItem('tradie_setup_complete', '1')
                   setShowSetupWizard(false)
-                }} style={{ flex:1, background:'#1C2B32', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                }} style={{ flex:1, background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                   Go to my dashboard →
                 </button>
               </div>
@@ -388,13 +388,13 @@ export default function TradieDashboard() {
           </a>
           <div style={{ position:'relative' as const }}>
             <div onClick={() => setDropdownOpen(!dropdownOpen)}
-              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
+              style={{ width:'36px', height:'36px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'white', flexShrink:0, userSelect:'none' as const }}>
               {profile?.tradie?.business_name?.charAt(0)?.toUpperCase() || 'T'}
             </div>
             {dropdownOpen && (
               <div style={{ position:'absolute' as const, right:0, top:'44px', background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'10px', boxShadow:'0 8px 24px rgba(28,43,50,0.12)', minWidth:'200px', zIndex:200, overflow:'hidden' }}>
                 <div style={{ padding:'12px 14px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#F4F8F7' }}>
-                  <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{profile?.tradie?.business_name || 'My business'}</p>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{profile?.tradie?.business_name || 'My business'}</p>
                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Tradie account</p>
                 </div>
                 {[
@@ -406,7 +406,7 @@ export default function TradieDashboard() {
                   { label:'Subscription plans', href:'/tradie/subscribe' },
                 ].map(item => (
                   <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
-                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#1C2B32', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                    style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
                     {item.label}
                   </a>
                 ))}
@@ -421,7 +421,7 @@ export default function TradieDashboard() {
       </nav>
 
       {/* ── Hero ── */}
-      <div style={{ background:'#1C2B32', padding:'40px 0', position:'relative', overflow:'hidden' }}>
+      <div style={{ background:'#0A0A0A', padding:'40px 0', position:'relative', overflow:'hidden' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Tradie dashboard</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(20px, 4vw, 30px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', marginBottom:'4px' }}>
@@ -438,7 +438,7 @@ export default function TradieDashboard() {
         {/* ── Analytics ── */}
         <div style={{ marginBottom:'28px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>YOUR PERFORMANCE</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>YOUR PERFORMANCE</h2>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'12px' }}>
             {[
@@ -491,11 +491,11 @@ export default function TradieDashboard() {
         {profile?.tradie && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'18px 20px', marginBottom:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
             <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
-              <div style={{ width:'44px', height:'44px', borderRadius:'10px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <div style={{ width:'44px', height:'44px', borderRadius:'10px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)' }}>{profile.tradie.business_name?.charAt(0) || '?'}</span>
               </div>
               <div>
-                <p style={{ fontSize:'15px', fontWeight:500, color:'#1C2B32', margin:'0 0 3px' }}>{profile.tradie.business_name}</p>
+                <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 3px' }}>{profile.tradie.business_name}</p>
                 <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' as const }}>
                   {profile.tradie.licence_verified   && <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)',   border:'1px solid rgba(46,125,96,0.2)',   borderRadius:'100px', padding:'2px 8px' }}>✓ Licence</span>}
                   {profile.tradie.insurance_verified && <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)',   border:'1px solid rgba(46,125,96,0.2)',   borderRadius:'100px', padding:'2px 8px' }}>✓ Insurance</span>}
@@ -559,7 +559,7 @@ export default function TradieDashboard() {
                   <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                     <span style={{ fontSize:'14px' }}>{item.ok ? '✓' : '○'}</span>
                     <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color: item.ok ? '#2E7D60' : '#1C2B32', margin:0 }}>{item.label}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color: item.ok ? '#2E7D60' : '#0A0A0A', margin:0 }}>{item.label}</p>
                       {item.action && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{item.action}</p>}
                     </div>
                   </div>
@@ -589,7 +589,7 @@ export default function TradieDashboard() {
         {/* ── Upcoming consults ── */}
         {consults.length > 0 && (
           <div style={{ marginBottom:'24px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'12px' }}>UPCOMING CONSULTS</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'12px' }}>UPCOMING CONSULTS</h2>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
               {consults.map((a: any) => {
                 const date = new Date(a.consult_date)
@@ -600,11 +600,11 @@ export default function TradieDashboard() {
                   <a key={a.id} href="/consult" style={{ textDecoration:'none' }}>
                     <div style={{ background:'#E8F0EE', border:'1px solid ' + (isToday ? 'rgba(155,107,155,0.4)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
                       <div style={{ width:'40px', height:'40px', borderRadius:'8px', background: isToday ? 'rgba(155,107,155,0.12)' : 'rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                        <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#1C2B32', margin:0, lineHeight:1 }}>{date.getDate()}</p>
+                        <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#0A0A0A', margin:0, lineHeight:1 }}>{date.getDate()}</p>
                         <p style={{ fontSize:'9px', color:'#7A9098', margin:0, textTransform:'uppercase' as const }}>{date.toLocaleDateString('en-AU', { month:'short' })}</p>
                       </div>
                       <div style={{ flex:1 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>{a.job?.title}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{a.job?.title}</p>
                         <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
                           {a.job?.client?.full_name} · {date.toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
                           {!isConfirmed && <span style={{ color:'#C07830', marginLeft:'6px' }}>· Awaiting confirmation</span>}
@@ -622,7 +622,7 @@ export default function TradieDashboard() {
 
         {/* ── Active jobs ── */}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:0 }}>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>
             {activeJobs.length > 0 ? 'ACTIVE JOBS' : 'NO ACTIVE JOBS'}
           </h2>
 
@@ -630,7 +630,7 @@ export default function TradieDashboard() {
 
         {activeJobs.length === 0 && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'32px' }}>
-            <div style={{ background:'#1C2B32', padding:'20px 24px' }}>
+            <div style={{ background:'#0A0A0A', padding:'20px 24px' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'0.5px', margin:'0 0 4px' }}>WELCOME TO STEADYHAND</p>
               <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Your job pipeline starts here</p>
             </div>
@@ -647,7 +647,7 @@ export default function TradieDashboard() {
                   <div key={s.step} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px 16px', display:'flex', gap:'12px', alignItems:'flex-start' }}>
                     <div style={{ width:'24px', height:'24px', borderRadius:'50%', background:s.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:'white', flexShrink:0, marginTop:'1px' }}>{s.step}</div>
                     <div style={{ flex:1 }}>
-                      <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>{s.title}</p>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{s.title}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 8px', lineHeight:'1.5' }}>{s.body}</p>
                       {s.href && s.cta && (
                         <a href={s.href} style={{ fontSize:'12px', color:s.color, textDecoration:'none', fontWeight:500 }}>{s.cta}</a>
@@ -695,7 +695,7 @@ export default function TradieDashboard() {
                   {/* Top row: title + stage badge */}
                   <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const, marginBottom: next ? '8px' : '10px' }}>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#1C2B32', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
+                      <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
                       <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</div>
                     </div>
                     <span style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', background: color + '18', border:'1px solid ' + color + '40', color, fontWeight:500, flexShrink:0 }}>{label}</span>
@@ -705,7 +705,7 @@ export default function TradieDashboard() {
                     <div style={{ background: next.urgent ? color + '15' : 'rgba(28,43,50,0.04)', border:'1px solid ' + (next.urgent ? color + '40' : 'rgba(28,43,50,0.1)'), borderRadius:'8px', padding:'8px 12px', marginBottom:'10px', display:'flex', alignItems:'center', gap:'8px' }}>
                       <span style={{ fontSize:'14px', flexShrink:0 }}>{next.icon}</span>
                       <div>
-                        <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? color : '#1C2B32', margin:'0 0 1px' }}>{next.headline}</p>
+                        <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? color : '#0A0A0A', margin:'0 0 1px' }}>{next.headline}</p>
                         {next.sub && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{next.sub}</p>}
                       </div>
                     </div>
@@ -737,12 +737,12 @@ export default function TradieDashboard() {
         {/* ── Completed ── */}
         {completedJobs.length > 0 && (
           <>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', marginBottom:'14px' }}>COMPLETED</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'14px' }}>COMPLETED</h2>
             <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
               {completedJobs.map(job => (
                 <div key={job.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #2E7D60', borderRadius:'11px', padding:'16px 20px', opacity:0.7, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
                   <div>
-                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#1C2B32' }}>{job.title}</div>
+                    <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A' }}>{job.title}</div>
                     <div style={{ fontSize:'12px', color:'#7A9098', marginTop:'2px' }}>{job.trade_category} · {job.suburb}</div>
                   </div>
                   <span style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60' }}>Complete</span>
@@ -756,11 +756,11 @@ export default function TradieDashboard() {
         <div style={{ marginTop:'32px', paddingTop:'24px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
           <a href="/tradie/steadytools" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', textDecoration:'none', gap:'16px' }}>
             <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
-              <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <span style={{ fontSize:'18px' }}>🔧</span>
               </div>
               <div>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 3px' }}>STEADYTOOLS</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 3px' }}>STEADYTOOLS</p>
                 <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Finance calculators, document vault, lead management and capability resources</p>
               </div>
             </div>

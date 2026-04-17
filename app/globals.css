@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --ink:       #1C2B32;
+  --ink:       #0A0A0A;
   --bark:      #111C22;
   --mist:      #C8D5D2;
   --mist-d:    #B0C0BC;
@@ -239,7 +239,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   color: white;
 }
 .stage-nav-item.done .stage-nav-label { color: #2E7D60; }
-.stage-nav-item.active .stage-nav-label { font-weight: 600; color: #1C2B32; }
+.stage-nav-item.active .stage-nav-label { font-weight: 600; color: #0A0A0A; }
 .stage-nav-item.active::after {
   content: '';
   position: absolute;
@@ -352,7 +352,7 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   }
 
   /* Dark hero headers */
-  div[style*="padding:'32px 24px'"][style*="background:'#1C2B32'"] {
+  div[style*="padding:'32px 24px'"][style*="background:'#0A0A0A'"] {
     padding: 20px 16px !important;
   }
 

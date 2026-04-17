@@ -163,12 +163,12 @@ export default function VaultPage() {
             <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'8px' }}>
               <span style={{ fontSize:'11px', color:'#6B4FA8', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Home vault</span>
             </div>
-            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#1C2B32', letterSpacing:'1.5px', marginBottom:'4px' }}>DOCUMENT VAULT</h1>
+            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'4px' }}>DOCUMENT VAULT</h1>
             <p style={{ fontSize:'14px', color:'#4A5E64', fontWeight:300, lineHeight:'1.7', marginBottom:'20px' }}>Your permanent home record — scope agreements, warranties, certificates and receipts.</p>
 
             {/* Explainer */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'8px' }}>
-              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#1C2B32' }}>
+              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>WHAT GETS STORED HERE</p>
               </div>
               <div style={{ padding:'16px 20px' }}>
@@ -188,7 +188,7 @@ export default function VaultPage() {
                     <div key={item.stage} style={{ display:'flex', gap:'10px', alignItems:'flex-start', padding:'10px', background:'rgba(28,43,50,0.03)', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.06)' }}>
                       <span style={{ fontSize:'18px', flexShrink:0 }}>{item.icon}</span>
                       <div>
-                        <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{item.stage}</p>
+                        <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{item.stage}</p>
                         <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
                       </div>
                     </div>
@@ -198,7 +198,7 @@ export default function VaultPage() {
             </div>
           </div>
           <button type="button" onClick={() => setShowUpload(!showUpload)}
-            style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
+            style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
             + Add document
           </button>
         </div>
@@ -220,47 +220,47 @@ export default function VaultPage() {
 
         {showUpload && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', marginBottom:'16px' }}>ADD DOCUMENT</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>ADD DOCUMENT</p>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
               <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Document title *</label>
+                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Document title *</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                   placeholder="e.g. Walsh Plumbing — hot water compliance certificate"
-                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
               </div>
               <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
                 <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Document type *</label>
+                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Document type *</label>
                   <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }}>
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
                     {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Trade business</label>
+                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Trade business</label>
                   <input value={form.tradie_name} onChange={e => setForm(f => ({ ...f, tradie_name: e.target.value }))}
                     placeholder="e.g. Walsh Plumbing"
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const }} />
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
                 </div>
                 <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Issue date</label>
+                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Issue date</label>
                   <input type="date" value={form.issued_date} onChange={e => setForm(f => ({ ...f, issued_date: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Expiry date</label>
+                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Expiry date</label>
                   <input type="date" value={form.expiry_date} onChange={e => setForm(f => ({ ...f, expiry_date: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none' }} />
+                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
                 </div>
               </div>
               <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Notes</label>
+                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Notes</label>
                 <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                   rows={2} placeholder="Any additional notes..."
-                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
               </div>
               <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#1C2B32', display:'block', marginBottom:'4px' }}>Upload file (optional)</label>
+                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Upload file (optional)</label>
                 <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                   onChange={e => setSelectedFile(e.target.files?.[0] || null)}
                   style={{ fontSize:'13px', color:'#4A5E64' }} />
@@ -268,9 +268,9 @@ export default function VaultPage() {
               </div>
               <div style={{ display:'flex', gap:'10px' }}>
                 <button type="button" onClick={() => setShowUpload(false)}
-                  style={{ background:'transparent', color:'#1C2B32', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>Cancel</button>
+                  style={{ background:'transparent', color:'#0A0A0A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>Cancel</button>
                 <button type="button" onClick={uploadDoc} disabled={!form.title || uploading}
-                  style={{ flex:1, background:'#1C2B32', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:!form.title || uploading ? 'not-allowed' : 'pointer', opacity:!form.title || uploading ? 0.5 : 1 }}>
+                  style={{ flex:1, background:'#0A0A0A', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:!form.title || uploading ? 'not-allowed' : 'pointer', opacity:!form.title || uploading ? 0.5 : 1 }}>
                   {uploading ? 'Saving...' : 'Save to vault \u2192'}
                 </button>
               </div>
@@ -281,7 +281,7 @@ export default function VaultPage() {
         <div style={{ display:'flex', gap:'6px', marginBottom:'16px', flexWrap:'wrap' as const }}>
           {[{ value:'all', label:'All' }, ...DOC_TYPES].map(t => (
             <button key={t.value} type="button" onClick={() => setFilter(t.value)}
-              style={{ padding:'5px 12px', borderRadius:'100px', fontSize:'12px', fontWeight:filter === t.value ? 600 : 400, background:filter === t.value ? '#1C2B32' : 'rgba(28,43,50,0.06)', color:filter === t.value ? 'white' : '#4A5E64', border:'1px solid ' + (filter === t.value ? '#1C2B32' : 'rgba(28,43,50,0.1)'), cursor:'pointer' }}>
+              style={{ padding:'5px 12px', borderRadius:'100px', fontSize:'12px', fontWeight:filter === t.value ? 600 : 400, background:filter === t.value ? '#0A0A0A' : 'rgba(28,43,50,0.06)', color:filter === t.value ? 'white' : '#4A5E64', border:'1px solid ' + (filter === t.value ? '#0A0A0A' : 'rgba(28,43,50,0.1)'), cursor:'pointer' }}>
               {t.label}
             </button>
           ))}
@@ -297,7 +297,7 @@ export default function VaultPage() {
               Completed Steadyhand jobs automatically deposit scope agreements, milestone records and warranty certificates here.
             </p>
             <button type="button" onClick={() => setShowUpload(true)}
-              style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+              style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
               + Add your first document
             </button>
           </div>
@@ -316,7 +316,7 @@ export default function VaultPage() {
                       </div>
                       <div style={{ flex:1 }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px', flexWrap:'wrap' as const }}>
-                          <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:0 }}>{doc.title}</p>
+                          <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{doc.title}</p>
                           <span style={{ fontSize:'10px', color:docType.color, background:docType.color + '12', border:'1px solid ' + docType.color + '25', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>{docType.label}</span>
                           {isExpired && <span style={{ fontSize:'10px', color:'#D4522A', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>EXPIRED</span>}
                           {isExpiringSoon && <span style={{ fontSize:'10px', color:'#C07830', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>EXPIRING SOON</span>}
@@ -355,7 +355,7 @@ export default function VaultPage() {
               { label:'Expiring soon', value:expiringSoon.length, alert:expiringSoon.length > 0 },
             ].map(s => (
               <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', textAlign:'center' as const }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:(s as any).alert ? '#C07830' : '#1C2B32', margin:'0 0 3px' }}>{s.value}</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:(s as any).alert ? '#C07830' : '#0A0A0A', margin:'0 0 3px' }}>{s.value}</p>
                 <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{s.label}</p>
               </div>
             ))}
@@ -369,7 +369,7 @@ export default function VaultPage() {
         <div style={{ position:'fixed', inset:0, background:'rgba(28,43,50,0.7)', zIndex:500, display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}
           onClick={e => { if (e.target === e.currentTarget) setSelectedDoc(null) }}>
           <div style={{ background:'white', borderRadius:'16px', width:'100%', maxWidth:'900px', maxHeight:'90vh', overflow:'hidden', display:'flex', flexDirection:'column' as const }}>
-            <div style={{ padding:'16px 20px', borderBottom:'1px solid #F0F0F0', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#1C2B32' }}>
+            <div style={{ padding:'16px 20px', borderBottom:'1px solid #F0F0F0', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#0A0A0A' }}>
               <div>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', margin:0 }}>{selectedDoc.title}</p>
                 <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:'2px 0 0' }}>{selectedDoc.document_type}</p>
@@ -396,7 +396,7 @@ export default function VaultPage() {
                     <p style={{ fontSize:'40px', marginBottom:'12px' }}>📎</p>
                     <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>Preview not available for this file type</p>
                     <a href={signedUrl || selectedDoc.file_url} target="_blank" rel="noreferrer"
-                      style={{ background:'#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
+                      style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
                       Download file →
                     </a>
                   </div>
@@ -413,9 +413,9 @@ export default function VaultPage() {
                   <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Notes &amp; annotations</p>
                   <textarea value={annotationText} onChange={e => setAnnotationText(e.target.value)}
                     placeholder="Add notes, observations or annotations about this document..."
-                    style={{ width:'100%', minHeight:'160px', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', color:'#1C2B32', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                    style={{ width:'100%', minHeight:'160px', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', color:'#0A0A0A', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
                   <button type="button" onClick={saveAnnotation} disabled={savingAnnotation}
-                    style={{ width:'100%', marginTop:'8px', background: annotationSaved ? '#2E7D60' : '#1C2B32', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                    style={{ width:'100%', marginTop:'8px', background: annotationSaved ? '#2E7D60' : '#0A0A0A', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                     {annotationSaved ? '✓ Saved' : savingAnnotation ? 'Saving...' : 'Save notes →'}
                   </button>
                 </div>
@@ -425,7 +425,7 @@ export default function VaultPage() {
                   <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
                     <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Share with tradie</p>
                     <select value={shareJobId} onChange={e => setShareJobId(e.target.value)}
-                      style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#1C2B32', marginBottom:'8px', boxSizing:'border-box' as const }}>
+                      style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#0A0A0A', marginBottom:'8px', boxSizing:'border-box' as const }}>
                       <option value="">Select a job...</option>
                       {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.tradie?.business_name}</option>)}
                     </select>

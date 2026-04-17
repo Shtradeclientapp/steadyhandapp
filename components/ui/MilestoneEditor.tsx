@@ -80,7 +80,7 @@ export function MilestoneEditor({ scope, currentQuote, onSave }: any) {
     setEditing(false)
   }
 
-  const inp = { width: '100%', padding: '7px 10px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '6px', fontSize: '13px', background: '#F4F8F7', color: '#1C2B32', outline: 'none', boxSizing: 'border-box' as const }
+  const inp = { width: '100%', padding: '7px 10px', border: '1.5px solid rgba(28,43,50,0.15)', borderRadius: '6px', fontSize: '13px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }
 
   return (
     <div style={{ padding: '24px 32px', borderBottom: '1px solid #F0F0F0' }}>
@@ -137,11 +137,11 @@ export function MilestoneEditor({ scope, currentQuote, onSave }: any) {
         milestones.map((m: any, i: number) => (
           <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px 0', borderBottom: '1px solid #F8F8F8' }}>
             <div style={{ flex: 1 }}>
-              <p style={{ fontSize: '14px', fontWeight: 600, color: '#1C2B32', marginBottom: '2px' }}>{m.label}</p>
+              <p style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A', marginBottom: '2px' }}>{m.label}</p>
               <p style={{ fontSize: '12px', color: '#7A9098' }}>{m.description}</p>
             </div>
             <div style={{ textAlign: 'right' as const, flexShrink: 0, marginLeft: '20px' }}>
-              <p style={{ fontSize: '15px', fontWeight: 700, color: '#1C2B32' }}>{m.percent}%</p>
+              <p style={{ fontSize: '15px', fontWeight: 700, color: '#0A0A0A' }}>{m.percent}%</p>
               {price > 0 && <p style={{ fontSize: '12px', color: '#7A9098' }}>${Math.round(price * m.percent / 100).toLocaleString()}</p>}
             </div>
           </div>
