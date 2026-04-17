@@ -86,7 +86,7 @@ export default function WarrantyGuide() {
         <div style={{ marginBottom:'32px' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
             <div style={{ width:'3px', height:'20px', background:'#D4522A', borderRadius:'2px', flexShrink:0 }} />
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>THE DATA GAP — WHY THE NUMBERS LIE</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>THE DATA GAP — THE DATA GAP — WHY RECORDED DISPUTES UNDERCOUNT THE REAL PICTURE</h2>
           </div>
           <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
             The WA Magistrates Court processes several thousand small claims each year, a portion of which relate to trade disputes. These figures are frequently cited as an indicator of the trade dispute rate in WA. They are not. They are an indicator of the disputes that survived the following filters:
@@ -128,8 +128,8 @@ export default function WarrantyGuide() {
                 body: "WA's construction sector is unusually volatile relative to eastern states — amplified by the resources sector's effect on labour costs, migration and consumer confidence. The mining boom periods of 2005–2012 and 2020–2024 saw rapid expansion of the building sector, with many new entrants operating without adequate capital, experience or systems. Warranty obligations incurred during boom periods often surface 2–5 years later when market conditions have changed and marginal operators have exited. This lag between work completion and warranty claim creates a mismatch between the trading entity at the time of work and the entity (if it still exists) at the time of claim.",
               },
               {
-                heading: 'Outer suburb construction volume',
-                body: 'The scale of greenfield residential development in outer Perth — Ellenbrook, Baldivis, Alkimos, Piara Waters, Byford — has produced an enormous volume of new homes built by volume builders and subcontractors operating under cost and schedule pressure. The density of warranty exposure in these corridors is high, and the capacity of the Building and Energy complaints process to absorb that volume is limited. Homeowners in these areas are statistically more likely to encounter warranty issues and less likely to have the documentation required to pursue them.',
+                heading: 'Outer suburb and regional city construction volume',
+                body: 'The scale of residential development across outer Perth — Ellenbrook, Baldivis, Alkimos, Piara Waters, Byford — and in regional WA cities experiencing their own growth cycles has produced an enormous volume of new homes built by volume builders and subcontractors operating under cost and schedule pressure. Bunbury, Busselton, Geraldton, Broome, Karratha and Port Hedland have all seen significant residential construction booms tied to resources sector activity and population growth. In regional cities, the warranty exposure problem is compounded: fewer local contractors means less competitive pressure on quality, longer distances make return visits for rectification more costly for the tradie, and regulatory oversight is lighter than in Perth metro. Homeowners in both outer Perth suburbs and regional WA cities are statistically more likely to encounter warranty issues and less likely to have the documentation required to pursue them.',
               },
               {
                 heading: 'Distance from regulatory oversight',
@@ -227,6 +227,46 @@ export default function WarrantyGuide() {
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 6px' }}>{item.heading}</p>
                   <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', margin:0 }}>{item.body}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Section — how this affects tradies */}
+        <div style={{ marginBottom:'32px' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'16px' }}>
+            <div style={{ width:'3px', height:'20px', background:'#C07830', borderRadius:'2px', flexShrink:0 }} />
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>THE COST TO TRADIES — AN UNDERAPPRECIATED SIDE OF THE PROBLEM</h2>
+          </div>
+          <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
+            Warranty disputes are not only a homeowner problem. The data gap and the absence of structured documentation create significant and underappreciated costs for tradies — particularly for those who do good work and intend to stand behind it.
+          </p>
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px' }}>
+            {[
+              {
+                heading: 'Unclear scope creates unclear responsibility',
+                body: "When a defect appears after a job is complete, the first question is almost always: whose responsibility is it? In multi-trade jobs — a bathroom renovation involving a tiler, plumber and electrician — the answer is rarely obvious. Water damage behind a wall could be a plumbing failure, a waterproofing failure, or a tiling failure. Without a written scope that defines each trade's responsibilities, the tradie faces an allegation they cannot easily defend and the homeowner cannot easily prove. Both parties lose time, money and goodwill in a dispute that a clear scope agreement would have resolved in ten minutes.",
+              },
+              {
+                heading: 'Legitimate workmanship questioned without a standard',
+                body: "A common and genuinely unfair scenario: a tradie completes work to an industry-accepted standard. The homeowner, having no reference point, believes the result is defective. Without agreed specifications in writing — tile lippage tolerance, paint coat count and product, concrete surface finish — the tradie has no documented standard to point to. They know their work was correct but cannot prove it. The warranty complaint process, slow and adversarial by design, does not resolve these ambiguities quickly. Reputation damage accumulates before any finding is made.",
+              },
+              {
+                heading: 'The impact of previous tradies\' poor work',
+                body: "In renovation work, a tradie frequently encounters the consequences of previous work — inadequate waterproofing, non-compliant framing, undersized electrical — that they did not cause. Without a documented pre-work condition report (photographs, notes on what was found), the new tradie can inherit responsibility for defects they discovered but did not create. This is particularly common in regional WA where construction activity has surged rapidly in resource towns — Karratha, Port Hedland, Broome — without a corresponding increase in experienced trades, leading to layered defects from multiple contractors over time.",
+              },
+              {
+                heading: 'The reputational asymmetry',
+                body: "A homeowner who has a poor experience — whether the tradie was genuinely at fault or not — is more likely to leave a negative review than a satisfied homeowner is to leave a positive one. In a sector where reputation is the primary currency, the absence of documented scope agreements, milestone records and warranty terms means tradies have no structured evidence to contest inaccurate accounts of their work. The Dialogue Rating on Steadyhand is designed to address this directly: a tradie who communicates clearly, documents thoroughly and responds to warranty issues promptly builds a verifiable professional record that reflects their actual conduct.",
+              },
+              {
+                heading: 'Confusion about statutory obligations',
+                body: "Many tradies — particularly sole traders and small operators working outside major builders — are genuinely uncertain about their statutory warranty obligations under WA law. The distinction between what is required by law and what is promised contractually is often unclear. This uncertainty leads to two equally problematic outcomes: some tradies over-extend themselves on obligations they do not legally owe, while others assume no obligations exist beyond what was verbally agreed. Neither position serves the tradie or the homeowner. A written scope agreement with explicit warranty terms removes this ambiguity.",
+              },
+            ].map(f => (
+              <div key={f.heading} style={{ borderLeft:'3px solid #C07830', paddingLeft:'14px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{f.heading}</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', margin:0 }}>{f.body}</p>
               </div>
             ))}
           </div>
