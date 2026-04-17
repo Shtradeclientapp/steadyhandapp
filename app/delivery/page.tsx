@@ -299,6 +299,32 @@ export default function DeliveryPage() {
     }
   }
 
+  const approveWorkOnly = async (id: string) => {
+    const supabase = createClient()
+    await supabase.from('milestones').update({
+      status: 'approved',
+      approved_at: new Date().toISOString(),
+      payment_held: true,
+    }).eq('id', id)
+    const updated = milestones.map((m: any) => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString(), payment_held: true } : m)
+    setMilestones(updated)
+    const nextPending = updated.find((m: any) => m.status === 'pending')
+    if (nextPending) {
+      await supabase.from('milestones').update({ status: 'active' }).eq('id', nextPending.id)
+      setMilestones(prev => prev.map((m: any) => m.id === nextPending.id ? { ...m, status: 'active' } : m))
+    }
+    await supabase.from('job_messages').insert({
+      job_id: job?.id,
+      sender_id: profile?.id,
+      body: '✅ Milestone work approved — payment is being held in Steadyhand pending final settlement or resolution.',
+    })
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'milestone_approved', milestone_id: id }),
+    }).catch(() => {})
+  }
+
   const approveM = async (id: string) => {
     const supabase = createClient()
     await supabase.from('milestones').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id)
@@ -465,16 +491,44 @@ export default function DeliveryPage() {
                     {isDone && m.approved_at ? ' · Approved ' + new Date(m.approved_at).toLocaleDateString('en-AU') : ''}
                   </p>
                   {isActive && !isDone && payingMilestone !== m.id && !isTradie && (
-                    <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
-                      <button type="button" onClick={() => initiatePayment(m.id, m.amount || 0)}
-                        style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
-                        {m.amount > 0 ? `Approve & pay $${Number(m.amount).toLocaleString()} →` : 'Approve milestone →'}
-                      </button>
-                      <button type="button"
-                        onClick={() => window.location.href = '/messages' + (job?.id ? '?job=' + job.id : '')}
-                        style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
-                        Flag an issue
-                      </button>
+                    <div>
+                      {/* Option explainer */}
+                      {m.amount > 0 && (
+                        <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'12px 14px', marginBottom:'12px' }}>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', margin:'0 0 8px' }}>How would you like to proceed?</p>
+                          <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                            <div style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                              <span style={{ fontSize:'13px', flexShrink:0 }}>✅</span>
+                              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>
+                                <strong>Approve & pay now</strong> — work is complete and you are ready to release the milestone payment to the tradie.
+                              </p>
+                            </div>
+                            <div style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                              <span style={{ fontSize:'13px', flexShrink:0 }}>⏸</span>
+                              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>
+                                <strong>Approve work, hold payment</strong> — work is confirmed complete but payment stays held in Steadyhand. Use this if more work is ongoing and you want to settle at the end, or if you need to raise a concern first.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className='delivery-btn-grid' style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+                        <button type="button" onClick={() => initiatePayment(m.id, m.amount || 0)}
+                          style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                          {m.amount > 0 ? `Approve & pay $${Number(m.amount).toLocaleString()} →` : 'Approve milestone →'}
+                        </button>
+                        {m.amount > 0 && (
+                          <button type="button" onClick={() => approveWorkOnly(m.id)}
+                            style={{ background:'transparent', color:'#2E7D60', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(46,125,96,0.35)', cursor:'pointer' }}>
+                            Approve work, hold payment
+                          </button>
+                        )}
+                        <button type="button"
+                          onClick={() => window.location.href = '/messages' + (job?.id ? '?job=' + job.id : '')}
+                          style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
+                          Flag an issue
+                        </button>
+                      </div>
                     </div>
                   )}
                   {isTradie && !isDone && milestones.length > 1 && (
