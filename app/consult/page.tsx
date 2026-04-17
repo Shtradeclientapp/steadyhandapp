@@ -236,6 +236,10 @@ export default function AssessPage() {
   }
 
   const myShared = isTradie ? assessment?.tradie_shared_at : assessment?.client_shared_at
+  const [internalNotes, setInternalNotes] = useState({ materials: '', labour: '', brief: '' })
+  const [savingInternal, setSavingInternal] = useState(false)
+  const [internalSaved, setInternalSaved] = useState(false)
+  const [showBrief, setShowBrief] = useState(false)
   const theirShared = isTradie ? assessment?.client_shared_at : assessment?.tradie_shared_at
 
   // Auto-show wait modal on page load if already shared but waiting
@@ -246,6 +250,20 @@ export default function AssessPage() {
   const theirAcknowledged = isTradie ? assessment?.client_acknowledged_at : assessment?.tradie_acknowledged_at
   const myPrompts = isTradie ? TRADIE_PROMPTS : CLIENT_PROMPTS
   const theirLabel = isTradie ? (job?.client?.full_name || 'the client') : (job?.tradie?.business_name || 'your tradie')
+
+  const saveInternalNotes = async () => {
+    if (!assessment) return
+    setSavingInternal(true)
+    const supabase = createClient()
+    await supabase.from('site_assessments').update({
+      tradie_materials_notes: internalNotes.materials,
+      tradie_labour_notes: internalNotes.labour,
+      tradie_site_brief: internalNotes.brief,
+    }).eq('id', assessment.id)
+    setInternalSaved(true)
+    setSavingInternal(false)
+    setTimeout(() => setInternalSaved(false), 2000)
+  }
 
   const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#1C2B32', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif', lineHeight:'1.6' }
 
@@ -419,6 +437,57 @@ export default function AssessPage() {
           </div>
         </div>
 
+        {/* ── Appointment card — tradie only ── */}
+        {isTradie && assessment?.consult_date && (
+          <div style={{ background:'#1C2B32', borderRadius:'14px', padding:'20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
+            <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 20%, rgba(212,82,42,0.12), transparent 55%)' }} />
+            <div style={{ position:'relative', zIndex:1 }}>
+              <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'8px' }}>Day of consult</p>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'16px', marginBottom:'16px' }}>
+                <div>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'3px' }}>Date & time</p>
+                  <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:0 }}>
+                    {new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' })}
+                    {' · '}
+                    {new Date(assessment.consult_date).toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' })}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'3px' }}>Client</p>
+                  <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 2px' }}>{job?.client?.full_name}</p>
+                  {job?.client?.phone && (
+                    <a href={'tel:' + job.client.phone} style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none' }}>{job.client.phone}</a>
+                  )}
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'3px' }}>Address</p>
+                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', margin:'0 0 4px' }}>
+                    {[job?.address, job?.suburb, job?.state].filter(Boolean).join(', ') || job?.suburb || 'See job details'}
+                  </p>
+                  {(job?.suburb || job?.address) && (
+                    <a href={'https://maps.google.com/?q=' + encodeURIComponent([job?.address, job?.suburb, 'WA', 'Australia'].filter(Boolean).join(' '))}
+                      target="_blank" rel="noreferrer"
+                      style={{ fontSize:'12px', color:'#4A9EE8', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'4px' }}>
+                      📍 Open in Google Maps →
+                    </a>
+                  )}
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'3px' }}>Job</p>
+                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', margin:0 }}>{job?.title}</p>
+                  <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'2px 0 0' }}>{job?.trade_category}</p>
+                </div>
+              </div>
+              {job?.description && (
+                <div style={{ borderTop:'1px solid rgba(216,228,225,0.08)', paddingTop:'12px' }}>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>Client brief</p>
+                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.6)', lineHeight:'1.6', margin:0 }}>{job.description}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'20px' }}>
           <button type="button" onClick={() => setActiveTab('mine')}
             style={{ padding:'10px 20px', border:'none', borderBottom: activeTab === 'mine' ? '2px solid #9B6B9B' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === 'mine' ? 600 : 400, color: activeTab === 'mine' ? '#1C2B32' : '#7A9098' }}>
@@ -480,6 +549,86 @@ export default function AssessPage() {
                 ))}
               </div>
             </div>
+
+            {/* INTERNAL NOTES — tradie only, never shared */}
+            {isTradie && (
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+                <div style={{ padding:'14px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.04)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <div>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#1C2B32', letterSpacing:'0.5px', margin:'0 0 2px' }}>INTERNAL NOTES</p>
+                    <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Private — never shared with the client. Informs your quote and site brief.</p>
+                  </div>
+                  <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'100px', padding:'3px 10px' }}>🔒 Private</span>
+                </div>
+                <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'14px' }}>
+                  <div>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Materials & quantities</p>
+                    <textarea value={internalNotes.materials} onChange={e => setInternalNotes(n => ({ ...n, materials: e.target.value }))}
+                      rows={3} placeholder="e.g. 20m² tiles @ $45/m², 2x taps, 15m copper pipe 15mm, waterproofing membrane..."
+                      style={{ ...inp, resize:'vertical' as const }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Labour & sequence</p>
+                    <textarea value={internalNotes.labour} onChange={e => setInternalNotes(n => ({ ...n, labour: e.target.value }))}
+                      rows={3} placeholder="e.g. Day 1: demo and waterproof. Day 2-3: tiling. Day 4: fixtures and grouting. 2 workers needed day 1..."
+                      style={{ ...inp, resize:'vertical' as const }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#1C2B32', marginBottom:'5px' }}>Site brief for workers</p>
+                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px' }}>What workers need to know before arriving on site.</p>
+                    <textarea value={internalNotes.brief} onChange={e => setInternalNotes(n => ({ ...n, brief: e.target.value }))}
+                      rows={4} placeholder="e.g. Access via side gate — call client day before. Asbestos suspected in wall cavity, treat as live. Park in street. Client works from home — keep noise down before 9am..."
+                      style={{ ...inp, resize:'vertical' as const }} />
+                  </div>
+                  <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+                    <button type="button" onClick={saveInternalNotes} disabled={savingInternal}
+                      style={{ background: internalSaved ? '#2E7D60' : '#1C2B32', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: savingInternal ? 0.7 : 1 }}>
+                      {internalSaved ? '✓ Saved' : savingInternal ? 'Saving...' : 'Save internal notes'}
+                    </button>
+                    {internalNotes.brief && (
+                      <button type="button" onClick={() => setShowBrief(!showBrief)}
+                        style={{ background:'rgba(46,106,143,0.08)', color:'#2E6A8F', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(46,106,143,0.2)', cursor:'pointer' }}>
+                        {showBrief ? 'Hide brief' : '📋 Preview site brief →'}
+                      </button>
+                    )}
+                  </div>
+                  {showBrief && internalNotes.brief && (
+                    <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'20px' }}>
+                      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#1C2B32', letterSpacing:'0.5px', margin:0 }}>SITE BRIEF</p>
+                        <button type="button" onClick={() => window.print()}
+                          style={{ fontSize:'12px', color:'#7A9098', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'5px 10px', cursor:'pointer' }}>
+                          Print / save →
+                        </button>
+                      </div>
+                      <div style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', paddingBottom:'12px', marginBottom:'12px' }}>
+                        <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 2px' }}>{job?.title}</p>
+                        <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
+                          {[job?.address, job?.suburb].filter(Boolean).join(', ') || job?.suburb}
+                          {assessment?.consult_date && ' · ' + new Date(assessment.consult_date).toLocaleDateString('en-AU')}
+                        </p>
+                      </div>
+                      {internalNotes.materials && (
+                        <div style={{ marginBottom:'12px' }}>
+                          <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Materials</p>
+                          <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.materials}</p>
+                        </div>
+                      )}
+                      {internalNotes.labour && (
+                        <div style={{ marginBottom:'12px' }}>
+                          <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Labour & sequence</p>
+                          <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.labour}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'4px' }}>Site notes for workers</p>
+                        <p style={{ fontSize:'13px', color:'#1C2B32', lineHeight:'1.6', margin:0, whiteSpace:'pre-wrap' as const }}>{internalNotes.brief}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* PHOTO UPLOAD */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'16px' }}>
