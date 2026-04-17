@@ -641,6 +641,16 @@ export default function TradieJobPage() {
             </div>
           )}
 
+          {currentQuote && !showQuoteForm && !quoteSubmitted && job?.status === 'compare' && (
+            <div style={{ margin:'0 20px 12px', background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'10px' }}>
+              <span style={{ fontSize:'18px', flexShrink:0 }}>⏳</span>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 2px' }}>Waiting for client to accept your quote</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>The client is reviewing quotes. You will be notified by email when they respond.</p>
+              </div>
+            </div>
+          )}
+
           {currentQuote && !showQuoteForm && !quoteSubmitted && (
             <div style={{ padding: '16px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '14px' }}>

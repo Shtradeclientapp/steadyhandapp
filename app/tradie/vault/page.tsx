@@ -99,7 +99,8 @@ export default function TradieVaultPage() {
     const path = `tradie/${user.id}/${Date.now()}.${ext}`
     const { error: upErr } = await supabase.storage.from('Documents').upload(path, file)
     if (upErr) { setUploadError('Upload failed: ' + upErr.message); setUploading(false); return }
-    const { data: { publicUrl } } = supabase.storage.from('Documents').getPublicUrl(path)
+    const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
+    const publicUrl = signedData?.signedUrl || ''
     await supabase.from('vault_documents').insert({
       user_id: user.id,
       job_id: form.job_id || null,
