@@ -183,7 +183,7 @@ export default function TradieDashboard() {
       // Assigned jobs
       const { data: assignedJobs } = await supabase
         .from('jobs')
-        .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id)')
+        .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id), quotes(id, tradie_id)')
         .eq('tradie_id', session.user.id)
         .order('updated_at', { ascending: false })
 
@@ -198,7 +198,7 @@ export default function TradieDashboard() {
       if (quotedJobIds.length > 0) {
         const { data: qjData } = await supabase
           .from('jobs')
-          .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id)')
+          .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id), quotes(id, tradie_id)')
           .in('id', quotedJobIds)
           .order('updated_at', { ascending: false })
         quotedJobs = qjData || []
