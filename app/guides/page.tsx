@@ -71,6 +71,23 @@ export default function GuidesPage() {
           ))}
         </div>
 
+        {/* Warranty reference — featured card */}
+        <div style={{ background:'#0A0A0A', borderRadius:'14px', overflow:'hidden', marginBottom:'14px' }}>
+          <div style={{ padding:'20px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap' as const }}>
+            <div style={{ flex:1, minWidth:0 }}>
+              <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.35)', marginBottom:'4px' }}>Reference guide</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 6px' }}>TRADE WARRANTIES IN WA</p>
+              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', lineHeight:'1.65', margin:0, maxWidth:'520px' }}>
+                The legal framework, the data gap, and why WA Magistrates Court small claims figures dramatically understate the true rate of post-completion trade disputes. A reference for homeowners and industry.
+              </p>
+            </div>
+            <Link href="/guides/warranty-wa"
+              style={{ fontSize:'13px', fontWeight:600, color:'white', background:'#D4522A', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', whiteSpace:'nowrap' as const, flexShrink:0 }}>
+              Read guide →
+            </Link>
+          </div>
+        </div>
+
         {/* CTA */}
         <div style={{ background:'#0A0A0A', borderRadius:'16px', padding:'32px', textAlign:'center' as const }}>
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 10px' }}>READY TO GET A QUOTE?</p>
