@@ -121,7 +121,8 @@ export default function GuidesPage() {
           </div>
           <div>
             <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 10px' }}>Legal</p>
-            <a href="/privacy" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Privacy policy</a>
+            <a href="/terms" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Terms of service</a>
+              <a href="/privacy" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Privacy policy</a>
             <a href="/guides/warranty-wa" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>Warranty reference</a>
           </div>
         </div>
