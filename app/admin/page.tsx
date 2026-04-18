@@ -21,7 +21,7 @@ export default function AdminPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('id, email, full_name, role, is_admin').eq('id', session.user.id).single()
       if (!prof?.is_admin) { window.location.href = '/'; return }
       setAuthed(true)
       await loadAll(supabase)
