@@ -66,11 +66,13 @@ export default function WorkerJobsPage() {
     if (!note.trim() || !selectedJob) return
     setSavingNote(true)
     const supabase = createClient()
-    await supabase.from('job_messages').insert({
-      job_id: selectedJob.job.id,
-      sender_id: worker?.id,
-      body: '📋 Worker note from ' + (worker?.full_name || 'worker') + ': ' + note,
-    }).catch(() => {})
+    try {
+      await supabase.from('job_messages').insert({
+        job_id: selectedJob.job.id,
+        sender_id: worker?.id,
+        body: '📋 Worker note from ' + (worker?.full_name || 'worker') + ': ' + note,
+      })
+    } catch (_e) {}
     setNote('')
     setNoteSaved(true)
     setSavingNote(false)
