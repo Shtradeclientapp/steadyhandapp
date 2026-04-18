@@ -72,7 +72,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    // Safety net — never hang on loading
+    // Safety net - never hang on loading
     const loadingTimeout = setTimeout(() => setLoading(false), 5000)
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { clearTimeout(loadingTimeout); window.location.href = '/login'; return }
@@ -193,7 +193,7 @@ export default function DashboardPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       {justSubmitted && (
         <div style={{ background:'#2E7D60', padding:'12px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-          <p style={{ fontSize:'13px', color:'white', margin:0, fontWeight:500 }}>✓ Your job request has been submitted — Steadyhand is building your shortlist now.</p>
+          <p style={{ fontSize:'13px', color:'white', margin:0, fontWeight:500 }}>✓ Your job request has been submitted - Steadyhand is building your shortlist now.</p>
           <a href="/shortlist" style={{ fontSize:'12px', color:'rgba(255,255,255,0.8)', textDecoration:'none', border:'1px solid rgba(255,255,255,0.3)', borderRadius:'6px', padding:'4px 10px', flexShrink:0 }}>View shortlist →</a>
         </div>
       )}
@@ -327,7 +327,7 @@ export default function DashboardPage() {
               <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: profile?.subscription_plan === 'home' ? 'rgba(46,125,96,0.3)' : 'rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px' }}>🏠</div>
               <div>
                 <p style={{ fontSize:'13px', fontWeight:600, color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>
-                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home — Active' : 'Steadyhand Home'}
+                  {profile?.subscription_plan === 'home' ? 'Steadyhand Home - Active' : 'Steadyhand Home'}
                 </p>
                 <p style={{ fontSize:'12px', color: profile?.subscription_plan === 'home' ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>
                   {profile?.subscription_plan === 'home' ? 'Extended warranty · Document vault · Priority matching' : 'Unlimited jobs · 180-day warranty · Document vault · $19/month'}
@@ -404,12 +404,12 @@ export default function DashboardPage() {
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
               <div style={{ position:'relative', zIndex:1 }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>YOUR FIRST JOB</p>
-                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Describe the work — we'll handle the rest</p>
+                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Describe the work - we'll handle the rest</p>
               </div>
             </div>
             <div style={{ padding:'24px' }}>
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'20px' }}>
-                Steadyhand takes your job from first request all the way through to a 90-day warranty — with a signed scope agreement, milestone payments, and a permanent document record at every step.
+                Steadyhand takes your job from first request all the way through to a 90-day warranty - with a signed scope agreement, milestone payments, and a permanent document record at every step.
               </p>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'10px', marginBottom:'20px' }}>
                 {[
@@ -464,7 +464,7 @@ export default function DashboardPage() {
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(260px, 1fr))', gap:'12px' }}>
             {[
               { icon:'📋', title:'Understanding your rights', body:'Consumer Protection WA outlines your rights when hiring a licensed tradie. Know what you are entitled to before you sign anything.', href:'https://www.commerce.wa.gov.au/consumer-protection', label:'Consumer Protection WA →' },
-              { icon:'💬', title:'How to read a trade quote', body:'A good quote itemises labour, materials and conditions separately. Learn what to look for — and what missing information signals.', href:'https://www.steadyhanddigital.com', label:'Steadyhand guide →' },
+              { icon:'💬', title:'How to read a trade quote', body:'A good quote itemises labour, materials and conditions separately. Learn what to look for - and what missing information signals.', href:'https://www.steadyhanddigital.com', label:'Steadyhand guide →' },
               { icon:'🔒', title:'What a scope agreement means', body:'A signed scope is your most important protection. It defines what is included, what is not, and what happens if something changes.', href:'https://www.steadyhanddigital.com', label:'Learn more →' },
               { icon:'🏗', title:'WA Building Commission', body:'If your job requires a building permit or involves licensed trades, the Building Commission sets the compliance standards that apply.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
             ].map(c => (
@@ -558,14 +558,14 @@ export default function DashboardPage() {
                   {
                     done: jobs.length > 0,
                     label: 'Post your first job request',
-                    sub: 'Describe the work — invite a tradie you trust to quote',
+                    sub: 'Describe the work - invite a tradie you trust to quote',
                     href: '/request',
                     cta: 'Start a request →'
                   },
                   {
                     done: isHomeMember,
                     label: 'Explore Steadyhand Home',
-                    sub: 'Build Journal, Document Vault and extended warranty — $19/month',
+                    sub: 'Build Journal, Document Vault and extended warranty - $19/month',
                     href: '/home-plan',
                     cta: 'Learn more →'
                   },
@@ -600,12 +600,12 @@ export default function DashboardPage() {
         {
           icon: '🏠',
           title: 'Welcome to Steadyhand',
-          body: 'Getting work done on your home shouldn\'t be stressful. Steadyhand stays with you from your first request all the way through to your 90-day warranty — so you always know what\'s happening and what happens next.',
+          body: 'Getting work done on your home shouldn\'t be stressful. Steadyhand stays with you from your first request all the way through to your 90-day warranty - so you always know what\'s happening and what happens next.',
         },
         {
           icon: '📋',
           title: 'Start with a request',
-          body: 'Describe the job in your own words. Steadyhand uses this to match you with verified trade businesses in your area — no lead fees, no bidding wars.',
+          body: 'Describe the job in your own words. Steadyhand uses this to match you with verified trade businesses in your area - no lead fees, no bidding wars.',
         },
         {
           icon: '✅',
@@ -615,7 +615,7 @@ export default function DashboardPage() {
         {
           icon: '💳',
           title: 'Pay in milestones',
-          body: 'You only release payment when you\'re satisfied each stage is complete. Steadyhand takes 3.5% — only when the tradie gets paid.',
+          body: 'You only release payment when you\'re satisfied each stage is complete. Steadyhand takes 3.5% - only when the tradie gets paid.',
         },
       ]} />
     </div>
