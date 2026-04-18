@@ -175,8 +175,9 @@ export default function TradieDashboard() {
       })
       const stripeData = await stripeRes.json()
       setStripeConnected(stripeData.connected || false)
-      // Show setup wizard if profile incomplete or subscription inactive
-      if (typeof window !== 'undefined' && !localStorage.getItem('tradie_setup_complete')) {
+      // Show setup wizard if onboarding not complete
+      const step = prof.tradie?.onboarding_step || 'profile'
+      if (step !== 'active' && step !== 'complete') {
         setShowSetupWizard(true)
       }
 
@@ -364,7 +365,15 @@ export default function TradieDashboard() {
               </div>
               <div style={{ display:'flex', gap:'10px' }}>
                 <button type="button" onClick={() => {
-                  if (typeof window !== 'undefined') localStorage.setItem('tradie_setup_complete', '1')
+                  // Mark onboarding complete in DB
+                  const supabaseD = createClient()
+                  const { data: { session: sessD } } = await supabaseD.auth.getSession()
+                  if (sessD && profile?.tradie?.id) {
+                    await supabaseD.from('tradie_profiles').update({
+                      onboarding_step: 'active',
+                      onboarding_completed_at: new Date().toISOString(),
+                    }).eq('id', profile.tradie.id)
+                  }
                   setShowSetupWizard(false)
                 }} style={{ flex:1, background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                   Go to my dashboard →
