@@ -50,11 +50,13 @@ export default function WorkerJobsPage() {
       const { data: { publicUrl } } = supabase.storage.from('Job Photos').getPublicUrl(path)
       setUploadedPhotos(prev => [...prev, publicUrl])
       // Notify tradie
-      supabase.from('notifications').insert({
-        user_id: selectedJob.job.tradie_id,
-        message: (worker?.full_name || 'A worker') + ' uploaded a photo for ' + selectedJob.job.title,
-        job_id: selectedJob.job.id,
-      }).then(() => {}).catch(() => {})
+      try {
+        await supabase.from('notifications').insert({
+          user_id: selectedJob.job.tradie_id,
+          message: (worker?.full_name || 'A worker') + ' uploaded a photo for ' + selectedJob.job.title,
+          job_id: selectedJob.job.id,
+        })
+      } catch (_e) {}
     }
     if (fileRef.current) fileRef.current.value = ''
     setUploading(false)
