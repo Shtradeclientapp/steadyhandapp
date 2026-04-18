@@ -101,8 +101,34 @@ export default function GuidesPage() {
       </div>
 
       {/* Footer */}
-      <div style={{ background:'#0A0A0A', padding:'24px', textAlign:'center' as const, marginTop:'24px' }}>
-        <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.25)', margin:0 }}>Steadyhand · Western Australia · Prices are indicative ranges based on 2025 WA market rates. Always obtain multiple quotes.</p>
+      <div style={{ background:'#0A0A0A', padding:'32px 24px', marginTop:'24px' }}>
+        <div style={{ maxWidth:'860px', margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(160px, 1fr))', gap:'20px', marginBottom:'24px' }}>
+          <div>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#D4522A', letterSpacing:'2px', margin:'0 0 6px' }}>STEADYHAND</p>
+            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.25)', margin:0 }}>Request to warranty platform for WA.</p>
+          </div>
+          <div>
+            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 10px' }}>Platform</p>
+            <a href="/signup" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Create account</a>
+            <a href="/login" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Sign in</a>
+            <a href="/help" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>Help & support</a>
+          </div>
+          <div>
+            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 10px' }}>Resources</p>
+            <a href="/guides/warranty-wa" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Warranties in WA</a>
+            <a href="/guides/electrical" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Electrical costs</a>
+            <a href="/guides/plumbing" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>Plumbing costs</a>
+          </div>
+          <div>
+            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 10px' }}>Legal</p>
+            <a href="/privacy" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none', marginBottom:'6px' }}>Privacy policy</a>
+            <a href="/guides/warranty-wa" style={{ display:'block', fontSize:'12px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>Warranty reference</a>
+          </div>
+        </div>
+        <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:'16px', maxWidth:'860px', margin:'0 auto', display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:'8px' }}>
+          <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.2)', margin:0 }}>© 2025 Steadyhand · Western Australia</p>
+          <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.2)', margin:0 }}>Prices are indicative 2025 WA market rates. Always obtain multiple quotes.</p>
+        </div>
       </div>
     </div>
   )
