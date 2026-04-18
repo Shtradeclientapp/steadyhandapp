@@ -33,34 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${barlow.variable} ${barlowCondensed.variable} ${aboreto.variable}`}>
       <body>
         {children}
-        <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-        <script dangerouslySetInnerHTML={{ __html: `
-          window.OneSignalDeferred = window.OneSignalDeferred || [];
-          OneSignalDeferred.push(async function(OneSignal) {
-            try {
-              await OneSignal.init({
-                appId: "9a835013-fb55-452e-8860-450ac951bd34",
-                safari_web_id: "web.onesignal.auto.1592f4e8-7629-48b3-b916-fa35b5011e11",
-                notifyButton: { enable: false },
-                allowLocalhostAsSecureOrigin: true,
-              });
-              OneSignal.on('subscriptionChange', async function(isSubscribed) {
-                if (isSubscribed) {
-                  const playerId = await OneSignal.getUserId();
-                  if (playerId) {
-                    await fetch('/api/notify/register', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ onesignal_id: playerId }),
-                    });
-                  }
-                }
-              });
-            } catch(e) {
-              console.warn('OneSignal init skipped:', e.message);
-            }
-          });
-        `}} />
+
 
       </body>
     </html>
