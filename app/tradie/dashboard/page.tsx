@@ -364,7 +364,7 @@ export default function TradieDashboard() {
                 ))}
               </div>
               <div style={{ display:'flex', gap:'10px' }}>
-                <button type="button" onClick={() => {
+                <button type="button" onClick={async () => {
                   // Mark onboarding complete in DB
                   const supabaseD = createClient()
                   const { data: { session: sessD } } = await supabaseD.auth.getSession()
