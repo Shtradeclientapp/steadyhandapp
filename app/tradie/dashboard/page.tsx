@@ -154,7 +154,19 @@ export default function TradieDashboard() {
         .single()
 
       if (prof && prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
-      if (!prof) { window.location.href = '/login'; return }
+      if (!prof) {
+        // Retry once — profile row may not be ready immediately after auth
+        const { data: profRetry } = await supabase
+          .from('profiles')
+          .select('*, tradie:tradie_profiles(*)')
+          .eq('id', session.user.id)
+          .single()
+        if (!profRetry) { window.location.href = '/login'; return }
+        if (profRetry.role !== 'tradie') { window.location.href = '/dashboard'; return }
+        setUser(session.user)
+        setProfile(profRetry)
+        return
+      }
 
       setUser(session.user)
       setProfile(prof)
