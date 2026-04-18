@@ -9,12 +9,13 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
     case 'matching':
     case 'shortlisted':
       return { icon: '👥', headline: 'Review your matches', sub: 'Tradies have been shortlisted for your job — compare and invite one to quote', urgent: true }
-    case 'consult':
+    case 'consult': {
       const hasConsult = job.site_assessments?.length > 0
       const confirmed = job.site_assessments?.[0]?.slot_confirmed_at
       if (!hasConsult) return { icon: '📅', headline: 'Book your consult', sub: 'Arrange a site visit with your tradie before quoting begins', urgent: true }
       if (!confirmed) return { icon: '⏳', headline: 'Awaiting consult confirmation', sub: 'Your tradie needs to confirm the appointment time', urgent: false }
-      return { icon: '📋', headline: 'Consult booked', sub: 'Your site visit is scheduled — notes will appear here after', urgent: false }
+      return { icon: '📋', headline: 'Consult booked', sub: 'Your site visit is scheduled - notes will appear here after', urgent: false }
+    }
     case 'compare':
       const hasQuote = job.quotes?.length > 0
       if (!hasQuote) return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote — you'll be notified when it arrives', urgent: false }
@@ -24,17 +25,20 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
       const tradieSigned = job.scope_agreements?.[0]?.tradie_signed_at
       if (!tradieSigned) return { icon: '⏳', headline: 'Waiting for tradie to draft scope', sub: 'Your tradie is preparing the scope agreement', urgent: false }
       if (!clientSigned) return { icon: '✍️', headline: 'Sign the scope agreement', sub: 'Your tradie has drafted the scope — review and sign to start work', urgent: true }
-      return { icon: '⏳', headline: 'Waiting for tradie to sign', sub: 'You've signed — waiting for your tradie to countersign', urgent: false }
-    case 'delivery':
+      return { icon: '⏳', headline: 'Waiting for tradie to sign', sub: 'You have signed - waiting for your tradie to countersign', urgent: false }
+    }
+    case 'delivery': {
       const pendingMilestone = job.milestones?.find((m: any) => m.status === 'submitted')
       if (pendingMilestone) return { icon: '💳', headline: 'Milestone ready for approval', sub: 'Your tradie has submitted work — review and approve to release payment', urgent: true }
-      return { icon: '🔨', headline: 'Work in progress', sub: 'Your tradie is on the job — you'll be notified when a milestone is ready', urgent: false }
+      return { icon: '🔨', headline: 'Work in progress', sub: 'Your tradie is on the job - you will be notified when a milestone is ready', urgent: false }
+    }
     case 'signoff':
       return { icon: '✅', headline: 'Sign off on completion', sub: 'Work is complete — review and sign off to begin the warranty period', urgent: true }
-    case 'warranty':
+    case 'warranty': {
       const warrantyEnd = job.warranty_ends_at ? new Date(job.warranty_ends_at) : null
       const daysLeft = warrantyEnd ? Math.ceil((warrantyEnd.getTime() - Date.now()) / 86400000) : 0
-      return { icon: '🛡', headline: 'Warranty active', sub: daysLeft > 0 ? daysLeft + ' days remaining — log any issues through the job page' : 'Warranty period ending soon', urgent: false }
+      return { icon: '🛡', headline: 'Warranty active', sub: daysLeft > 0 ? daysLeft + ' days remaining - log any issues through the job page' : 'Warranty period ending soon', urgent: false }
+    }
     default:
       return { icon: '📋', headline: 'Continue your job', sub: 'Pick up where you left off', urgent: false }
   }
