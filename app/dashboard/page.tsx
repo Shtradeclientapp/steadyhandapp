@@ -4,6 +4,42 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
+function getClientNextAction(job: any): { icon: string; headline: string; sub: string; urgent: boolean } {
+  switch (job.status) {
+    case 'matching':
+    case 'shortlisted':
+      return { icon: '👥', headline: 'Review your matches', sub: 'Tradies have been shortlisted for your job — compare and invite one to quote', urgent: true }
+    case 'consult':
+      const hasConsult = job.site_assessments?.length > 0
+      const confirmed = job.site_assessments?.[0]?.slot_confirmed_at
+      if (!hasConsult) return { icon: '📅', headline: 'Book your consult', sub: 'Arrange a site visit with your tradie before quoting begins', urgent: true }
+      if (!confirmed) return { icon: '⏳', headline: 'Awaiting consult confirmation', sub: 'Your tradie needs to confirm the appointment time', urgent: false }
+      return { icon: '📋', headline: 'Consult booked', sub: 'Your site visit is scheduled — notes will appear here after', urgent: false }
+    case 'compare':
+      const hasQuote = job.quotes?.length > 0
+      if (!hasQuote) return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote — you'll be notified when it arrives', urgent: false }
+      return { icon: '📊', headline: 'Review your quote', sub: 'Your tradie has submitted a quote — review and accept to proceed', urgent: true }
+    case 'agreement':
+      const clientSigned = job.scope_agreements?.[0]?.client_signed_at
+      const tradieSigned = job.scope_agreements?.[0]?.tradie_signed_at
+      if (!tradieSigned) return { icon: '⏳', headline: 'Waiting for tradie to draft scope', sub: 'Your tradie is preparing the scope agreement', urgent: false }
+      if (!clientSigned) return { icon: '✍️', headline: 'Sign the scope agreement', sub: 'Your tradie has drafted the scope — review and sign to start work', urgent: true }
+      return { icon: '⏳', headline: 'Waiting for tradie to sign', sub: 'You've signed — waiting for your tradie to countersign', urgent: false }
+    case 'delivery':
+      const pendingMilestone = job.milestones?.find((m: any) => m.status === 'submitted')
+      if (pendingMilestone) return { icon: '💳', headline: 'Milestone ready for approval', sub: 'Your tradie has submitted work — review and approve to release payment', urgent: true }
+      return { icon: '🔨', headline: 'Work in progress', sub: 'Your tradie is on the job — you'll be notified when a milestone is ready', urgent: false }
+    case 'signoff':
+      return { icon: '✅', headline: 'Sign off on completion', sub: 'Work is complete — review and sign off to begin the warranty period', urgent: true }
+    case 'warranty':
+      const warrantyEnd = job.warranty_ends_at ? new Date(job.warranty_ends_at) : null
+      const daysLeft = warrantyEnd ? Math.ceil((warrantyEnd.getTime() - Date.now()) / 86400000) : 0
+      return { icon: '🛡', headline: 'Warranty active', sub: daysLeft > 0 ? daysLeft + ' days remaining — log any issues through the job page' : 'Warranty period ending soon', urgent: false }
+    default:
+      return { icon: '📋', headline: 'Continue your job', sub: 'Pick up where you left off', urgent: false }
+  }
+}
+
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
   draft:       { label: 'Draft',          path: '/request',    color: '#7A9098' },
   matching:    { label: 'Matching',        path: '/shortlist',  color: '#2E6A8F' },
@@ -316,22 +352,39 @@ export default function DashboardPage() {
                 const stage = STAGES[job.status] || STAGES.draft
                 return (
                   <a key={job.id} href={stage.path} style={{ textDecoration:'none' }}>
-                    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + stage.color, borderRadius:'11px', padding:'18px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', transition:'background 0.15s', cursor:'pointer' }}>
-                      <div style={{ flex:1, minWidth:'200px' }}>
-                        <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'4px' }}>{job.title}</div>
-                        <div style={{ fontSize:'12px', color:'#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
-                      </div>
-                      <div style={{ display:'flex', alignItems:'center', gap:'10px', flexShrink:0 }}>
-                        <span style={{ fontSize:'12px', fontWeight:500, color: stage.color }}>{stage.label}</span>
-                        <span style={{ fontSize:'14px', color:'#7A9098' }}>→</span>
-                        {cancelableStatuses.includes(job.status) && (
-                          <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); cancelJob(job.id, job.title) }}
-                            style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'5px', padding:'3px 8px', cursor:'pointer', flexShrink:0 }}>
-                            Cancel
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    {(() => {
+                      const next = getClientNextAction(job)
+                      return (
+                        <div style={{ background: next.urgent ? '#0A0A0A' : '#E8F0EE', border:'1px solid ' + (next.urgent ? 'transparent' : 'rgba(28,43,50,0.1)'), borderLeft:'3px solid ' + stage.color, borderRadius:'11px', overflow:'hidden', transition:'background 0.15s', cursor:'pointer' }}>
+                          <div style={{ padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', borderBottom:'1px solid ' + (next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.06)') }}>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
+                              <div style={{ fontSize:'11px', color: next.urgent ? 'rgba(216,228,225,0.35)' : '#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
+                            </div>
+                            <span style={{ fontSize:'11px', fontWeight:500, color: stage.color, background: next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.05)', padding:'3px 10px', borderRadius:'100px', flexShrink:0 }}>{stage.label}</span>
+                          </div>
+                          <div style={{ padding:'12px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:'10px', flex:1, minWidth:0 }}>
+                              <span style={{ fontSize:'18px', flexShrink:0 }}>{next.icon}</span>
+                              <div style={{ minWidth:0 }}>
+                                <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>{next.headline}</p>
+                                <p style={{ fontSize:'12px', color: next.urgent ? 'rgba(216,228,225,0.4)' : '#7A9098', margin:0, lineHeight:'1.4' }}>{next.sub}</p>
+                              </div>
+                            </div>
+                            <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
+                              {next.urgent && <span style={{ fontSize:'11px', color:'#D4522A', background:'rgba(212,82,42,0.15)', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'100px', padding:'3px 10px', whiteSpace:'nowrap' as const }}>Action needed</span>}
+                              <span style={{ fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.4)' : '#7A9098' }}>→</span>
+                              {cancelableStatuses.includes(job.status) && (
+                                <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); cancelJob(job.id, job.title) }}
+                                  style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'5px', padding:'3px 8px', cursor:'pointer' }}>
+                                  Cancel
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })()}
                   </a>
                 )
               })}
