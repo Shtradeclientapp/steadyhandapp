@@ -57,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             });
           });
         `}} />
-      <footer style={{ background:'#0A0A0A', padding:'40px 24px 28px', marginTop:'auto' }}>
+      <footer style={{ background:'#0A0A0A', padding:'40px 24px 28px' }}>
         <div style={{ maxWidth:'960px', margin:'0 auto' }}>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(180px, 1fr))', gap:'28px', marginBottom:'32px' }}>
             <div>
@@ -66,36 +66,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div>
               <p style={{ fontSize:'11px', fontWeight:600, color:'rgba(216,228,225,0.35)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 12px' }}>Platform</p>
-              {[
-                { href:'/signup', label:'Create account' },
-                { href:'/login', label:'Sign in' },
-                { href:'/help', label:'Help & support' },
-                { href:'/guides', label:'Cost guides' },
-              ].map(l => (
-                <a key={l.href} href={l.href} style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>{l.label}</a>
-              ))}
+              <a href="/signup" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Create account</a>
+              <a href="/login" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Sign in</a>
+              <a href="/help" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Help & support</a>
+              <a href="/guides" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Cost guides</a>
             </div>
             <div>
               <p style={{ fontSize:'11px', fontWeight:600, color:'rgba(216,228,225,0.35)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 12px' }}>Resources</p>
-              {[
-                { href:'/guides/warranty-wa', label:'Warranties in WA' },
-                { href:'/guides/electrical', label:'Electrical costs' },
-                { href:'/guides/plumbing', label:'Plumbing costs' },
-                { href:'/guides/bathroom-renovation', label:'Bathroom renovation' },
-                { href:'/guides', label:'All cost guides →' },
-              ].map(l => (
-                <a key={l.href} href={l.href} style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>{l.label}</a>
-              ))}
+              <a href="/guides/warranty-wa" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Warranties in WA</a>
+              <a href="/guides/electrical" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Electrical costs</a>
+              <a href="/guides/plumbing" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Plumbing costs</a>
+              <a href="/guides/bathroom-renovation" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Bathroom renovation</a>
+              <a href="/guides" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>All cost guides →</a>
             </div>
             <div>
               <p style={{ fontSize:'11px', fontWeight:600, color:'rgba(216,228,225,0.35)', letterSpacing:'1px', textTransform:'uppercase', margin:'0 0 12px' }}>Legal</p>
-              {[
-                { href:'/privacy', label:'Privacy policy' },
-                { href:'/guides/warranty-wa', label:'Warranty reference' },
-                { href:'/help', label:'Contact us' },
-              ].map(l => (
-                <a key={l.href} href={l.href} style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>{l.label}</a>
-              ))}
+              <a href="/privacy" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Privacy policy</a>
+              <a href="/guides/warranty-wa" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Warranty reference</a>
+              <a href="/help" style={{ display:'block', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'7px' }}>Contact us</a>
             </div>
           </div>
           <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:'20px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'12px' }}>
