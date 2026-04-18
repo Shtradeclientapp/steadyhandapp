@@ -147,13 +147,12 @@ export default function TradieDashboard() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
 
-      const { data: prof, error: profError } = await supabase
+      const { data: prof } = await supabase
         .from('profiles')
-        .select('*, tradie:tradie_profiles(*)')
+        .select('*, tradie:tradie_profiles!tradie_profiles_id_fkey(*)')
         .eq('id', session.user.id)
         .single()
 
-      console.log('[dashboard] prof:', prof, 'error:', profError)
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
 
       setUser(session.user)

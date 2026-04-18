@@ -16,7 +16,7 @@ export default function TradieAvailability() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(*)').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles!tradie_profiles_id_fkey(*)').eq('id', session.user.id).single()
       setProfile(prof)
       setTradie(prof?.tradie)
       if (prof?.tradie) {

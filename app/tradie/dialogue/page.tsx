@@ -27,7 +27,7 @@ export default function DialogueHistory() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(*)').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles!tradie_profiles_id_fkey(*)').eq('id', session.user.id).single()
       setTradie(prof?.tradie)
       const hist = Array.isArray(prof?.tradie?.dialogue_score_history) ? prof.tradie.dialogue_score_history : []
       setHistory([...hist].reverse())
