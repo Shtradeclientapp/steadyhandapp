@@ -37,6 +37,13 @@ export default function SignupPage() {
   const [form, setForm] = useState({ fullName:'', email:'', password:'', suburb:'', businessName:'', tradeCategory:'', serviceArea:'', licenceNumber:'', abn:'' })
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
   const supabase = createClient()
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search).get('role')
+      if (p === 'tradie' || p === 'org') setRole(p as 'tradie'|'org')
+    }
+  }, [])
+
   const handleSignup = async () => {
     setLoading(true); setError('')
     const { data, error: authErr } = await supabase.auth.signUp({ email: form.email, password: form.password })

@@ -117,7 +117,7 @@ export default function Home() {
                 I&apos;m a trade business &rarr;
               </button>
             </Link>
-            <Link href="/org/setup">
+            <Link href="/signup?role=org">
               <button style={{ background:'rgba(107,79,168,0.3)', color:'rgba(216,228,225,0.9)', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(107,79,168,0.4)', cursor:'pointer' }}>
                 I manage properties &rarr;
               </button>
