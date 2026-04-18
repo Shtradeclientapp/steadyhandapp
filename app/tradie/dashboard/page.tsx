@@ -153,7 +153,8 @@ export default function TradieDashboard() {
         .eq('id', session.user.id)
         .single()
 
-      if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
+      if (prof && prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
+      if (!prof) { window.location.href = '/login'; return }
 
       setUser(session.user)
       setProfile(prof)
