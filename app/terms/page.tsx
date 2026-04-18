@@ -41,7 +41,7 @@ export default function TermsPage() {
 
         {section('1. About Steadyhand', <>
           <p>Steadyhand is a platform that facilitates the management of residential trade jobs in Western Australia. It provides tools for homeowners, trade businesses and property managers to manage the consult, quote, scope agreement, delivery, and warranty stages of a trade job.</p>
-          <p style={{ marginTop:'10px' }}>Steadyhand is operated by Steadyhand Trade Pty Ltd (ABN pending), registered in Western Australia. References to "Steadyhand", "we", "us" or "our" in these terms refer to Steadyhand Trade Pty Ltd.</p>
+          <p style={{ marginTop:'10px' }}>Steadyhand is operated by Steadyhand Trade Pty Ltd (ABN 14 696 780 588), registered in Western Australia. References to "Steadyhand", "we", "us" or "our" in these terms refer to Steadyhand Trade Pty Ltd.</p>
         </>)}
 
         {section('2. Eligibility', <>
@@ -146,7 +146,7 @@ export default function TermsPage() {
       </div>
 
       <div style={{ background:'#0A0A0A', padding:'20px 24px', textAlign:'center' as const, marginTop:'24px' }}>
-        <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.2)', margin:0 }}>Steadyhand Trade Pty Ltd · Western Australia · ABN pending</p>
+        <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.2)', margin:0 }}>Steadyhand Trade Pty Ltd · Western Australia · ABN 14 696 780 588</p>
       </div>
     </div>
   )
