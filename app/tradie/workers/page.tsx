@@ -51,7 +51,7 @@ export default function WorkersPage() {
 
   const inviteWorker = async () => {
     if (!form.email) return
-    if (activeWorkers >= seatsAllowed) { setError('You have reached your worker seat limit. Upgrade your plan to add more.'); return }
+    if (activeWorkers >= seatsAllowed) { setError('You have reached your worker seat limit. Email support@steadyhandtrade.app to add more seats.'); return }
     setInviting(true)
     setError(null)
     const res = await fetch('/api/worker-invite', {
@@ -132,7 +132,8 @@ export default function WorkersPage() {
               <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{activeWorkers} of {seatsAllowed} seats used · {profile?.tradie?.subscription_tier || 'basic'} plan</p>
             </div>
             {seatsAllowed === 0 && (
-              <a href="/tradie/subscribe" style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, textDecoration:'none' }}>Upgrade to add workers →</a>
+              <a href="mailto:support@steadyhandtrade.app?subject=Additional worker seats&body=Hi, I would like to add more worker seats to my account." 
+                style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, textDecoration:'none' }}>Contact us to add seats →</a>
             )}
           </div>
 
