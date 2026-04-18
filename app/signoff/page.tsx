@@ -114,6 +114,20 @@ export default function SignoffPage() {
         expiry_date: new Date(Date.now() + (job.warranty_period || 90) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         notes: (job.warranty_period || 90) + '-day warranty — signed off ' + new Date().toLocaleDateString('en-AU'),
       })
+      // Also file to tradie vault
+      if (job.tradie_id) {
+        await supabase2.from('vault_documents').insert({
+          user_id: job.tradie_id,
+          job_id: job.id,
+          job_title: job.title,
+          title: job.title + ' - warranty record',
+          document_type: 'warranty',
+          tradie_name: job.tradie?.business_name || null,
+          issued_date: new Date().toISOString().split('T')[0],
+          expiry_date: new Date(Date.now() + (job.warranty_period || 90) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          notes: (job.warranty_period || 90) + '-day warranty period — signed off ' + new Date().toLocaleDateString('en-AU'),
+        })
+      }
     } catch { /* non-critical */ }
 
     // Request certificate of compliance from tradie

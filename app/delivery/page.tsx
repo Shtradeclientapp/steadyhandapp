@@ -318,6 +318,24 @@ export default function DeliveryPage() {
       sender_id: profile?.id,
       body: '✅ Milestone work approved — payment is being held in Steadyhand pending final settlement or resolution.',
     })
+
+    // Auto-file to vault
+    try {
+      const milestone = milestones.find((m: any) => m.id === id)
+      if (milestone && job && profile) {
+        const supabaseV = createClient()
+        await supabaseV.from('vault_documents').insert({
+          user_id: profile.id,
+          job_id: job.id,
+          job_title: job.title,
+          title: job.title + ' - milestone approved (payment held): ' + (milestone.title || 'Milestone'),
+          document_type: 'milestone',
+          tradie_name: job.tradie?.business_name || null,
+          issued_date: new Date().toISOString().split('T')[0],
+          notes: 'Work approved, payment held in Steadyhand - ' + new Date().toLocaleDateString('en-AU'),
+        })
+      }
+    } catch { /* non-critical */ }
     await fetch('/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -339,6 +357,25 @@ export default function DeliveryPage() {
     }
     setPayingMilestone(null)
     setClientSecret(null)
+
+    // Auto-file milestone record to client vault
+    try {
+      const milestone = milestones.find((m: any) => m.id === id)
+      if (milestone && job && profile) {
+        const supabaseV = createClient()
+        await supabaseV.from('vault_documents').insert({
+          user_id: profile.id,
+          job_id: job.id,
+          job_title: job.title,
+          title: job.title + ' - milestone approved: ' + (milestone.title || 'Milestone'),
+          document_type: 'milestone',
+          tradie_name: job.tradie?.business_name || null,
+          issued_date: new Date().toISOString().split('T')[0],
+          notes: 'Milestone approved on ' + new Date().toLocaleDateString('en-AU') + (milestone.amount ? ' - $' + Number(milestone.amount).toLocaleString() : ''),
+        })
+      }
+    } catch { /* non-critical */ }
+
     await fetch('/api/notify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
