@@ -141,6 +141,7 @@ export default function TradieDashboard() {
   const [xeroTenant, setXeroTenant] = useState<string|null>(null)
   const [xeroDisconnecting, setXeroDisconnecting] = useState(false)
   const [showSetupWizard, setShowSetupWizard] = useState(false)
+  const [showSpotlight, setShowSpotlight] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -179,6 +180,11 @@ export default function TradieDashboard() {
       const step = prof.tradie?.onboarding_step || 'profile'
       if (step !== 'active' && step !== 'complete') {
         setShowSetupWizard(true)
+      }
+      // Show Steadytools spotlight once for new tradies who have completed profile
+      if (step === 'invite_client' || step === 'first_job') {
+        const seen = typeof window !== 'undefined' && localStorage.getItem('steadytools_spotlight_seen')
+        if (!seen) setShowSpotlight(true)
       }
 
       // Assigned jobs

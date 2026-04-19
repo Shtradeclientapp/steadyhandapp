@@ -99,7 +99,7 @@ export default function TradieLead() {
       suburb: imp.suburb,
       address: imp.address,
       source: imp.source,
-      existing_quote_amount: imp.existing_quote_amount ? parseFloat(imp.existing_quote_amount) : null,
+      existing_quote_amount: imp.existing_quote_amount && !isNaN(parseFloat(imp.existing_quote_amount)) ? parseFloat(imp.existing_quote_amount) : null,
       preferred_start: imp.preferred_start || null,
       internal_notes: imp.internal_notes,
       status: imp.invite_client && imp.client_email ? 'invited' : 'imported',
