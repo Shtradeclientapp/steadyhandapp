@@ -145,9 +145,6 @@ export default function TradieSubscribePage() {
   const currentTier = tradie?.subscription_tier || 'basic'
   const isSubscribed = currentTier !== 'basic'
 
-  const currentTier = tradie?.free_tier_override || tradie?.subscription_tier
-  const isSubscribed = tradie?.subscription_active === true
-
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
