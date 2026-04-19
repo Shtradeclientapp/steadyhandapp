@@ -315,7 +315,13 @@ export default function AssessPage() {
         <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
           <a href="/shortlist" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to matches</a>
           <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Message your tradie →</a>
-          <a href="/compare" style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Skip to quote →</a>
+          <button type="button" onClick={async () => {
+            if (job?.id) {
+              const supabase = createClient()
+              await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
+            }
+            window.location.href = '/compare'
+          }} style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', cursor:'pointer' }}>Skip to quote →</button>
         </div>
       </div>
     </div>
