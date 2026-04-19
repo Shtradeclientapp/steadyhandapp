@@ -307,22 +307,39 @@ export default function AssessPage() {
 
   if (!job) return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ textAlign:'center' as const }}>
-        <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult is currently scheduled</p>
-        <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px', maxWidth:'400px' }}>
-          If you skipped the consult stage, contact your tradie through messages to arrange a site visit. Your tradie can schedule it from their dashboard. Or continue to the quote stage if a consult is not needed.
-        </p>
-        <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
-          <a href="/shortlist" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to matches</a>
-          <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Message your tradie →</a>
-          <button type="button" onClick={async () => {
-            if (job?.id) {
-              const supabase = createClient()
-              await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
-            }
-            window.location.href = '/compare'
-          }} style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', cursor:'pointer' }}>Skip to quote →</button>
-        </div>
+      <div style={{ textAlign:'center' as const, maxWidth:'480px', padding:'0 24px' }}>
+        {isTradie ? (
+          <>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult scheduled for this job</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
+              The client has not yet scheduled a consult. You can message them to arrange a site visit, or proceed to quote if both parties are happy to skip this stage.
+            </p>
+            <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
+              <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to dashboard</a>
+              <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Message client →</a>
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult is currently scheduled</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
+              If you skipped the consult stage, contact your tradie through messages to arrange a site visit. Or continue to the quote stage if a consult is not needed.
+            </p>
+            <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
+              <a href="/shortlist" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to matches</a>
+              <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Message your tradie →</a>
+              <button type="button" onClick={async () => {
+                const supabase = createClient()
+                const { data: { session } } = await supabase.auth.getSession()
+                if (session) {
+                  const { data: j } = await supabase.from('jobs').select('id').eq('client_id', session.user.id).order('created_at', { ascending: false }).limit(1).single()
+                  if (j) await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', j.id)
+                }
+                window.location.href = '/compare'
+              }} style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', cursor:'pointer' }}>Skip to quote →</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
