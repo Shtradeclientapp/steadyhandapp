@@ -46,7 +46,7 @@ export default function AgreementPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       setUser(session.user)
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('id, full_name, email, role, tradie:tradie_profiles!tradie_profiles_id_fkey(id, business_name, subscription_tier, subscription_active, licence_verified, abn, trade_categories, service_areas)').eq('id', session.user.id).single()
       setProfile(prof)
       const isTradie = prof?.role === 'tradie'
       const { data: jobs } = await supabase
@@ -281,7 +281,7 @@ export default function AgreementPage() {
 
   const nav = (
     <div>
-      <NavHeader profile={profile} isTradie={false}   />
+      <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/agreement" jobStatus={job?.status} />
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'800px', margin:'0 auto', padding:'16px 24px 0' }}>

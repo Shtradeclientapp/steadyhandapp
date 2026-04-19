@@ -122,7 +122,7 @@ export default function ComparePage() {
 
           <HintPanel color="#6B4FA8" hints={[
             "Review each quote carefully — check the inclusions, exclusions and conditions, not just the price.",
-            "Once you accept a quote, the other tradies are notified and a scope agreement is drafted for both parties to sign.",
+            "Progressing to the scope agreement locks in this tradie for the job. A scope agreement will be drafted for both parties to review and sign before work begins.",
             "If a quote is missing detail, use 'Request revision' to ask the tradie to clarify before you commit.",
           ]} />
 
