@@ -692,6 +692,25 @@ export default function AgreementPage() {
 
             {scope && (
               <>
+                {/* Quote reference panel */}
+                {currentQuote?.breakdown?.length > 0 && (
+                  <div style={{ background:'rgba(46,106,143,0.05)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                    <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'#2E6A8F', letterSpacing:'0.5px', margin:'0 0 10px' }}>ACCEPTED QUOTE — SCOPE BASIS</p>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px', marginBottom:'10px' }}>
+                      {currentQuote.breakdown.map((b: any, i: number) => (
+                        <div key={i} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                          <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0 }}>{b.label}{b.category ? <span style={{ fontSize:'11px', color:'#7A9098', marginLeft:'6px' }}>[{b.category}]</span> : null}</p>
+                          <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:0, flexShrink:0 }}>${Number(b.amount).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ borderTop:'1px solid rgba(46,106,143,0.15)', paddingTop:'8px', display:'flex', justifyContent:'space-between' }}>
+                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quote total</p>
+                      <p style={{ fontSize:'14px', fontWeight:700, color:'#2E6A8F', margin:0 }}>${Number(currentQuote.total_price || 0).toLocaleString()}</p>
+                    </div>
+                  </div>
+                )}
+
                 {scope.inclusions?.length > 0 && (
                   <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
                     <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'14px', fontWeight:600 }}>Inclusions</p>

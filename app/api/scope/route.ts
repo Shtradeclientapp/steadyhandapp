@@ -16,6 +16,14 @@ export async function POST(request: NextRequest) {
     const { data: job } = await supabase.from('jobs').select('*').eq('id', job_id).single()
     if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
 
+    // Fetch accepted quote breakdown to use as basis for scope inclusions
+    const { data: acceptedQuote } = await supabase
+      .from('quotes')
+      .select('breakdown, total_price, notes')
+      .eq('job_id', job_id)
+      .eq('status', 'accepted')
+      .single()
+
     // Fetch parent OB project if linked
     let obProject: any = null
     if (job.diy_project_id) {
@@ -53,7 +61,7 @@ export async function POST(request: NextRequest) {
         warranty_days: scope.warranty_days,
         response_sla_days: 5,
         remediation_days: 14,
-        total_price: scope.total_price_estimate || 0,
+        total_price: acceptedQuote?.total_price || scope.total_price_estimate || 0,
         last_edited_at: new Date().toISOString(),
         version: supabase.rpc ? undefined : undefined,
       }, { onConflict: 'job_id' })
