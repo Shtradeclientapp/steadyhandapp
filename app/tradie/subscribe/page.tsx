@@ -92,6 +92,10 @@ export default function TradieSubscribePage() {
         const { data: tp } = await supabase.from('tradie_profiles').select('*').eq('id', prof.id).single()
         setTradie(tp)
       }
+      if (prof?.role === 'tradie') {
+        const { data: tp } = await supabase.from('tradie_profiles').select('*').eq('id', prof.id).single()
+        setTradie(tp)
+      }
       setTradie(trad)
       setLoading(false)
     })
