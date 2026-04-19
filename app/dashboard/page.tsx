@@ -364,7 +364,10 @@ export default function DashboardPage() {
                         <div style={{ background: next.urgent ? '#0A0A0A' : '#E8F0EE', border:'1px solid ' + (next.urgent ? 'transparent' : 'rgba(28,43,50,0.1)'), borderLeft:'3px solid ' + stage.color, borderRadius:'11px', overflow:'hidden', transition:'background 0.15s', cursor:'pointer' }}>
                           <div style={{ padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', borderBottom:'1px solid ' + (next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.06)') }}>
                             <div style={{ flex:1, minWidth:0 }}>
-                              <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', letterSpacing:'0.3px', marginBottom:'3px' }}>{job.title}</div>
+                              <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', letterSpacing:'0.3px' }}>{job.title}</div>
+                                {(() => { const hrs = (Date.now() - new Date(job.updated_at).getTime()) / 3600000; return hrs < 24 ? <span style={{ fontSize:'10px', color:'#2E7D60', background:'rgba(46,125,96,0.12)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'1px 7px', flexShrink:0 }}>Updated</span> : null })()}
+                              </div>
                               <div style={{ fontSize:'11px', color: next.urgent ? 'rgba(216,228,225,0.35)' : '#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
                             </div>
                             <span style={{ fontSize:'11px', fontWeight:500, color: stage.color, background: next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.05)', padding:'3px 10px', borderRadius:'100px', flexShrink:0 }}>{stage.label}</span>

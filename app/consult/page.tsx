@@ -50,12 +50,16 @@ export default function AssessPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
 
-      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('id, full_name, email, role, tradie:tradie_profiles!tradie_profiles_id_fkey(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
       const tradie = prof?.role === 'tradie'
       setIsTradie(tradie)
 
-      const col = tradie ? 'tradie_id' : 'client_id'
+      // Double-check role via tradie_profiles existence to prevent client view showing for tradies
+      const hasTradieProfle = !!(Array.isArray(prof?.tradie) ? prof?.tradie?.[0]?.id : prof?.tradie?.id)
+      const resolvedTradie = tradie || hasTradieProfle
+      const col = resolvedTradie ? 'tradie_id' : 'client_id'
+      if (resolvedTradie !== tradie) setIsTradie(resolvedTradie)
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
