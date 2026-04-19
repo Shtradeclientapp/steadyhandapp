@@ -276,7 +276,7 @@ export default function ComparePage() {
                           )}
                           <button type="button" onClick={() => acceptQuote(q)} disabled={!!accepting}
                             style={{ width:'100%', background:'#2E7D60', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: accepting ? 0.6 : 1 }}>
-                            {accepting === q.id ? 'Accepting...' : 'Accept this quote →'}
+                            {accepting === q.id ? 'Progressing...' : 'Progress to scope agreement →'}
                           </button>
                           {!isRevisingThis && (
                             <button type="button" onClick={() => { setReviseId(q.id); setReviseNote('') }}
