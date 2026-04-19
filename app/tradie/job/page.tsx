@@ -469,7 +469,7 @@ export default function TradieJobPage() {
                           setSavingSlots(false)
                           setConsultSent(true)
                           setProposingConsult(false)
-                        }} disabled={!proposedSlots[0] || savingSlots}
+                        }} disabled={!proposedSlots[0] || savingSlots} style={{ opacity: savingSlots ? 0.6 : 1 }}
                           style={{ flex:1, background:'#9B6B9B', color:'white', padding:'9px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !proposedSlots[0] || savingSlots ? 0.5 : 1 }}>
                           {savingSlots ? 'Sending...' : 'Send times to client →'}
                         </button>
