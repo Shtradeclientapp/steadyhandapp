@@ -21,13 +21,14 @@ export default function WorkersPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: prof } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, worker_seats_included, worker_seats_extra, subscription_tier)').eq('id', session.user.id).single()
+      const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, worker_seats_included, worker_seats_extra, subscription_tier)').eq('id', session.user.id).single()
+      const prof = profRaw as any
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
       setProfile(prof)
 
       const [{ data: w }, { data: j }, { data: a }] = await Promise.all([
-        supabase.from('tradie_workers').select('*').eq('tradie_id', (Array.isArray(prof.tradie) ? prof.tradie[0]?.id : prof.tradie?.id)).order('created_at', { ascending: false }),
-        supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', (Array.isArray(prof.tradie) ? prof.tradie[0]?.id : prof.tradie?.id)).in('status', ['agreement','delivery','assess','quote']).order('created_at', { ascending: false }),
+        supabase.from('tradie_workers').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false }),
+        supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['agreement','delivery','assess','quote']).order('created_at', { ascending: false }),
         supabase.from('job_worker_assignments').select('*, worker:tradie_workers(name), job:jobs(title, suburb)').in('job_id', []).order('assigned_date', { ascending: true }),
       ])
       setWorkers(w || [])
