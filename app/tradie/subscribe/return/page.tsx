@@ -15,10 +15,21 @@ export default function SubscribeReturnPage() {
       body: JSON.stringify({ action: 'get_session_status', session_id: sessionId }),
     })
       .then(r => r.json())
-      .then(data => {
+      .then(async data => {
         setStatus(data.status === 'complete' ? 'success' : data.status === 'open' ? 'open' : 'error')
         setTier(data.tier || '')
         setEmail(data.customer_email || '')
+        // Update subscription status in Supabase immediately on success
+        if (data.status === 'complete' && data.tier && data.tradie_id) {
+          const { createClient } = await import('@/lib/supabase/client')
+          const supabase = createClient()
+          await supabase.from('tradie_profiles').update({
+            subscription_active: true,
+            subscription_tier: data.tier,
+            onboarding_step: 'invite_client',
+            worker_seats_included: data.tier === 'pro' ? 5 : data.tier === 'business' ? 2 : 0,
+          }).eq('id', data.tradie_id)
+        }
       })
       .catch(() => setStatus('error'))
   }, [])

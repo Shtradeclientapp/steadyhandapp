@@ -55,9 +55,10 @@ export default function AssessPage() {
       const tradie = prof?.role === 'tradie'
       setIsTradie(tradie)
 
-      // Double-check role via tradie_profiles existence to prevent client view showing for tradies
-      const hasTradieProfle = !!(Array.isArray(prof?.tradie) ? prof?.tradie?.[0]?.id : prof?.tradie?.id)
-      const resolvedTradie = tradie || hasTradieProfle
+      // Double-check role via tradie_profiles existence
+      const tradieProf = prof?.tradie as any
+      const hasTraidieProfile = !!(Array.isArray(tradieProf) ? tradieProf?.[0]?.id : tradieProf?.id)
+      const resolvedTradie = tradie || hasTraidieProfile
       const col = resolvedTradie ? 'tradie_id' : 'client_id'
       if (resolvedTradie !== tradie) setIsTradie(resolvedTradie)
       const { data: jobs } = await supabase

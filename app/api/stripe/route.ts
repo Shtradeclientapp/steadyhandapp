@@ -131,6 +131,7 @@ export async function POST(request: NextRequest) {
         status: session.status,
         customer_email: session.customer_details?.email,
         tier: session.metadata?.tier,
+        tradie_id: session.metadata?.tradie_id,
       })
     }
 

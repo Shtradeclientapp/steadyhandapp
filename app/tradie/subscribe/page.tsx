@@ -88,6 +88,10 @@ export default function TradieSubscribePage() {
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
+      if (prof?.role === 'tradie') {
+        const { data: tp } = await supabase.from('tradie_profiles').select('*').eq('id', prof.id).single()
+        setTradie(tp)
+      }
       setTradie(trad)
       setLoading(false)
     })
@@ -136,6 +140,9 @@ export default function TradieSubscribePage() {
   const isFounding = tradie?.founding_member === true
   const currentTier = tradie?.subscription_tier || 'basic'
   const isSubscribed = currentTier !== 'basic'
+
+  const currentTier = tradie?.free_tier_override || tradie?.subscription_tier
+  const isSubscribed = tradie?.subscription_active === true
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
