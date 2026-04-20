@@ -134,6 +134,22 @@ export default function SignoffPage() {
           notes: (job.warranty_period || 90) + '-day warranty period — signed off ' + new Date().toLocaleDateString('en-AU'),
         })
       }
+      // Auto-archive job notes and photos to tradie vault on signoff
+      if (job.tradie_id) {
+        const { data: jf } = await supabase2.from('job_files').select('*').eq('job_id', job.id).maybeSingle()
+        if (jf && (jf.notes || (jf.photo_urls && jf.photo_urls.length > 0))) {
+          await supabase2.from('vault_documents').insert({
+            user_id: job.tradie_id,
+            job_id: job.id,
+            job_title: job.title,
+            title: 'Job notes — ' + job.title,
+            document_type: 'uploaded',
+            notes: jf.notes || null,
+            issued_date: new Date().toISOString().split('T')[0],
+            tradie_name: job.tradie?.business_name || null,
+          })
+        }
+      }
     } catch { /* non-critical */ }
 
     // Request certificate of compliance from tradie
