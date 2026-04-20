@@ -5,6 +5,10 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
+import { loadStripe } from '@stripe/stripe-js'
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 const BASE_CHECKS = [
   { id:'defects', label:'No visible defects in workmanship', sub:'No cracks, gaps, unfinished surfaces or loose fittings' },
@@ -31,6 +35,7 @@ export default function SignoffPage() {
   const [contributionSent, setContributionSent] = useState(false)
   const [contributionError, setContributionError] = useState<string|null>(null)
   const [showContribution, setShowContribution] = useState(false)
+  const [contributionClientSecret, setContributionClientSecret] = useState<string|null>(null)
   const [showPartial, setShowPartial] = useState(false)
   const [outstandingNote, setOutstandingNote] = useState('')
 
@@ -317,14 +322,8 @@ export default function SignoffPage() {
                             }),
                           })
                           const data = await res.json()
-                          if (data.success) {
-                            // Fire contribution email
-                            await fetch('/api/email', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ type: 'contribution_received', job_id: job.id, amount: finalAmount, message: contributionMessage }),
-                            }).catch(() => {})
-                            setContributionSent(true)
+                          if (data.client_secret) {
+                            setContributionClientSecret(data.client_secret)
                           } else {
                             setContributionError(data.error || 'Payment failed — please try again.')
                           }
@@ -341,6 +340,28 @@ export default function SignoffPage() {
                         Skip
                       </button>
                     </div>
+                    {contributionClientSecret && (
+                      <div style={{ marginTop:'16px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden' }}>
+                        <div style={{ background:'#0A0A0A', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                          <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.8)', letterSpacing:'0.5px', margin:0 }}>SEND CONTRIBUTION</p>
+                          <button type="button" onClick={() => setContributionClientSecret(null)}
+                            style={{ background:'rgba(255,255,255,0.08)', border:'none', borderRadius:'6px', padding:'3px 8px', fontSize:'12px', color:'rgba(216,228,225,0.6)', cursor:'pointer' }}>✕</button>
+                        </div>
+                        <div style={{ padding:'16px' }}>
+                          <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret: contributionClientSecret, onComplete: async () => {
+                            setContributionClientSecret(null)
+                            setContributionSent(true)
+                            await fetch('/api/email', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ type: 'contribution_received', job_id: job?.id, amount: contributionAmount || parseFloat(customAmount), message: contributionMessage }),
+                            }).catch(() => {})
+                          }}}>
+                            <EmbeddedCheckout />
+                          </EmbeddedCheckoutProvider>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
