@@ -215,7 +215,8 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
               </>
             )}
             {!profile && (
-              <a href="/login" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#D4522A', textDecoration:'none', fontWeight:500 }} onClick={() => setMobileMenuOpen(false)}>Sign in →</a>
+              <a href="/guides" style={{ fontSize:'13px', color:'rgba(216,228,225,0.55)', textDecoration:'none' }}>Cost guides</a>
+        <a href="/login" style={{ display:'flex', alignItems:'center', padding:'14px 20px', fontSize:'14px', color:'#D4522A', textDecoration:'none', fontWeight:500 }} onClick={() => setMobileMenuOpen(false)}>Sign in →</a>
             )}
           </div>
         </>

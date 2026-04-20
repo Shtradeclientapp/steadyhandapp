@@ -315,6 +315,8 @@ export default function Home() {
         <div className="footer-inner footer-pad">
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.7)', letterSpacing:'2px' }}>STEADYHAND</div>
           <div className="footer-links">
+              <a href="/guides" style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none' }}>Cost guides</a>
+              <a href="/guides/warranty-wa" style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none' }}>Warranty WA</a>
             {[['About','#about'], ['For homeowners','#for-homeowners'], ['For trade businesses','#for-trade-businesses'], ['For organisations','#for-organisations'], ['Privacy','/privacy']].map(([l,href]) => (
               <a key={l} href={href} style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', cursor:'pointer', textDecoration:'none' }}>{l}</a>
             ))}
