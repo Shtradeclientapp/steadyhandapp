@@ -65,26 +65,42 @@ export default function ShortlistPage() {
 
   const sendQuoteRequests = async () => {
     if (selectedTradies.length === 0 && pendingInvites.length === 0) return
+    if (!selectedJob?.id) { setSendError('No job selected — please refresh and try again.'); return }
     setSending(true)
-    try {
-      const supabase = createClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      for (const tradieId of selectedTradies) {
-        await supabase.from('quote_requests').upsert({ job_id: selectedJob.id, tradie_id: tradieId, status: 'requested', requested_at: new Date().toISOString() }, { onConflict: 'job_id,tradie_id' })
-        await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }) }).catch(() => {})
+    setSendError(null)
+    const supabase = createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+
+    for (const tradieId of selectedTradies) {
+      const { error: qrErr } = await supabase.from('quote_requests').upsert(
+        { job_id: selectedJob.id, tradie_id: tradieId, status: 'requested', requested_at: new Date().toISOString() },
+        { onConflict: 'job_id,tradie_id' }
+      )
+      if (qrErr) {
+        console.error('quote_requests error:', qrErr)
+        setSendError('Quote request failed: ' + qrErr.message)
+        setSending(false)
+        return
       }
-      for (const invite of pendingInvites) {
-        await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite, personal_message: invite.personal_message || '' }) }).catch(() => {})
-      }
-      await supabase.from('jobs').update({ status: 'shortlisted', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
-      await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'consult_ready', job_id: selectedJob.id }) }).catch(() => {})
-      await loadQuoteRequests(selectedJob.id)
-      setSent(true)
-      setShowNextStepModal(true)
-    } catch (e) {
-      console.error('sendQuoteRequests error:', e)
-      setSendError('Could not send quote requests — please try again.')
+      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }) }).catch(() => {})
     }
+
+    for (const invite of pendingInvites) {
+      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite, personal_message: invite.personal_message || '' }) }).catch(() => {})
+    }
+
+    const { error: jobErr } = await supabase.from('jobs').update({ status: 'shortlisted', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
+    if (jobErr) {
+      console.error('jobs update error:', jobErr)
+      setSendError('Job status update failed: ' + jobErr.message)
+      setSending(false)
+      return
+    }
+
+    await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'consult_ready', job_id: selectedJob.id }) }).catch(() => {})
+    await loadQuoteRequests(selectedJob.id)
+    setSent(true)
+    setShowNextStepModal(true)
     setSending(false)
   }
 
