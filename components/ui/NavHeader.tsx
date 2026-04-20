@@ -81,8 +81,13 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
             </a>
           )}
 
-          {/* Cost guides — always visible */}
+          {/* Nav links — always visible on desktop */}
           <a href="/guides" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>Cost guides</a>
+          <a href="/guides/warranty-wa" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>Warranty guide</a>
+          <a href="/diy" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>DIY tools</a>
+          {profile && (
+            <button type="button" onClick={signOut} className="nav-back-link" style={{ fontSize:'13px', color:'#D4522A', background:'none', border:'none', cursor:'pointer', fontWeight:500, padding:0 }}>Sign out</button>
+          )}
 
           {/* Notifications bell */}
           {profile && (
