@@ -195,10 +195,11 @@ export default function DeliveryPage() {
       }
       // Load variations
       if (jobs && jobs.length > 0) {
+        const varJobId = (jobs.find((j: any) => j.status === 'delivery') || jobs[0]).id
         const { data: vars } = await supabase
           .from('variations')
           .select('*, requested_by_profile:profiles!variations_requested_by_fkey(full_name)')
-          .eq('job_id', deliveryJob.id)
+          .eq('job_id', varJobId)
           .order('created_at', { ascending: false })
         setVariations(vars || [])
       }
