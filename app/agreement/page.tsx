@@ -694,16 +694,18 @@ export default function AgreementPage() {
                   <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {draftError}</p>
                 )}
                 {isTradie ? (
-                  {isTradie && !scope && (
-                  <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 4px' }}>Your client is waiting for the scope agreement</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Draft the scope below to define what is included, the payment milestones and warranty terms. Your client will be notified to review and sign once you submit.</p>
-                  </div>
-                )}
-                <button type="button" onClick={() => draftScope()} disabled={drafting}
-                    style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
-                    {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
-                  </button>
+                  <>
+                    {!scope && (
+                      <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 4px' }}>Your client is waiting for the scope agreement</p>
+                        <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Draft the scope below to define what is included, the payment milestones and warranty terms. Your client will be notified to review and sign once you submit.</p>
+                      </div>
+                    )}
+                    <button type="button" onClick={() => draftScope()} disabled={drafting}
+                      style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
+                      {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
+                    </button>
+                  </>
                 ) : (
                   <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
                     <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', margin:'0 0 4px' }}>Waiting for tradie to draft the scope</p>
