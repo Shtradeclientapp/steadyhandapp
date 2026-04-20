@@ -78,7 +78,7 @@ export default function AgreementPage() {
           .from('jobs')
           .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
           .eq('tradie_id', session.user.id)
-          .in('status', ['shortlisted','compare','quote','agreement','delivery','signoff','warranty','complete'])
+          .in('status', ['shortlisted','consult','compare','quote','agreement','delivery','signoff','warranty','complete'])
           .order('updated_at', { ascending: false })
 
         if (urlJobId) query = query.eq('id', urlJobId)
