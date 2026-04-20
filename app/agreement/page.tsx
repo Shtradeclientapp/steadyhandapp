@@ -53,6 +53,29 @@ export default function AgreementPage() {
       // Tradies manage scope from their job page — redirect them there
       // Unless they arrived here from the job page (from_job param)
       const fromJob = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from_job')
+
+      // If tradie arrived via from_job param, load that job directly by ID
+      if (isTradie && fromJob) {
+        const { data: directJob } = await supabase
+          .from('jobs')
+          .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+          .eq('id', fromJob)
+          .single()
+        if (directJob) {
+          setJob(directJob)
+          setAllJobs([directJob])
+          const { data: scopeD } = await supabase.from('scope_agreements').select('*').eq('job_id', fromJob).maybeSingle()
+          if (scopeD) { setScope(scopeD); setScopeVersion(v => v + 1) }
+          const { data: qsD } = await supabase.from('quotes').select('*, tradie:tradie_profiles(business_name)').eq('job_id', fromJob).order('created_at', { ascending: false })
+          if (qsD && qsD.length > 0) { setCurrentQuote(qsD[0]); setAllQuotes(qsD) }
+          const { data: qrsD } = await supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)').eq('job_id', fromJob)
+          setQuoteRequests(qrsD || [])
+          setLoading(false)
+          return
+        }
+      }
+
+      // Tradies without from_job param — redirect to their job page
       if (isTradie && !fromJob) {
         const { data: tj } = await supabase
           .from('jobs')
