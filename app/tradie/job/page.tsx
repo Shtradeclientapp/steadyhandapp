@@ -887,6 +887,20 @@ export default function TradieJobPage() {
           </div>
         )}
 
+        {/* Agreement stage — show draft prompt if no scope yet */}
+        {(job?.status === 'agreement' || job?.status === 'compare') && !scope && (
+          <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'14px', padding:'24px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#6B4FA8', letterSpacing:'0.5px', margin:'0 0 8px' }}>SCOPE AGREEMENT — ACTION REQUIRED</p>
+            <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>Your client has accepted your quote and is waiting for the scope agreement</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
+              Draft the scope agreement below. This defines what is included, what is excluded, the payment milestones and warranty terms. Your client will be notified to review and sign.
+            </p>
+            <a href="/agreement" style={{ display:'inline-block', background:'#6B4FA8', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
+              Draft scope agreement →
+            </a>
+          </div>
+        )}
+
         {scope && (
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px' }}>
             <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: '#0A0A0A', letterSpacing: '0.5px', marginBottom: '10px' }}>SCOPE AGREEMENT</p>

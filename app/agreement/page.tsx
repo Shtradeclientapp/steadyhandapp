@@ -49,6 +49,23 @@ export default function AgreementPage() {
       const { data: prof } = await supabase.from('profiles').select('id, full_name, email, role, tradie:tradie_profiles!tradie_profiles_id_fkey(id, business_name, subscription_tier, subscription_active, licence_verified, abn, trade_categories, service_areas)').eq('id', session.user.id).single()
       setProfile(prof)
       const isTradie = prof?.role === 'tradie'
+
+      // Tradies manage scope from their job page — redirect them there
+      if (isTradie) {
+        const { data: tj } = await supabase
+          .from('jobs')
+          .select('id')
+          .eq('tradie_id', session.user.id)
+          .in('status', ['agreement','delivery','signoff','warranty','complete'])
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .single()
+        if (tj?.id) {
+          window.location.href = '/tradie/job?id=' + tj.id
+          return
+        }
+      }
+
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
