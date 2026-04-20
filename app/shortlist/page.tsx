@@ -37,7 +37,7 @@ export default function ShortlistPage() {
         .from('jobs')
         .select('*')
         .eq('client_id', session.user.id)
-        .in('status', ['matching', 'shortlisted', 'agreement', 'delivery', 'signoff', 'warranty', 'complete'])
+        .in('status', ['draft', 'matching', 'shortlisted', 'consult', 'assess', 'compare', 'quote', 'agreement', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('created_at', { ascending: false })
 
       if (!jobsData || jobsData.length === 0) { setLoading(false); return }
