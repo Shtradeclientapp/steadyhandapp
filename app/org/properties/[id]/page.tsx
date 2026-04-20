@@ -83,7 +83,7 @@ export default function PropertyDetailPage() {
   }, [])
 
   const uploadDoc = async () => {
-    if (!fileRef.current?.files?.[0] || !docForm.title || !property) return
+    if (!fileRef.current?.files?.[0] || !docForm.title || !property) { setUploadingDoc(false); return }
     setUploadingDoc(true); setUploadError(null)
     const supabase = createClient()
     const file = fileRef.current.files[0]
@@ -113,7 +113,7 @@ export default function PropertyDetailPage() {
   }
 
   const shareDoc = async (doc: any) => {
-    if (!shareEmail.trim()) return
+    if (!shareEmail.trim()) { setSharing(null); return }
     setSharing(doc.id)
     const supabase = createClient()
     // Find user by email
