@@ -5,10 +5,16 @@ export default function SubscribeReturnPage() {
   const [status, setStatus] = useState<'loading'|'success'|'open'|'error'>('loading')
   const [tier, setTier] = useState('')
   const [email, setEmail] = useState('')
+  const [workerSeatsAdded, setWorkerSeatsAdded] = useState(0)
+  const [isWorkerSeat, setIsWorkerSeat] = useState(false)
 
   useEffect(() => {
-    const sessionId = new URLSearchParams(window.location.search).get('session_id')
+    const params = new URLSearchParams(window.location.search)
+    const sessionId = params.get('session_id')
+    const type = params.get('type')
+    const quantity = parseInt(params.get('quantity') || '1')
     if (!sessionId) { setStatus('error'); return }
+    if (type === 'worker_seats') setIsWorkerSeat(true)
     fetch('/api/stripe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -19,16 +25,26 @@ export default function SubscribeReturnPage() {
         setStatus(data.status === 'complete' ? 'success' : data.status === 'open' ? 'open' : 'error')
         setTier(data.tier || '')
         setEmail(data.customer_email || '')
-        // Update subscription status in Supabase immediately on success
-        if (data.status === 'complete' && data.tier && data.tradie_id) {
+        if (data.status === 'complete' && data.tradie_id) {
           const { createClient } = await import('@/lib/supabase/client')
           const supabase = createClient()
-          await supabase.from('tradie_profiles').update({
-            subscription_active: true,
-            subscription_tier: data.tier,
-            onboarding_step: 'invite_client',
-            worker_seats_included: data.tier === 'pro' ? 5 : data.tier === 'business' ? 2 : 0,
-          }).eq('id', data.tradie_id)
+          if (type === 'worker_seats') {
+            // Increment worker_seats_extra
+            const { data: tp } = await supabase.from('tradie_profiles').select('worker_seats_extra').eq('id', data.tradie_id).single()
+            const current = tp?.worker_seats_extra || 0
+            await supabase.from('tradie_profiles').update({
+              worker_seats_extra: current + quantity,
+            }).eq('id', data.tradie_id)
+            setWorkerSeatsAdded(quantity)
+          } else if (data.tier) {
+            // Standard subscription upgrade
+            await supabase.from('tradie_profiles').update({
+              subscription_active: true,
+              subscription_tier: data.tier,
+              onboarding_step: 'invite_client',
+              worker_seats_included: data.tier === 'pro' ? 5 : data.tier === 'business' ? 2 : 0,
+            }).eq('id', data.tradie_id)
+          }
         }
       })
       .catch(() => setStatus('error'))
@@ -46,9 +62,13 @@ export default function SubscribeReturnPage() {
         {status === 'success' && (
           <>
             <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(46,125,96,0.12)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', fontSize:'28px' }}>✓</div>
-            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'10px' }}>You're subscribed</h1>
+            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'10px' }}>
+              {isWorkerSeat ? 'Worker seats added' : "You're subscribed"}
+            </h1>
             <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:'8px' }}>
-              Welcome to Steadyhand {tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : ''}. Your account has been upgraded.
+              {isWorkerSeat
+                ? `${workerSeatsAdded} worker seat${workerSeatsAdded > 1 ? 's' : ''} added to your account. You can now invite workers from the Workers page.`
+                : `Welcome to Steadyhand ${tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : ''}. Your account has been upgraded.`}
             </p>
             {email && <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'28px' }}>Confirmation sent to {email}</p>}
             <a href="/tradie/dashboard" style={{ display:'block', background:'#0A0A0A', color:'white', padding:'14px', borderRadius:'10px', fontSize:'14px', fontWeight:600, textDecoration:'none' }}>

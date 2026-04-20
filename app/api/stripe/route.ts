@@ -135,6 +135,38 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // ── Worker seat checkout ─────────────────────────────────────
+    if (action === 'create_worker_seat_checkout') {
+      const { quantity } = body
+      const seatPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_WORKER_SEAT
+      if (!seatPriceId) return NextResponse.json({ error: 'Worker seat price not configured' }, { status: 500 })
+
+      // Get or create Stripe customer
+      const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id').eq('id', tradie_id).single()
+      let customerId = tp?.stripe_customer_id
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: email,
+          metadata: { user_id: tradie_id },
+        })
+        customerId = customer.id
+        await supabase.from('tradie_profiles').update({ stripe_customer_id: customerId }).eq('id', tradie_id)
+      }
+
+      const session = await (stripe.checkout.sessions.create as any)({
+        ui_mode: 'embedded_page',
+        mode: 'subscription',
+        customer: customerId,
+        line_items: [{ price: seatPriceId, quantity: quantity || 1 }],
+        automatic_tax: { enabled: true },
+        customer_update: { address: 'auto' },
+        billing_address_collection: 'required',
+        return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/subscribe/return?session_id={CHECKOUT_SESSION_ID}&type=worker_seats&quantity=' + (quantity || 1),
+        metadata: { tradie_id: tradie_id || null, type: 'worker_seats', quantity: String(quantity || 1) },
+      })
+      return NextResponse.json({ client_secret: session.client_secret })
+    }
+
     // ── Customer portal (manage/cancel subscription) ─────────────
     if (action === 'create_portal_session') {
       const { data: tp } = await supabase.from('tradie_profiles').select('stripe_customer_id').eq('id', tradie_id).single()

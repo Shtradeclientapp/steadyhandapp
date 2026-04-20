@@ -52,7 +52,7 @@ export default function WorkersPage() {
 
   const inviteWorker = async () => {
     if (!form.email) return
-    if (activeWorkers >= seatsAllowed) { setError('You have reached your worker seat limit. Email support@steadyhandtrade.app to add more seats.'); return }
+    if (activeWorkers >= seatsAllowed) { setError('You have reached your worker seat limit. Add more seats on the Subscribe page.'); return }
     setInviting(true)
     setError(null)
     const res = await fetch('/api/worker-invite', {

@@ -70,6 +70,13 @@ const TIERS = [
 const PRICE_IDS: Record<string, string> = {
   business: process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS || '',
   pro: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || '',
+  worker_seat: process.env.NEXT_PUBLIC_STRIPE_PRICE_WORKER_SEAT || '',
+}
+
+const SEATS_INCLUDED: Record<string, number> = {
+  basic: 0,
+  business: 2,
+  pro: 5,
 }
 
 export default function TradieSubscribePage() {
@@ -80,6 +87,10 @@ export default function TradieSubscribePage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [extraSeats, setExtraSeats] = useState(1)
+  const [seatCheckoutLoading, setSeatCheckoutLoading] = useState(false)
+  const [seatClientSecret, setSeatClientSecret] = useState<string|null>(null)
+  const [seatCheckoutError, setSeatCheckoutError] = useState<string|null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -88,14 +99,6 @@ export default function TradieSubscribePage() {
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      if (prof?.role === 'tradie') {
-        const { data: tp } = await supabase.from('tradie_profiles').select('*').eq('id', prof.id).single()
-        setTradie(tp)
-      }
-      if (prof?.role === 'tradie') {
-        const { data: tp } = await supabase.from('tradie_profiles').select('*').eq('id', prof.id).single()
-        setTradie(tp)
-      }
       setTradie(trad)
       setLoading(false)
     })
@@ -133,6 +136,25 @@ export default function TradieSubscribePage() {
     const data = await res.json()
     if (data.url) window.location.href = data.url
     else setCheckoutError('Could not open billing portal. Please try again.')
+  }
+
+  const openSeatCheckout = async () => {
+    if (!profile) return
+    setSeatCheckoutLoading(true)
+    setSeatCheckoutError(null)
+    setSeatClientSecret(null)
+    const res = await fetch('/api/stripe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create_worker_seat_checkout', tradie_id: profile.id, email: profile.email, quantity: extraSeats }),
+    })
+    const data = await res.json()
+    if (data.client_secret) {
+      setSeatClientSecret(data.client_secret)
+    } else {
+      setSeatCheckoutError(data.error || 'Could not start checkout. Please try again.')
+    }
+    setSeatCheckoutLoading(false)
   }
 
   if (loading) return (
@@ -287,6 +309,60 @@ export default function TradieSubscribePage() {
             ))}
           </div>
         </div>
+
+        {/* Worker seat add-on */}
+        {isSubscribed && (
+          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px', marginBottom:'24px' }}>
+            <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'16px', marginBottom:'16px', flexWrap:'wrap' as const }}>
+              <div>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 4px' }}>WORKER SEATS</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>
+                  {SEATS_INCLUDED[currentTier] || 0} seats included with {currentTier} · {(tradie?.worker_seats_extra || 0)} extra seats · <strong>{(SEATS_INCLUDED[currentTier] || 0) + (tradie?.worker_seats_extra || 0)} total</strong>
+                </p>
+              </div>
+              <div style={{ background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'8px', padding:'8px 14px', textAlign:'center' as const }}>
+                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px' }}>Extra seats</p>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#2E6A8F', margin:0 }}>{tradie?.worker_seats_extra || 0}</p>
+              </div>
+            </div>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'16px' }}>
+              Add extra worker seats at $10/seat/month. Workers get field access — they can view their assigned jobs, upload site photos and add progress notes.
+            </p>
+            <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'16px', flexWrap:'wrap' as const }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                <button type="button" onClick={() => setExtraSeats(s => Math.max(1, s - 1))}
+                  style={{ width:'32px', height:'32px', borderRadius:'8px', background:'rgba(28,43,50,0.08)', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer', fontSize:'16px', display:'flex', alignItems:'center', justifyContent:'center' }}>−</button>
+                <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', minWidth:'32px', textAlign:'center' as const }}>{extraSeats}</span>
+                <button type="button" onClick={() => setExtraSeats(s => Math.min(20, s + 1))}
+                  style={{ width:'32px', height:'32px', borderRadius:'8px', background:'rgba(28,43,50,0.08)', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer', fontSize:'16px', display:'flex', alignItems:'center', justifyContent:'center' }}>+</button>
+              </div>
+              <div>
+                <p style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500, margin:'0 0 2px' }}>{extraSeats} seat{extraSeats > 1 ? 's' : ''} × $10/month</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>${extraSeats * 10}/month added to your subscription</p>
+              </div>
+            </div>
+            {seatCheckoutError && <p style={{ fontSize:'12px', color:'#D4522A', marginBottom:'10px' }}>⚠ {seatCheckoutError}</p>}
+            {!seatClientSecret ? (
+              <button type="button" onClick={openSeatCheckout} disabled={seatCheckoutLoading}
+                style={{ background:'#2E6A8F', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: seatCheckoutLoading ? 0.7 : 1 }}>
+                {seatCheckoutLoading ? 'Loading...' : `Add ${extraSeats} seat${extraSeats > 1 ? 's' : ''} — $${extraSeats * 10}/month →`}
+              </button>
+            ) : (
+              <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'12px', overflow:'hidden' }}>
+                <div style={{ background:'#0A0A0A', padding:'12px 20px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.8)', letterSpacing:'0.5px', margin:0 }}>ADD WORKER SEATS</p>
+                  <button type="button" onClick={() => setSeatClientSecret(null)}
+                    style={{ background:'rgba(255,255,255,0.08)', border:'none', borderRadius:'6px', padding:'3px 8px', fontSize:'12px', color:'rgba(216,228,225,0.6)', cursor:'pointer' }}>✕</button>
+                </div>
+                <div style={{ padding:'20px' }}>
+                  <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret: seatClientSecret }}>
+                    <EmbeddedCheckout />
+                  </EmbeddedCheckoutProvider>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* FAQ */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
