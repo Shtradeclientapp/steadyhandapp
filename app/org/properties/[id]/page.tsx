@@ -164,6 +164,7 @@ export default function PropertyDetailPage() {
 
   const activeJobs = jobs.filter(j => !['complete', 'cancelled'].includes(j.status))
   const totalSpend = jobs.filter(j => j.agreed_price).reduce((sum, j) => sum + Number(j.agreed_price), 0)
+  const org_name = property?.org_name || ''
 
   return (
     <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
@@ -204,7 +205,6 @@ export default function PropertyDetailPage() {
       </div>
 
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px' }}>
-        {(() => { const org_name = '' ; return null })()}
 
         {property.notes && activeTab === 'jobs' && (
           <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
