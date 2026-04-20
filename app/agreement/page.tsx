@@ -53,7 +53,7 @@ export default function AgreementPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
         .or(isTradie ? 'tradie_id.eq.' + session.user.id : 'client_id.eq.' + session.user.id)
-        .in('status', ['agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
+        .in('status', ['agreement', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         .limit(1)
       // Fallback for tradies — find jobs via quote_requests if tradie_id not yet set
@@ -69,7 +69,7 @@ export default function AgreementPage() {
             .from('jobs')
             .select('*, tradie:tradie_profiles(*, profile:profiles(*)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
             .in('id', jobIds)
-            .in('status', ['agreement', 'shortlisted', 'delivery', 'signoff', 'warranty', 'complete'])
+            .in('status', ['agreement', 'delivery', 'signoff', 'warranty', 'complete'])
             .order('updated_at', { ascending: false })
             .limit(1)
           jobList = fallbackJobs || []
@@ -318,7 +318,7 @@ export default function AgreementPage() {
         </div>
       </div>
     </div>
-  </>
+    </>
   )
 
   return (

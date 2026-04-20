@@ -13,7 +13,7 @@ const STAGES = [
 
 const STATUS_TO_STAGE: Record<string,number> = {
   draft:1, matching:1, shortlisted:2, assess:3, consult:3,
-  compare:4, quote:5, agreement:5, contract:5,
+  compare:4, quote:4, agreement:5, contract:5,
   delivery:6, signoff:7, warranty:8, complete:8,
 }
 
