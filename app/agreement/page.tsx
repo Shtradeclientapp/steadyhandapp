@@ -205,7 +205,8 @@ export default function AgreementPage() {
     setJob({ ...job, tradie_id: quote.tradie_id, status:'agreement' })
     setCurrentQuote(quote)
     setAcceptingQuote(false)
-    await draftScope()
+    // Tradie drafts the scope — notify them via email
+    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_ready', job_id: job.id }) }).catch(() => {})
   }
 
   const sendMessage = async () => {
@@ -729,10 +730,12 @@ export default function AgreementPage() {
                   )}
 
                   {draftError && <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {draftError}</p>}
-                  <button type="button" onClick={() => draftScope()} disabled={drafting}
-                    style={{ width:'100%', background:'transparent', color:'#6B4FA8', padding:'12px', borderRadius:'10px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(107,79,168,0.25)', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
-                    {drafting ? 'Redrafting...' : '↻ Redraft scope with Steadyhand'}
-                  </button>
+                  {isTradie && (
+                    <button type="button" onClick={() => draftScope()} disabled={drafting}
+                      style={{ width:'100%', background:'transparent', color:'#6B4FA8', padding:'12px', borderRadius:'10px', fontSize:'13px', fontWeight:500, border:'1px solid rgba(107,79,168,0.25)', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
+                      {drafting ? 'Redrafting...' : '↻ Redraft scope with Steadyhand'}
+                    </button>
+                  )}
                 </div>
               </>
             )}

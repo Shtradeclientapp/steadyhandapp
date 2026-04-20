@@ -1081,7 +1081,7 @@ export default function TradieJobPage() {
         {scope?.client_signed_at && scope?.tradie_signed_at && milestones.length === 0 && (
           <div style={{ background: 'rgba(192,120,48,0.06)', border: '1px solid rgba(192,120,48,0.2)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px' }}>
             <p style={{ fontSize: '13px', color: '#C07830', fontWeight: 500, marginBottom: '4px' }}>⏳ Awaiting milestones</p>
-            <p style={{ fontSize: '12px', color: '#4A5E64', margin: 0 }}>Milestones are set by the client on the agreement page. You will be notified when they are ready.</p>
+            <p style={{ fontSize: '12px', color: '#4A5E64', margin: 0 }}>Milestones are defined in the scope agreement. Go to the agreement page to add them.</p>
           </div>
         )}
 
