@@ -118,7 +118,7 @@ export default function ComparePage() {
     </div>
   )
 
-  const nav = <NavHeader />
+  const nav = <NavHeader profile={profile} />
 
   return (
     <>

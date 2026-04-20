@@ -157,7 +157,7 @@ export default function DeliveryPage() {
         const { data: ms } = await supabase
           .from('milestones')
           .select('*')
-          .eq('job_id', jobs[0].id)
+          .eq('job_id', deliveryJob.id)
           .order('order_index', { ascending: true })
 
         if (ms && ms.length > 0) {
@@ -173,13 +173,13 @@ export default function DeliveryPage() {
             const { data: latestQuote } = await supabase
               .from('quotes')
               .select('total_price')
-              .eq('job_id', jobs[0].id)
+              .eq('job_id', deliveryJob.id)
               .order('created_at', { ascending: false })
               .limit(1)
               .single()
             const quoteTotal = latestQuote?.total_price || scope.total_price || 0
             const rows = scope.milestones.map((m: any, i: number) => ({
-              job_id: jobs[0].id,
+              job_id: deliveryJob.id,
               label: m.label,
               description: m.description,
               order_index: i + 1,
@@ -188,7 +188,7 @@ export default function DeliveryPage() {
               status: 'pending',
             }))
             await supabase.from('milestones').insert(rows)
-            const { data: fresh } = await supabase.from('milestones').select('*').eq('job_id', jobs[0].id).order('order_index', { ascending: true })
+            const { data: fresh } = await supabase.from('milestones').select('*').eq('job_id', deliveryJob.id).order('order_index', { ascending: true })
             setMilestones(fresh || [])
           }
         }
@@ -198,18 +198,12 @@ export default function DeliveryPage() {
         const { data: vars } = await supabase
           .from('variations')
           .select('*, requested_by_profile:profiles!variations_requested_by_fkey(full_name)')
-          .eq('job_id', jobs[0].id)
+          .eq('job_id', deliveryJob.id)
           .order('created_at', { ascending: false })
         setVariations(vars || [])
       }
 
-      // Detect if user is tradie
-      const { data: tradieCheck } = await supabase
-        .from('tradie_profiles')
-        .select('id')
-        .eq('id', session.user.id)
-        .single()
-      setIsTradie(!!tradieCheck)
+      // isTradie already set from prof.role above — no need to overwrite
 
       setLoading(false)
     })

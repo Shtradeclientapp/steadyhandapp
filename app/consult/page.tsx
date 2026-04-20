@@ -65,11 +65,12 @@ export default function AssessPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
         .eq(col, session.user.id)
-        .in('status', ['assess', 'quotes', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
+        .in('status', ['assess', 'consult', 'quote', 'compare', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
         
 
       if (jobs && jobs.length > 0) {
+        setAllJobs(jobs)
         setJob(jobs[0])
         const { data: assess } = await supabase
           .from('site_assessments')
@@ -352,7 +353,7 @@ export default function AssessPage() {
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
-      <NavHeader profile={profile} isTradie={false}   />
+      <NavHeader profile={profile} isTradie={isTradie} />
 
       {/* STAGE RAIL */}
       <OnboardingModal storageKey="seen_consult_explainer" slides={[

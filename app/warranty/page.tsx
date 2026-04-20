@@ -26,11 +26,13 @@ export default function WarrantyPage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       setProfile(prof)
+      const isT = prof?.role === 'tradie'
+      const col = isT ? 'tradie_id' : 'client_id'
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
-        .eq('client_id', session.user.id)
-        .eq('status', 'warranty')
+        .eq(col, session.user.id)
+        .in('status', ['warranty', 'complete'])
         .order('updated_at', { ascending: false })
         
       if (jobs && jobs.length > 0) {
@@ -134,7 +136,6 @@ export default function WarrantyPage() {
   )
 
   return (
-    <>
     <>{nav}
     <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
       <div style={{ maxWidth:'780px', margin:'0 auto' }}>
@@ -249,20 +250,7 @@ export default function WarrantyPage() {
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
-              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
-                <p style={{ fontSize:'11px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#C07830', margin:'0 0 8px' }}>
-                  {new Date(issue.response_due_at) < new Date()
-                    ? 'Tradie response overdue — Steadyhand has been notified.'
-                    : 'Tradie response due by ' + new Date(issue.response_due_at).toLocaleDateString('en-AU')}
-                </p>
-              )}
-              {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (
-                <p style={{ fontSize:'11px', color: new Date(issue.response_due_at) < new Date() ? '#D4522A' : '#C07830', margin:'0 0 8px' }}>
-                  {new Date(issue.response_due_at) < new Date()
-                    ? 'Tradie response overdue — Steadyhand has been notified.'
-                    : 'Tradie response due by ' + new Date(issue.response_due_at).toLocaleDateString('en-AU')}
-                </p>
-              )}
+              {/* response due indicator rendered below */}
               {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (() => {
                 const due = new Date(issue.response_due_at)
                 const overdue = due < new Date()

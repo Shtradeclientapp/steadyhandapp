@@ -52,7 +52,7 @@ export default function SignoffPage() {
           .from('milestones')
           .select('*')
           .eq('job_id', jobs[0].id)
-          .order('position', { ascending: true })
+          .order('order_index', { ascending: true })
         setMilestones(ms || [])
 
         const milestoneChecks = (ms || []).map((m: any) => ({
@@ -129,32 +129,6 @@ export default function SignoffPage() {
         })
       }
     } catch { /* non-critical */ }
-
-    // Request certificate of compliance from tradie
-    if (job.tradie_id) {
-      const supabase3 = createClient()
-      const { data: { session: sess3 } } = await supabase3.auth.getSession()
-      try {
-        await supabase3.from('job_messages').insert({
-          job_id: job.id,
-          sender_id: sess3?.user.id,
-          body: 'Sign-off complete. ' + (job.tradie?.business_name || 'Tradie') + ' — please provide your certificate of compliance for this job. Upload it to the job page so it is stored in the client vault.',
-        })
-      } catch { /* non-critical */ }
-      // If OB project, check if all child jobs are now at sign-off/warranty → final inspection reminder
-      if (job.diy_project_id) {
-        const supabase4 = createClient()
-        const { data: siblingJobs } = await supabase4.from('jobs').select('id, status').eq('diy_project_id', job.diy_project_id)
-        const allAtSignoff = (siblingJobs || []).length > 0 && (siblingJobs || []).every((j: any) => ['signoff','warranty','complete'].includes(j.status))
-        if (allAtSignoff) {
-          await fetch('/api/notify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type: 'ob_final_inspection', job_id: job.id }),
-          })
-        }
-      }
-    }
 
     // Request certificate of compliance from tradie
     if (job.tradie_id) {
@@ -256,7 +230,7 @@ export default function SignoffPage() {
               <div style={{ display:'flex', justifyContent:'center', gap:'24px', flexWrap:'wrap' as const }}>
                 {[
                   { label:'Tradie', value: job?.tradie?.business_name || '—' },
-                  { label:'Warranty', value: (job?.warranty_period_days || 90) + ' days' },
+                  { label:'Warranty', value: (job?.warranty_period || 90) + ' days' },
                   { label:'Signed off', value: '✓ Both parties' },
                 ].map((s, i) => (
                   <div key={i} style={{ textAlign:'center' as const }}>

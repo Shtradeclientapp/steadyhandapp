@@ -458,6 +458,69 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // ── Scope ready (notify tradie to draft scope) ───────────────────────────
+    if (type === 'scope_ready') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      if (job?.tradie?.profile?.email) {
+        const tradieName = job.tradie.profile.full_name || 'there'
+        const html = wrap(
+          greeting(tradieName) +
+          para(`<strong>${job.client.full_name}</strong> has accepted your quote and is waiting for the scope agreement. Please log in and draft the scope so work can begin.`) +
+          jobCard(job.title, job.trade_category, job.suburb, '#6B4FA8') +
+          para('The scope defines what is included, the payment milestones and warranty terms. Your client will review and sign once you submit.') +
+          btn(APP_URL + '/agreement?job_id=' + job_id, 'Draft scope agreement', '#6B4FA8'),
+          `${job.client.full_name} accepted your quote — scope needed`
+        )
+        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Scope agreement needed — ${job.title}`, html })
+      }
+    }
+
+    // ── Consult ready (notify tradie of quote request) ────────────────────────
+    if (type === 'consult_ready') {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      if (job?.tradie?.profile?.email) {
+        const tradieName = job.tradie.profile.full_name || 'there'
+        const html = wrap(
+          greeting(tradieName) +
+          para(`<strong>${job.client.full_name}</strong> has sent you a quote request. The next step is to arrange a site consult before submitting your quote.`) +
+          jobCard(job.title, job.trade_category, job.suburb, '#9B6B9B') +
+          btn(APP_URL + '/tradie/dashboard', 'View job and arrange consult', '#9B6B9B'),
+          `Quote request from ${job.client.full_name}`
+        )
+        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Quote request — ${job.title}`, html })
+      }
+    }
+
+    // ── Assess reminder (renamed from assess_reminder → consult_reminder alias) ─
+    if (type === 'assess_reminder') {
+      const reqBody = body
+      const { remind_party } = reqBody
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .eq('id', job_id).single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+      const recipientEmail = remind_party === 'tradie' ? job.tradie?.profile?.email : job.client?.email
+      const recipientName = remind_party === 'tradie' ? job.tradie?.profile?.full_name : job.client?.full_name
+      const otherName = remind_party === 'tradie' ? job.client?.full_name : job.tradie?.business_name
+      if (recipientEmail) {
+        const html = wrap(
+          greeting(recipientName) +
+          para(`A reminder that <strong>${otherName}</strong> is waiting for your consult notes on the following job:`) +
+          jobCard(job.title, job.trade_category, job.suburb, '#9B6B9B') +
+          btn(APP_URL + '/consult', 'Share your consult notes', '#9B6B9B'),
+          `Reminder: consult notes needed`
+        )
+        await resend.emails.send({ from: FROM, to: recipientEmail, subject: `Reminder: consult notes needed — ${job.title}`, html })
+      }
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
