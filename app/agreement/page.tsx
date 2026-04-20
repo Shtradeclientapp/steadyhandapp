@@ -58,7 +58,7 @@ export default function AgreementPage() {
           .from('jobs')
           .select('id')
           .eq('tradie_id', session.user.id)
-          .in('status', ['agreement','delivery','signoff','warranty','complete'])
+          .in('status', ['agreement','compare','quote','delivery','signoff','warranty','complete'])
           .order('updated_at', { ascending: false })
           .limit(1)
           .single()
@@ -319,20 +319,35 @@ export default function AgreementPage() {
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'16px', overflow:'hidden' }}>
           <div style={{ background:'#0A0A0A', padding:'20px 24px' }}>
             <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>SCOPE AGREEMENT</p>
-            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>Waiting for your tradie to prepare the scope</p>
+            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>{isTradie ? 'No active agreement job found' : 'Waiting for your tradie to prepare the scope'}</p>
           </div>
           <div style={{ padding:'24px' }}>
-            <p style={{ fontSize:'14px', color:'#0A0A0A', fontWeight:500, margin:'0 0 10px' }}>Your tradie is drafting the scope agreement</p>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
-              Once you progressed to this stage, your tradie was notified to prepare the scope agreement. This defines exactly what work is included, the payment milestones, and the warranty period. You will be notified by email when it is ready for your review.
-            </p>
-            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
-              If you have not heard back within 2 business days, message your tradie directly through the job thread.
-            </p>
-            <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
-              <a href="/messages" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>Message your tradie →</a>
-              <a href="/compare" style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>← Back to quote</a>
-            </div>
+            {isTradie ? (
+              <>
+                <p style={{ fontSize:'14px', color:'#0A0A0A', fontWeight:500, margin:'0 0 10px' }}>No job at agreement stage</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
+                  You do not currently have a job that has reached the scope agreement stage. Check your dashboard for active jobs, or wait for a client to accept your quote.
+                </p>
+                <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+                  <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to dashboard</a>
+                  <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Messages</a>
+                </div>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize:'14px', color:'#0A0A0A', fontWeight:500, margin:'0 0 10px' }}>Your tradie is drafting the scope agreement</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
+                  Once you progressed to this stage, your tradie was notified to prepare the scope agreement. This defines exactly what work is included, the payment milestones, and the warranty period. You will be notified by email when it is ready for your review.
+                </p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
+                  If you have not heard back within 2 business days, message your tradie directly through the job thread.
+                </p>
+                <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+                  <a href="/messages" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>Message your tradie →</a>
+                  <a href="/compare" style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>← Back to quote</a>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
