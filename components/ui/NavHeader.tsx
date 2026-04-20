@@ -81,10 +81,8 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
             </a>
           )}
 
-          {/* Cost guides — shown when not logged in */}
-          {!profile && (
-            <a href="/guides" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>Cost guides</a>
-          )}
+          {/* Cost guides — always visible */}
+          <a href="/guides" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>Cost guides</a>
 
           {/* Notifications bell */}
           {profile && (
