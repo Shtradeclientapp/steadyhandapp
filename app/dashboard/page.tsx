@@ -366,10 +366,10 @@ export default function DashboardPage() {
                           <div style={{ padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', borderBottom:'1px solid ' + (next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.06)') }}>
                             <div style={{ flex:1, minWidth:0 }}>
                               <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', letterSpacing:'0.3px' }}>{job.title}</div>
+                                <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,1)' : '#0A0A0A', letterSpacing:'0.3px' }}>{job.title}</div>
                                 {(() => { const hrs = (Date.now() - new Date(job.updated_at).getTime()) / 3600000; return hrs < 24 ? <span style={{ fontSize:'10px', color:'#2E7D60', background:'rgba(46,125,96,0.12)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'100px', padding:'1px 7px', flexShrink:0 }}>Updated</span> : null })()}
                               </div>
-                              <div style={{ fontSize:'11px', color: next.urgent ? 'rgba(216,228,225,0.35)' : '#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
+                              <div style={{ fontSize:'11px', color: next.urgent ? 'rgba(216,228,225,0.6)' : '#7A9098' }}>{job.trade_category} · {job.suburb}{job.tradie?.business_name ? ' · ' + job.tradie.business_name : ''}</div>
                             </div>
                             <span style={{ fontSize:'11px', fontWeight:500, color: stage.color, background: next.urgent ? 'rgba(255,255,255,0.06)' : 'rgba(28,43,50,0.05)', padding:'3px 10px', borderRadius:'100px', flexShrink:0 }}>{stage.label}</span>
                           </div>
@@ -377,13 +377,13 @@ export default function DashboardPage() {
                             <div style={{ display:'flex', alignItems:'center', gap:'10px', flex:1, minWidth:0 }}>
                               <span style={{ fontSize:'18px', flexShrink:0 }}>{next.icon}</span>
                               <div style={{ minWidth:0 }}>
-                                <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>{next.headline}</p>
-                                <p style={{ fontSize:'12px', color: next.urgent ? 'rgba(216,228,225,0.4)' : '#7A9098', margin:0, lineHeight:'1.4' }}>{next.sub}</p>
+                                <p style={{ fontSize:'13px', fontWeight:600, color: next.urgent ? 'rgba(216,228,225,1)' : '#0A0A0A', margin:'0 0 2px' }}>{next.headline}</p>
+                                <p style={{ fontSize:'12px', color: next.urgent ? 'rgba(216,228,225,0.7)' : '#7A9098', margin:0, lineHeight:'1.4' }}>{next.sub}</p>
                               </div>
                             </div>
                             <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
                               {next.urgent && <span style={{ fontSize:'11px', color:'#D4522A', background:'rgba(212,82,42,0.15)', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'100px', padding:'3px 10px', whiteSpace:'nowrap' as const }}>Action needed</span>}
-                              <span style={{ fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.4)' : '#7A9098' }}>→</span>
+                              <span style={{ fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.7)' : '#7A9098' }}>→</span>
                               {cancelableStatuses.includes(job.status) && (
                                 <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); cancelJob(job.id, job.title) }}
                                   style={{ fontSize:'11px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'5px', padding:'3px 8px', cursor:'pointer' }}>
