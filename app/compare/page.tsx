@@ -170,6 +170,7 @@ export default function ComparePage() {
                 <p style={{ fontSize:'12px', color:'#9AA5AA', margin:0 }}>
                   Most clients invite 2–3 tradies. You only need one good quote to proceed — you are not obligated to accept the lowest price.
                 </p>
+              <a href="/guides" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', display:'inline-block', marginTop:'4px' }}>📋 WA trade cost guides →</a>
               </div>
             </div>
           )}

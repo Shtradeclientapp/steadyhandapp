@@ -81,6 +81,11 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
             </a>
           )}
 
+          {/* Cost guides — shown when not logged in */}
+          {!profile && (
+            <a href="/guides" className="nav-back-link" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', fontWeight:500 }}>Cost guides</a>
+          )}
+
           {/* Notifications bell */}
           {profile && (
             <div style={{ position:'relative' }}>
@@ -138,6 +143,8 @@ export function NavHeader({ profile, isTradie, showBack = true, backLabel, backH
                     </div>
                     <a href={profileHref} style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>My profile</a>
                     <a href="/trust" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Dialogue Rating</a>
+                    <a href="/guides" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Cost guides</a>
+                    <a href="/guides/warranty-wa" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Warranty WA guide</a>
                     {profile?.org_id && (
                       <a href="/org/dashboard" style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }} onClick={() => setDropdownOpen(false)}>Organisation dashboard</a>
                     )}
