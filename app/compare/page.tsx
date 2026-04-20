@@ -75,8 +75,17 @@ export default function ComparePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'quote_accepted', job_id: selectedJob.id, tradie_id: quote.tradie_id }),
       }).catch(() => {})
+      // Email tradie to draft the scope
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'scope_ready', job_id: selectedJob.id }),
+      }).catch(() => {})
       setAccepted(quote.id)
-      await loadQuotes(selectedJob.id)
+      // Redirect client to agreement page for this job
+      setTimeout(() => {
+        window.location.href = '/agreement?job_id=' + selectedJob.id
+      }, 800)
     } catch (e: any) {
       setAcceptError('Could not accept quote — please check your connection and try again.')
     }
