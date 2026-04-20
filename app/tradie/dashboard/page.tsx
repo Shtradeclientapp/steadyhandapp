@@ -488,7 +488,7 @@ export default function TradieDashboard() {
               {
                 label:'Quote acceptance',
                 value: (() => {
-                  const sent = jobs.filter(j => ['shortlisted','quotes','agreement','delivery','signoff','warranty','complete'].includes(j.status)).length
+                  const sent = jobs.filter(j => ['shortlisted','consult','compare','quote','agreement','delivery','signoff','warranty','complete'].includes(j.status)).length
                   const accepted = jobs.filter(j => ['agreement','delivery','signoff','warranty','complete'].includes(j.status)).length
                   return sent > 0 ? Math.round(accepted/sent*100) + '%' : '—'
                 })(),

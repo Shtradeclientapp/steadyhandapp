@@ -146,7 +146,7 @@ export default function DeliveryPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
         .eq(col, session.user.id)
-        .in('status', ['delivery', 'agreement', 'signoff', 'warranty', 'complete'])
+        .in('status', ['delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
 
       if (jobs && jobs.length > 0) {

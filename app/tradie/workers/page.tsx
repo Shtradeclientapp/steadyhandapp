@@ -28,7 +28,7 @@ export default function WorkersPage() {
 
       const [{ data: w }, { data: j }, { data: a }] = await Promise.all([
         supabase.from('tradie_workers').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false }),
-        supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['agreement','delivery','assess','quote']).order('created_at', { ascending: false }),
+        supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['consult','assess','compare','quote','agreement','delivery']).order('created_at', { ascending: false }),
         supabase.from('job_worker_assignments').select('*, worker:tradie_workers(name), job:jobs(title, suburb)').in('job_id', []).order('assigned_date', { ascending: true }),
       ])
       setWorkers(w || [])
