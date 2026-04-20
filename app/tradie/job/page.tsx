@@ -53,6 +53,16 @@ export default function TradieJobPage() {
   const [job, setJob] = useState<any>(null)
   const [scope, setScope] = useState<any>(null)
   const [quotes, setQuotes] = useState<any[]>([])
+  const [jobNotes, setJobNotes] = useState('')
+  const [savingNotes, setSavingNotes] = useState(false)
+  const [notesSaved, setNotesSaved] = useState(false)
+  const [jobPhotos, setJobPhotos] = useState<string[]>([])
+  const [uploadingJobPhoto, setUploadingJobPhoto] = useState(false)
+  const [jobPhotoError, setJobPhotoError] = useState<string|null>(null)
+  const [jobDocs, setJobDocs] = useState<any[]>([])
+  const [uploadingJobDoc, setUploadingJobDoc] = useState(false)
+  const [jobDocError, setJobDocError] = useState<string|null>(null)
+  const [jobFileOpen, setJobFileOpen] = useState(true)
   const [milestones, setMilestones] = useState<any[]>([])
   const [progressNote, setProgressNote] = useState('')
   const [sendingNote, setSendingNote] = useState(false)
@@ -134,11 +144,16 @@ export default function TradieJobPage() {
       const jobId = params.get('id')
       if (!jobId) { window.location.href = '/tradie/dashboard'; return }
       const { data: jobData } = await supabase.from('jobs')
-        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb, phone, address)')
         .eq('id', jobId).single()
       setJob(jobData)
       const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).maybeSingle()
       setScope(scopeData)
+      // Load job file data
+      const { data: jfData } = await supabase.from('job_files').select('*').eq('job_id', jobId).eq('tradie_id', session.user.id).maybeSingle()
+      if (jfData) { setJobNotes(jfData.notes || ''); setJobPhotos(jfData.photo_urls || []) }
+      const { data: vaultDocs } = await supabase.from('vault_documents').select('*').eq('job_id', jobId).eq('user_id', session.user.id).order('created_at', { ascending: false })
+      setJobDocs(vaultDocs || [])
       const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobId).order('created_at', { ascending: false })
       setQuotes(qs || [])
       const { data: ms } = await supabase.from('milestones').select('*').eq('job_id', jobId).order('created_at', { ascending: true })
@@ -1159,6 +1174,190 @@ export default function TradieJobPage() {
             </div>
           </div>
         </a>
+
+        {/* ── JOB FILE ── */}
+        <div style={{ marginTop:'24px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+          <div style={{ padding:'16px 20px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}
+            onClick={() => setJobFileOpen(o => !o)}>
+            <div>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 2px' }}>JOB FILE</p>
+              <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:0 }}>Client details · notes · photos · documents</p>
+            </div>
+            <span style={{ fontSize:'16px', color:'rgba(216,228,225,0.5)', transition:'transform 0.2s', transform: jobFileOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
+          </div>
+
+          {jobFileOpen && (
+            <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'20px' }}>
+
+              {/* Client & site card */}
+              <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'16px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+                <div>
+                  <p style={{ fontSize:'10px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>Client</p>
+                  <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{job?.client?.full_name || '—'}</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 6px' }}>{job?.client?.email || '—'}</p>
+                  {job?.client?.phone && (
+                    <a href={'tel:' + job.client.phone} style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'4px' }}>
+                      📞 {job.client.phone}
+                    </a>
+                  )}
+                </div>
+                <div>
+                  <p style={{ fontSize:'10px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>Site</p>
+                  <p style={{ fontSize:'13px', color:'#0A0A0A', margin:'0 0 4px' }}>
+                    {[job?.client?.address, job?.suburb].filter(Boolean).join(', ') || job?.suburb || '—'}
+                  </p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 8px' }}>{job?.property_type || ''}</p>
+                  {(job?.suburb || job?.client?.address) && (
+                    <a href={'https://maps.google.com/?q=' + encodeURIComponent([job?.client?.address, job?.suburb, 'WA', 'Australia'].filter(Boolean).join(' '))}
+                      target="_blank" rel="noreferrer"
+                      style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'4px', fontWeight:500 }}>
+                      📍 Open in Maps →
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Internal notes */}
+              <div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px' }}>
+                  <div>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Internal notes</p>
+                    <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Private — never shared with the client</p>
+                  </div>
+                  <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'100px', padding:'2px 8px' }}>🔒 Private</span>
+                </div>
+                <textarea
+                  value={jobNotes}
+                  onChange={e => setJobNotes(e.target.value)}
+                  rows={4}
+                  placeholder="Materials needed, access notes, parking, site hazards, follow-up items, anything relevant to this job..."
+                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.6', boxSizing:'border-box' as const }}
+                />
+                <button type="button" onClick={async () => {
+                  if (!job) return
+                  setSavingNotes(true)
+                  const supabase = createClient()
+                  const { data: { session } } = await supabase.auth.getSession()
+                  await supabase.from('job_files').upsert({ job_id: job.id, tradie_id: session?.user.id, notes: jobNotes }, { onConflict: 'job_id,tradie_id' })
+                  setSavingNotes(false); setNotesSaved(true)
+                  setTimeout(() => setNotesSaved(false), 2000)
+                }} disabled={savingNotes}
+                  style={{ marginTop:'8px', background: notesSaved ? '#2E7D60' : '#0A0A0A', color:'white', padding:'9px 20px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: savingNotes ? 0.7 : 1 }}>
+                  {notesSaved ? '✓ Saved' : savingNotes ? 'Saving...' : 'Save notes'}
+                </button>
+              </div>
+
+              {/* Job photos */}
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>Job photos</p>
+                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 10px' }}>General job photos — separate from milestone and consult photos</p>
+                {jobPhotoError && <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {jobPhotoError}</p>}
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'8px', marginBottom:'10px' }}>
+                  {jobPhotos.map((url, i) => (
+                    <div key={i} style={{ position:'relative', aspectRatio:'1', borderRadius:'8px', overflow:'hidden', background:'rgba(28,43,50,0.06)' }}>
+                      <img src={url} alt={'Photo ' + (i+1)} style={{ width:'100%', height:'100%', objectFit:'cover' as const }} />
+                      <button type="button" onClick={async () => {
+                        const updated = jobPhotos.filter((_, idx) => idx !== i)
+                        setJobPhotos(updated)
+                        const supabase = createClient()
+                        const { data: { session } } = await supabase.auth.getSession()
+                        await supabase.from('job_files').upsert({ job_id: job?.id, tradie_id: session?.user.id, photo_urls: updated }, { onConflict: 'job_id,tradie_id' })
+                      }} style={{ position:'absolute', top:'4px', right:'4px', background:'rgba(28,43,50,0.7)', color:'white', border:'none', borderRadius:'50%', width:'20px', height:'20px', fontSize:'12px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center' }}>×</button>
+                    </div>
+                  ))}
+                  <label style={{ aspectRatio:'1', borderRadius:'8px', border:'1.5px dashed rgba(28,43,50,0.2)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', cursor:'pointer', background:'#F4F8F7' }}>
+                    <input type="file" accept="image/*" multiple style={{ display:'none' }} onChange={async e => {
+                      const files = Array.from(e.target.files || [])
+                      setUploadingJobPhoto(true); setJobPhotoError(null)
+                      const supabase = createClient()
+                      const { data: { session } } = await supabase.auth.getSession()
+                      const newUrls: string[] = []
+                      for (const file of files) {
+                        const ext = file.name.split('.').pop()
+                        const filePath = 'job-photos/' + job?.id + '/' + Date.now() + '.' + ext
+                        const { error } = await supabase.storage.from('Job Photos').upload(filePath, file)
+                        if (error) { setJobPhotoError('Upload failed — check Job Photos bucket exists'); break }
+                        const { data } = supabase.storage.from('Job Photos').getPublicUrl(filePath)
+                        newUrls.push(data.publicUrl)
+                      }
+                      const updated = [...jobPhotos, ...newUrls]
+                      setJobPhotos(updated)
+                      await supabase.from('job_files').upsert({ job_id: job?.id, tradie_id: session?.user.id, photo_urls: updated }, { onConflict: 'job_id,tradie_id' })
+                      setUploadingJobPhoto(false)
+                      e.target.value = ''
+                    }} />
+                    {uploadingJobPhoto ? (
+                      <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Uploading...</p>
+                    ) : (
+                      <>
+                        <span style={{ fontSize:'20px', opacity:0.4, marginBottom:'4px' }}>📷</span>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Add photos</p>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              {/* Document vault filing */}
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>File to vault</p>
+                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 10px' }}>Upload certificates, permits, invoices or any document to your vault for this job</p>
+                {jobDocError && <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {jobDocError}</p>}
+                <label style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 14px', border:'1.5px dashed rgba(28,43,50,0.2)', borderRadius:'8px', cursor:'pointer', background:'#F4F8F7', marginBottom:'10px' }}>
+                  <input type="file" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" style={{ display:'none' }} onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file || !job) return
+                    setUploadingJobDoc(true); setJobDocError(null)
+                    const formData = new FormData()
+                    formData.append('file', file)
+                    formData.append('job_id', job.id)
+                    const supabase = createClient()
+                    const { data: { session } } = await supabase.auth.getSession()
+                    formData.append('user_id', session?.user.id || '')
+                    const res = await fetch('/api/upload', { method:'POST', body: formData })
+                    const data = await res.json()
+                    if (data.uploaded) {
+                      await supabase.from('vault_documents').insert({
+                        user_id: session?.user.id,
+                        job_id: job.id,
+                        job_title: job.title,
+                        title: file.name.replace(/\.[^.]+$/, ''),
+                        document_type: 'general',
+                        tradie_name: null,
+                        issued_date: new Date().toISOString().split('T')[0],
+                        notes: 'Filed from job page — ' + job.title,
+                      })
+                      const { data: vd } = await supabase.from('vault_documents').select('*').eq('job_id', job.id).eq('user_id', session?.user.id).order('created_at', { ascending: false })
+                      setJobDocs(vd || [])
+                    } else {
+                      setJobDocError('Upload failed — please try again')
+                    }
+                    setUploadingJobDoc(false)
+                    e.target.value = ''
+                  }} />
+                  <span style={{ fontSize:'18px' }}>📎</span>
+                  <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0, fontWeight:500 }}>{uploadingJobDoc ? 'Uploading...' : 'Upload document to vault'}</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0, marginLeft:'auto' }}>PDF, Word, image</p>
+                </label>
+                {jobDocs.length > 0 && (
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                    {jobDocs.map((doc: any) => (
+                      <div key={doc.id} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px' }}>
+                        <span style={{ fontSize:'16px' }}>📄</span>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 1px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{doc.title}</p>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{new Date(doc.created_at).toLocaleDateString('en-AU')} · {doc.document_type}</p>
+                        </div>
+                        <a href="/tradie/vault" style={{ fontSize:'11px', color:'#2E6A8F', textDecoration:'none', flexShrink:0 }}>View vault →</a>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+        </div>
 
       </div>
     </div>
