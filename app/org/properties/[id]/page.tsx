@@ -137,7 +137,7 @@ export default function PropertyDetailPage() {
   }
 
   const saveTenant = async () => {
-    if (!property) return
+    if (!property) { setSavingTenant(false); return }
     setSavingTenant(true)
     const supabase = createClient()
     await supabase.from('properties').update({
