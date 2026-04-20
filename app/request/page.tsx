@@ -212,14 +212,22 @@ sessionStorage.removeItem('diy_project_id')
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 6px' }}>
                     🏗 This type of job often needs more than one trade
                   </p>
-                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
-                    Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade — or use the <strong>Reno Planner</strong> to manage them all as one project, with a single scope and coordinated milestones.
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 8px' }}>
+                    Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade individually — or use the <strong>Build Journal</strong> to coordinate them as one project.
                   </p>
-                  <a href="/diy" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#9B6B9B', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
-                    Go to Reno Planner →
-                  </a>
-                  <button type="button" onClick={() => {}} style={{ marginLeft:'10px', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'8px 0' }}>
-                    No thanks, single trade only
+                  <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
+                    The Build Journal lets you invite multiple tradies, track each scope separately, manage milestones across trades, log expenses, store compliance documents and monitor progress — all in one place.
+                  </p>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' as const }}>
+                    <a href="/diy" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#9B6B9B', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
+                      Open Build Journal →
+                    </a>
+                    <span style={{ fontSize:'11px', color:'#9B6B9B', background:'rgba(155,107,155,0.1)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'100px', padding:'3px 10px' }}>
+                      WA compliance checklist included
+                    </span>
+                  </div>
+                  <button type="button" onClick={() => {}} style={{ marginTop:'8px', display:'block', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'4px 0' }}>
+                    No thanks, single trade only →
                   </button>
                 </div>
               )}
