@@ -616,7 +616,7 @@ export default function DeliveryPage() {
             </div>
             <button type="button" onClick={() => setShowVariationForm(v => !v)}
               style={{ background:'#C07830', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
-              {showVariationForm ? 'Cancel' : '+ Request variation'}
+              {showVariationForm ? 'Cancel' : isTradie ? '+ Submit variation' : '+ Request variation'}
             </button>
           </div>
 

@@ -229,7 +229,7 @@ export default function AssessPage() {
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
       const supabase2 = createClient()
-      await supabase2.from('jobs').update({ status: 'quotes' }).eq('id', job.id)
+      await supabase2.from('jobs').update({ status: 'compare' }).eq('id', job.id)
       await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
 
       // Auto-file consult record to both client and tradie vaults
@@ -338,8 +338,8 @@ export default function AssessPage() {
                 const supabase = createClient()
                 const { data: { session } } = await supabase.auth.getSession()
                 if (session) {
-                  const { data: j } = await supabase.from('jobs').select('id').eq('client_id', session.user.id).order('created_at', { ascending: false }).limit(1).single()
-                  if (j) await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', j.id)
+                  // use the job already in context rather than re-querying
+                  if (job) await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
                 }
                 window.location.href = '/compare'
               }} style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', cursor:'pointer' }}>Skip to quote →</button>

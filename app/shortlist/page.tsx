@@ -88,7 +88,7 @@ export default function ShortlistPage() {
         setSending(false)
         return
       }
-      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id }) }).catch(() => {})
+      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id, tradie_id: tradieId }) }).catch(() => {})
     }
 
     for (const invite of pendingInvites) {

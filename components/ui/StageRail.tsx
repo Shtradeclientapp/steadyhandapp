@@ -41,8 +41,10 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
 
   const getHref = (stage: typeof STAGES[0]) => {
     if (!isClickable(stage)) return '#'
-    // Append job_id to /agreement so the page loads the correct job
+    // Pass job_id to agreement, consult and delivery so they load the correct job
     if (stage.p === '/agreement' && jobId) return '/agreement?job_id=' + jobId
+    if (stage.p === '/consult' && jobId) return '/consult?job_id=' + jobId
+    if (stage.p === '/delivery' && jobId) return '/delivery?job_id=' + jobId
     return stage.p
   }
 

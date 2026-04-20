@@ -20,13 +20,7 @@ export default function SignoffPage() {
   const [dynamicChecks, setDynamicChecks] = useState<{id:string,label:string,sub:string}[]>([])
   const [loading, setLoading] = useState(true)
   const [checks, setChecks] = useState<Record<string, boolean>>({})
-  const [rating, setRating] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem('signoff_rating')
-      return saved ? parseInt(saved) : 0
-    }
-    return 0
-  })
+  const [rating, setRating] = useState(0)
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
@@ -160,7 +154,7 @@ export default function SignoffPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'job_signed_off', job_id: job.id }),
     })
-    if (typeof window !== 'undefined') sessionStorage.removeItem('signoff_rating')
+    // rating cleared on component unmount
     setDone(true)
     setSubmitting(false)
   }
@@ -327,7 +321,7 @@ export default function SignoffPage() {
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'12px' }}>RATE YOUR TRADIE</p>
               <div style={{ display:'flex', gap:'8px', marginBottom:'16px' }}>
                 {[1,2,3,4,5].map(s => (
-                  <button key={s} type="button" onClick={() => { setRating(s); if (typeof window !== 'undefined') sessionStorage.setItem('signoff_rating', String(s)) }}
+                  <button key={s} type="button" onClick={() => setRating(s)}
                     style={{ fontSize:'28px', background:'none', border:'none', cursor:'pointer', opacity: s <= rating ? 1 : 0.25, transition:'opacity 0.15s' }}>
                     ⭐
                   </button>
