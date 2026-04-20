@@ -119,27 +119,22 @@ export default function AgreementPage() {
       }
 
       if (jobList && jobList.length > 0) {
-        setJob(jobList[0])
-        const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobs[0].id).single()
+        const loadedJob = jobList[0]
+        setJob(loadedJob)
+        setAllJobs(jobList)
+        const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', loadedJob.id).maybeSingle()
         if (scopeData) {
           setScope(scopeData)
           setScopeVersion(scopeData.version || 1)
-          if (scopeData.dialogue_score) {
-          }
         }
-        const { data: msgs } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', jobs[0].id).order('created_at', { ascending: true })
+        const { data: msgs } = await supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', loadedJob.id).order('created_at', { ascending: true })
         setMessages(msgs || [])
-        const { data: qs } = await supabase.from('quotes').select('*, tradie:tradie_profiles(business_name)').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
+        const { data: qs } = await supabase.from('quotes').select('*, tradie:tradie_profiles(business_name)').eq('job_id', loadedJob.id).order('created_at', { ascending: false })
         if (qs && qs.length > 0) { setCurrentQuote(qs[0]); setAllQuotes(qs) }
-        const { data: qrs } = await supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)').eq('job_id', jobs[0].id)
+        const { data: qrs } = await supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, rating_avg, jobs_completed)').eq('job_id', loadedJob.id)
         setQuoteRequests(qrs || [])
-        if (jobs[0].agreement_document_name) {
-          setUploadedDoc({ name: jobs[0].agreement_document_name, path: jobs[0].agreement_document_url })
-        }
-        const hintKey = 'sh_scope_hint_seen_' + jobs[0].id
-        const hintSeen = localStorage.getItem(hintKey)
-        if (!hintSeen && jobs[0].tradie_id && !scopeData) {
-          setTimeout(() => setShowScopeHint(true), 1200)
+        if (loadedJob.agreement_document_name) {
+          setUploadedDoc({ name: loadedJob.agreement_document_name, path: loadedJob.agreement_document_url })
         }
       }
       setLoading(false)
