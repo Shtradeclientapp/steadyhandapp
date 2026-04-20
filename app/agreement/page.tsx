@@ -94,14 +94,16 @@ export default function AgreementPage() {
           }
         }
       } else {
-        // ── CLIENT: load by client_id ─────────────────────────────────────
-        const { data: clientJobs } = await supabase
+        // ── CLIENT: load by client_id, respect ?job_id= param ──────────────
+        let clientQuery = supabase
           .from('jobs')
           .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
           .eq('client_id', session.user.id)
           .in('status', ['agreement','delivery','signoff','warranty','complete'])
           .order('updated_at', { ascending: false })
-          .limit(10)
+        if (urlJobId) clientQuery = clientQuery.eq('id', urlJobId)
+        else clientQuery = clientQuery.limit(10)
+        const { data: clientJobs } = await clientQuery
 
         if (clientJobs && clientJobs.length > 0) {
           setJob(clientJobs[0])

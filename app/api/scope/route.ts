@@ -24,6 +24,20 @@ export async function POST(request: NextRequest) {
       .eq('status', 'accepted')
       .single()
 
+    // Fetch consult notes for both parties to inform scope
+    const { data: consultNotes } = await supabase
+      .from('job_messages')
+      .select('body, sender:profiles(role)')
+      .eq('job_id', job_id)
+      .order('created_at', { ascending: true })
+      .limit(30)
+
+    const consultContext = consultNotes && consultNotes.length > 0
+      ? '\n\nConsult notes from both parties:\n' + consultNotes
+          .map((m: any) => `[${m.sender?.role || 'user'}]: ${m.body}`)
+          .join('\n')
+      : ''
+
     // Fetch parent OB project if linked
     let obProject: any = null
     if (job.diy_project_id) {
