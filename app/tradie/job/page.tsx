@@ -137,7 +137,7 @@ export default function TradieJobPage() {
         .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
         .eq('id', jobId).single()
       setJob(jobData)
-      const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).single()
+      const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).maybeSingle()
       setScope(scopeData)
       const { data: qs } = await supabase.from('quotes').select('*').eq('job_id', jobId).order('created_at', { ascending: false })
       setQuotes(qs || [])
@@ -895,9 +895,11 @@ export default function TradieJobPage() {
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
               Draft the scope agreement below. This defines what is included, what is excluded, the payment milestones and warranty terms. Your client will be notified to review and sign.
             </p>
-            <a href="/agreement" style={{ display:'inline-block', background:'#6B4FA8', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
-              Draft scope agreement →
-            </a>
+            <button type="button" onClick={() => {
+                window.location.href = '/agreement?from_job=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')
+              }} style={{ display:'inline-block', background:'#6B4FA8', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                Draft scope agreement →
+              </button>
           </div>
         )}
 
@@ -915,7 +917,7 @@ export default function TradieJobPage() {
               </div>
             </div>
             {!scope.tradie_signed_at ? (
-              <a href="/agreement">
+              <a href={'/agreement?from_job=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')}>
                 <button type="button" style={{ width: '100%', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                   Go to agreement page to sign →
                 </button>

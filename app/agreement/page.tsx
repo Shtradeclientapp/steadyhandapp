@@ -51,7 +51,9 @@ export default function AgreementPage() {
       const isTradie = prof?.role === 'tradie'
 
       // Tradies manage scope from their job page — redirect them there
-      if (isTradie) {
+      // Unless they arrived here from the job page (from_job param)
+      const fromJob = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('from_job')
+      if (isTradie && !fromJob) {
         const { data: tj } = await supabase
           .from('jobs')
           .select('id')
