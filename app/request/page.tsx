@@ -124,7 +124,7 @@ const submitJob = async () => {
     const { job, error } = await res.json()
     if (error) { setSubmitError(error); setSubmitting(false); return }
 sessionStorage.removeItem('diy_project_id')
-    window.location.href = '/shortlist?submitted=true'
+    window.location.href = '/shortlist?submitted=true&job_id=' + job.id
   }
 
   const nav = (

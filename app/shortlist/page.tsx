@@ -33,16 +33,22 @@ export default function ShortlistPage() {
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible)').eq('id', session.user.id).single()
       setProfile(prof)
 
-      const { data: jobsData } = await supabase
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
+
+      let jobsQuery = supabase
         .from('jobs')
         .select('*')
         .eq('client_id', session.user.id)
         .in('status', ['draft', 'matching', 'shortlisted', 'consult', 'assess', 'compare', 'quote', 'agreement', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('created_at', { ascending: false })
 
+      if (urlJobId) jobsQuery = jobsQuery.eq('id', urlJobId)
+
+      const { data: jobsData } = await jobsQuery
+
       if (!jobsData || jobsData.length === 0) { setLoading(false); return }
 
-      const job = jobsData[0]
+      const job = urlJobId ? jobsData[0] : jobsData[0]
       setJobs(jobsData)
       setSelectedJob(job)
       await loadQuoteRequests(job.id)
