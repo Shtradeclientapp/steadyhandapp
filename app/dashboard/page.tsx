@@ -85,11 +85,12 @@ export default function DashboardPage() {
       })
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
-      setProfile(prof)
+      // Redirect tradie immediately before loading any job data
       if (prof && prof.role === 'tradie') {
         window.location.href = '/tradie/dashboard'
         return
       }
+      setProfile(prof)
       const { data } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')

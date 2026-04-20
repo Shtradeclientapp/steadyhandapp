@@ -488,7 +488,7 @@ export default function DeliveryPage() {
         <div style={{ display:'flex', flexDirection:'column', gap:'0' }}>
           {milestones.map((m, i) => {
             const isDone = m.status === 'approved'
-            const isActive = !isDone && (i === 0 || milestones[i-1]?.status === 'approved')
+            const isActive = !isDone && (m.status === 'active' || i === 0 || milestones[i-1]?.status === 'approved')
             return (
               <div key={m.id} style={{ display:'flex', gap:'16px', position:'relative' }}>
                 {i < milestones.length - 1 && (
@@ -572,7 +572,13 @@ export default function DeliveryPage() {
                         const prev = milestones[idx - 1]
                         await supabase.from('milestones').update({ order_index: idx }).eq('id', prev.id)
                         await supabase.from('milestones').update({ order_index: idx - 1 }).eq('id', m.id)
-                        window.location.reload()
+                        // Update state in place — no reload needed
+                        setMilestones(ms => {
+                          const updated = [...ms]
+                          updated[idx] = { ...updated[idx], order_index: idx - 1 }
+                          updated[idx - 1] = { ...updated[idx - 1], order_index: idx }
+                          return [...updated.slice(0, idx-1), updated[idx], updated[idx-1], ...updated.slice(idx+1)]
+                        })
                       }} style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'4px', padding:'3px 8px', cursor:'pointer' }}>↑ Move up</button>
                       <button type="button" onClick={async () => {
                         const idx = milestones.findIndex((x:any) => x.id === m.id)
@@ -581,7 +587,13 @@ export default function DeliveryPage() {
                         const next = milestones[idx + 1]
                         await supabase.from('milestones').update({ order_index: idx }).eq('id', next.id)
                         await supabase.from('milestones').update({ order_index: idx + 1 }).eq('id', m.id)
-                        window.location.reload()
+                        // Update state in place — no reload needed
+                        setMilestones(ms => {
+                          const updated = [...ms]
+                          updated[idx] = { ...updated[idx], order_index: idx + 1 }
+                          updated[idx + 1] = { ...updated[idx + 1], order_index: idx }
+                          return [...updated.slice(0, idx), updated[idx+1], updated[idx], ...updated.slice(idx+2)]
+                        })
                       }} style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'4px', padding:'3px 8px', cursor:'pointer' }}>↓ Move down</button>
                     </div>
                   )}
