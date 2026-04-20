@@ -166,7 +166,7 @@ export default function DeliveryPage() {
           const { data: scope } = await supabase
             .from('scope_agreements')
             .select('milestones, total_price')
-            .eq('job_id', jobs[0].id)
+            .eq('job_id', deliveryJob.id)
             .single()
 
           if (scope?.milestones) {
