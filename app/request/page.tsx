@@ -253,8 +253,8 @@ sessionStorage.removeItem('diy_project_id')
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                disabled={!form.title || !form.description}
-                style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:(!form.title || !form.description) ? 0.5 : 1, fontFamily:'sans-serif' }}>
+                disabled={!form.title || !form.description || !form.trade_category}
+                style={{ width:'100%', background:'#2E7D60', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', fontWeight:'500', border:'none', cursor:'pointer', opacity:(!form.title || !form.description || !form.trade_category) ? 0.5 : 1, fontFamily:'sans-serif' }}>
                 Continue — location & details →
               </button>
             </>
