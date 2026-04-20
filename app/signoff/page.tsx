@@ -24,6 +24,13 @@ export default function SignoffPage() {
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [contributionAmount, setContributionAmount] = useState<number|null>(null)
+  const [customAmount, setCustomAmount] = useState('')
+  const [contributionMessage, setContributionMessage] = useState('')
+  const [sendingContribution, setSendingContribution] = useState(false)
+  const [contributionSent, setContributionSent] = useState(false)
+  const [contributionError, setContributionError] = useState<string|null>(null)
+  const [showContribution, setShowContribution] = useState(false)
   const [showPartial, setShowPartial] = useState(false)
   const [outstandingNote, setOutstandingNote] = useState('')
 
@@ -251,6 +258,98 @@ export default function SignoffPage() {
                 ))}
               </div>
             </div>
+
+            {/* Voluntary contribution */}
+            {!contributionSent ? (
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'12px' }}>
+                <div style={{ padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer', borderBottom: showContribution ? '1px solid rgba(28,43,50,0.08)' : 'none' }}
+                  onClick={() => setShowContribution(s => !s)}>
+                  <div>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>💛 Recognise your tradie</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Send a voluntary contribution — no platform fee deducted</p>
+                  </div>
+                  <span style={{ fontSize:'14px', color:'#7A9098', transform: showContribution ? 'rotate(180deg)' : 'none', transition:'transform 0.2s' }}>▾</span>
+                </div>
+                {showContribution && (
+                  <div style={{ padding:'16px 18px' }}>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'14px' }}>
+                      If {job?.tradie?.business_name || 'your tradie'} went above and beyond, you can send them a voluntary contribution. It goes directly to their account with no fees taken by Steadyhand.
+                    </p>
+                    <div style={{ display:'flex', gap:'8px', marginBottom:'12px', flexWrap:'wrap' as const }}>
+                      {[25, 50, 100, 200].map(amt => (
+                        <button key={amt} type="button" onClick={() => { setContributionAmount(amt); setCustomAmount('') }}
+                          style={{ padding:'8px 16px', borderRadius:'8px', border:'1.5px solid ' + (contributionAmount === amt ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: contributionAmount === amt ? 'rgba(46,125,96,0.08)' : 'transparent', color: contributionAmount === amt ? '#2E7D60' : '#4A5E64', fontSize:'13px', fontWeight: contributionAmount === amt ? 600 : 400, cursor:'pointer' }}>
+                          ${amt}
+                        </button>
+                      ))}
+                      <div style={{ display:'flex', alignItems:'center', gap:'6px', padding:'8px 12px', borderRadius:'8px', border:'1.5px solid rgba(28,43,50,0.15)', background:'transparent' }}>
+                        <span style={{ fontSize:'13px', color:'#7A9098' }}>$</span>
+                        <input type="number" placeholder="Other" value={customAmount}
+                          onChange={e => { setCustomAmount(e.target.value); setContributionAmount(null) }}
+                          style={{ width:'60px', border:'none', background:'transparent', fontSize:'13px', color:'#0A0A0A', outline:'none' }} />
+                      </div>
+                    </div>
+                    <textarea value={contributionMessage} onChange={e => setContributionMessage(e.target.value)}
+                      placeholder={`Add a personal note to ${job?.tradie?.business_name || 'your tradie'}... (optional)`}
+                      rows={2}
+                      style={{ width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', marginBottom:'10px', boxSizing:'border-box' as const }} />
+                    {contributionError && <p style={{ fontSize:'12px', color:'#D4522A', marginBottom:'8px' }}>⚠ {contributionError}</p>}
+                    <div style={{ display:'flex', gap:'8px' }}>
+                      <button type="button" onClick={async () => {
+                        const finalAmount = contributionAmount || parseFloat(customAmount)
+                        if (!finalAmount || finalAmount <= 0 || !job) return
+                        setSendingContribution(true)
+                        setContributionError(null)
+                        try {
+                          const supabase = createClient()
+                          const { data: { session } } = await supabase.auth.getSession()
+                          // Create Stripe payment intent via API
+                          const res = await fetch('/api/stripe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              action: 'create_contribution',
+                              job_id: job.id,
+                              tradie_id: job.tradie_id,
+                              amount: Math.round(finalAmount * 100),
+                              message: contributionMessage,
+                              client_id: session?.user.id,
+                            }),
+                          })
+                          const data = await res.json()
+                          if (data.success) {
+                            // Fire contribution email
+                            await fetch('/api/email', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ type: 'contribution_received', job_id: job.id, amount: finalAmount, message: contributionMessage }),
+                            }).catch(() => {})
+                            setContributionSent(true)
+                          } else {
+                            setContributionError(data.error || 'Payment failed — please try again.')
+                          }
+                        } catch {
+                          setContributionError('Connection error — please try again.')
+                        }
+                        setSendingContribution(false)
+                      }} disabled={sendingContribution || (!contributionAmount && !customAmount)}
+                        style={{ flex:1, background: sendingContribution || (!contributionAmount && !customAmount) ? 'rgba(28,43,50,0.2)' : '#2E7D60', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                        {sendingContribution ? 'Processing...' : `Send $${contributionAmount || customAmount || '—'} contribution →`}
+                      </button>
+                      <button type="button" onClick={() => setShowContribution(false)}
+                        style={{ background:'transparent', color:'#7A9098', padding:'10px 14px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                        Skip
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'12px 16px', marginBottom:'12px', display:'flex', alignItems:'center', gap:'10px' }}>
+                <span style={{ fontSize:'18px' }}>💛</span>
+                <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:0 }}>Contribution sent — {job?.tradie?.business_name || 'your tradie'} has been notified.</p>
+              </div>
+            )}
 
             {/* CTAs */}
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
