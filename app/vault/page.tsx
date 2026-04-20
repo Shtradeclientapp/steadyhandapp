@@ -21,7 +21,7 @@ export default function VaultPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string|null>(null)
   const [showUpload, setShowUpload] = useState(false)
-  const [activeTab, setActiveTab] = useState<'documents'|'templates'>('documents')
+  const [activeTab, setActiveTab] = useState<'documents'|'shared'|'templates'>('documents')
   const [filter, setFilter] = useState('all')
   const [form, setForm] = useState({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
   const fileRef = useRef<HTMLInputElement>(null)
@@ -36,6 +36,7 @@ export default function VaultPage() {
   const [sharing, setSharing] = useState(false)
   const [shareSuccess, setShareSuccess] = useState(false)
   const [jobs, setJobs] = useState<any[]>([])
+  const [sharedWithMe, setSharedWithMe] = useState<any[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -57,6 +58,12 @@ export default function VaultPage() {
         .not('tradie_id', 'is', null)
         .in('status', ['agreement','delivery','signoff','warranty','complete'])
       setJobs(jobsData || [])
+      // Load documents shared with this client by tradies
+      const { data: shares } = await supabase
+        .from('vault_document_shares')
+        .select('*, document:vault_documents(*, job:jobs(title, trade_category, suburb))')
+        .eq('shared_with', session.user.id)
+      setSharedWithMe((shares || []).map((s: any) => ({ ...s.document, _shared: true, _share_id: s.id, _shared_by_name: s.document?.tradie_name || 'Your tradie' })))
 
       setLoading(false)
     })
@@ -359,6 +366,46 @@ export default function VaultPage() {
                 <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{s.label}</p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* ── Shared with me ── */}
+        {sharedWithMe.length > 0 && (
+          <div style={{ marginTop:'32px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>SHARED WITH YOU</p>
+              <span style={{ fontSize:'11px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', color:'#2E6A8F', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>{sharedWithMe.length}</span>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+              {sharedWithMe.map((doc: any) => {
+                const docType = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
+                return (
+                  <div key={doc.id} style={{ background:'#E8F0EE', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'12px', flex:1, minWidth:0 }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px', flexShrink:0 }}>
+                        {docType.icon}
+                      </div>
+                      <div style={{ minWidth:0 }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{doc.title}</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                          Shared by {doc._shared_by_name || 'your tradie'}
+                          {doc.job?.title ? ' · ' + doc.job.title : ''}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0 }}>
+                      <span style={{ fontSize:'10px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'100px', padding:'2px 8px' }}>View only</span>
+                      {doc.file_url && (
+                        <a href={doc.file_url} target="_blank" rel="noreferrer"
+                          style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px' }}>
+                          Open →
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         )}
 
