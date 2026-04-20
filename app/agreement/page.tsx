@@ -636,8 +636,8 @@ export default function AgreementPage() {
 
             {/* Scope */}
   
-          {allQuotes.length > 1 && job?.tradie_id && (
-            {!isTradie && <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
+          {allQuotes.length > 1 && job?.tradie_id && !isTradie && (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'20px' }}>
               <div style={{ padding:'14px 18px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>QUOTE VERSION HISTORY</p>
                 <p style={{ fontSize:'12px', color:'#7A9098' }}>Full revision trail — available to both parties for contract variation reference</p>
@@ -693,7 +693,8 @@ export default function AgreementPage() {
                   </div>
                 ))}
               </div>
-            </div>}
+            </div>
+          )}
 
           {!scope && (
               <div style={{ padding:'32px', textAlign:'center' as const, borderBottom:'1px solid #F0F0F0' }}>
