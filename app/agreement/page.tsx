@@ -567,7 +567,16 @@ export default function AgreementPage() {
                 </div>
 
                             {/* Quote details */}
-            {currentQuote && (
+            {currentQuote && isTradie && (
+              <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                <div>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 2px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Your accepted quote</p>
+                  <p style={{ fontSize:'16px', fontWeight:700, color:'#0A0A0A', margin:0 }}>${Number(currentQuote.total_price).toLocaleString()} AUD inc. GST</p>
+                </div>
+                <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'3px 10px', fontWeight:500, flexShrink:0 }}>✓ Accepted</span>
+              </div>
+            )}
+            {currentQuote && !isTradie && (
               <div style={{ padding:'24px 32px', borderBottom:'1px solid #F0F0F0' }}>
                 <p style={{ fontSize:'10px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#7A9098', marginBottom:'16px', fontWeight:600 }}>Agreed price</p>
                 <div style={{ display:'flex', alignItems:'baseline', gap:'12px', marginBottom:'16px' }}>
