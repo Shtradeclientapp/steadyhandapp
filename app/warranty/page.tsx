@@ -319,7 +319,7 @@ export default function WarrantyPage() {
         </div>
 
       </div>
-    </div></>
+    </div>
       <StageGuideModal
         storageKey="seen_warranty_guide"
         stageNumber={8}
