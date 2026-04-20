@@ -896,7 +896,7 @@ export default function TradieJobPage() {
               Draft the scope agreement below. This defines what is included, what is excluded, the payment milestones and warranty terms. Your client will be notified to review and sign.
             </p>
             <button type="button" onClick={() => {
-                window.location.href = '/agreement?from_job=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')
+                window.location.href = '/agreement?job_id=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')
               }} style={{ display:'inline-block', background:'#6B4FA8', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Draft scope agreement →
               </button>
@@ -917,7 +917,7 @@ export default function TradieJobPage() {
               </div>
             </div>
             {!scope.tradie_signed_at ? (
-              <a href={'/agreement?from_job=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')}>
+              <a href={'/agreement?job_id=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')}>
                 <button type="button" style={{ width: '100%', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                   Go to agreement page to sign →
                 </button>
