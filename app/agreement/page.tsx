@@ -295,10 +295,27 @@ export default function AgreementPage() {
 
   if (!job) return (
     <>{nav}
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 110px)', background:'#C8D5D2' }}>
-      <div style={{ textAlign:'center' }}>
-        <p style={{ color:'#4A5E64', marginBottom:'16px', fontFamily:'sans-serif' }}>No job in agreement stage.</p>
-        <a href="/shortlist"><button style={{ background:'#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', border:'none', cursor:'pointer' }}>Go to shortlist</button></a>
+    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'calc(100vh - 110px)', background:'#C8D5D2', padding:'24px' }}>
+      <div style={{ maxWidth:'480px', width:'100%' }}>
+        <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'16px', overflow:'hidden' }}>
+          <div style={{ background:'#0A0A0A', padding:'20px 24px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>SCOPE AGREEMENT</p>
+            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>Waiting for your tradie to prepare the scope</p>
+          </div>
+          <div style={{ padding:'24px' }}>
+            <p style={{ fontSize:'14px', color:'#0A0A0A', fontWeight:500, margin:'0 0 10px' }}>Your tradie is drafting the scope agreement</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
+              Once you progressed to this stage, your tradie was notified to prepare the scope agreement. This defines exactly what work is included, the payment milestones, and the warranty period. You will be notified by email when it is ready for your review.
+            </p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
+              If you have not heard back within 2 business days, message your tradie directly through the job thread.
+            </p>
+            <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const }}>
+              <a href="/messages" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>Message your tradie →</a>
+              <a href="/compare" style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>← Back to quote</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </>
@@ -677,7 +694,13 @@ export default function AgreementPage() {
                   <p style={{ fontSize:'13px', color:'#D4522A', marginBottom:'10px' }}>⚠ {draftError}</p>
                 )}
                 {isTradie ? (
-                  <button type="button" onClick={() => draftScope()} disabled={drafting}
+                  {isTradie && !scope && (
+                  <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 4px' }}>Your client is waiting for the scope agreement</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Draft the scope below to define what is included, the payment milestones and warranty terms. Your client will be notified to review and sign once you submit.</p>
+                  </div>
+                )}
+                <button type="button" onClick={() => draftScope()} disabled={drafting}
                     style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
                     {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
                   </button>

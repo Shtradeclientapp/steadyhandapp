@@ -190,7 +190,7 @@ export default function ComparePage() {
                   <span style={{ fontSize:'18px' }}>✓</span>
                   <div>
                     <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', margin:'0 0 2px' }}>Quote accepted — scope agreement ready to sign</p>
-                    <a href="/agreement" style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'underline' }}>Go to contract →</a>
+                    <a href="/agreement" style={{ fontSize:'13px', color:'white', background:'#2E7D60', padding:'8px 16px', borderRadius:'7px', textDecoration:'none', fontWeight:500, display:'inline-block', marginTop:'4px' }}>Go to scope agreement →</a>
                   </div>
                 </div>
               )}
