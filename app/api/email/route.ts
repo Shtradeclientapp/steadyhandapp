@@ -537,8 +537,6 @@ export async function POST(request: NextRequest) {
       const sent = results.filter(r => r.status === 'fulfilled').length
       return NextResponse.json({ sent, total: recipients.length })
     }
-    }
-    }
 
     return NextResponse.json({ sent: true })
 
