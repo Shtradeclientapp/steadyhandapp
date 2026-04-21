@@ -358,7 +358,7 @@ export default function DashboardPage() {
               {activeJobs.map(job => {
                 const stage = STAGES[job.status] || STAGES.draft
                 return (
-                  <a key={job.id} href={stage.path} style={{ textDecoration:'none' }}>
+                  <a key={job.id} href={'/jobs/' + job.id} style={{ textDecoration:'none' }}>
                     {(() => {
                       const next = getClientNextAction(job)
                       return (
