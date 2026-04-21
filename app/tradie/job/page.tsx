@@ -503,7 +503,7 @@ export default function TradieJobPage() {
                     <div style={{ marginTop:'12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'12px 14px' }}>
                       <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:'0 0 4px' }}>✓ Times sent to client</p>
                       <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px' }}>After the site visit, record your observations in the Consult page and share them with the client before quoting.</p>
-                      <a href="/consult" style={{ fontSize:'12px', color:'#9B6B9B', fontWeight:500, textDecoration:'none' }}>Go to Consult page to write your notes →</a>
+                      <a href={'/consult?job_id=' + job?.id} style={{ fontSize:'12px', color:'#9B6B9B', fontWeight:500, textDecoration:'none' }}>Go to Consult page to write your notes →</a>
                     </div>
                   )}
                 </div>

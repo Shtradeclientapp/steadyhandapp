@@ -627,7 +627,7 @@ export default function TradieDashboard() {
                 const isConfirmed = !!a.slot_confirmed_at
                 const isToday = date.toDateString() === new Date().toDateString()
                 return (
-                  <a key={a.id} href="/consult" style={{ textDecoration:'none' }}>
+                  <a key={a.id} href={'/consult?job_id=' + a.job_id} style={{ textDecoration:'none' }}>
                     <div style={{ background:'#E8F0EE', border:'1px solid ' + (isToday ? 'rgba(155,107,155,0.4)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
                       <div style={{ width:'40px', height:'40px', borderRadius:'8px', background: isToday ? 'rgba(155,107,155,0.12)' : 'rgba(28,43,50,0.06)', display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                         <p style={{ fontSize:'16px', fontWeight:700, color: isToday ? '#9B6B9B' : '#0A0A0A', margin:0, lineHeight:1 }}>{date.getDate()}</p>
