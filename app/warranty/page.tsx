@@ -48,9 +48,9 @@ export default function WarrantyPage() {
         jobData.status = 'complete'
         // Auto-file job notes and photos into vault on completion
         try {
-          const { data: jf } = await supabase2.from('job_files').select('*').eq('job_id', jobData.id).maybeSingle()
+          const { data: jf } = await supabase.from('job_files').select('*').eq('job_id', jobData.id).maybeSingle()
           if (jf && (jf.notes || (jf.photo_urls && jf.photo_urls.length > 0))) {
-            await supabase2.from('vault_documents').insert({
+            await supabase.from('vault_documents').insert({
               user_id: jobData.tradie_id,
               job_id: jobData.id,
               job_title: jobData.title,
