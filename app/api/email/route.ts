@@ -521,6 +521,30 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // ── Admin broadcast ─────────────────────────────────────────────
+    if (type === 'admin_broadcast') {
+      const { subject, body: msgBody, recipients } = body
+      if (!subject || !msgBody || !recipients?.length) {
+        return NextResponse.json({ error: 'Missing subject, body or recipients' }, { status: 400 })
+      }
+      const results = await Promise.allSettled(
+        recipients.map((email: string) =>
+          resend.emails.send({
+            from: FROM,
+            to: email,
+            subject,
+            html: wrap(
+              para(msgBody.replace(/
+/g, '<br/>')),
+              subject
+            ),
+          })
+        )
+      )
+      const sent = results.filter(r => r.status === 'fulfilled').length
+      return NextResponse.json({ sent, total: recipients.length })
+    }
+
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
