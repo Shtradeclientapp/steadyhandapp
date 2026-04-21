@@ -3,6 +3,7 @@ import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
@@ -38,9 +39,9 @@ export default function SignoffPage() {
   const [contributionClientSecret, setContributionClientSecret] = useState<string|null>(null)
   const [showPartial, setShowPartial] = useState(false)
   const [outstandingNote, setOutstandingNote] = useState('')
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
@@ -86,7 +87,6 @@ export default function SignoffPage() {
   const submitSignoff = async () => {
     if (!job || !allChecked || rating === 0) return
     setSubmitting(true)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('jobs').update({
       status: 'warranty',
@@ -111,8 +111,7 @@ export default function SignoffPage() {
 
     // Auto-deposit warranty certificate to vault
     try {
-      const supabase2 = createClient()
-      await supabase2.from('vault_documents').insert({
+      await supabase.from('vault_documents').insert({
         user_id: session.user.id,
         job_id: job.id,
         job_title: job.title,
@@ -125,7 +124,7 @@ export default function SignoffPage() {
       })
       // Also file to tradie vault
       if (job.tradie_id) {
-        await supabase2.from('vault_documents').insert({
+        await supabase.from('vault_documents').insert({
           user_id: job.tradie_id,
           job_id: job.id,
           job_title: job.title,
@@ -139,9 +138,9 @@ export default function SignoffPage() {
       }
       // Auto-archive job notes and photos to tradie vault on signoff
       if (job.tradie_id) {
-        const { data: jf } = await supabase2.from('job_files').select('*').eq('job_id', job.id).maybeSingle()
+        const { data: jf } = await supabase.from('job_files').select('*').eq('job_id', job.id).maybeSingle()
         if (jf && (jf.notes || (jf.photo_urls && jf.photo_urls.length > 0))) {
-          await supabase2.from('vault_documents').insert({
+          await supabase.from('vault_documents').insert({
             user_id: job.tradie_id,
             job_id: job.id,
             job_title: job.title,
@@ -157,17 +156,15 @@ export default function SignoffPage() {
 
     // Request certificate of compliance from tradie
     if (job.tradie_id) {
-      const supabase3 = createClient()
-      const { data: { session: sess3 } } = await supabase3.auth.getSession()
-      await supabase3.from('job_messages').insert({
+      const { data: { session: sess3 } } = await supabase.auth.getSession()
+      await supabase.from('job_messages').insert({
         job_id: job.id,
         sender_id: sess3?.user.id,
         body: 'Sign-off complete. ' + (job.tradie?.business_name || 'Tradie') + ' — please provide your certificate of compliance for this job. Upload it to the job page so it is stored in the client vault.',
       })
       // If OB project, check if all child jobs are now at sign-off/warranty → final inspection reminder
       if (job.diy_project_id) {
-        const supabase4 = createClient()
-        const { data: siblingJobs } = await supabase4.from('jobs').select('id, status').eq('diy_project_id', job.diy_project_id)
+        const { data: siblingJobs } = await supabase.from('jobs').select('id, status').eq('diy_project_id', job.diy_project_id)
         const allAtSignoff = (siblingJobs || []).length > 0 && (siblingJobs || []).every((j: any) => ['signoff','warranty','complete'].includes(j.status))
         if (allAtSignoff) {
           await fetch('/api/notify', {
@@ -325,7 +322,6 @@ export default function SignoffPage() {
                         setSendingContribution(true)
                         setContributionError(null)
                         try {
-                          const supabase = createClient()
                           const { data: { session } } = await supabase.auth.getSession()
                           // Create Stripe payment intent via API
                           const res = await fetch('/api/stripe', {
@@ -513,7 +509,6 @@ export default function SignoffPage() {
                       <div style={{ display:'flex', gap:'8px' }}>
                         <button type="button" onClick={async () => {
                           if (!outstandingNote.trim()) return
-                          const supabase = createClient()
                           const { data: { session } } = await supabase.auth.getSession()
                           await supabase.from('job_messages').insert({
                             job_id: job.id,
