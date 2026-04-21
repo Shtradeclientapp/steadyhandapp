@@ -534,8 +534,8 @@ export async function POST(request: NextRequest) {
             to: email,
             subject,
             html: wrap(
-              para(msgBody.replace(/
-/g, '<br/>')),
+              para(msgBody.split('
+').join('<br/>'), '<br/>')),
               subject
             ),
           })
