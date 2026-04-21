@@ -54,6 +54,7 @@ export default function Home() {
           <div className="nav-links">
             <a href="#how-it-works" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>How it works</a>
             <a href="#for-trade-businesses" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For tradies</a>
+            <a href="/org/setup" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For property managers</a>
             <a href="#guides" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Guides</a>
           </div>
           <div className="nav-buttons">
@@ -70,6 +71,7 @@ export default function Home() {
         <div id="mobile-nav" className="mobile-nav">
           <a href="#how-it-works" style={{ fontSize:'15px', color:'#0A0A0A', textDecoration:'none', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>How it works</a>
           <a href="#for-trade-businesses" style={{ fontSize:'15px', color:'#0A0A0A', textDecoration:'none', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>For tradies</a>
+          <a href="/org/setup" style={{ fontSize:'15px', color:'#0A0A0A', textDecoration:'none', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>For property managers</a>
           <a href="#guides" style={{ fontSize:'15px', color:'#0A0A0A', textDecoration:'none', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>Guides</a>
           <div style={{ display:'flex', gap:'10px', paddingTop:'8px' }}>
             <Link href="/login" style={{ flex:1 }}><button style={{ width:'100%', background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#4A5E64', padding:'10px', borderRadius:'8px', fontSize:'14px', cursor:'pointer' }}>Log in</button></Link>
