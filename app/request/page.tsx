@@ -232,8 +232,8 @@ sessionStorage.removeItem('diy_project_id')
                 </div>
               )}
 
-              {/* Property manager prompt — always visible */}
-              <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'4px' }}>
+              {/* Property manager prompt — only for non-org users */}
+              {!orgId && <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'4px' }}>
                 <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 6px' }}>
                   🏢 Managing more than one property?
                 </p>
@@ -243,7 +243,7 @@ sessionStorage.removeItem('diy_project_id')
                 <a href="/org/setup" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#2E6A8F', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
                   Set up a Property Manager account →
                 </a>
-              </div>
+              </div>}
 
               {submitError && step === 0 && (
                 <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'10px' }}>
