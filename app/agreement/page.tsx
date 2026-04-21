@@ -73,19 +73,29 @@ export default function AgreementPage() {
         : null
 
       if (tradie) {
-        // ── TRADIE: load by tradie_id, widest possible status filter ────────
-        let query = supabase
-          .from('jobs')
-          .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
-          .eq('tradie_id', session.user.id)
-          .in('status', ['shortlisted','consult','compare','quote','agreement','delivery','signoff','warranty','complete'])
-          .order('updated_at', { ascending: false })
+        let tradieJobs: any[] = []
 
-        if (urlJobId) query = query.eq('id', urlJobId)
-        else query = query.limit(1)
+        if (urlJobId) {
+          // Direct load by job ID — no tradie_id filter needed
+          const { data: directJob } = await supabase
+            .from('jobs')
+            .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+            .eq('id', urlJobId)
+            .single()
+          if (directJob) tradieJobs = [directJob]
+        } else {
+          // No job_id — load most recent agreement-stage job for this tradie
+          const { data: jobs } = await supabase
+            .from('jobs')
+            .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
+            .eq('tradie_id', session.user.id)
+            .in('status', ['agreement','delivery','signoff','warranty','complete'])
+            .order('updated_at', { ascending: false })
+            .limit(1)
+          tradieJobs = jobs || []
+        }
 
-        const { data: tradieJobs } = await query
-        if (tradieJobs && tradieJobs.length > 0) {
+        if (tradieJobs.length > 0) {
           setJob(tradieJobs[0])
           setAllJobs(tradieJobs)
           await loadJobData(supabase, tradieJobs[0].id)
