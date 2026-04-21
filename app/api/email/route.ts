@@ -525,24 +525,19 @@ export async function POST(request: NextRequest) {
     if (type === 'admin_broadcast') {
       const { subject, body: msgBody, recipients } = body
       if (!subject || !msgBody || !recipients?.length) {
-        return NextResponse.json({ error: 'Missing subject, body or recipients' }, { status: 400 })
+        return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
       }
+      const nl = String.fromCharCode(10)
+      const htmlBody = wrap(para(String(msgBody).split(nl).join('<br/>')), String(subject))
       const results = await Promise.allSettled(
-        recipients.map((email: string) =>
-          resend.emails.send({
-            from: FROM,
-            to: email,
-            subject,
-            html: wrap(
-              para(msgBody.split('
-').join('<br/>'), '<br/>')),
-              subject
-            ),
-          })
+        (recipients as string[]).map((email: string) =>
+          resend.emails.send({ from: FROM, to: email, subject: String(subject), html: htmlBody })
         )
       )
       const sent = results.filter(r => r.status === 'fulfilled').length
       return NextResponse.json({ sent, total: recipients.length })
+    }
+    }
     }
 
     return NextResponse.json({ sent: true })
