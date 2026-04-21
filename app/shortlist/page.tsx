@@ -3,6 +3,7 @@ import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { HintPanel } from '@/components/ui/HintPanel'
 
@@ -24,9 +25,10 @@ export default function ShortlistPage() {
   const [pendingInvites, setPendingInvites] = useState<any[]>([])
   const [allQuotes, setAllQuotes] = useState<any[]>([])
 
+  const supabase = useSupabase()
+
   useEffect(() => {
     const init = async () => {
-      const supabase = createClient()
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { window.location.href = '/login'; return }
 
@@ -58,7 +60,6 @@ export default function ShortlistPage() {
   }, [])
 
   const loadQuoteRequests = async (jobId: string) => {
-    const supabase = createClient()
     const { data } = await supabase
       .from('quote_requests')
       .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible, rating_avg, jobs_completed)')
@@ -74,7 +75,6 @@ export default function ShortlistPage() {
     if (!selectedJob?.id) { setSendError('No job selected — please refresh and try again.'); return }
     setSending(true)
     setSendError(null)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
 
     for (const tradieId of selectedTradies) {
@@ -262,7 +262,6 @@ export default function ShortlistPage() {
                     <div style={{ background:'white', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'12px', padding:'16px 18px', cursor:'pointer' }}
                       onClick={async () => {
                         if (!selectedJob) { setShowNextStepModal(false); return }
-                        const supabase = (await import('@/lib/supabase/client')).createClient()
                         const { data: { session } } = await supabase.auth.getSession()
                         await supabase.from('site_assessments').upsert({
                           job_id: selectedJob.id,
