@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
@@ -20,9 +21,9 @@ export default function ComparePage() {
   const [reviseId, setReviseId] = useState<string|null>(null)
   const [reviseNote, setReviseNote] = useState('')
   const [sendingRevise, setSendingRevise] = useState(false)
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
@@ -38,15 +39,14 @@ export default function ComparePage() {
       const { data: jobsData } = await jobsQuery
       setJobs(jobsData || [])
       if (jobsData && jobsData.length > 0) {
-        await loadQuotes(jobsData[0].id, supabase)
+        await loadQuotes(jobsData[0].id)
         setSelectedJob(jobsData[0])
       }
       setLoading(false)
     })
   }, [])
 
-  const loadQuotes = async (jobId: string, sb?: any) => {
-    const supabase = sb || createClient()
+  const loadQuotes = async (jobId: string) => {
     const { data: qrs } = await supabase
       .from('quote_requests')
       .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible)')
@@ -67,7 +67,6 @@ export default function ComparePage() {
     setAccepting(quote.id)
     setAcceptError(null)
     try {
-      const supabase = createClient()
       const { error: e1 } = await supabase.from('quotes').update({ status: 'accepted' }).eq('id', quote.id)
       if (e1) throw new Error(e1.message)
       await supabase.from('quotes').update({ status: 'rejected' }).eq('job_id', selectedJob.id).neq('id', quote.id)
@@ -101,7 +100,6 @@ export default function ComparePage() {
   const requestRevision = async (quoteId: string) => {
     if (!reviseNote.trim()) return
     setSendingRevise(true)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('job_messages').insert({
       job_id: selectedJob.id,
