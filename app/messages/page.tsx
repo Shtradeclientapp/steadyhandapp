@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 
 function MessagesPageInner() {
   const [user, setUser] = useState<any>(null)
@@ -18,9 +19,9 @@ function MessagesPageInner() {
   const [unread, setUnread] = useState<Record<string, number>>({})  // per-job unread counts
   const bottomRef = useRef<HTMLDivElement>(null)
   const [mobilePanelView, setMobilePanelView] = useState<'list'|'thread'>('list')
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       setUser(session.user)
@@ -43,7 +44,7 @@ function MessagesPageInner() {
 
       // Load last message preview for each job
       if (jobData && jobData.length > 0) {
-        const supabase2 = createClient()
+        const supabase2 = supabase
         const previews: Record<string, any> = {}
         const unreadCounts: Record<string, number> = {}
         const { data: { session: sess } } = await supabase2.auth.getSession()
@@ -85,7 +86,6 @@ function MessagesPageInner() {
 
   useEffect(() => {
     if (!selectedJob) return
-    const supabase = createClient()
     const channel = supabase
       .channel('job_messages:' + selectedJob.id)
       .on('postgres_changes', {
@@ -119,7 +119,6 @@ function MessagesPageInner() {
   }, [messages])
 
   const loadMessages = async (jobId: string) => {
-    const supabase = createClient()
     const { data } = await supabase
       .from('job_messages')
       .select('*, sender:profiles(full_name, role)')
@@ -145,7 +144,6 @@ function MessagesPageInner() {
     if (!newMessage.trim() || !selectedJob || !user) return
     setSending(true)
     setSendError(null)
-    const supabase = createClient()
     const { error } = await supabase.from('job_messages').insert({
       job_id: selectedJob.id,
       sender_id: user.id,
