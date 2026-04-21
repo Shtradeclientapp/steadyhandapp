@@ -584,8 +584,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <button type="button" onClick={() => {
-                const supabaseOB = createClient()
-                await supabaseOB.from('profiles').update({ onboarding_complete: true }).eq('id', user?.id)
+                ;(async () => { const supabaseOB = createClient(); await supabaseOB.from('profiles').update({ onboarding_complete: true }).eq('id', user?.id) })()
                 setShowClientWizard(false)
               }} style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to my dashboard →
