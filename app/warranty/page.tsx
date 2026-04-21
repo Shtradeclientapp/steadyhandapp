@@ -4,6 +4,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 
@@ -19,9 +20,9 @@ export default function WarrantyPage() {
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const [issueError, setIssueError] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
@@ -43,8 +44,7 @@ export default function WarrantyPage() {
       // Auto-complete if warranty period has expired
       const jobData = jobs[0]
       if (jobData?.warranty_ends_at && new Date(jobData.warranty_ends_at) < new Date() && jobData.status === 'warranty') {
-        const supabase2 = createClient()
-        await supabase2.from('jobs').update({ status: 'complete' }).eq('id', jobData.id)
+        await supabase.from('jobs').update({ status: 'complete' }).eq('id', jobData.id)
         jobData.status = 'complete'
         // Auto-file job notes and photos into vault on completion
         try {
@@ -70,7 +70,6 @@ export default function WarrantyPage() {
   const submitIssue = async () => {
     if (!job || !form.title || !form.description) return
     setSubmitting(true)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const responseDue = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
     const { data: issue, error: issueInsertErr } = await supabase.from('warranty_issues').insert({
@@ -109,7 +108,6 @@ export default function WarrantyPage() {
 
   const acceptResolution = async (issueId: string) => {
     setAcceptingId(issueId)
-    const supabase = createClient()
     await supabase.from('warranty_issues').update({
       status: 'resolved',
       client_accepted_at: new Date().toISOString(),
@@ -294,7 +292,6 @@ export default function WarrantyPage() {
                   )}
                   {issue.status === 'open' && (
                     <button type="button" onClick={async () => {
-                      const supabase = createClient()
                       await supabase.from('warranty_issues').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', issue.id)
                       setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, status: 'resolved' } : i))
                     }} style={{ marginTop:'10px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
