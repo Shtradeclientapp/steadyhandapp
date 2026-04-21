@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
 
 const DOC_TYPES = [
@@ -37,8 +38,9 @@ export default function TradieVaultPage() {
   const [shareSuccess, setShareSuccess] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const supabase = useSupabase()
+
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
@@ -47,11 +49,12 @@ export default function TradieVaultPage() {
       setProfile(prof)
 
       // Load tradie's own vault documents
-      const { data: myDocs } = await supabase
+      const { data: myDocs, error: vaultErr } = await supabase
         .from('vault_documents')
         .select('*, job:jobs(title, trade_category, suburb)')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
+      if (vaultErr) console.error('Vault load error:', vaultErr.message)
       setDocs(myDocs || [])
 
       // Load documents shared with this tradie
@@ -93,7 +96,6 @@ export default function TradieVaultPage() {
     if (!fileRef.current?.files?.[0] || !form.title.trim()) { setUploadError('Please add a title and select a file.'); return }
     setUploading(true)
     setUploadError(null)
-    const supabase = createClient()
     const file = fileRef.current.files[0]
     const ext = file.name.split('.').pop()
     const path = `tradie/${user.id}/${Date.now()}.${ext}`
@@ -122,7 +124,6 @@ export default function TradieVaultPage() {
   const saveAnnotation = async () => {
     if (!selectedDoc) return
     setSavingAnnotation(true)
-    const supabase = createClient()
     await supabase.from('vault_documents').update({ notes: annotationText }).eq('id', selectedDoc.id)
     setAnnotationSaved(true)
     setSavingAnnotation(false)
@@ -132,7 +133,6 @@ export default function TradieVaultPage() {
   const shareWithClient = async () => {
     if (!selectedDoc || !shareJobId) return
     setSharing(true)
-    const supabase = createClient()
     const job = jobs.find((j: any) => j.id === shareJobId)
     if (!job) { setSharing(false); return }
     await supabase.from('vault_document_shares').upsert({

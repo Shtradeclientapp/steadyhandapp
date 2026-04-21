@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
 
 const DOC_TYPES = [
@@ -38,17 +39,19 @@ export default function VaultPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [sharedWithMe, setSharedWithMe] = useState<any[]>([])
 
+  const supabase = useSupabase()
+
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      const { data: vaultDocs } = await supabase
+      const { data: vaultDocs, error: vaultErr } = await supabase
         .from('vault_documents')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
+      if (vaultErr) console.error('Vault load error:', vaultErr.message)
       setDocs(vaultDocs || [])
       // Load jobs for sharing
       const { data: jobsData } = await supabase
@@ -72,7 +75,6 @@ export default function VaultPage() {
   const uploadDoc = async () => {
     if (!form.title || !profile) return
     setUploading(true)
-    const supabase = createClient()
     let file_url = null
     let file_name = null
     if (selectedFile) {
@@ -109,7 +111,6 @@ export default function VaultPage() {
 
   const deleteDoc = async (id: string) => {
     if (!confirm('Remove this document from your vault?')) return
-    const supabase = createClient()
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
   }
@@ -117,7 +118,6 @@ export default function VaultPage() {
   const shareWithTradie = async () => {
     if (!selectedDoc || !shareJobId) return
     setSharing(true)
-    const supabase = createClient()
     const job = jobs.find((j: any) => j.id === shareJobId)
     if (!job) { setSharing(false); return }
     await supabase.from('vault_document_shares').upsert({
@@ -142,7 +142,6 @@ export default function VaultPage() {
   const saveAnnotation = async () => {
     if (!selectedDoc) return
     setSavingAnnotation(true)
-    const supabase = createClient()
     await supabase.from('vault_documents').update({ notes: annotationText }).eq('id', selectedDoc.id)
     setDocs(prev => prev.map(d => d.id === selectedDoc.id ? { ...d, notes: annotationText } : d))
     setAnnotationSaved(true)
