@@ -62,7 +62,7 @@ export default function TradieJobPage() {
   const [jobDocs, setJobDocs] = useState<any[]>([])
   const [uploadingJobDoc, setUploadingJobDoc] = useState(false)
   const [jobDocError, setJobDocError] = useState<string|null>(null)
-  const [jobFileOpen, setJobFileOpen] = useState(true)
+  const [jobFileOpen, setJobFileOpen] = useState(false)
   const [milestones, setMilestones] = useState<any[]>([])
   const [progressNote, setProgressNote] = useState('')
   const [sendingNote, setSendingNote] = useState(false)
@@ -1189,7 +1189,7 @@ export default function TradieJobPage() {
           <div style={{ padding:'16px 20px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'space-between', cursor:'pointer' }}
             onClick={() => setJobFileOpen(o => !o)}>
             <div>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 2px' }}>JOB FILE</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:'0 0 2px' }}>JOB FILE — FIELD SERVICE NOTES</p>
               <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:0 }}>Client details · notes · photos · documents</p>
             </div>
             <span style={{ fontSize:'16px', color:'rgba(216,228,225,0.5)', transition:'transform 0.2s', transform: jobFileOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
