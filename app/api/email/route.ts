@@ -262,7 +262,7 @@ export async function POST(request: NextRequest) {
       const { qr_ids } = reqBody
       const { data: job } = await supabase
         .from('jobs')
-        .select('*, client:profiles!jobs_client_id_fkey(full_name, email)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, org_id), org:organisations(name)')
         .eq('id', job_id).single()
       const { data: qrs } = await supabase
         .from('quote_requests')
@@ -286,16 +286,26 @@ export async function POST(request: NextRequest) {
         const tradieEmail = (qr.tradie as any)?.profile?.email
         const tradieName = (qr.tradie as any)?.profile?.full_name || (qr.tradie as any)?.business_name
         if (tradieEmail) {
+          const isOrg = !!(job as any)?.org?.name
+          const orgName = (job as any)?.org?.name
+          const clientLabel = isOrg ? orgName : job?.client?.full_name
+          const orgNote = isOrg
+            ? `<div style="margin:12px 0;padding:10px 14px;background:rgba(107,79,168,0.08);border-left:3px solid #6B4FA8;border-radius:4px;font-size:13px;color:#4A5E64;font-family:Georgia,serif;">
+                <strong style="color:#6B4FA8;">Property management organisation</strong><br/>
+                This job has been posted by <strong>${orgName}</strong>, a property management organisation on Steadyhand. They may manage multiple properties and have ongoing work to offer. Treat this as a professional B2B relationship — their requirements may differ from a typical homeowner job.
+              </div>`
+            : ''
           const html = wrap(
             greeting(tradieName) +
-            para(`<strong>${job?.client?.full_name}</strong> has sent you a quote request on Steadyhand.`) +
+            para(`<strong>${clientLabel}</strong> has sent you a quote request on Steadyhand.`) +
+            orgNote +
             jobCard(job?.title || '', job?.trade_category || '', job?.suburb || '', '#9B6B9B',
               `<p style="margin:8px 0 0;font-size:13px;color:#4A5E64;font-family:Georgia,serif;line-height:1.6;">${job?.description || ''}</p>`) +
-            para('To get started, propose a time for a site visit. After the consult, record your observations and submit your quote. Clear communication at this stage builds your Dialogue Rating.') +
-            btn(APP_URL + '/tradie/dashboard', 'View job and propose a time', '#9B6B9B'),
-            `New quote request from ${job?.client?.full_name}`
+            para('To get started, message the client to arrange a site visit. After the consult, record your observations and submit your quote. Clear communication at this stage builds your Dialogue Rating.') +
+            btn(APP_URL + '/tradie/dashboard', 'View job on Steadyhand', '#9B6B9B'),
+            `New quote request from ${clientLabel}`
           )
-          await resend.emails.send({ from: FROM, to: tradieEmail, subject: `New quote request — ${job?.title}`, html })
+          await resend.emails.send({ from: FROM, to: tradieEmail, subject: isOrg ? `New quote request (Property manager) — ${job?.title}` : `New quote request — ${job?.title}`, html })
         }
       }
     }

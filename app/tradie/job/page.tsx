@@ -144,7 +144,7 @@ export default function TradieJobPage() {
       const jobId = params.get('id')
       if (!jobId) { window.location.href = '/tradie/dashboard'; return }
       const { data: jobData } = await supabase.from('jobs')
-        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb, phone, address)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email, suburb, phone, address, org_id), org:organisations(name)')
         .eq('id', jobId).single()
       setJob(jobData)
       const { data: scopeData } = await supabase.from('scope_agreements').select('*').eq('job_id', jobId).maybeSingle()
@@ -548,7 +548,13 @@ export default function TradieJobPage() {
           </div>
         )}
         <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '24px', color: '#0A0A0A', letterSpacing: '1.5px', marginBottom: '4px' }}>{job.title}</h1>
-        <p style={{ fontSize: '14px', color: '#7A9098', marginBottom: '24px' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</p>
+        <p style={{ fontSize: '14px', color: '#7A9098', marginBottom: job?.org?.name ? '12px' : '24px' }}>{job.trade_category} · {job.suburb} · {job.client?.full_name}</p>
+        {job?.org?.name && (
+          <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(107,79,168,0.1)', border:'1px solid rgba(107,79,168,0.25)', borderRadius:'100px', padding:'4px 12px', marginBottom:'20px' }}>
+            <span style={{ fontSize:'12px' }}>🏢</span>
+            <span style={{ fontSize:'12px', fontWeight:600, color:'#6B4FA8' }}>Property management — {job.org.name}</span>
+          </div>
+        )}
 
         <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
           <p style={{ fontSize: '10px', letterSpacing: '1px', textTransform: 'uppercase' as const, color: '#7A9098', marginBottom: '8px', fontWeight: 500 }}>Job description</p>
@@ -1202,6 +1208,12 @@ export default function TradieJobPage() {
               <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'16px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
                 <div>
                   <p style={{ fontSize:'10px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'6px' }}>Client</p>
+                  {job?.org?.name && (
+                    <div style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'6px', padding:'3px 10px', marginBottom:'8px' }}>
+                      <span style={{ fontSize:'11px' }}>🏢</span>
+                      <span style={{ fontSize:'11px', fontWeight:600, color:'#6B4FA8' }}>Property manager · {job.org.name}</span>
+                    </div>
+                  )}
                   <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{job?.client?.full_name || '—'}</p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 6px' }}>{job?.client?.email || '—'}</p>
                   {job?.client?.phone && (
