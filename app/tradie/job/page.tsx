@@ -1357,6 +1357,10 @@ export default function TradieJobPage() {
                     e.target.value = ''
                   }} />
                   <span style={{ fontSize:'18px' }}>📎</span>
+                  <a href={'/consult?job_id=' + job?.id} style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 12px', background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'8px', textDecoration:'none', marginBottom:'8px' }}>
+                    <span style={{ fontSize:'16px' }}>📋</span>
+                    <p style={{ fontSize:'13px', color:'#9B6B9B', margin:0, fontWeight:500 }}>View consult notes →</p>
+                  </a>
                   <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0, fontWeight:500 }}>{uploadingJobDoc ? 'Uploading...' : 'Upload document to vault'}</p>
                   <p style={{ fontSize:'11px', color:'#7A9098', margin:0, marginLeft:'auto' }}>PDF, Word, image</p>
                 </label>

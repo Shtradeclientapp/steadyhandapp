@@ -9,7 +9,9 @@ import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null
 
 // ── Payment form component ────────────────────────────────────────────────────
 function MilestonePaymentForm({ milestoneId, amount, jobId, onSuccess, onCancel }: {

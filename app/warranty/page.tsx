@@ -32,7 +32,7 @@ export default function WarrantyPage() {
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
         .eq(col, session.user.id)
-        .in('status', ['warranty', 'complete'])
+        .in('status', ['warranty', 'complete', 'signoff'])
         .order('updated_at', { ascending: false })
         
       if (jobs && jobs.length > 0) {
@@ -161,7 +161,9 @@ export default function WarrantyPage() {
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>WARRANTY PERIOD</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
-          Your warranty is active. Log any defects — the tradie must respond within 5 business days.
+          {isTradie
+            ? 'The warranty period is active. Respond to any issues logged by the client within 5 business days.'
+            : 'Your warranty is active. Log any defects — the tradie must respond within 5 business days.'}
         </p>
 
         <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'24px', marginBottom:'24px', position:'relative', overflow:'hidden' }}>
@@ -188,10 +190,10 @@ export default function WarrantyPage() {
         )}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#0A0A0A', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
-          <button type="button" onClick={() => setShowForm(true)}
+          {!isTradie && <button type="button" onClick={() => setShowForm(true)}
             style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
             + Log new issue
-          </button>
+          </button>}
         </div>
 
         {showForm && (

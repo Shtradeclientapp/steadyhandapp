@@ -10,7 +10,7 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
     case 'shortlisted':
       return { icon: '👥', headline: 'Review your matches', sub: 'Tradies have been shortlisted - compare and invite one to quote', urgent: true }
     case 'consult':
-      return { icon: '📋', headline: 'Consult in progress', sub: 'Use the message thread to arrange a site visit with your tradie — notes will appear here once complete', urgent: true }
+      return { icon: '💬', headline: 'Arrange your site visit', sub: 'Message your tradie to agree on a time — all consult arrangements are kept in the job thread', urgent: true }
     case 'compare': {
       const hasQuote = job.quotes?.length > 0
       if (!hasQuote) return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote - you will be notified when it arrives', urgent: false }

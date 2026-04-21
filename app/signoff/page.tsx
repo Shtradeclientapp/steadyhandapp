@@ -45,15 +45,18 @@ export default function SignoffPage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       setProfile(prof)
-      const { data: jobs } = await supabase
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
+      let signoffQuery = supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id, dialogue_score_avg)')
         .eq('client_id', session.user.id)
         .in('status', ['signoff', 'delivery', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
+      if (urlJobId) signoffQuery = signoffQuery.eq('id', urlJobId)
+      const { data: jobs } = await signoffQuery
         
       if (jobs && jobs.length > 0) {
-        setJob(jobs[0])
+        setJob(urlJobId ? jobs[0] : (jobs.find((j: any) => j.status === 'signoff') || jobs[0]))
         const { data: ms } = await supabase
           .from('milestones')
           .select('*')
