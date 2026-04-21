@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import Link from 'next/link'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
 
@@ -64,9 +65,9 @@ export default function DashboardPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [builds, setBuilds] = useState<any[]>([])
   const [showClientWizard, setShowClientWizard] = useState(false)
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     // Safety net - never hang on loading
     const loadingTimeout = setTimeout(() => setLoading(false), 5000)
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -133,7 +134,6 @@ export default function DashboardPage() {
   }, [])
 
   const signOut = async () => {
-    const supabase = createClient()
     await supabase.auth.signOut()
     window.location.href = '/login'
   }
@@ -157,7 +157,6 @@ export default function DashboardPage() {
 
   const cancelJob = async (jobId: string, jobTitle: string) => {
     if (!confirm('Cancel "' + jobTitle + '"? This will notify any tradies who have been invited and cannot be undone.')) return
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('jobs').update({ status: 'cancelled' }).eq('id', jobId)
     await supabase.from('job_messages').insert({
@@ -584,7 +583,7 @@ export default function DashboardPage() {
                 ))}
               </div>
               <button type="button" onClick={() => {
-                ;(async () => { const supabaseOB = createClient(); await supabaseOB.from('profiles').update({ onboarding_complete: true }).eq('id', user?.id) })()
+                ;(async () => { await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', user?.id) })()
                 setShowClientWizard(false)
               }} style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to my dashboard →
