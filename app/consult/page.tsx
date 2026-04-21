@@ -232,34 +232,25 @@ export default function AssessPage() {
       await supabase2.from('jobs').update({ status: 'compare' }).eq('id', job.id)
       await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
 
-      // Auto-file consult record to both client and tradie vaults
+      // Auto-file consult record to both client and tradie vaults via service role API
       try {
-        const supabaseV = createClient()
-        const { data: { session: sess } } = await supabaseV.auth.getSession()
-        // File to client vault
-        if (job.client_id) {
-          await supabaseV.from('vault_documents').insert({
-            user_id: job.client_id,
-            job_id: job.id,
-            job_title: job.title,
-            title: job.title + ' - consult notes',
-            document_type: 'consult',
-            tradie_name: job.tradie?.business_name || null,
-            issued_date: new Date().toISOString().split('T')[0],
-            notes: 'Consult notes acknowledged by both parties on ' + new Date().toLocaleDateString('en-AU'),
-          })
+        const docs = []
+        const consultNote = {
+          job_id: job.id,
+          job_title: job.title,
+          title: job.title + ' — consult notes',
+          document_type: 'consult',
+          tradie_name: job.tradie?.business_name || null,
+          issued_date: new Date().toISOString().split('T')[0],
+          notes: 'Consult notes acknowledged by both parties on ' + new Date().toLocaleDateString('en-AU'),
         }
-        // File to tradie vault
-        if (job.tradie_id) {
-          await supabaseV.from('vault_documents').insert({
-            user_id: job.tradie_id,
-            job_id: job.id,
-            job_title: job.title,
-            title: job.title + ' - consult notes',
-            document_type: 'consult',
-            tradie_name: job.tradie?.business_name || null,
-            issued_date: new Date().toISOString().split('T')[0],
-            notes: 'Consult notes acknowledged by both parties on ' + new Date().toLocaleDateString('en-AU'),
+        if (job.client_id) docs.push({ ...consultNote, user_id: job.client_id })
+        if (job.tradie_id) docs.push({ ...consultNote, user_id: job.tradie_id })
+        if (docs.length > 0) {
+          await fetch('/api/vault/file', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ documents: docs }),
           })
         }
       } catch { /* non-critical */ }
