@@ -669,6 +669,15 @@ export default function TradieJobPage() {
               </div>
             </div>
           )}
+          {currentQuote && !showQuoteForm && !quoteSubmitted && job?.status === 'agreement' && !scope && (
+            <div style={{ margin:'0 20px 12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'10px' }}>
+              <span style={{ fontSize:'18px', flexShrink:0 }}>✅</span>
+              <div>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', margin:'0 0 2px' }}>Quote accepted — draft the scope agreement now</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Your client is waiting. Scroll down to draft the scope.</p>
+              </div>
+            </div>
+          )}
 
           {currentQuote && !showQuoteForm && !quoteSubmitted && (
             <div style={{ padding: '16px 20px' }}>
@@ -903,7 +912,7 @@ export default function TradieJobPage() {
         )}
 
         {/* Agreement stage — show draft prompt if no scope yet */}
-        {(job?.status === 'agreement' || job?.status === 'compare') && !scope && (
+        {job?.status === 'agreement' && !scope && (
           <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'14px', padding:'24px', marginBottom:'20px' }}>
             <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#6B4FA8', letterSpacing:'0.5px', margin:'0 0 8px' }}>SCOPE AGREEMENT — ACTION REQUIRED</p>
             <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>Your client has accepted your quote and is waiting for the scope agreement</p>
@@ -911,7 +920,7 @@ export default function TradieJobPage() {
               Draft the scope agreement below. This defines what is included, what is excluded, the payment milestones and warranty terms. Your client will be notified to review and sign.
             </p>
             <button type="button" onClick={() => {
-                window.location.href = '/agreement?job_id=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')
+                window.location.href = '/agreement?job_id=' + job.id
               }} style={{ display:'inline-block', background:'#6B4FA8', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Draft scope agreement →
               </button>
@@ -932,7 +941,7 @@ export default function TradieJobPage() {
               </div>
             </div>
             {!scope.tradie_signed_at ? (
-              <a href={'/agreement?job_id=' + (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('id') : '')}>
+              <a href={'/agreement?job_id=' + job?.id}>
                 <button type="button" style={{ width: '100%', background: '#6B4FA8', color: 'white', padding: '11px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer' }}>
                   Go to agreement page to sign →
                 </button>
