@@ -2,6 +2,7 @@
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
@@ -44,9 +45,9 @@ export default function AssessPage() {
   const [consultDate, setConsultDate] = useState('')
   const [savingDate, setSavingDate] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
 
@@ -108,7 +109,6 @@ export default function AssessPage() {
   const uploadPhoto = async (file: File) => {
     if (!assessment) return
     setUploadingPhotos(true)
-    const supabase = createClient()
     const ext = file.name.split('.').pop()
     const path = 'assessments/' + assessment.id + '/' + Date.now() + '.' + ext
     setPhotoError(null)
@@ -129,7 +129,6 @@ export default function AssessPage() {
 
   const removePhoto = async (url: string) => {
     if (!assessment) return
-    const supabase = createClient()
     const field = isTradie ? 'tradie_photo_urls' : 'client_photo_urls'
     const current = isTradie ? tradiePhotos : clientPhotos
     const updated = current.filter(p => p !== url)
@@ -142,7 +141,6 @@ export default function AssessPage() {
   const saveConsultDate = async (date: string) => {
     if (!assessment || !date) return
     setSavingDate(true)
-    const supabase = createClient()
     await supabase.from('site_assessments').update({ consult_date: date, slot_confirmed_at: new Date().toISOString() }).eq('id', assessment.id)
     setAssessment((a: any) => ({ ...a, consult_date: date, slot_confirmed_at: new Date().toISOString() }))
     const { data: { session } } = await supabase.auth.getSession()
@@ -160,7 +158,6 @@ export default function AssessPage() {
   const save = async () => {
     if (!assessment) return
     setSaving(true)
-    const supabase = createClient()
     await supabase.from('site_assessments').update({
       consult_date: form.consult_date,
       consult_attendees: form.consult_attendees,
@@ -184,7 +181,6 @@ export default function AssessPage() {
   const share = async () => {
     if (!assessment || !job) return
     setSharing(true)
-    const supabase = createClient()
     const field = isTradie ? 'tradie_shared_at' : 'client_shared_at'
     await supabase.from('site_assessments').update({
       [field]: new Date().toISOString(),
@@ -204,8 +200,7 @@ export default function AssessPage() {
 
     setAssessment((a: any) => ({ ...a, [field]: new Date().toISOString() }))
     // Post encouragement message
-    const supabase2 = createClient()
-    await supabase2.from('job_messages').insert({
+    await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: profile.id,
       body: '📋 ' + (isTradie ? profile.tradie?.business_name : profile.full_name) + ' has shared their consult notes. Taking time to document observations before quoting begins is one of the most important trust acts in any trade relationship.',
@@ -216,7 +211,6 @@ export default function AssessPage() {
   const acknowledge = async () => {
     if (!assessment || !job) return
     setAcknowledging(true)
-    const supabase = createClient()
     const field = isTradie ? 'tradie_acknowledged_at' : 'client_acknowledged_at'
     await supabase.from('site_assessments').update({
       [field]: new Date().toISOString(),
@@ -234,8 +228,7 @@ export default function AssessPage() {
     // If both acknowledged, move to quotes
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
-      const supabase2 = createClient()
-      await supabase2.from('jobs').update({ status: 'compare' }).eq('id', job.id)
+        await supabase.from('jobs').update({ status: 'compare' }).eq('id', job.id)
       await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
 
       // Auto-file consult record to both client and tradie vaults via service role API
@@ -289,7 +282,6 @@ export default function AssessPage() {
   const saveInternalNotes = async () => {
     if (!assessment) return
     setSavingInternal(true)
-    const supabase = createClient()
     await supabase.from('site_assessments').update({
       tradie_materials_notes: internalNotes.materials,
       tradie_labour_notes: internalNotes.labour,
@@ -332,8 +324,7 @@ export default function AssessPage() {
               <a href="/shortlist" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to matches</a>
               <a href="/messages" style={{ fontSize:'13px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'10px 18px', borderRadius:'8px', textDecoration:'none' }}>Message your tradie →</a>
               <button type="button" onClick={async () => {
-                const supabase = createClient()
-                const { data: { session } } = await supabase.auth.getSession()
+                            const { data: { session } } = await supabase.auth.getSession()
                 if (session) {
                   // use the job already in context rather than re-querying
                   if (job) await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
@@ -378,7 +369,6 @@ export default function AssessPage() {
             const selected = allJobs.find(j => j.id === id)
             setJob(selected)
             // Reload assessment for selected job
-            const supabase = (await import('@/lib/supabase/client')).createClient()
             const { data: assess } = await supabase.from('site_assessments').select('*').eq('job_id', id).single()
             if (assess) { setAssessment(assess); setForm(assess) }
           }} />
@@ -403,8 +393,7 @@ export default function AssessPage() {
             <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Prefer to go straight to quotes without a site consult?</p>
             <button type="button" onClick={async () => {
               if (!job) return
-              const supabase = createClient()
-              const { data: { session } } = await supabase.auth.getSession()
+                        const { data: { session } } = await supabase.auth.getSession()
               await supabase.from('site_assessments').upsert({
                 job_id: job.id,
                 client_what_discussed: 'Consult skipped by client — proceeded directly to quoting.',
@@ -743,8 +732,7 @@ export default function AssessPage() {
                 <button type="button" onClick={async () => {
                     // Create assessment record if it doesn't exist yet
                     if (!assessment && job) {
-                      const supabase = (await import('@/lib/supabase/client')).createClient()
-                      const { data: newAssess } = await supabase.from('site_assessments').insert({ job_id: job.id, consult_date: new Date().toISOString() }).select().single()
+                                const { data: newAssess } = await supabase.from('site_assessments').insert({ job_id: job.id, consult_date: new Date().toISOString() }).select().single()
                       if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
                       await new Promise(r => setTimeout(r, 100))
                     }
