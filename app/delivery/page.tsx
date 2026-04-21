@@ -4,6 +4,7 @@ import React from 'react'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
@@ -133,9 +134,9 @@ export default function DeliveryPage() {
   const [submittingVariation, setSubmittingVariation] = useState(false)
   const [variationError, setVariationError] = useState<string|null>(null)
   const [isTradie, setIsTradie] = useState(false)
+  const supabase = useSupabase()
 
   useEffect(() => {
-    const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
@@ -216,7 +217,6 @@ export default function DeliveryPage() {
 
   const uploadPhoto = async (milestoneId: string, file: File) => {
     setUploadingPhoto(milestoneId)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const ext = file.name.split('.').pop()
     const filePath = `milestone-photos/${milestoneId}/${Date.now()}.${ext}`
@@ -236,7 +236,6 @@ export default function DeliveryPage() {
     if (!variationForm.title || !job) return
     setSubmittingVariation(true)
     setVariationError(null)
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     const { data: variation, error: varErr } = await supabase.from('variations').insert({
       job_id: job.id,
@@ -266,7 +265,6 @@ export default function DeliveryPage() {
   }
 
   const respondToVariation = async (variationId: string, approved: boolean, response: string) => {
-    const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('variations').update({
       status: approved ? 'approved' : 'rejected',
@@ -299,7 +297,6 @@ export default function DeliveryPage() {
   }
 
   const approveWorkOnly = async (id: string) => {
-    const supabase = createClient()
     await supabase.from('milestones').update({
       status: 'approved',
       approved_at: new Date().toISOString(),
@@ -322,8 +319,7 @@ export default function DeliveryPage() {
     try {
       const milestone = milestones.find((m: any) => m.id === id)
       if (milestone && job && profile) {
-        const supabaseV = createClient()
-        await supabaseV.from('vault_documents').insert({
+        await supabase.from('vault_documents').insert({
           user_id: profile.id,
           job_id: job.id,
           job_title: job.title,
@@ -343,15 +339,13 @@ export default function DeliveryPage() {
   }
 
   const approveM = async (id: string) => {
-    const supabase = createClient()
     await supabase.from('milestones').update({ status: 'approved', approved_at: new Date().toISOString() }).eq('id', id)
     const updated = milestones.map((m: any) => m.id === id ? { ...m, status: 'approved', approved_at: new Date().toISOString() } : m)
     setMilestones(updated)
     // Auto-activate next pending milestone
     const nextPending = updated.find((m: any) => m.status === 'pending')
     if (nextPending) {
-      const supabase2 = createClient()
-      await supabase2.from('milestones').update({ status: 'active' }).eq('id', nextPending.id)
+      await supabase.from('milestones').update({ status: 'active' }).eq('id', nextPending.id)
       setMilestones(prev => prev.map((m: any) => m.id === nextPending.id ? { ...m, status: 'active' } : m))
     }
     setPayingMilestone(null)
@@ -361,8 +355,7 @@ export default function DeliveryPage() {
     try {
       const milestone = milestones.find((m: any) => m.id === id)
       if (milestone && job && profile) {
-        const supabaseV = createClient()
-        await supabaseV.from('vault_documents').insert({
+        await supabase.from('vault_documents').insert({
           user_id: profile.id,
           job_id: job.id,
           job_title: job.title,
@@ -382,9 +375,8 @@ export default function DeliveryPage() {
     }).catch(() => {})
     const allDone = milestones.every(m => m.id === id ? true : m.status === 'approved')
     if (allDone && job) {
-      const supabase2 = createClient()
-      await supabase2.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
-      await supabase2.from('job_messages').insert({
+      await supabase.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
+      await supabase.from('job_messages').insert({
         job_id: job.id,
         sender_id: profile?.id,
         body: 'All milestones approved — the job is ready for sign-off.',
@@ -572,8 +564,7 @@ export default function DeliveryPage() {
                       <button type="button" onClick={async () => {
                         const idx = milestones.findIndex((x:any) => x.id === m.id)
                         if (idx <= 0) return
-                        const supabase = createClient()
-                        const prev = milestones[idx - 1]
+                                            const prev = milestones[idx - 1]
                         await supabase.from('milestones').update({ order_index: idx }).eq('id', prev.id)
                         await supabase.from('milestones').update({ order_index: idx - 1 }).eq('id', m.id)
                         // Update state in place — no reload needed
@@ -587,8 +578,7 @@ export default function DeliveryPage() {
                       <button type="button" onClick={async () => {
                         const idx = milestones.findIndex((x:any) => x.id === m.id)
                         if (idx >= milestones.length - 1) return
-                        const supabase = createClient()
-                        const next = milestones[idx + 1]
+                                            const next = milestones[idx + 1]
                         await supabase.from('milestones').update({ order_index: idx }).eq('id', next.id)
                         await supabase.from('milestones').update({ order_index: idx + 1 }).eq('id', m.id)
                         // Update state in place — no reload needed
