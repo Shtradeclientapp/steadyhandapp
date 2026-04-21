@@ -27,12 +27,15 @@ export default function ComparePage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      const { data: jobsData } = await supabase
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
+      let jobsQuery = supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, availability_message, availability_visible)')
         .eq('client_id', session.user.id)
-        .in('status', ['compare','quote','shortlisted','assess','consult'])
+        .in('status', ['compare','quote','shortlisted','assess','consult','agreement'])
         .order('created_at', { ascending: false })
+      if (urlJobId) jobsQuery = jobsQuery.eq('id', urlJobId)
+      const { data: jobsData } = await jobsQuery
       setJobs(jobsData || [])
       if (jobsData && jobsData.length > 0) {
         await loadQuotes(jobsData[0].id, supabase)

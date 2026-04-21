@@ -142,17 +142,19 @@ export default function DeliveryPage() {
       const isT = prof?.role === 'tradie'
       setIsTradie(isT)
       const col = isT ? 'tradie_id' : 'client_id'
-      const { data: jobs } = await supabase
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
+      let jobsQuery = supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
         .eq(col, session.user.id)
         .in('status', ['delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
+      if (urlJobId) jobsQuery = jobsQuery.eq('id', urlJobId)
+      const { data: jobs } = await jobsQuery
 
       if (jobs && jobs.length > 0) {
-        // Find the most relevant job — prefer delivery status, then most recently updated
         setAllJobs(jobs)
-        const deliveryJob = jobs.find((j: any) => j.status === 'delivery') || jobs[0]
+        const deliveryJob = urlJobId ? jobs[0] : (jobs.find((j: any) => j.status === 'delivery') || jobs[0])
         setJob(deliveryJob)
         const { data: ms } = await supabase
           .from('milestones')

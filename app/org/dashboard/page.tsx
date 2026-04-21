@@ -260,7 +260,6 @@ export default function OrgDashboardPage() {
         <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
           <a href="/org/properties/new" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#D4522A', borderRadius:'6px' }}>+ Add property</a>
           <a href="/org/request" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#2E7D60', borderRadius:'6px' }}>+ New job request</a>
-          <a href="/request" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none', padding:'7px 14px', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'6px' }}>New job</a>
           <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Personal dashboard</a>
         </div>
       </nav>

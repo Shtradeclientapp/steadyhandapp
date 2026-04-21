@@ -67,8 +67,13 @@ export default function JobHubPage() {
   }, [])
 
   if (loading) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
-      <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading...</p>
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
+      <div style={{ background:'#0A0A0A', height:'120px' }} />
+      <div style={{ maxWidth:'800px', margin:'0 auto', padding:'28px 24px' }}>
+        {[1,2,3].map(i => (
+          <div key={i} style={{ background:'#E8F0EE', borderRadius:'12px', height:'80px', marginBottom:'12px', opacity: 1 - i * 0.2 }} />
+        ))}
+      </div>
     </div>
   )
   if (!job) return null

@@ -9,13 +9,8 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
     case 'matching':
     case 'shortlisted':
       return { icon: '👥', headline: 'Review your matches', sub: 'Tradies have been shortlisted - compare and invite one to quote', urgent: true }
-    case 'consult': {
-      const hasConsult = job.site_assessments?.length > 0
-      const confirmed = job.site_assessments?.[0]?.slot_confirmed_at
-      if (!hasConsult) return { icon: '📅', headline: 'Book your consult', sub: 'Arrange a site visit with your tradie before quoting begins', urgent: true }
-      if (!confirmed) return { icon: '⏳', headline: 'Awaiting consult confirmation', sub: 'Your tradie needs to confirm the appointment time', urgent: false }
-      return { icon: '📋', headline: 'Consult booked', sub: 'Your site visit is scheduled - notes will appear here after', urgent: false }
-    }
+    case 'consult':
+      return { icon: '📋', headline: 'Consult in progress', sub: 'Use the message thread to arrange a site visit with your tradie — notes will appear here once complete', urgent: true }
     case 'compare': {
       const hasQuote = job.quotes?.length > 0
       if (!hasQuote) return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote - you will be notified when it arrives', urgent: false }
@@ -97,7 +92,7 @@ export default function DashboardPage() {
         .eq('client_id', session.user.id)
         .order('created_at', { ascending: false })
       setJobs(data || [])
-      if (typeof window !== 'undefined' && !localStorage.getItem('client_setup_complete')) {
+      if (!prof?.onboarding_complete) {
         setShowClientWizard(true)
       }
 
@@ -589,7 +584,8 @@ export default function DashboardPage() {
                 ))}
               </div>
               <button type="button" onClick={() => {
-                if (typeof window !== 'undefined') localStorage.setItem('client_setup_complete', '1')
+                const supabaseOB = createClient()
+                await supabaseOB.from('profiles').update({ onboarding_complete: true }).eq('id', user?.id)
                 setShowClientWizard(false)
               }} style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'12px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to my dashboard →
