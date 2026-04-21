@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Barlow, Barlow_Condensed, Aboreto } from 'next/font/google'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import './globals.css'
 
 const barlow = Barlow({
@@ -59,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${barlow.variable} ${barlowCondensed.variable} ${aboreto.variable}`}>
       <body>
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
         <script dangerouslySetInnerHTML={{ __html: oneSignalScript }} />
       </body>
