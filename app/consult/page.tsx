@@ -61,12 +61,18 @@ export default function AssessPage() {
       const resolvedTradie = tradie || hasTraidieProfile
       const col = resolvedTradie ? 'tradie_id' : 'client_id'
       if (resolvedTradie !== tradie) setIsTradie(resolvedTradie)
-      const { data: jobs } = await supabase
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
+      let jobsQuery = supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
-        .eq(col, session.user.id)
         .in('status', ['assess', 'consult', 'quote', 'compare', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
+      if (urlJobId) {
+        jobsQuery = jobsQuery.eq('id', urlJobId)
+      } else {
+        jobsQuery = jobsQuery.eq(col, session.user.id)
+      }
+      const { data: jobs } = await jobsQuery
         
 
       if (jobs && jobs.length > 0) {
@@ -309,7 +315,7 @@ export default function AssessPage() {
           <>
             <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult scheduled for this job</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
-              The client has not yet scheduled a consult. You can message them to arrange a site visit, or proceed to quote if both parties are happy to skip this stage.
+              Use the message thread to arrange a site visit time with the client. Both parties need to complete and acknowledge their consult notes before the job moves to the quoting stage.
             </p>
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
               <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to dashboard</a>
@@ -318,7 +324,7 @@ export default function AssessPage() {
           </>
         ) : (
           <>
-            <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult is currently scheduled</p>
+            <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult notes yet</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
               If you skipped the consult stage, contact your tradie through messages to arrange a site visit. Or continue to the quote stage if a consult is not needed.
             </p>
@@ -424,24 +430,16 @@ export default function AssessPage() {
                 <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.45)', margin:0 }}>with {job.tradie.business_name}</p>
               )}
             </div>
-            {/* ── Consult date picker ── */}
+            {/* ── Consult scheduling — via messenger ── */}
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Consult date</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'12px' }}>
-                {assessment?.consult_date
-                  ? 'Set to ' + new Date(assessment.consult_date).toLocaleDateString('en-AU', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) + '. Either party can update this.'
-                  : 'Agree on a time via the message thread, then confirm it here.'}
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Arranging the site visit</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'12px' }}>
+                Use the message thread to agree on a time, location and who will attend. All consult arrangements are kept in the message record so both parties have a clear reference.
               </p>
-              <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
-                <input type="datetime-local"
-                  defaultValue={assessment?.consult_date ? new Date(assessment.consult_date).toISOString().slice(0,16) : ''}
-                  onChange={e => setConsultDate(e.target.value)}
-                  style={{ flex:1, padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
-                <button type="button" onClick={() => saveConsultDate(consultDate)} disabled={!consultDate || savingDate}
-                  style={{ background:'#9B6B9B', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !consultDate || savingDate ? 0.5 : 1, flexShrink:0 }}>
-                  {savingDate ? 'Saving...' : assessment?.consult_date ? 'Update' : 'Set date'}
-                </button>
-              </div>
+              <a href={'/messages' + (job?.id ? '?job=' + job.id : '')}
+                style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>
+                Open message thread →
+              </a>
             </div>
 
             {assessment?.consult_date && (
