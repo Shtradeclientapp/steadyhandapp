@@ -135,6 +135,7 @@ export default function TradieDashboard() {
   const [consults, setConsults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [tradieAnalytics, setTradieAnalytics] = useState<any[]>([])
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
   const [xeroConnected, setXeroConnected] = useState(false)
@@ -232,6 +233,16 @@ export default function TradieDashboard() {
         upcoming.sort((a: any, b: any) => new Date(a.consult_date).getTime() - new Date(b.consult_date).getTime())
         setConsults(upcoming)
       }
+      // Load tradie's own job analytics
+      if (merged.length > 0) {
+        const mergedIds = merged.map((j: any) => j.id)
+        const { data: analyticsData } = await supabase
+          .from('job_analytics')
+          .select('*')
+          .in('job_id', mergedIds)
+        setTradieAnalytics(analyticsData || [])
+      }
+
       setLoading(false)
     })
   }, [])
@@ -731,6 +742,47 @@ export default function TradieDashboard() {
             </div>
           </>
         )}
+
+        {/* Analytics insights */}
+        {tradieAnalytics.length > 0 && (() => {
+          const completed = tradieAnalytics.filter(a => a.signoff_completed_at)
+          const avgDelivery = completed.filter(a => a.days_delivery > 0).length > 0
+            ? Math.round(completed.filter(a => a.days_delivery > 0).reduce((s, a) => s + a.days_delivery, 0) / completed.filter(a => a.days_delivery > 0).length)
+            : null
+          const withVariations = tradieAnalytics.filter(a => a.variation_count > 0).length
+          const warrantyIssues = tradieAnalytics.reduce((s, a) => s + (a.warranty_issues_count || 0), 0)
+          const warrantyResolved = tradieAnalytics.reduce((s, a) => s + (a.warranty_issues_resolved || 0), 0)
+          const openWarranty = warrantyIssues - warrantyResolved
+          const avgScopeToStart = tradieAnalytics.filter(a => a.days_scope_to_first_milestone > 0).length > 0
+            ? Math.round(tradieAnalytics.filter(a => a.days_scope_to_first_milestone > 0).reduce((s, a) => s + a.days_scope_to_first_milestone, 0) / tradieAnalytics.filter(a => a.days_scope_to_first_milestone > 0).length)
+            : null
+
+          const insights = [
+            avgDelivery && { icon:'⚡', text: 'Your jobs complete in an average of ' + avgDelivery + ' days once work starts', positive: avgDelivery <= 21 },
+            completed.length > 0 && { icon:'✅', text: completed.length + ' job' + (completed.length > 1 ? 's' : '') + ' signed off successfully', positive: true },
+            warrantyIssues > 0 && openWarranty === 0 && { icon:'🛡️', text: 'All ' + warrantyIssues + ' warranty issue' + (warrantyIssues > 1 ? 's' : '') + ' resolved — clean record', positive: true },
+            openWarranty > 0 && { icon:'⚠️', text: openWarranty + ' warranty issue' + (openWarranty > 1 ? 's' : '') + ' awaiting resolution', positive: false },
+            withVariations > 0 && { icon:'📋', text: withVariations + ' job' + (withVariations > 1 ? 's' : '') + ' included scope variations', positive: null },
+            avgScopeToStart && { icon:'🚀', text: 'Average ' + avgScopeToStart + ' days from scope agreement to starting work', positive: null },
+          ].filter(Boolean) as any[]
+
+          if (!insights.length) return null
+
+          return (
+            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px', marginBottom:'16px' }}>
+              <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', margin:'0 0 14px' }}>Your job insights</p>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                {insights.map((item: any, i: number) => (
+                  <div key={i} style={{ display:'flex', alignItems:'flex-start', gap:'10px', padding:'10px 12px', background:'white', borderRadius:'8px', borderLeft: '3px solid ' + (item.positive === true ? '#2E7D60' : item.positive === false ? '#C07830' : 'rgba(28,43,50,0.15)') }}>
+                    <span style={{ fontSize:'15px', flexShrink:0, marginTop:'1px' }}>{item.icon}</span>
+                    <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0, lineHeight:1.5 }}>{item.text}</p>
+                  </div>
+                ))}
+              </div>
+              <a href="/tradie/jobs" style={{ display:'inline-block', marginTop:'12px', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>View job analytics →</a>
+            </div>
+          )
+        })()}
 
         {/* Steadytools entry point */}
         <div style={{ marginTop:'32px', paddingTop:'24px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
