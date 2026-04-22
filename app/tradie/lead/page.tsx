@@ -24,6 +24,7 @@ export default function TradieLead() {
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState<string|null>(null)
+  const [profileLoaded, setProfileLoaded] = useState(false)
 
   // Invite form
   const [invite, setInvite] = useState({ client_name:'', client_email:'', trade_category:'', suburb:'', job_title:'', notes:'' })
@@ -47,6 +48,7 @@ export default function TradieLead() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
+      setProfileLoaded(true)
       const { data: existing } = await supabase.from('tradie_leads').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false })
       setLeads(existing || [])
     })
@@ -60,7 +62,8 @@ export default function TradieLead() {
 
   const handleInvite = async () => {
     if (!invite.client_email || !invite.job_title) return
-    if (!profile?.tradie?.id) { setSendError('Profile not loaded — please refresh and try again'); return }
+    if (!profileLoaded) return
+    if (!profile?.tradie?.id) { setSendError('Could not find your tradie profile — please refresh and try again'); return }
     setSending(true)
     setSendError(null)
     const supabase = createClient()
@@ -108,7 +111,8 @@ export default function TradieLead() {
 
   const handleImport = async () => {
     if (!imp.client_name || !imp.job_title) return
-    if (!profile?.tradie?.id) { setSendError('Profile not loaded — please refresh and try again'); return }
+    if (!profileLoaded) return
+    if (!profile?.tradie?.id) { setSendError('Could not find your tradie profile — please refresh and try again'); return }
     setSending(true)
     setSendError(null)
     const supabase = createClient()
