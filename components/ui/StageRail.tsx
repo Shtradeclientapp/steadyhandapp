@@ -31,7 +31,9 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
-      setJobId(params.get('id') || params.get('job_id'))
+      // Support ?job_id=, ?id=, and path-based /tradie/jobs/[id]
+      const pathId = window.location.pathname.match(/\/tradie\/jobs\/([^/?]+)/)?.[1]
+      setJobId(params.get('job_id') || params.get('id') || pathId || null)
     }
   }, [])
 
@@ -41,10 +43,8 @@ export function StageRail({ currentPath, jobStatus }: StageRailProps) {
 
   const getHref = (stage: typeof STAGES[0]) => {
     if (!isClickable(stage)) return '#'
-    // Pass job_id to agreement, consult and delivery so they load the correct job
-    if (stage.p === '/agreement' && jobId) return '/agreement?job_id=' + jobId
-    if (stage.p === '/consult' && jobId) return '/consult?job_id=' + jobId
-    if (stage.p === '/delivery' && jobId) return '/delivery?job_id=' + jobId
+    // Pass job_id to all stage pages that support it
+    if (jobId && stage.p !== '/request') return stage.p + '?job_id=' + jobId
     return stage.p
   }
 

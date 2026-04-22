@@ -110,7 +110,8 @@ export default function TradieJobHub() {
   )
 
   const goToStage = (path: string) => {
-    window.location.href = path + '?job_id=' + job?.id
+    const param = path === '/tradie/job' ? '?id=' : '?job_id='
+    window.location.href = path + param + job?.id
     setStageDropdown(false)
   }
 

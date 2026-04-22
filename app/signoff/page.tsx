@@ -233,7 +233,7 @@ export default function SignoffPage() {
           <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
             <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>This job has been signed off</p>
             <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'12px' }}>Your 90-day warranty period is now active.</p>
-            <a href="/warranty">
+            <a href={'/warranty?job_id=' + job?.id}>
               <button type="button" style={{ background:'#2E7D60', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 Go to warranty →
               </button>

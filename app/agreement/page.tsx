@@ -205,7 +205,7 @@ export default function AgreementPage() {
       await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(() => {})
       if (updated.client_signed_at && updated.tradie_signed_at) {
         await supabase.from('jobs').update({ status:'delivery' }).eq('id', job.id)
-        setTimeout(() => { window.location.href = isTradie ? '/tradie/job?id=' + job.id : '/delivery' }, 1000)
+        setTimeout(() => { window.location.href = isTradie ? '/tradie/jobs/' + job.id : '/delivery?job_id=' + job.id }, 1000)
       }
     } catch (err: any) {
       setSaveError('Signing failed — ' + (err.message || 'please try again'))
