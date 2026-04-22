@@ -18,19 +18,15 @@ const PINNED_ITEMS: any[] = [
 
 async function fetchIntelligence(category: any) {
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/observatory', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'You are a WA trade industry intelligence analyst. Return ONLY a JSON array of 4 recent intelligence items. Each item must have: id (string), title (string max 80 chars), summary (string max 200 chars), date (YYYY-MM-DD), source (string), url (string), significance ("high"|"medium"|"low"). Return ONLY the JSON array, no markdown.',
-        messages: [{ role: 'user', content: `Find 4 important recent developments for WA trade professionals related to: ${category.prompt}` }],
+        prompt: `Find 4 important recent developments for WA trade professionals related to: ${category.prompt}`,
       }),
     })
     const data = await response.json()
-    const text = data.content?.[0]?.text || '[]'
-    return JSON.parse(text.replace(/```json|```/g, '').trim()).map((i: any) => ({ ...i, category: category.id }))
+    return (data.items || []).map((i: any) => ({ ...i, category: category.id }))
   } catch { return [] }
 }
 
