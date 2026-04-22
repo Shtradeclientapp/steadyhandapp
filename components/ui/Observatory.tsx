@@ -366,7 +366,7 @@ export function ObservatoryCarousel() {
         </div>
 
         {/* Main carousel card */}
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 280px', gap:'24px', alignItems:'start' }}>
+        <div className="observatory-grid" style={{ display:'grid', gridTemplateColumns:'1fr 280px', gap:'24px', alignItems:'start' }}>
 
           {/* Active item */}
           <a href="/observatory" style={{ textDecoration:'none', display:'block' }}>

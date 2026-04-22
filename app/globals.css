@@ -1074,3 +1074,13 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     padding-right: max(16px, env(safe-area-inset-right)) !important;
   }
 }
+
+/* ── Observatory carousel mobile ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .observatory-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .observatory-grid > div:last-child {
+    display: none !important;
+  }
+}

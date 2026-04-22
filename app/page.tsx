@@ -122,11 +122,10 @@ export default function Home() {
       </div>
 
       {/* OBSERVATORY TEASER */}
-      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'16px 32px', display:'flex', justifyContent:'center' }}>
-        <a href="/observatory" style={{ display:'inline-flex', alignItems:'center', gap:'10px', background:'#0A0A0A', color:'rgba(216,228,225,0.85)', textDecoration:'none', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, letterSpacing:'0.3px' }}>
-          <span style={{ fontSize:'15px' }}>🔭</span>
-          Find the latest updates at the Steadyhand WA Data Observatory
-          <span style={{ color:'#D4522A', fontSize:'14px' }}>→</span>
+      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'14px 20px', display:'flex', justifyContent:'center' }}>
+        <a href="/observatory" style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'#0A0A0A', color:'rgba(216,228,225,0.85)', textDecoration:'none', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textAlign:'center' as const, lineHeight:1.4 }}>
+          <span style={{ fontSize:'15px', flexShrink:0 }}>🔭</span>
+          <span>Steadyhand WA Data Observatory <span style={{ color:'#D4522A' }}>→</span></span>
         </a>
       </div>
 
