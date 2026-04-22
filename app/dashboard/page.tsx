@@ -87,34 +87,29 @@ export default function DashboardPage() {
         return
       }
       setProfile(prof)
-      const { data } = await supabase
-        .from('jobs')
-        .select('*, tradie:tradie_profiles(business_name)')
-        .eq('client_id', session.user.id)
-        .order('created_at', { ascending: false })
+      // Parallelise independent queries
+      const [{ data }, { data: buildsData }, { count: unreadTotal }] = await Promise.all([
+        supabase.from('jobs')
+          .select('*, tradie:tradie_profiles(business_name)')
+          .eq('client_id', session.user.id)
+          .order('created_at', { ascending: false }),
+        supabase.from('diy_projects')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(3),
+        supabase.from('job_messages')
+          .select('id', { count: 'exact', head: true })
+          .neq('sender_id', session.user.id)
+          .not('read_by', 'cs', JSON.stringify([session.user.id])),
+      ])
       setJobs(data || [])
-      if (!prof?.onboarding_complete) {
-        setShowClientWizard(true)
-      }
-
-      const { data: buildsData } = await supabase
-        .from('diy_projects')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
-        .limit(3)
       setBuilds(buildsData || [])
-
-      // Count unread messages using read_by tracking
-      const { count: unreadTotal } = await supabase
-        .from('job_messages')
-        .select('id', { count: 'exact', head: true })
-        .neq('sender_id', session.user.id)
-        .not('read_by', 'cs', JSON.stringify([session.user.id]))
       setUnreadCount(unreadTotal || 0)
+      if (!prof?.onboarding_complete) setShowClientWizard(true)
 
-      // Fetch upcoming consults
+      // Assessments depend on job IDs so run after
       const jobIds = (data || []).map((j: any) => j.id)
       if (jobIds.length > 0) {
         const { data: assessments } = await supabase
@@ -122,7 +117,6 @@ export default function DashboardPage() {
           .select('*, job:jobs(id, title, tradie:tradie_profiles(business_name))')
           .in('job_id', jobIds)
           .not('consult_date', 'is', null)
-        // Filter: consult date within last 7 days or in future
         const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
         const upcoming = (assessments || []).filter((a: any) => new Date(a.consult_date) > cutoff)
         upcoming.sort((a: any, b: any) => new Date(a.consult_date).getTime() - new Date(b.consult_date).getTime())

@@ -159,62 +159,48 @@ export default function TradieDashboard() {
       setUser(session.user)
       setProfile(prof)
 
-      // Check Xero connection status
-      const xeroRes = await fetch('/api/xero/status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: session.user.id }),
-      })
+      // Parallelise Xero status, Stripe status and assigned jobs — all independent
+      const [xeroRes, stripeRes, { data: assignedJobs }, { data: qrs }, { count: unreadTotal }] = await Promise.all([
+        fetch('/api/xero/status', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session.user.id }) }),
+        fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'get_account_status', tradie_id: session.user.id }) }),
+        supabase.from('jobs')
+          .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id), quotes(id, tradie_id)')
+          .eq('tradie_id', session.user.id)
+          .order('updated_at', { ascending: false }),
+        supabase.from('quote_requests').select('job_id').eq('tradie_id', session.user.id),
+        supabase.from('job_messages')
+          .select('id', { count: 'exact', head: true })
+          .neq('sender_id', session.user.id)
+          .not('read_by', 'cs', JSON.stringify([session.user.id])),
+      ])
+
       const xeroData = await xeroRes.json()
       setXeroConnected(xeroData.connected || false)
       if (xeroData.tenant_name) setXeroTenant(xeroData.tenant_name)
 
-      const stripeRes  = await fetch('/api/stripe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'get_account_status', tradie_id: session.user.id }),
-      })
       const stripeData = await stripeRes.json()
       setStripeConnected(stripeData.connected || false)
-      // Show setup wizard if onboarding not complete
+
+      setUnreadCount(unreadTotal || 0)
+
+      // Setup wizard + onboarding checks
       const step = prof.tradie?.onboarding_step || 'profile'
-      if (step !== 'active' && step !== 'complete') {
-        setShowSetupWizard(true)
-      }
-      // Auto-trigger 7-day check-in email if still at invite_client stage after 7 days
+      if (step !== 'active' && step !== 'complete') setShowSetupWizard(true)
       if (step === 'invite_client' && prof.tradie?.id) {
         const joined = new Date(prof.created_at || Date.now())
         const daysSince = (Date.now() - joined.getTime()) / 86400000
         const checkinSent = typeof window !== 'undefined' && localStorage.getItem('checkin_sent_' + prof.tradie.id)
         if (daysSince >= 7 && !checkinSent) {
-          fetch('/api/onboarding', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tradie_id: prof.tradie.id, email_type: 'checkin' }),
-          }).catch(() => {})
+          fetch('/api/onboarding', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tradie_id: prof.tradie.id, email_type:'checkin' }) }).catch(() => {})
           if (typeof window !== 'undefined') localStorage.setItem('checkin_sent_' + prof.tradie.id, '1')
         }
       }
-
-      // Show Steadytools spotlight once for new tradies who have completed profile
       if (step === 'invite_client' || step === 'first_job') {
         const seen = typeof window !== 'undefined' && localStorage.getItem('steadytools_spotlight_seen')
         if (!seen) setShowSpotlight(true)
       }
 
-      // Assigned jobs
-      const { data: assignedJobs } = await supabase
-        .from('jobs')
-        .select('*, milestones(*), client:profiles!jobs_client_id_fkey(full_name, email, suburb), quote_requests(status, tradie_id), quotes(id, tradie_id)')
-        .eq('tradie_id', session.user.id)
-        .order('updated_at', { ascending: false })
-
-      // Jobs where a quote was requested
-      const { data: qrs } = await supabase
-        .from('quote_requests')
-        .select('job_id')
-        .eq('tradie_id', session.user.id)
-
+      // Merge assigned jobs + quoted jobs (deduplicated)
       const quotedJobIds = (qrs || []).map((q: any) => q.job_id)
       let quotedJobs: any[] = []
       if (quotedJobIds.length > 0) {
@@ -225,22 +211,14 @@ export default function TradieDashboard() {
           .order('updated_at', { ascending: false })
         quotedJobs = qjData || []
       }
-
       const assignedIds = new Set((assignedJobs || []).map((j: any) => j.id))
       const merged = [...(assignedJobs || []), ...quotedJobs.filter((j: any) => !assignedIds.has(j.id))]
       setJobs(merged)
-      // Count unread messages
-      const { count: unreadTotal } = await supabase
-        .from('job_messages')
-        .select('id', { count: 'exact', head: true })
-        .neq('sender_id', session.user.id)
-        .not('read_by', 'cs', JSON.stringify([session.user.id]))
-      setUnreadCount(unreadTotal || 0)
 
+      // Assessments depend on job IDs — run after merge
       const allJobIds = merged.map((j: any) => j.id)
       if (allJobIds.length > 0) {
-        const supabase2 = (await import('@/lib/supabase/client')).createClient()
-        const { data: assessments } = await supabase2
+        const { data: assessments } = await supabase
           .from('site_assessments')
           .select('*, job:jobs(id, title, client:profiles!jobs_client_id_fkey(full_name))')
           .in('job_id', allJobIds)

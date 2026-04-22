@@ -42,34 +42,36 @@ function MessagesPageInner() {
 
       setJobs(jobData || [])
 
-      // Load last message preview for each job
+      // Load message previews — 2 bulk queries instead of N*2 queries
       if (jobData && jobData.length > 0) {
-        const supabase2 = supabase
-        const previews: Record<string, any> = {}
-        const unreadCounts: Record<string, number> = {}
-        const { data: { session: sess } } = await supabase2.auth.getSession()
-        const uid = sess?.user.id
-        await Promise.all((jobData || []).map(async (j: any) => {
-          const { data: lastMsg } = await supabase2
-            .from('job_messages')
-            .select('body, created_at, sender_id')
-            .eq('job_id', j.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single()
-          if (lastMsg) previews[j.id] = lastMsg
+        const uid = session.user.id
+        const jobIds = jobData.map((j: any) => j.id)
 
-          // Count unread messages for this job
-          if (uid) {
-            const { count } = await supabase2
-              .from('job_messages')
-              .select('id', { count: 'exact', head: true })
-              .eq('job_id', j.id)
-              .neq('sender_id', uid)
-              .not('read_by', 'cs', JSON.stringify([uid]))
-            unreadCounts[j.id] = count || 0
-          }
-        }))
+        // Fetch last 1 message per job in a single query, then pick latest per job in JS
+        const { data: allPreviews } = await supabase
+          .from('job_messages')
+          .select('job_id, body, created_at, sender_id')
+          .in('job_id', jobIds)
+          .order('created_at', { ascending: false })
+
+        const previews: Record<string, any> = {}
+        for (const msg of (allPreviews || [])) {
+          if (!previews[msg.job_id]) previews[msg.job_id] = msg
+        }
+
+        // Fetch all unread messages in a single query, then count per job in JS
+        const { data: unreadMsgs } = await supabase
+          .from('job_messages')
+          .select('job_id')
+          .in('job_id', jobIds)
+          .neq('sender_id', uid)
+          .not('read_by', 'cs', JSON.stringify([uid]))
+
+        const unreadCounts: Record<string, number> = {}
+        for (const msg of (unreadMsgs || [])) {
+          unreadCounts[msg.job_id] = (unreadCounts[msg.job_id] || 0) + 1
+        }
+
         setLastMessages(previews)
         setUnread(unreadCounts)
       }
