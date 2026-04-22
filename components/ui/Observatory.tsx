@@ -303,3 +303,121 @@ export function ObservatoryWidget() {
 }
 
 export default ObservatoryPage
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LANDING PAGE CAROUSEL — auto-advancing, full-width feature section
+// ══════════════════════════════════════════════════════════════════════════════
+export function ObservatoryCarousel() {
+  const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [activeIdx, setActiveIdx] = useState(0)
+  const [paused, setPaused] = useState(false)
+
+  useEffect(() => {
+    // Load 2 items from 3 random categories for variety
+    const shuffled = [...CATEGORIES].sort(() => Math.random() - 0.5).slice(0, 3)
+    Promise.all(shuffled.map(cat =>
+      fetchIntelligence(cat).then(items =>
+        items.slice(0, 2).map((i: any) => ({
+          ...i,
+          categoryLabel: cat.label,
+          categoryColor: cat.color,
+          categoryIcon: cat.icon,
+        }))
+      )
+    )).then(results => {
+      setItems(results.flat().slice(0, 5))
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
+
+  // Auto-advance every 5s
+  useEffect(() => {
+    if (paused || items.length === 0) return
+    const t = setTimeout(() => setActiveIdx(i => (i + 1) % items.length), 5000)
+    return () => clearTimeout(t)
+  }, [activeIdx, paused, items.length])
+
+  if (loading) return (
+    <div style={{ background:'#0A0A0A', padding:'64px 32px' }}>
+      <div style={{ maxWidth:'900px', margin:'0 auto' }}>
+        <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
+        <div style={{ height:'16px', width:'200px', borderRadius:'4px', background:'linear-gradient(90deg,rgba(255,255,255,0.05) 25%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.05) 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.4s infinite', marginBottom:'32px' }} />
+        <div style={{ height:'120px', borderRadius:'12px', background:'linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.4s infinite' }} />
+      </div>
+    </div>
+  )
+
+  if (!items.length) return null
+
+  const active = items[activeIdx]
+
+  return (
+    <div style={{ background:'#0A0A0A', padding:'64px 0' }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
+      <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'0 32px' }}>
+
+        {/* Header */}
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap' as const, gap:'12px' }}>
+          <div>
+            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Live intelligence</p>
+            <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>WA TRADE OBSERVATORY</h2>
+          </div>
+          <a href="/observatory" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', padding:'8px 16px', borderRadius:'7px' }}>
+            View full observatory →
+          </a>
+        </div>
+
+        {/* Main carousel card */}
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 280px', gap:'24px', alignItems:'start' }}>
+
+          {/* Active item */}
+          <a href="/observatory" style={{ textDecoration:'none', display:'block' }}>
+            <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderLeft:`3px solid ${active.categoryColor}`, borderRadius:'12px', padding:'28px 32px', minHeight:'160px', transition:'background 0.2s' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px', flexWrap:'wrap' as const }}>
+                <span style={{ fontSize:'18px' }}>{active.categoryIcon}</span>
+                <span style={{ fontSize:'11px', fontWeight:600, color:active.categoryColor, background:active.categoryColor + '20', padding:'3px 10px', borderRadius:'20px', letterSpacing:'0.5px' }}>{active.categoryLabel}</span>
+                {active.significance && (
+                  <span style={{ fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'20px', background:'rgba(255,255,255,0.06)', color:'rgba(216,228,225,0.5)' }}>
+                    {active.significance === 'high' ? '● High significance' : active.significance === 'medium' ? '◐ Medium' : '○ Low'}
+                  </span>
+                )}
+                <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', marginLeft:'auto' }}>{active.date}</span>
+              </div>
+              <p style={{ fontSize:'17px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 10px', lineHeight:1.4 }}>{active.title}</p>
+              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', margin:'0 0 16px', lineHeight:1.7 }}>{active.summary}</p>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.3)' }}>{active.source}</span>
+                <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500 }}>Read more →</span>
+              </div>
+            </div>
+          </a>
+
+          {/* Item list */}
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+            {items.map((item, i) => (
+              <button key={i} type="button" onClick={() => setActiveIdx(i)}
+                style={{ background: i === activeIdx ? 'rgba(255,255,255,0.06)' : 'transparent', border:`1px solid ${i === activeIdx ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)'}`, borderLeft:`2px solid ${i === activeIdx ? item.categoryColor : 'transparent'}`, borderRadius:'8px', padding:'12px 14px', cursor:'pointer', textAlign:'left' as const, transition:'all 0.15s' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'4px' }}>
+                  <span style={{ fontSize:'12px' }}>{item.categoryIcon}</span>
+                  <span style={{ fontSize:'10px', color:item.categoryColor, fontWeight:600 }}>{item.categoryLabel}</span>
+                </div>
+                <p style={{ fontSize:'12px', color: i === activeIdx ? 'rgba(216,228,225,0.8)' : 'rgba(216,228,225,0.4)', margin:0, lineHeight:1.4, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' as const, overflow:'hidden' }}>{item.title}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Progress dots */}
+        <div style={{ display:'flex', gap:'6px', justifyContent:'center', marginTop:'24px' }}>
+          {items.map((_, i) => (
+            <button key={i} type="button" onClick={() => setActiveIdx(i)}
+              style={{ width: i === activeIdx ? '24px' : '6px', height:'4px', borderRadius:'2px', border:'none', background: i === activeIdx ? '#D4522A' : 'rgba(255,255,255,0.15)', cursor:'pointer', padding:0, transition:'all 0.3s' }} />
+          ))}
+        </div>
+
+      </div>
+    </div>
+  )
+}

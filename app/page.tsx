@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import { ObservatoryCarousel } from '@/components/ui/Observatory'
 
 export default function Home() {
   return (
@@ -285,6 +286,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* OBSERVATORY */}
+      <ObservatoryCarousel />
 
       {/* CTA */}
       <div style={{ background:'#E8F0EE' }}>
