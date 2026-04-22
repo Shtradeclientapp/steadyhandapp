@@ -66,6 +66,17 @@ export default function OrgDashboardPage() {
         .eq('org_id', prof.org_id)
         .order('updated_at', { ascending: false })
       setJobs(jobsData || [])
+
+      // Load portfolio analytics for all org jobs
+      if (jobsData && jobsData.length > 0) {
+        const jobIds = jobsData.map((j: any) => j.id)
+        const { data: analyticsData } = await supabase
+          .from('job_analytics')
+          .select('*')
+          .in('job_id', jobIds)
+        setPortfolioAnalytics(analyticsData || [])
+      }
+
       const { data: mems } = await supabase
         .from('org_memberships')
         .select('*, profile:profiles(full_name, email)')
