@@ -57,6 +57,7 @@ export default function Home() {
             <a href="#for-trade-businesses" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For tradies</a>
             <a href="/org/setup" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For property managers</a>
             <a href="#guides" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Guides</a>
+            <a href="/observatory" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>WA Trade Legislation Tracker</a>
           </div>
           <div className="nav-buttons">
             <Link href="/login"><button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#4A5E64', padding:'7px 16px', borderRadius:'7px', fontSize:'13px', cursor:'pointer' }}>Log in</button></Link>
@@ -119,14 +120,6 @@ export default function Home() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* OBSERVATORY TEASER */}
-      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'14px 20px', display:'flex', justifyContent:'center' }}>
-        <a href="/observatory" style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'#0A0A0A', color:'rgba(216,228,225,0.85)', textDecoration:'none', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textAlign:'center' as const, lineHeight:1.4 }}>
-          <span style={{ fontSize:'15px', flexShrink:0 }}>🔭</span>
-          <span>Steadyhand WA Data Observatory <span style={{ color:'#D4522A' }}>→</span></span>
-        </a>
       </div>
 
       {/* HOW IT WORKS */}
