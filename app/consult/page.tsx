@@ -874,7 +874,7 @@ export default function AssessPage() {
                   </div>
                   <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
                     Both parties have acknowledged each other&apos;s notes. The consult record is saved.
-                    {isTradie ? ' Quoting is now open — the client will compare and accept a quote to proceed.' : ' You are ready to compare quotes and select a tradie to proceed.'}
+                    {isTradie ? ' Quoting is now open — the client will compare quotes and progress to scope agreement.' : ' You are ready to compare quotes and progress to scope agreement.'}
                   </p>
                   <a href={isTradie ? '/tradie/dashboard' : '/compare'} style={{ textDecoration:'none' }}>
                     <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:600, border:'none', cursor:'pointer', width:'100%' }}>

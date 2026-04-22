@@ -670,7 +670,7 @@ export default function TradieJobPage() {
             <div style={{ margin:'0 20px 12px', background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', gap:'10px' }}>
               <span style={{ fontSize:'18px', flexShrink:0 }}>⏳</span>
               <div>
-                <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 2px' }}>Waiting for client to accept your quote</p>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 2px' }}>Waiting for client to progress to scope agreement</p>
                 <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>The client is reviewing quotes. You will be notified by email when they respond.</p>
               </div>
             </div>
@@ -921,7 +921,7 @@ export default function TradieJobPage() {
         {job?.status === 'agreement' && !scope && (
           <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'14px', padding:'24px', marginBottom:'20px' }}>
             <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#6B4FA8', letterSpacing:'0.5px', margin:'0 0 8px' }}>SCOPE AGREEMENT — ACTION REQUIRED</p>
-            <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>Your client has accepted your quote and is waiting for the scope agreement</p>
+            <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>Your client has progressed to scope agreement — review and sign below</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 16px' }}>
               Draft the scope agreement below. This defines what is included, what is excluded, the payment milestones and warranty terms. Your client will be notified to review and sign.
             </p>

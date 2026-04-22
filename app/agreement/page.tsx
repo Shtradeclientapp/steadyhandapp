@@ -294,7 +294,7 @@ export default function AgreementPage() {
             <>
               <p style={{ fontSize:'14px', color:'#0A0A0A', fontWeight:500, margin:'0 0 8px' }}>No job at agreement stage</p>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
-                You do not currently have a job that has reached the scope agreement stage. Check your dashboard for active jobs, or wait for a client to accept your quote.
+                You do not currently have a job that has reached the scope agreement stage. Check your dashboard for active jobs, or wait for a client to progress a quote to scope agreement.
               </p>
               <div style={{ display:'flex', gap:'10px' }}>
                 <a href="/tradie/dashboard" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to dashboard</a>
@@ -546,7 +546,7 @@ export default function AgreementPage() {
             {currentQuote && isTradie && (
               <div style={{ padding:'16px 32px', borderBottom:'1px solid #F0F0F0', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <div>
-                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Your accepted quote</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Quote selected for scope</p>
                   <p style={{ fontSize:'18px', fontWeight:700, color:'#0A0A0A', margin:0 }}>${Number(currentQuote.total_price).toLocaleString()} AUD inc. GST</p>
                 </div>
                 <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'3px 10px', fontWeight:500 }}>✓ Accepted</span>
