@@ -30,12 +30,14 @@ export default function WarrantyPage() {
       const isT = prof?.role === 'tradie'
       const col = isT ? 'tradie_id' : 'client_id'
       const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
-      const { data: jobs } = await supabase
+      let wQuery = supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')
         .eq(col, session.user.id)
         .in('status', ['warranty', 'complete', 'signoff'])
         .order('updated_at', { ascending: false })
+      if (urlJobId) wQuery = (wQuery as any).eq('id', urlJobId)
+      const { data: jobs } = await wQuery
         
       if (jobs && jobs.length > 0) {
         setJob(jobs[0])

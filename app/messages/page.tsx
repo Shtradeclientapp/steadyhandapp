@@ -266,6 +266,13 @@ function MessagesPageInner() {
                     No messages yet. Start the conversation below.
                   </div>
                 )}
+                {messages.length === 0 && (
+                  <div style={{ display:'flex', flexDirection:'column' as const, alignItems:'center', justifyContent:'center', height:'200px', padding:'24px', textAlign:'center' as const }}>
+                    <div style={{ fontSize:'28px', marginBottom:'10px', opacity:0.3 }}>💬</div>
+                    <p style={{ fontSize:'13px', color:'#4A5E64', fontWeight:500, marginBottom:'4px' }}>No messages yet</p>
+                    <p style={{ fontSize:'12px', color:'#9AA5AA' }}>Send the first message below.</p>
+                  </div>
+                )}
                 {messages.map((msg, idx) => {
                   const isMine = msg.sender_id === user?.id
                   const isSystem = !msg.sender_id || msg.body.startsWith('⚠') || msg.body.startsWith('✍') || msg.body.startsWith('✅') || msg.body.startsWith('📋') || msg.body.includes('has signed') || msg.body.includes('Scope updated') || msg.body.includes('milestone') || msg.body.includes('skipped')
