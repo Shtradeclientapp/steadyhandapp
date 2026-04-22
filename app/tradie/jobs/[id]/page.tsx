@@ -66,6 +66,7 @@ export default function TradieJobHub() {
         supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', jobId).order('created_at', { ascending: false }).limit(5),
       ])
 
+      if (!jobData) { window.location.href = '/tradie/dashboard'; return }
       setJob(jobData)
       setAssessment(assessData)
       setQuotes(quotesData || [])
