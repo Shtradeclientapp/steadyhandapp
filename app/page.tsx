@@ -121,17 +121,14 @@ export default function Home() {
         </div>
       </div>
 
-      {/* OBSERVATORY TEASER STRIP */}
-      <a href="/observatory" style={{ textDecoration:'none', display:'block', background:'#0A0A0A' }}>
-        <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'14px 32px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
-            <span style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase', color:'rgba(216,228,225,0.35)', fontWeight:500, flexShrink:0 }}>Steadyhand WA Data Observatory</span>
-            <span style={{ width:'1px', height:'14px', background:'rgba(255,255,255,0.1)', flexShrink:0 }} />
-            <span style={{ fontSize:'13px', color:'rgba(216,228,225,0.6)', fontWeight:300 }}>Live WA trade legislation, Fair Work decisions, DMIRS updates and award rates</span>
-          </div>
-          <span style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, flexShrink:0, whiteSpace:'nowrap' }}>Explore the observatory →</span>
-        </div>
-      </a>
+      {/* OBSERVATORY TEASER */}
+      <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'16px 32px', display:'flex', justifyContent:'center' }}>
+        <a href="/observatory" style={{ display:'inline-flex', alignItems:'center', gap:'10px', background:'#0A0A0A', color:'rgba(216,228,225,0.85)', textDecoration:'none', padding:'11px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, letterSpacing:'0.3px' }}>
+          <span style={{ fontSize:'15px' }}>🔭</span>
+          Find the latest updates at the Steadyhand WA Data Observatory
+          <span style={{ color:'#D4522A', fontSize:'14px' }}>→</span>
+        </a>
+      </div>
 
       {/* HOW IT WORKS */}
       <div style={{ background:'#C8D5D2' }} id="how-it-works">
