@@ -30,7 +30,8 @@ export default function JobHubPage() {
   const [sharedDocs, setSharedDocs] = useState<any[]>([])
   const [messages, setMessages] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview'|'quotes'|'scope'|'documents'|'messages'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'quotes'|'scope'|'documents'|'messages'|'record'>('overview')
+  const [analytics, setAnalytics] = useState<any>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -48,16 +49,18 @@ export default function JobHubPage() {
         .single()
       if (!jobData) { window.location.href = '/dashboard'; return }
       setJob(jobData)
-      const [{ data: q }, { data: sc }, { data: ms }, { data: msgs }, { data: vd }, { data: shares }] = await Promise.all([
+      const [{ data: q }, { data: sc }, { data: ms }, { data: msgs }, { data: vd }, { data: shares }, { data: analytics }] = await Promise.all([
         supabase.from('quotes').select('*').eq('job_id', id).order('created_at', { ascending: false }),
         supabase.from('scope_agreements').select('*').eq('job_id', id).maybeSingle(),
         supabase.from('milestones').select('*').eq('job_id', id).order('order_index'),
         supabase.from('job_messages').select('*, sender:profiles(full_name, role)').eq('job_id', id).order('created_at', { ascending: false }).limit(5),
         supabase.from('vault_documents').select('*').eq('job_id', id).eq('user_id', session.user.id).order('created_at', { ascending: false }),
         supabase.from('vault_document_shares').select('*, document:vault_documents(*)').eq('shared_with', session.user.id),
+        supabase.from('job_analytics').select('*').eq('job_id', id).maybeSingle(),
       ])
       setQuotes(q || [])
       setScope(sc)
+      if (analytics) setAnalytics(analytics)
       setMilestones(ms || [])
       setMessages(msgs || [])
       setDocs(vd || [])
@@ -144,6 +147,7 @@ export default function JobHubPage() {
           { key:'scope', label:'Scope & milestones' },
           { key:'documents', label:'Documents' + (allDocs.length > 0 ? ' (' + allDocs.length + ')' : '') },
           { key:'messages', label:'Messages' },
+          { key:'record', label:'Job Record' },
         ] as {key: typeof activeTab, label: string}[]).map(t => (
           <button key={t.key} type="button" onClick={() => setActiveTab(t.key)}
             style={{ padding:'14px 18px', border:'none', borderBottom: activeTab === t.key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === t.key ? 600 : 400, color: activeTab === t.key ? '#0A0A0A' : '#7A9098', whiteSpace:'nowrap' as const, flexShrink:0 }}>
@@ -435,6 +439,92 @@ export default function JobHubPage() {
         )}
 
         {/* ── MESSAGES ── */}
+        {activeTab === 'record' && (
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+            <div style={{ background:'#0A0A0A', borderRadius:'12px', padding:'20px' }}>
+              <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Property Record</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>{job.title}</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>{job.trade_category} · {job.suburb} · {new Date(job.created_at).toLocaleDateString('en-AU', { month:'long', year:'numeric' })}</p>
+            </div>
+
+            {!analytics ? (
+              <div style={{ background:'#E8F0EE', borderRadius:'12px', padding:'24px', textAlign:'center' as const }}>
+                <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Record data will appear as your job progresses through each stage.</p>
+              </div>
+            ) : (
+              <>
+                {/* Financial summary */}
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'14px' }}>Financial summary</p>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(140px, 1fr))', gap:'12px' }}>
+                    {[
+                      { label:'Agreed scope value', value: analytics.final_scope_value ? '$' + Number(analytics.final_scope_value).toLocaleString() : '—' },
+                      { label:'Variations raised', value: analytics.variation_count > 0 ? analytics.variation_count + ' (+$' + Number(analytics.variation_value_total).toLocaleString() + ')' : 'None' },
+                      { label:'Milestones', value: analytics.milestone_count || '—' },
+                    ].map(({ label, value }) => (
+                      <div key={label} style={{ background:'white', borderRadius:'8px', padding:'12px 14px' }}>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 4px' }}>{label}</p>
+                        <p style={{ fontSize:'15px', fontWeight:600, color:'#0A0A0A', margin:0 }}>{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Timeline */}
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'14px' }}>Timeline</p>
+                  <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+                    {[
+                      { label:'Job created', date: analytics.job_created_at, done: true },
+                      { label:'Scope agreed', date: analytics.scope_signed_at, done: !!analytics.scope_signed_at },
+                      { label:'Work started', date: analytics.first_milestone_submitted_at, done: !!analytics.first_milestone_submitted_at },
+                      { label:'Work completed', date: analytics.all_milestones_approved_at, done: !!analytics.all_milestones_approved_at },
+                      { label:'Sign-off', date: analytics.signoff_completed_at, done: !!analytics.signoff_completed_at },
+                      { label:'Warranty started', date: analytics.warranty_started_at, done: !!analytics.warranty_started_at },
+                    ].filter(e => e.done).map(({ label, date }) => (
+                      <div key={label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                          <div style={{ width:'8px', height:'8px', borderRadius:'50%', background:'#2E7D60', flexShrink:0 }} />
+                          <p style={{ fontSize:'13px', color:'#0A0A0A', margin:0 }}>{label}</p>
+                        </div>
+                        <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{date ? new Date(date).toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '—'}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {(analytics.days_delivery || analytics.days_request_to_scope) && (
+                    <div style={{ marginTop:'14px', padding:'12px', background:'white', borderRadius:'8px', display:'flex', gap:'20px', flexWrap:'wrap' as const }}>
+                      {analytics.days_request_to_scope > 0 && <div><p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px' }}>Request to scope</p><p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:0 }}>{analytics.days_request_to_scope} days</p></div>}
+                      {analytics.days_delivery > 0 && <div><p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 2px' }}>Delivery time</p><p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:0 }}>{analytics.days_delivery} days</p></div>}
+                    </div>
+                  )}
+                </div>
+
+                {/* Warranty */}
+                <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'14px' }}>Warranty record</p>
+                  {analytics.warranty_issues_count === 0 ? (
+                    <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <span style={{ fontSize:'20px' }}>✅</span>
+                      <p style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, margin:0 }}>No warranty issues raised</p>
+                    </div>
+                  ) : (
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+                      <div style={{ background:'white', borderRadius:'8px', padding:'12px 14px' }}>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 4px' }}>Issues raised</p>
+                        <p style={{ fontSize:'18px', fontWeight:600, color:'#C07830', margin:0 }}>{analytics.warranty_issues_count}</p>
+                      </div>
+                      <div style={{ background:'white', borderRadius:'8px', padding:'12px 14px' }}>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 4px' }}>Resolved</p>
+                        <p style={{ fontSize:'18px', fontWeight:600, color:'#2E7D60', margin:0 }}>{analytics.warranty_issues_resolved}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {activeTab === 'messages' && (
           <div>
             {messages.length > 0 && (
