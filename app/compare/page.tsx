@@ -79,13 +79,13 @@ export default function ComparePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'quote_accepted', job_id: selectedJob.id, tradie_id: quote.tradie_id }),
-      }).catch(() => {})
+      }).catch(console.error)
       // Email tradie to draft the scope
       await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'scope_ready', job_id: selectedJob.id }),
-      }).catch(() => {})
+      }).catch(console.error)
       setAccepted(quote.id)
       // Redirect client to agreement page for this job
       setTimeout(() => {

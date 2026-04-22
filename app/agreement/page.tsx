@@ -127,7 +127,7 @@ export default function AgreementPage() {
 
       // ── Xero connection check ────────────────────────────────────────────
       fetch('/api/xero/status', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: session.user.id }) })
-        .then(r => r.json()).then(d => setXeroConnected(d.connected || false)).catch(() => {})
+        .then(r => r.json()).then(d => setXeroConnected(d.connected || false)).catch(console.error)
 
       setLoading(false)
     })
@@ -202,7 +202,7 @@ export default function AgreementPage() {
       setScope(updated)
       const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
       await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
-      await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(() => {})
+      await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)
       if (updated.client_signed_at && updated.tradie_signed_at) {
         await supabase.from('jobs').update({ status:'delivery' }).eq('id', job.id)
         setTimeout(() => { window.location.href = isTradie ? '/tradie/jobs/' + job.id : '/delivery?job_id=' + job.id }, 1000)
@@ -224,7 +224,7 @@ export default function AgreementPage() {
     setCurrentQuote(quote)
     setAcceptingQuote(false)
     // Tradie drafts the scope — notify them via email
-    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_ready', job_id: job.id }) }).catch(() => {})
+    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_ready', job_id: job.id }) }).catch(console.error)
   }
 
   const sendMessage = async () => {

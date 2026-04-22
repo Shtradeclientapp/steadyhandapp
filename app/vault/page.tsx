@@ -110,7 +110,7 @@ export default function VaultPage() {
   }
 
   const deleteDoc = async (id: string) => {
-    if (!confirm('Remove this document from your vault?')) return
+    if (!window.confirm('Remove this document from your vault?')) return
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
   }

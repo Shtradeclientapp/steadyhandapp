@@ -96,7 +96,7 @@ export default function WarrantyPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'warranty_issue', issue_id: issue.id }),
-      }).catch(() => {})
+      }).catch(console.error)
     }
     if (!issue) {
       setIssueError('Could not log issue — please check your connection and try again.')
@@ -120,7 +120,7 @@ export default function WarrantyPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'score_stage', stage: 'protect', job_id: job?.id }),
-    }).catch(() => {})
+    }).catch(console.error)
     setAcceptingId(null)
   }
 

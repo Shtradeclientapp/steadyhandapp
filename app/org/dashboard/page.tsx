@@ -201,7 +201,7 @@ export default function OrgDashboardPage() {
   }
 
   const removeMember = async (memberId: string, memberName: string) => {
-    if (!confirm('Remove ' + memberName + ' from your organisation?')) return
+    if (!window.confirm('Remove ' + memberName + ' from your organisation?')) return
     const supabase = createClient()
     await supabase.from('org_memberships').delete().eq('id', memberId)
     setMembers(prev => prev.filter((m: any) => m.id !== memberId))
@@ -232,7 +232,7 @@ export default function OrgDashboardPage() {
         org_id: org.id,
         role: inviteRole,
       }),
-    }).catch(() => {})
+    }).catch(console.error)
     setInviteSent(true)
     setInviting(false)
     setInviteEmail('')

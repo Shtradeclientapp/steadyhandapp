@@ -372,7 +372,7 @@ export default function SignoffPage() {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({ type: 'contribution_received', job_id: job?.id, amount: contributionAmount || parseFloat(customAmount), message: contributionMessage }),
-                            }).catch(() => {})
+                            }).catch(console.error)
                           }}}>
                             <EmbeddedCheckout />
                           </EmbeddedCheckoutProvider>

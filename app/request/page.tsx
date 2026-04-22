@@ -95,6 +95,7 @@ export default function RequestPage() {
     setForm(f => ({ ...f, [k]: e.target.value }))
 
 const submitJob = async () => {
+    if (submitting) return
     if (!form.title || !form.description || !form.trade_category || !form.suburb) {
       setSubmitError('Please complete all required fields — title, description, trade category and suburb.')
       setSubmitting(false)

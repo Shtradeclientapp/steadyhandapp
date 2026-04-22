@@ -107,7 +107,7 @@ export default function DIYPage() {
   const [projectStartDate, setProjectStartDate] = useState('')
 
   const deleteProject = async (projectId: string) => {
-    if (!confirm('Delete this project and all its data? This cannot be undone.')) return
+    if (!window.confirm('Delete this project and all its data? This cannot be undone.')) return
     const supabase = createClient()
     await supabase.from('ob_checklist_items').delete().eq('project_id', projectId)
     await supabase.from('diy_tasks').delete().eq('project_id', projectId)

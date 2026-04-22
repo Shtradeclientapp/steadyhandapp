@@ -98,7 +98,7 @@ export default function WorkersPage() {
   }
 
   const removeWorker = async (id: string) => {
-    if (!confirm('Remove this worker from your team?')) return
+    if (!window.confirm('Remove this worker from your team?')) return
     const supabase = createClient()
     await supabase.from('tradie_workers').update({ status: 'removed' }).eq('id', id)
     setWorkers(prev => prev.filter(w => w.id !== id))

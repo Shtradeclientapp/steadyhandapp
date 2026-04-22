@@ -372,7 +372,7 @@ export default function DeliveryPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'milestone_approved', milestone_id: id }),
-    }).catch(() => {})
+    }).catch(console.error)
     const allDone = milestones.every(m => m.id === id ? true : m.status === 'approved')
     if (allDone && job) {
       await supabase.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
@@ -385,7 +385,7 @@ export default function DeliveryPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'ready_for_signoff', job_id: job.id }),
-      }).catch(() => {})
+      }).catch(console.error)
       setTimeout(() => { window.location.href = '/signoff' }, 800)
     }
   }

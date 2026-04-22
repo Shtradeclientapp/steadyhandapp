@@ -88,11 +88,11 @@ export default function ShortlistPage() {
         setSending(false)
         return
       }
-      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id, tradie_id: tradieId }) }).catch(() => {})
+      await fetch('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'tradie_selected', job_id: selectedJob.id, tradie_id: tradieId }) }).catch(console.error)
     }
 
     for (const invite of pendingInvites) {
-      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite, personal_message: invite.personal_message || '' }) }).catch(() => {})
+      await fetch('/api/invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ job_id: selectedJob?.id, client_id: session?.user.id, ...invite, personal_message: invite.personal_message || '' }) }).catch(console.error)
     }
 
     const { error: jobErr } = await supabase.from('jobs').update({ status: 'shortlisted', quote_request_sent_at: new Date().toISOString() }).eq('id', selectedJob.id)
@@ -103,7 +103,7 @@ export default function ShortlistPage() {
       return
     }
 
-    await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'consult_ready', job_id: selectedJob.id }) }).catch(() => {})
+    await fetch('/api/email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'consult_ready', job_id: selectedJob.id }) }).catch(console.error)
     await loadQuoteRequests(selectedJob.id)
     setSent(true)
     setShowNextStepModal(true)
