@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
 import Link from 'next/link'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
+import { ObservatoryWidget } from '@/components/ui/Observatory'
 
 function getClientNextAction(job: any): { icon: string; headline: string; sub: string; urgent: boolean } {
   switch (job.status) {
