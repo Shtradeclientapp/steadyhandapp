@@ -18,15 +18,19 @@ export async function POST(request: NextRequest) {
     })
     if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 })
 
-    // Create tradie profile if applicable
-    if (role === 'tradie' && business_name) {
-      await supabase.from('tradie_profiles').insert({
+    // Create tradie profile — required for tradie role
+    if (role === 'tradie') {
+      if (!business_name) {
+        return NextResponse.json({ error: 'Business name is required for tradie accounts' }, { status: 400 })
+      }
+      const { error: tradieError } = await supabase.from('tradie_profiles').insert({
         id: userId,
         business_name,
         trade_categories: trade_categories || [],
         service_areas: service_areas || [],
         subscription_active: false,
       })
+      if (tradieError) return NextResponse.json({ error: tradieError.message }, { status: 500 })
     }
 
     return NextResponse.json({ user: data.user }, { status: 201 })
