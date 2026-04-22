@@ -31,6 +31,7 @@ export default function OrgDashboardPage() {
   const [tradieResults, setTradieResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'jobs'|'properties'|'members'|'preferred'|'reports'>('jobs')
+  const [portfolioAnalytics, setPortfolioAnalytics] = useState<any[]>([])
   const [myRole, setMyRole] = useState<string>('member')
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -580,6 +581,93 @@ export default function OrgDashboardPage() {
         {/* Reports tab */}
         {activeTab === 'reports' && (
           <div>
+
+            {/* Portfolio Analytics */}
+            {portfolioAnalytics.length > 0 && (() => {
+              const completed = portfolioAnalytics.filter(a => a.signoff_completed_at)
+              const withWarranty = portfolioAnalytics.filter(a => a.warranty_issues_count > 0)
+              const openWarranty = portfolioAnalytics.filter(a => a.warranty_issues_count > a.warranty_issues_resolved)
+              const avgDelivery = completed.length > 0 ? Math.round(completed.filter(a => a.days_delivery > 0).reduce((s, a) => s + a.days_delivery, 0) / completed.filter(a => a.days_delivery > 0).length) : null
+              const totalVariationValue = portfolioAnalytics.reduce((s, a) => s + (Number(a.variation_value_total) || 0), 0)
+              const totalSpend = portfolioAnalytics.reduce((s, a) => s + (Number(a.final_scope_value) || 0), 0)
+
+              // Spend by trade category
+              const byCategory: Record<string, { count: number, spend: number, warranty: number }> = {}
+              portfolioAnalytics.forEach(a => {
+                if (!a.trade_category) return
+                if (!byCategory[a.trade_category]) byCategory[a.trade_category] = { count: 0, spend: 0, warranty: 0 }
+                byCategory[a.trade_category].count++
+                byCategory[a.trade_category].spend += Number(a.final_scope_value) || 0
+                byCategory[a.trade_category].warranty += a.warranty_issues_count || 0
+              })
+
+              return (
+                <>
+                  {/* Summary stats */}
+                  <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'20px', marginBottom:'16px' }}>
+                    <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'16px' }}>Portfolio Intelligence</p>
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(160px, 1fr))', gap:'12px' }}>
+                      {[
+                        { label:'Total portfolio spend', value: '$' + totalSpend.toLocaleString(), sub: portfolioAnalytics.length + ' jobs tracked' },
+                        { label:'Variation spend', value: '$' + totalVariationValue.toLocaleString(), sub: 'Above original scope' },
+                        { label:'Avg delivery time', value: avgDelivery ? avgDelivery + ' days' : '—', sub: completed.length + ' completed jobs' },
+                        { label:'Jobs with warranty issues', value: withWarranty.length.toString(), sub: openWarranty.length + ' currently open' },
+                      ].map(({ label, value, sub }) => (
+                        <div key={label} style={{ background:'rgba(255,255,255,0.05)', borderRadius:'10px', padding:'14px' }}>
+                          <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:'0 0 6px', lineHeight:1.4 }}>{label}</p>
+                          <p style={{ fontSize:'22px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 2px' }}>{value}</p>
+                          <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', margin:0 }}>{sub}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Open warranty issues alert */}
+                  {openWarranty.length > 0 && (
+                    <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap' as const, gap:'12px' }}>
+                      <div>
+                        <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 3px' }}>⚠ {openWarranty.length} job{openWarranty.length > 1 ? 's' : ''} with open warranty issues</p>
+                        <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Review these jobs to ensure issues are being resolved by tradies.</p>
+                      </div>
+                      <button type="button" onClick={() => setActiveTab('jobs')} style={{ fontSize:'12px', color:'#C07830', background:'none', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'6px', padding:'6px 12px', cursor:'pointer', fontWeight:500 }}>View jobs →</button>
+                    </div>
+                  )}
+
+                  {/* Spend by trade category */}
+                  {Object.keys(byCategory).length > 0 && (
+                    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'16px' }}>
+                      <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
+                        <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>SPEND BY TRADE CATEGORY</p>
+                      </div>
+                      <table style={{ width:'100%', borderCollapse:'collapse' as const, fontSize:'13px' }}>
+                        <thead>
+                          <tr style={{ background:'rgba(28,43,50,0.03)' }}>
+                            {['Trade', 'Jobs', 'Total spend', 'Warranty issues'].map(h => (
+                              <th key={h} style={{ padding:'10px 16px', textAlign:'left' as const, fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(byCategory).sort(([,a],[,b]) => b.spend - a.spend).map(([cat, data]) => (
+                            <tr key={cat} style={{ borderBottom:'1px solid rgba(28,43,50,0.05)' }}>
+                              <td style={{ padding:'12px 16px', fontWeight:500, color:'#0A0A0A' }}>{cat}</td>
+                              <td style={{ padding:'12px 16px', color:'#4A5E64' }}>{data.count}</td>
+                              <td style={{ padding:'12px 16px', color:'#0A0A0A', fontWeight:500 }}>${data.spend.toLocaleString()}</td>
+                              <td style={{ padding:'12px 16px' }}>
+                                <span style={{ fontSize:'12px', fontWeight:500, color: data.warranty > 0 ? '#C07830' : '#2E7D60' }}>
+                                  {data.warranty > 0 ? data.warranty + ' issue' + (data.warranty > 1 ? 's' : '') : '✓ None'}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
+
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'16px' }}>
               <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>EXPORT REPORTS</p>
