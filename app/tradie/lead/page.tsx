@@ -49,6 +49,9 @@ export default function TradieLead() {
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
       setProfileLoaded(true)
+      if (!prof?.tradie?.id) {
+        setSendError('Your tradie profile is not fully set up — please complete your profile before inviting clients.')
+      }
       const { data: existing } = await supabase.from('tradie_leads').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false })
       setLeads(existing || [])
     })
@@ -62,8 +65,7 @@ export default function TradieLead() {
 
   const handleInvite = async () => {
     if (!invite.client_email || !invite.job_title) return
-    if (!profileLoaded) return
-    if (!profile?.tradie?.id) { setSendError('Could not find your tradie profile — please refresh and try again'); return }
+    if (!profileLoaded || !profile?.tradie?.id) return
     setSending(true)
     setSendError(null)
     const supabase = createClient()
@@ -111,8 +113,7 @@ export default function TradieLead() {
 
   const handleImport = async () => {
     if (!imp.client_name || !imp.job_title) return
-    if (!profileLoaded) return
-    if (!profile?.tradie?.id) { setSendError('Could not find your tradie profile — please refresh and try again'); return }
+    if (!profileLoaded || !profile?.tradie?.id) return
     setSending(true)
     setSendError(null)
     const supabase = createClient()
@@ -192,7 +193,7 @@ export default function TradieLead() {
             { key:'invite', label:'✉️  Invite a client', sub:'Send them a Steadyhand invitation' },
             { key:'import', label:'📥  Import a lead', sub:'From Simpro, Tradify, paper or phone' },
           ].map(t => (
-            <button key={t.key} type="button" onClick={() => { setMode(t.key as any); setSent(false) }}
+            <button key={t.key} type="button" onClick={() => { setMode(t.key as any); setSent(false); if (profile?.tradie?.id) setSendError(null) }}
               style={{ flex:1, padding:'14px 16px', border:'none', background: mode === t.key ? '#0A0A0A' : 'transparent', cursor:'pointer', textAlign:'left' as const, transition:'background 0.15s' }}>
               <p style={{ fontSize:'13px', fontWeight:600, color: mode === t.key ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>{t.label}</p>
               <p style={{ fontSize:'11px', color: mode === t.key ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>{t.sub}</p>
