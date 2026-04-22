@@ -614,7 +614,7 @@ export default function TradieJobPage() {
           {!currentQuote && !quoteSubmitted && !showQuoteForm && job?.status === 'shortlisted' && (
             <div style={{ padding:'0 20px 12px' }}>
               <button type="button" onClick={async () => {
-                if (!confirm('Decline this quote request? The client will be notified.')) return
+                if (!window.confirm('Decline this quote request? The client will be notified.')) return
                 const supabase = createClient()
                 const { data: { session } } = await supabase.auth.getSession()
                 const { data: qr } = await supabase.from('quote_requests').select('id').eq('job_id', job.id).eq('tradie_id', session?.user.id).single()

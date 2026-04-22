@@ -9,7 +9,9 @@ import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
 import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null
 
 const BASE_CHECKS = [
   { id:'defects', label:'No visible defects in workmanship', sub:'No cracks, gaps, unfinished surfaces or loose fittings' },

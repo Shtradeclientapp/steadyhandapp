@@ -92,6 +92,7 @@ export default function DashboardPage() {
         supabase.from('jobs')
           .select('*, tradie:tradie_profiles(business_name)')
           .eq('client_id', session.user.id)
+          .neq('status', 'cancelled')
           .order('created_at', { ascending: false }),
         supabase.from('diy_projects')
           .select('*')
@@ -150,7 +151,7 @@ export default function DashboardPage() {
   const cancelableStatuses = ['matching', 'shortlisted', 'compare', 'draft']
 
   const cancelJob = async (jobId: string, jobTitle: string) => {
-    if (!confirm('Cancel "' + jobTitle + '"? This will notify any tradies who have been invited and cannot be undone.')) return
+    if (!window.confirm('Cancel "' + jobTitle + '"? This will notify any tradies who have been invited and cannot be undone.')) return
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('jobs').update({ status: 'cancelled' }).eq('id', jobId)
     await supabase.from('job_messages').insert({

@@ -394,6 +394,11 @@ export default function DeliveryPage() {
     <div>
       <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/delivery" jobStatus={job?.status} />
+      {job?.id && (
+        <div style={{ background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'8px 24px' }}>
+          <a href={'/tradie/jobs/' + job.id} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>← Back to job overview</a>
+        </div>
+      )}
 
     </div>
   )

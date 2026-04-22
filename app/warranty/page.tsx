@@ -29,6 +29,7 @@ export default function WarrantyPage() {
       setProfile(prof)
       const isT = prof?.role === 'tradie'
       const col = isT ? 'tradie_id' : 'client_id'
+      const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
       const { data: jobs } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name)')

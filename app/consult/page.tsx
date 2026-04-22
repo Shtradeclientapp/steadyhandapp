@@ -113,7 +113,7 @@ export default function AssessPage() {
     const path = 'assessments/' + assessment.id + '/' + Date.now() + '.' + ext
     setPhotoError(null)
     const { error } = await supabase.storage.from('Job Photos').upload(path, file)
-    if (error) { setPhotoError('Photo upload failed — check that the Job Photos bucket exists in Supabase storage and is set to public.'); setUploadingPhotos(false); return }
+    if (error) { setPhotoError('Photo upload failed — please try again or check your connection.'); setUploadingPhotos(false); return }
     if (!error) {
       const { data: urlData } = supabase.storage.from('Job Photos').getPublicUrl(path)
       const url = urlData.publicUrl
