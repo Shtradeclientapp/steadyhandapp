@@ -207,7 +207,7 @@ export function ObservatoryPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <div style={{ background:'#0A0A0A', padding:'40px 24px 32px' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto' }}>
-          <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Steadyhand Intelligence</p>
+          <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Stay up-to-date</p>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap' as const, gap:'12px' }}>
             <div>
               <h1 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'3px', margin:'0 0 8px' }}>STEADYHAND WA DATA OBSERVATORY</h1>
@@ -238,12 +238,11 @@ export function ObservatoryPage() {
           <div>
             <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'18px', marginBottom:'16px' }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', margin:'0 0 12px' }}>About</p>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>Intelligence is AI-generated and curated by the Steadyhand team. Always verify with the original source before taking legal or commercial action.</p>
-              <a href="mailto:hello@steadyhandtrade.app" style={{ fontSize:'12px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Submit an item →</a>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The SH tracker aims to provide a comprehensive overview of policies, legislation, collective bargaining agreements, and judicial decisions related to trade labour in WA. It serves as a practical resource for governments, employers' and workers' organizations, policymakers, researchers, and anyone interested in understanding the policy developments in this area.</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The tracker will be regularly updated as new regulations, agreements, and decisions emerge. Please refer to the links provided for detailed information and source materials.</p>
+              <a href="mailto:info@steadyhanddigital.com" style={{ fontSize:'12px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>info@steadyhanddigital.com →</a>
             </div>
-            <WABenchmarks />
-
-            <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)', marginTop:'16px' }}>
+            <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', margin:'0 0 14px' }}>Key sources</p>
               {[{ name:'DMIRS WA', url:'https://www.dmirs.wa.gov.au' },{ name:'Fair Work Commission', url:'https://www.fwc.gov.au' },{ name:'Building Commission WA', url:'https://www.buildingcommission.wa.gov.au' },{ name:'WA State Law Publisher', url:'https://www.legislation.wa.gov.au' },{ name:'SafeWork Australia', url:'https://www.safeworkaustralia.gov.au' }].map(s => (
                 <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display:'block', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', marginBottom:'8px', fontWeight:500 }}>{s.name} ↗</a>
