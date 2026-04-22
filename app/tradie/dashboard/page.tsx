@@ -784,6 +784,15 @@ export default function TradieDashboard() {
           )
         })()}
 
+        {/* Observatory */}
+        <div style={{ marginTop:'24px' }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
+            <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, margin:0 }}>WA Trade Intelligence</p>
+            <a href="/observatory" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>Full observatory →</a>
+          </div>
+          <ObservatoryWidget />
+        </div>
+
         {/* Steadytools entry point */}
         <div style={{ marginTop:'32px', paddingTop:'24px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
           <a href="/tradie/steadytools" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', textDecoration:'none', gap:'16px' }}>

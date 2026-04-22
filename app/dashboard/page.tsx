@@ -490,6 +490,15 @@ export default function DashboardPage() {
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', opacity: isHomeMember ? 1 : 0.4, pointerEvents: isHomeMember ? 'auto' : 'none' as const }}>
 
             {/* Build Journal */}
+            {/* Observatory widget */}
+            <div style={{ marginBottom:'24px' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
+                <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, margin:0 }}>WA Trade Intelligence</p>
+                <a href="/observatory" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>Full observatory →</a>
+              </div>
+              <ObservatoryWidget />
+            </div>
+
             <a href="/diy" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #D4522A', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
