@@ -13,7 +13,38 @@ const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 
 export async function POST(request: NextRequest) {
   try {
-    const { job_id, client_id, business_name, email, trade_category, phone, personal_message } = await request.json()
+    const body = await request.json()
+
+    // ── Tradie-to-client direct invite ──────────────────────────────────────
+    if (body.client_email && body.tradie_name && !body.job_id) {
+      const { client_email, client_name, tradie_name, job_title, message, lead_id } = body
+      if (!client_email || !tradie_name || !job_title) {
+        return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+      }
+
+      const signupUrl = APP_URL + '/request?ref=' + encodeURIComponent(tradie_name)
+
+      await resend.emails.send({
+        from: FROM,
+        to: client_email,
+        subject: tradie_name + ' has invited you to post your job on Steadyhand',
+        html: '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;">' +
+          '<h1 style="font-size:24px;color:#0A0A0A;letter-spacing:2px;font-family:Georgia,serif;">STEADYHAND</h1>' +
+          '<p style="color:#4A5E64;font-size:15px;">Hi ' + (client_name || 'there') + ',</p>' +
+          '<p style="color:#4A5E64;font-size:15px;line-height:1.6;"><strong>' + tradie_name + '</strong> has invited you to manage your upcoming job through Steadyhand — a request-to-warranty platform built for WA property owners and trade businesses.</p>' +
+          (job_title ? '<div style="background:#F4F8F7;border-left:3px solid #D4522A;padding:16px;margin:20px 0;border-radius:6px;"><p style="color:#0A0A0A;font-weight:600;margin:0 0 4px;">' + job_title + '</p><p style="color:#7A9098;font-size:13px;margin:0;">Job posted by ' + (client_name || 'you') + '</p></div>' : '') +
+          (message ? '<div style="background:#F4F8F7;border-left:3px solid #2E6A8F;padding:14px 16px;margin:16px 0;border-radius:6px;"><p style="color:#4A5E64;font-style:italic;margin:0;">“' + message + '”</p><p style="color:#9AA5AA;font-size:12px;margin:6px 0 0;">— ' + tradie_name + '</p></div>' : '') +
+          '<p style="color:#4A5E64;font-size:14px;line-height:1.6;">Steadyhand keeps your scope, milestones, payments and warranty in one place — and gives you a clear record of everything agreed before work begins.</p>' +
+          '<a href="' + signupUrl + '" style="display:inline-block;background:#D4522A;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:8px;font-weight:500;font-size:15px;">Post your job on Steadyhand →</a>' +
+          '<p style="color:#7A9098;font-size:12px;margin-top:32px;">Invited by ' + tradie_name + ' · Steadyhand · Western Australia</p>' +
+          '</div>',
+      })
+
+      return NextResponse.json({ sent: true, lead_id })
+    }
+
+    // ── Shortlist tradie invite (existing flow) ──────────────────────────────
+    const { job_id, client_id, business_name, email, trade_category, phone, personal_message } = body
     if (!job_id || !email || !business_name) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
