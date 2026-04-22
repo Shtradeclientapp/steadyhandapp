@@ -23,6 +23,7 @@ export default function TradieLead() {
   const [leads, setLeads] = useState<any[]>([])
   const [sent, setSent] = useState(false)
   const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string|null>(null)
 
   // Invite form
   const [invite, setInvite] = useState({ client_name:'', client_email:'', trade_category:'', suburb:'', job_title:'', notes:'' })
@@ -66,18 +67,31 @@ export default function TradieLead() {
       source: 'direct_invite',
       status: 'invited',
     }).select().single()
-    await fetch('/api/invite', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_email: invite.client_email,
-        client_name: invite.client_name,
-        tradie_name: profile?.tradie?.business_name,
-        job_title: invite.job_title,
-        message: invite.notes,
-        lead_id: lead?.id,
-      }),
-    }).catch(() => {})
+    setSendError(null)
+    try {
+      const invRes = await fetch('/api/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client_email: invite.client_email,
+          client_name: invite.client_name,
+          tradie_name: profile?.tradie?.business_name,
+          job_title: invite.job_title,
+          message: invite.notes,
+          lead_id: lead?.id,
+        }),
+      })
+      const invData = await invRes.json()
+      if (!invRes.ok || invData.error) {
+        setSendError('Lead saved but invitation email failed — ' + (invData.error || 'please try again'))
+        setSending(false)
+        return
+      }
+    } catch {
+      setSendError('Lead saved but invitation email could not be sent — check your connection')
+      setSending(false)
+      return
+    }
     setLeads(prev => [{ ...invite, id: lead?.id, source:'direct_invite', status:'invited', created_at: new Date().toISOString() }, ...prev])
     setSent(true)
     setSending(false)
@@ -105,19 +119,32 @@ export default function TradieLead() {
       status: imp.invite_client && imp.client_email ? 'invited' : 'imported',
     }).select().single()
 
+    setSendError(null)
     if (imp.invite_client && imp.client_email) {
-      await fetch('/api/invite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client_email: imp.client_email,
-          client_name: imp.client_name,
-          tradie_name: profile?.tradie?.business_name,
-          job_title: imp.job_title,
-          message: imp.job_description,
-          lead_id: lead?.id,
-        }),
-      }).catch(() => {})
+      try {
+        const invRes = await fetch('/api/invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_email: imp.client_email,
+            client_name: imp.client_name,
+            tradie_name: profile?.tradie?.business_name,
+            job_title: imp.job_title,
+            message: imp.job_description,
+            lead_id: lead?.id,
+          }),
+        })
+        const invData = await invRes.json()
+        if (!invRes.ok || invData.error) {
+          setSendError('Lead saved but invitation email failed — ' + (invData.error || 'please try again'))
+          setSending(false)
+          return
+        }
+      } catch {
+        setSendError('Lead saved but invitation email could not be sent — check your connection')
+        setSending(false)
+        return
+      }
     }
 
     setLeads(prev => [{ ...imp, id: lead?.id, status: imp.invite_client && imp.client_email ? 'invited' : 'imported', created_at: new Date().toISOString() }, ...prev])
@@ -158,6 +185,11 @@ export default function TradieLead() {
           ))}
         </div>
 
+        {sendError && (
+          <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'8px', padding:'12px 14px', marginBottom:'16px' }}>
+            <p style={{ fontSize:'13px', color:'#D4522A', margin:0 }}>⚠ {sendError}</p>
+          </div>
+        )}
         {sent && (
           <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'10px' }}>
             <span style={{ fontSize:'18px' }}>✓</span>
