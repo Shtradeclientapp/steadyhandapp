@@ -191,18 +191,24 @@ export default function AgreementPage() {
   const signScope = async () => {
     if (!job || !scope) return
     setSigning(true)
-    const supabase = createClient()
-    const field = isTradie ? 'tradie_signed_at' : 'client_signed_at'
-    const now = new Date().toISOString()
-    await supabase.from('scope_agreements').update({ [field]: now }).eq('id', scope.id)
-    const updated = { ...scope, [field]: now }
-    setScope(updated)
-    const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
-    await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
-    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(() => {})
-    if (updated.client_signed_at && updated.tradie_signed_at) {
-      await supabase.from('jobs').update({ status:'delivery' }).eq('id', job.id)
-      setTimeout(() => { window.location.href = isTradie ? '/tradie/job?id=' + job.id : '/delivery' }, 1000)
+    setSaveError(null)
+    try {
+      const supabase = createClient()
+      const field = isTradie ? 'tradie_signed_at' : 'client_signed_at'
+      const now = new Date().toISOString()
+      const { error: signErr } = await supabase.from('scope_agreements').update({ [field]: now }).eq('id', scope.id)
+      if (signErr) throw new Error(signErr.message)
+      const updated = { ...scope, [field]: now }
+      setScope(updated)
+      const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
+      await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
+      await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(() => {})
+      if (updated.client_signed_at && updated.tradie_signed_at) {
+        await supabase.from('jobs').update({ status:'delivery' }).eq('id', job.id)
+        setTimeout(() => { window.location.href = isTradie ? '/tradie/job?id=' + job.id : '/delivery' }, 1000)
+      }
+    } catch (err: any) {
+      setSaveError('Signing failed — ' + (err.message || 'please try again'))
     }
     setSigning(false)
   }

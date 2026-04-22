@@ -335,7 +335,7 @@ export default function DeliveryPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'milestone_approved', milestone_id: id }),
-    }).catch(() => {})
+    }).catch(console.error)
   }
 
   const approveM = async (id: string) => {

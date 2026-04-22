@@ -189,15 +189,18 @@ export default function TradieDashboard() {
       if (step === 'invite_client' && prof.tradie?.id) {
         const joined = new Date(prof.created_at || Date.now())
         const daysSince = (Date.now() - joined.getTime()) / 86400000
-        const checkinSent = typeof window !== 'undefined' && localStorage.getItem('checkin_sent_' + prof.tradie.id)
+        const checkinSent = prof.tradie?.checkin_sent
         if (daysSince >= 7 && !checkinSent) {
           fetch('/api/onboarding', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tradie_id: prof.tradie.id, email_type:'checkin' }) }).catch(() => {})
-          if (typeof window !== 'undefined') localStorage.setItem('checkin_sent_' + prof.tradie.id, '1')
+          supabase.from('tradie_profiles').update({ checkin_sent: true }).eq('id', prof.tradie.id).then(() => {})
         }
       }
       if (step === 'invite_client' || step === 'first_job') {
-        const seen = typeof window !== 'undefined' && localStorage.getItem('steadytools_spotlight_seen')
-        if (!seen) setShowSpotlight(true)
+        const seen = prof.tradie?.spotlight_seen
+        if (!seen) {
+          setShowSpotlight(true)
+          supabase.from('tradie_profiles').update({ spotlight_seen: true }).eq('id', prof.tradie.id).then(() => {})
+        }
       }
 
       // Merge assigned jobs + quoted jobs (deduplicated)

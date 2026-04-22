@@ -229,7 +229,7 @@ export default function AssessPage() {
     const updated = { ...assessment, [field]: new Date().toISOString() }
     if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
         await supabase.from('jobs').update({ status: 'compare' }).eq('id', job.id)
-      await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(() => {})
+      await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(console.error)
 
       // Auto-file consult record to both client and tradie vaults via service role API
       try {
