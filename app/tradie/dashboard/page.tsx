@@ -617,8 +617,8 @@ export default function TradieDashboard() {
               <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'20px' }}>
                 {[
                   { step:'1', title:'Complete your profile', body:'A complete profile — with your trade category, licence number, and business description — is what clients see before deciding whether to invite you.', href:'/tradie/profile', cta:'Complete profile →', color:'#D4522A' },
-                  { step:'2', title:'Connect your bank account', body:'Set up Stripe so you can receive milestone payments automatically when clients approve completed work.', href:null, cta:null, color:'#2E7D60' },
-                  { step:'3', title:'Share your profile link', body:'Ask past clients to find you on Steadyhand and post their next job. A direct invitation from a familiar client is the fastest way to your first job on the platform.', href:null, cta:null, color:'#2E6A8F' },
+                  { step:'2', title:'Connect your bank account', body:'Set up Stripe so you can receive milestone payments automatically when clients approve completed work.', href:'/tradie/dashboard#stripe', cta:'Connect Stripe →', color:'#2E7D60' },
+                  { step:'3', title:'Invite your first client', body:'Send a client an invitation to post their job on Steadyhand. A direct invitation is the fastest way to your first job on the platform.', href:'/tradie/lead', cta:'Invite a client →', color:'#2E6A8F' },
                 ].map(s => (
                   <div key={s.step} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px 16px', display:'flex', gap:'12px', alignItems:'flex-start' }}>
                     <div style={{ width:'24px', height:'24px', borderRadius:'50%', background:s.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:'white', flexShrink:0, marginTop:'1px' }}>{s.step}</div>
