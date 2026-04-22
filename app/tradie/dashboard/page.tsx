@@ -470,7 +470,7 @@ export default function TradieDashboard() {
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>YOUR PERFORMANCE</h2>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'12px' }}>
+          <div className="stat-grid-3" style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px', marginBottom:'12px' }}>
             {[
               { label:'Active jobs', value: activeJobs.length, sub: jobs.filter(j => j.status === 'delivery').length + ' in delivery', color:'#2E7D60' },
               { label:'Jobs completed', value: profile?.tradie?.jobs_completed || 0, sub: jobs.filter(j => j.status === 'warranty').length + ' under warranty', color:'#2E6A8F' },
@@ -478,12 +478,12 @@ export default function TradieDashboard() {
             ].map(s => (
               <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
                 <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', letterSpacing:'0.3px' }}>{s.label}</p>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
+                <p className="stat-value" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
                 <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>{s.sub}</p>
               </div>
             ))}
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px' }}>
+          <div className="stat-grid-3" style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'12px' }}>
             {[
               {
                 label:'Quote acceptance',
@@ -510,7 +510,7 @@ export default function TradieDashboard() {
             ].map(s => (
               <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
                 <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', letterSpacing:'0.3px' }}>{s.label}</p>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
+                <p className="stat-value" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color: s.color, letterSpacing:'1px', margin:'0 0 4px' }}>{s.value}</p>
                 <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>{s.sub}</p>
               </div>
             ))}

@@ -243,7 +243,7 @@ export default function DashboardPage() {
       </div>
 
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
-        <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(160px, 1fr))', gap:'12px', marginBottom:'28px' }}>
+        <div className="dashboard-grid" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(140px, 1fr))', gap:'12px', marginBottom:'28px' }}>
           {[
             { label:'Active jobs', value: activeJobs.length },
             { label:'Under warranty', value: jobs.filter(j => j.status === 'warranty').length },

@@ -274,7 +274,7 @@ export default function OrgDashboardPage() {
       </div>
 
       <div style={{ maxWidth:'1100px', margin:'0 auto', padding:'32px 24px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'12px', marginBottom:'28px' }}>
+        <div className="stat-grid-4" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'12px', marginBottom:'28px' }}>
           {[
             { label:'Active jobs', value: activeJobs.length },
             { label:'Properties', value: properties.length },
@@ -325,7 +325,7 @@ export default function OrgDashboardPage() {
                 <a href="/request"><button type="button" style={{ background:'#D4522A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>New job request →</button></a>
               </div>
             ) : (
-              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
+              <div className="org-table-wrap" style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden' }}>
                 <table style={{ width:'100%', borderCollapse:'collapse' as const, fontSize:'13px' }}>
                   <thead>
                     <tr style={{ borderBottom:'1px solid rgba(28,43,50,0.08)', background:'rgba(28,43,50,0.03)' }}>
