@@ -52,12 +52,20 @@ export default function TradieLead() {
     })
   }, [])
 
+  const reloadLeads = async (tradieId: string) => {
+    const supabase = createClient()
+    const { data } = await supabase.from('tradie_leads').select('*').eq('tradie_id', tradieId).order('created_at', { ascending: false })
+    setLeads(data || [])
+  }
+
   const handleInvite = async () => {
     if (!invite.client_email || !invite.job_title) return
+    if (!profile?.tradie?.id) { setSendError('Profile not loaded — please refresh and try again'); return }
     setSending(true)
+    setSendError(null)
     const supabase = createClient()
-    const { data: lead } = await supabase.from('tradie_leads').insert({
-      tradie_id: profile?.tradie?.id,
+    const { data: lead, error: insertErr } = await supabase.from('tradie_leads').insert({
+      tradie_id: profile.tradie.id,
       client_name: invite.client_name,
       client_email: invite.client_email,
       job_title: invite.job_title,
@@ -67,7 +75,7 @@ export default function TradieLead() {
       source: 'direct_invite',
       status: 'invited',
     }).select().single()
-    setSendError(null)
+    if (insertErr || !lead) { setSendError('Could not save lead — ' + (insertErr?.message || 'please try again')); setSending(false); return }
     try {
       const invRes = await fetch('/api/invite', {
         method: 'POST',
@@ -92,7 +100,7 @@ export default function TradieLead() {
       setSending(false)
       return
     }
-    setLeads(prev => [{ ...invite, id: lead?.id, source:'direct_invite', status:'invited', created_at: new Date().toISOString() }, ...prev])
+    await reloadLeads(profile.tradie.id)
     setSent(true)
     setSending(false)
     setInvite({ client_name:'', client_email:'', trade_category:'', suburb:'', job_title:'', notes:'' })
@@ -100,10 +108,12 @@ export default function TradieLead() {
 
   const handleImport = async () => {
     if (!imp.client_name || !imp.job_title) return
+    if (!profile?.tradie?.id) { setSendError('Profile not loaded — please refresh and try again'); return }
     setSending(true)
+    setSendError(null)
     const supabase = createClient()
-    const { data: lead } = await supabase.from('tradie_leads').insert({
-      tradie_id: profile?.tradie?.id,
+    const { data: lead, error: importErr } = await supabase.from('tradie_leads').insert({
+      tradie_id: profile.tradie.id,
       client_name: imp.client_name,
       client_email: imp.client_email || null,
       client_phone: imp.client_phone || null,
@@ -119,6 +129,7 @@ export default function TradieLead() {
       status: imp.invite_client && imp.client_email ? 'invited' : 'imported',
     }).select().single()
 
+    if (importErr || !lead) { setSendError('Could not save lead — ' + (importErr?.message || 'please try again')); setSending(false); return }
     setSendError(null)
     if (imp.invite_client && imp.client_email) {
       try {
@@ -147,7 +158,7 @@ export default function TradieLead() {
       }
     }
 
-    setLeads(prev => [{ ...imp, id: lead?.id, status: imp.invite_client && imp.client_email ? 'invited' : 'imported', created_at: new Date().toISOString() }, ...prev])
+    await reloadLeads(profile.tradie.id)
     setSent(true)
     setSending(false)
     setImp({ client_name:'', client_email:'', client_phone:'', address:'', suburb:'', trade_category:'', job_title:'', job_description:'', source:'simpro', existing_quote_amount:'', preferred_start:'', internal_notes:'', invite_client: true })
