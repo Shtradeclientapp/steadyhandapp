@@ -680,7 +680,7 @@ export default function TradieDashboard() {
             const milestonesTotal = job.milestones?.length ?? 0
 
             return (
-              <a key={job.id} href={'/tradie/job?id=' + job.id} style={{ textDecoration:'none' }}>
+              <a key={job.id} href={'/tradie/jobs/' + job.id} style={{ textDecoration:'none' }}>
                 <div style={{
                   background: '#E8F0EE',
                   border: '1px solid rgba(28,43,50,0.1)',
