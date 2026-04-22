@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 const CATEGORIES = [
   { id: 'legislation',  label: 'Legislation',      icon: '⚖️',  color: '#2E6A8F', prompt: 'WA building trades construction legislation updates 2024 2025 Building Services Registration Act Home Building Contracts Act' },
@@ -100,6 +101,107 @@ function CategoryPanel({ category, pinnedItems, refreshKey }: any) {
   )
 }
 
+// ── WA Live Benchmarks (from job_analytics) ──────────────────────────────────
+function WABenchmarks() {
+  const [stats, setStats] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('job_analytics')
+      .select('trade_category, days_delivery, warranty_issues_count, variation_count, final_scope_value')
+      .not('signoff_completed_at', 'is', null)
+      .then(({ data }) => {
+        if (!data || data.length < 3) { setLoading(false); return }
+
+        // Compute anonymised aggregates
+        const withDelivery = data.filter(r => r.days_delivery > 0)
+        const avgDelivery = withDelivery.length > 0
+          ? Math.round(withDelivery.reduce((s, r) => s + r.days_delivery, 0) / withDelivery.length)
+          : null
+
+        const warrantyRate = data.length > 0
+          ? Math.round((data.filter(r => r.warranty_issues_count > 0).length / data.length) * 100)
+          : null
+
+        const avgVariations = data.length > 0
+          ? (data.reduce((s, r) => s + (r.variation_count || 0), 0) / data.length).toFixed(1)
+          : null
+
+        const avgScope = data.filter(r => r.final_scope_value > 0).length > 0
+          ? Math.round(data.filter(r => r.final_scope_value > 0).reduce((s, r) => s + r.final_scope_value, 0) / data.filter(r => r.final_scope_value > 0).length)
+          : null
+
+        // Top trade categories
+        const catCount: Record<string, number> = {}
+        data.forEach(r => { if (r.trade_category) catCount[r.trade_category] = (catCount[r.trade_category] || 0) + 1 })
+        const topCats = Object.entries(catCount).sort(([,a],[,b]) => b - a).slice(0, 3)
+
+        setStats({ avgDelivery, warrantyRate, avgVariations, avgScope, topCats, total: data.length })
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) return (
+    <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
+      <style>{`@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}`}</style>
+      {[1,2,3].map(i => <div key={i} style={{ height:'32px', borderRadius:'6px', marginBottom:'8px', background:'linear-gradient(90deg,#E8F0EE 25%,#D8E8E4 50%,#E8F0EE 75%)', backgroundSize:'200% 100%', animation:'shimmer 1.4s infinite' }} />)}
+    </div>
+  )
+
+  if (!stats) return (
+    <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
+      <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', margin:'0 0 10px' }}>WA Benchmarks</p>
+      <p style={{ fontSize:'12px', color:'#9AA5AA', margin:0, lineHeight:1.6 }}>Benchmarks will appear once more jobs complete through Steadyhand.</p>
+    </div>
+  )
+
+  return (
+    <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'14px' }}>
+        <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', margin:0 }}>WA Live Benchmarks</p>
+        <span style={{ fontSize:'10px', color:'#9AA5AA', background:'rgba(28,43,50,0.06)', padding:'2px 8px', borderRadius:'20px' }}>{stats.total} jobs</span>
+      </div>
+      <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
+        {stats.avgDelivery && (
+          <div style={{ background:'#F4F8F7', borderRadius:'8px', padding:'10px 12px' }}>
+            <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px' }}>Avg delivery time</p>
+            <p style={{ fontSize:'18px', fontWeight:700, color:'#0A0A0A', margin:'0 0 1px' }}>{stats.avgDelivery} days</p>
+            <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>from first milestone to signoff</p>
+          </div>
+        )}
+        {stats.warrantyRate !== null && (
+          <div style={{ background:'#F4F8F7', borderRadius:'8px', padding:'10px 12px' }}>
+            <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px' }}>Warranty claim rate</p>
+            <p style={{ fontSize:'18px', fontWeight:700, color:'#0A0A0A', margin:'0 0 1px' }}>{stats.warrantyRate}%</p>
+            <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>of completed jobs</p>
+          </div>
+        )}
+        {stats.avgVariations && (
+          <div style={{ background:'#F4F8F7', borderRadius:'8px', padding:'10px 12px' }}>
+            <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 3px' }}>Avg variations per job</p>
+            <p style={{ fontSize:'18px', fontWeight:700, color:'#0A0A0A', margin:'0 0 1px' }}>{stats.avgVariations}</p>
+            <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>scope changes after agreement</p>
+          </div>
+        )}
+        {stats.topCats.length > 0 && (
+          <div style={{ background:'#F4F8F7', borderRadius:'8px', padding:'10px 12px' }}>
+            <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 8px' }}>Top trades on platform</p>
+            {stats.topCats.map(([cat, count]: [string, number]) => (
+              <div key={cat} style={{ display:'flex', justifyContent:'space-between', marginBottom:'4px' }}>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>{cat}</p>
+                <p style={{ fontSize:'12px', color:'#9AA5AA', margin:0 }}>{count} jobs</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <p style={{ fontSize:'10px', color:'#C8D5D2', margin:'12px 0 0', lineHeight:1.5 }}>Anonymised · Steadyhand platform data · WA only</p>
+    </div>
+  )
+}
+
 export function ObservatoryPage() {
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0])
   const [refreshKey, setRefreshKey] = useState(0)
@@ -143,7 +245,9 @@ export function ObservatoryPage() {
               <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>Intelligence is AI-generated and curated by the Steadyhand team. Always verify with the original source before taking legal or commercial action.</p>
               <a href="mailto:hello@steadyhandtrade.app" style={{ fontSize:'12px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Submit an item →</a>
             </div>
-            <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
+            <WABenchmarks />
+
+            <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)', marginTop:'16px' }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', margin:'0 0 14px' }}>Key sources</p>
               {[{ name:'DMIRS WA', url:'https://www.dmirs.wa.gov.au' },{ name:'Fair Work Commission', url:'https://www.fwc.gov.au' },{ name:'Building Commission WA', url:'https://www.buildingcommission.wa.gov.au' },{ name:'WA State Law Publisher', url:'https://www.legislation.wa.gov.au' },{ name:'SafeWork Australia', url:'https://www.safeworkaustralia.gov.au' }].map(s => (
                 <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display:'block', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', marginBottom:'8px', fontWeight:500 }}>{s.name} ↗</a>
