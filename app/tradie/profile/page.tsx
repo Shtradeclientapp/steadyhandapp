@@ -163,6 +163,12 @@ export default function TradieProfilePage() {
       <div style={{ background: '#0A0A0A', padding: '32px 0', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
+        {required && (
+          <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'8px', padding:'14px 16px', marginBottom:'20px', marginTop:'16px' }}>
+            <p style={{ fontSize:'14px', fontWeight:600, color:'#D4522A', margin:'0 0 4px' }}>Profile setup required</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>Your tradie profile needs to be completed before you can access your dashboard. Please fill in your business name, trade category and licence number below.</p>
+          </div>
+        )}
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' as const }}>
             <label style={{ width: '72px', height: '72px', borderRadius: '14px', background: 'rgba(216,228,225,0.1)', border: '1.5px solid rgba(216,228,225,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, cursor: 'pointer', overflow: 'hidden', position: 'relative' as const }}>
               <input type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { if (e.target.files?.[0]) uploadLogo(e.target.files[0]) }} />

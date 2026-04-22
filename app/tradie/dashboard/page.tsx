@@ -155,7 +155,7 @@ export default function TradieDashboard() {
         .single()
 
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
-      if (!prof.tradie?.id) { window.location.href = '/tradie/profile?setup=required'; return }
+      if (!prof.tradie?.id) { window.location.href = '/tradie/profile?required=true'; return }
 
       setUser(session.user)
       setProfile(prof)
