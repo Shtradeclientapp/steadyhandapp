@@ -210,7 +210,7 @@ export function ObservatoryPage() {
           <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Steadyhand Intelligence</p>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap' as const, gap:'12px' }}>
             <div>
-              <h1 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'3px', margin:'0 0 8px' }}>WA TRADE OBSERVATORY</h1>
+              <h1 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'3px', margin:'0 0 8px' }}>STEADYHAND WA DATA OBSERVATORY</h1>
               <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0, maxWidth:'500px', lineHeight:1.6 }}>Live intelligence on legislation, Fair Work decisions, DMIRS updates, award rates and legal precedents affecting WA trade professionals.</p>
             </div>
             <button type="button" onClick={() => setRefreshKey(k => k+1)} style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', color:'rgba(216,228,225,0.7)', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', cursor:'pointer' }}>↻ Refresh</button>
@@ -358,7 +358,7 @@ export function ObservatoryCarousel() {
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap' as const, gap:'12px' }}>
           <div>
             <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Digital & Trade Labour Tracker</p>
-            <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>WA TRADE OBSERVATORY</h2>
+            <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>STEADYHAND WA DATA OBSERVATORY</h2>
           </div>
           <a href="/observatory" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', padding:'8px 16px', borderRadius:'7px' }}>
             View full observatory →
