@@ -25,6 +25,9 @@ export default function TradieLead() {
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState<string|null>(null)
   const [profileLoaded, setProfileLoaded] = useState(false)
+  const [guestInviteCount, setGuestInviteCount] = useState(0)
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false)
+  const GUEST_LIMIT = 3
 
   // Invite form
   const [invite, setInvite] = useState({ client_name:'', client_email:'', trade_category:'', suburb:'', job_title:'', notes:'' })
@@ -45,7 +48,14 @@ export default function TradieLead() {
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { window.location.href = '/login'; return }
+      // Load guest invite count from localStorage
+      const guestCount = parseInt(localStorage.getItem('sh_guest_invites') || '0', 10)
+      setGuestInviteCount(guestCount)
+
+      if (!session) {
+        setProfileLoaded(true)
+        return
+      }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
       setProfileLoaded(true)
@@ -65,7 +75,49 @@ export default function TradieLead() {
 
   const handleInvite = async () => {
     if (!invite.client_email || !invite.job_title) return
-    if (!profileLoaded || !profile?.tradie?.id) return
+    if (!profileLoaded) return
+
+    // Guest flow — no session
+    if (!profile?.tradie?.id) {
+      if (guestInviteCount >= GUEST_LIMIT) {
+        setShowSignupPrompt(true)
+        return
+      }
+      setSending(true)
+      setSendError(null)
+      try {
+        const invRes = await fetch('/api/invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_email: invite.client_email,
+            client_name: invite.client_name,
+            tradie_name: 'your tradie',
+            job_title: invite.job_title,
+            message: invite.notes,
+          }),
+        })
+        const invData = await invRes.json()
+        if (!invRes.ok || invData.error) {
+          setSendError('Invitation email failed — ' + (invData.error || 'please try again'))
+          setSending(false)
+          return
+        }
+      } catch {
+        setSendError('Could not send invitation — check your connection')
+        setSending(false)
+        return
+      }
+      const newCount = guestInviteCount + 1
+      localStorage.setItem('sh_guest_invites', String(newCount))
+      setGuestInviteCount(newCount)
+      setSent(true)
+      setSending(false)
+      setInvite({ client_name:'', client_email:'', trade_category:'', suburb:'', job_title:'', notes:'' })
+      if (newCount >= GUEST_LIMIT) setShowSignupPrompt(true)
+      return
+    }
+
     setSending(true)
     setSendError(null)
     const supabase = createClient()
@@ -176,6 +228,36 @@ export default function TradieLead() {
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={true} backLabel="← Dashboard" backHref="/tradie/dashboard" />
+
+      {/* Guest invite counter banner */}
+      {!profile?.tradie?.id && (
+        <div style={{ background:'#0A0A0A', padding:'10px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap' as const, gap:'10px' }}>
+          <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.7)', margin:0 }}>
+            You have <strong style={{ color:'rgba(216,228,225,0.95)' }}>{Math.max(0, GUEST_LIMIT - guestInviteCount)}</strong> free invite{GUEST_LIMIT - guestInviteCount === 1 ? '' : 's'} remaining — <a href="/signup?role=tradie" style={{ color:'#D4522A', textDecoration:'none', fontWeight:500 }}>sign up free</a> to unlock unlimited invites and track all your leads.
+          </p>
+        </div>
+      )}
+
+      {/* Signup prompt modal */}
+      {showSignupPrompt && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100, padding:'24px' }}>
+          <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'420px', width:'100%', textAlign:'center' as const }}>
+            <p style={{ fontSize:'28px', marginBottom:'12px' }}>🎉</p>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'20px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'10px' }}>
+              {guestInviteCount >= GUEST_LIMIT ? "You've used your free invites" : 'Invitation sent!'}
+            </h2>
+            <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.7, marginBottom:'24px' }}>
+              Sign up free to unlock unlimited client invites, track all your leads, manage jobs end-to-end and get paid through Steadyhand.
+            </p>
+            <a href="/signup?role=tradie" style={{ display:'block', background:'#D4522A', color:'white', padding:'13px 24px', borderRadius:'8px', fontSize:'15px', fontWeight:500, textDecoration:'none', marginBottom:'10px' }}>
+              Create your free tradie account →
+            </a>
+            <button type="button" onClick={() => setShowSignupPrompt(false)} style={{ background:'none', border:'none', fontSize:'13px', color:'#9AA5AA', cursor:'pointer' }}>
+              {guestInviteCount >= GUEST_LIMIT ? 'Close' : 'Continue without signing up'}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div style={{ background:'#0A0A0A', padding:'28px 24px' }}>
         <div style={{ maxWidth:'760px', margin:'0 auto' }}>
