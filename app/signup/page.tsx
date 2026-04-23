@@ -60,9 +60,13 @@ export default function SignupPage() {
     const waitForSession = setInterval(async () => {
       attempts++
       const { data: { session } } = await supabase2.auth.getSession()
-      if (session || attempts > 10) {
+      if (session) {
         clearInterval(waitForSession)
         window.location.href = dest
+      } else if (attempts > 15) {
+        clearInterval(waitForSession)
+        // Email confirmation may be required — send to login with message
+        window.location.href = '/login?confirmed=pending'
       }
     }, 300)
   }

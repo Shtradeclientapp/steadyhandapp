@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [status, setStatus] = useState('')
   const [loading, setLoading] = useState(false)
   const [showForgot, setShowForgot] = useState(false)
+  const pendingConfirmation = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('confirmed') === 'pending'
   const [resetEmail, setResetEmail] = useState('')
   const [resetSent, setResetSent] = useState(false)
   const [resetting, setResetting] = useState(false)
@@ -53,7 +54,13 @@ export default function LoginPage() {
           <div style={{ width:'100%', maxWidth:'380px' }}>
             <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#D4522A', letterSpacing:'2px', marginBottom:'6px' }}>STEADYHAND</h1>
             <p style={{ fontSize:'22px', fontWeight:'600', color:'#0A0A0A', marginBottom:'6px', fontFamily:'sans-serif' }}>Welcome back</p>
-            <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'32px', fontFamily:'sans-serif' }}>Sign in to your Steadyhand account</p>
+            <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom: pendingConfirmation ? '16px' : '32px', fontFamily:'sans-serif' }}>Sign in to your Steadyhand account</p>
+            {pendingConfirmation && (
+              <div style={{ background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'24px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 4px', fontFamily:'sans-serif' }}>Check your email</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', margin:0, fontFamily:'sans-serif' }}>We sent a confirmation link to your email address. Click it to activate your account, then sign in here.</p>
+              </div>
+            )}
 
             <div style={{ marginBottom:'16px' }}>
               <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'6px', fontFamily:'sans-serif' }}>Email address</label>
