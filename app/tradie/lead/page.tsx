@@ -27,6 +27,7 @@ export default function TradieLead() {
   const [profileLoaded, setProfileLoaded] = useState(false)
   const [guestInviteCount, setGuestInviteCount] = useState(0)
   const [showSignupPrompt, setShowSignupPrompt] = useState(false)
+  const [showFreeInviteInfo, setShowFreeInviteInfo] = useState(false)
   const GUEST_LIMIT = 3
 
   // Invite form
@@ -238,6 +239,31 @@ export default function TradieLead() {
         </div>
       )}
 
+      {/* Free invite info modal — shown on first click for guests */}
+      {showFreeInviteInfo && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.55)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100, padding:'24px' }}>
+          <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'400px', width:'100%' }}>
+            <p style={{ fontSize:'24px', marginBottom:'12px', textAlign:'center' as const }}>✉️</p>
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'10px', textAlign:'center' as const }}>3 FREE CLIENT INVITES</h2>
+            <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.7, marginBottom:'8px' }}>
+              You can invite up to <strong>3 clients</strong> to Steadyhand without creating an account. They'll receive an email invitation to set up their job on the platform.
+            </p>
+            <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.7, marginBottom:'24px' }}>
+              Sign up free to unlock unlimited invites, track all your leads, and manage jobs end-to-end.
+            </p>
+            <button type="button" onClick={() => {
+              localStorage.setItem('sh_invite_info_seen', '1')
+              setShowFreeInviteInfo(false)
+            }} style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', marginBottom:'10px' }}>
+              Got it — send my first invite
+            </button>
+            <div style={{ textAlign:'center' as const }}>
+              <a href="/signup?role=tradie" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Create a free account instead →</a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Signup prompt modal */}
       {showSignupPrompt && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100, padding:'24px' }}>
@@ -275,7 +301,12 @@ export default function TradieLead() {
             { key:'invite', label:'✉️  Invite a client', sub:'Send them a Steadyhand invitation' },
             { key:'import', label:'📥  Import a lead', sub:'From Simpro, Tradify, paper or phone' },
           ].map(t => (
-            <button key={t.key} type="button" onClick={() => { setMode(t.key as any); setSent(false); if (profile?.tradie?.id) setSendError(null) }}
+            <button key={t.key} type="button" onClick={() => {
+                setMode(t.key as any); setSent(false); if (profile?.tradie?.id) setSendError(null)
+                if (t.key === 'invite' && !profile?.tradie?.id && guestInviteCount === 0 && !localStorage.getItem('sh_invite_info_seen')) {
+                  setShowFreeInviteInfo(true)
+                }
+              }}
               style={{ flex:1, padding:'14px 16px', border:'none', background: mode === t.key ? '#0A0A0A' : 'transparent', cursor:'pointer', textAlign:'left' as const, transition:'background 0.15s' }}>
               <p style={{ fontSize:'13px', fontWeight:600, color: mode === t.key ? 'rgba(216,228,225,0.9)' : '#0A0A0A', margin:'0 0 2px' }}>{t.label}</p>
               <p style={{ fontSize:'11px', color: mode === t.key ? 'rgba(216,228,225,0.45)' : '#7A9098', margin:0 }}>{t.sub}</p>
