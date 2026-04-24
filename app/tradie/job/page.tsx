@@ -46,6 +46,7 @@ const BLANK_ITEM = (category: string) => ({ category, label: '', quantity: '1', 
 
 export default function TradieJobPage() {
   const [user, setUser] = useState<any>(null)
+  const [declineConfirmId, setDeclineConfirmId] = useState<string|null>(null)
   const [proposedSlots, setProposedSlots] = useState(['','',''])
   const [proposingConsult, setProposingConsult] = useState(false)
   const [consultSent, setConsultSent] = useState(false)
