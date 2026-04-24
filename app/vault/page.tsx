@@ -18,6 +18,7 @@ const DOC_TYPES = [
 export default function VaultPage() {
   const [profile, setProfile] = useState<any>(null)
   const [docs, setDocs] = useState<any[]>([])
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string|null>(null)
@@ -110,7 +111,8 @@ export default function VaultPage() {
   }
 
   const deleteDoc = async (id: string) => {
-    if (!window.confirm('Remove this document from your vault?')) return
+    if (deleteConfirmId !== docId) { setDeleteConfirmId(docId); return }
+    setDeleteConfirmId(null)
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
   }

@@ -60,6 +60,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
+  const [cancelConfirmId, setCancelConfirmId] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
   const [consults, setConsults] = useState<any[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
@@ -152,7 +153,8 @@ export default function DashboardPage() {
   const cancelableStatuses = ['matching', 'shortlisted', 'compare', 'draft']
 
   const cancelJob = async (jobId: string, jobTitle: string) => {
-    if (!window.confirm('Cancel "' + jobTitle + '"? This will notify any tradies who have been invited and cannot be undone.')) return
+    if (cancelConfirmId !== jobId) { setCancelConfirmId(jobId); return }
+    setCancelConfirmId(null)
     const { data: { session } } = await supabase.auth.getSession()
     await supabase.from('jobs').update({ status: 'cancelled' }).eq('id', jobId)
     await supabase.from('job_messages').insert({

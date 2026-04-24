@@ -32,6 +32,7 @@ export default function OrgDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'jobs'|'properties'|'members'|'preferred'|'reports'>('jobs')
   const [portfolioAnalytics, setPortfolioAnalytics] = useState<any[]>([])
+  const [removeMemberConfirmId, setRemoveMemberConfirmId] = useState<string|null>(null)
   const [myRole, setMyRole] = useState<string>('member')
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -213,7 +214,8 @@ export default function OrgDashboardPage() {
   }
 
   const removeMember = async (memberId: string, memberName: string) => {
-    if (!window.confirm('Remove ' + memberName + ' from your organisation?')) return
+    if (removeMemberConfirmId !== memberId) { setRemoveMemberConfirmId(memberId); return }
+    setRemoveMemberConfirmId(null)
     const supabase = createClient()
     await supabase.from('org_memberships').delete().eq('id', memberId)
     setMembers(prev => prev.filter((m: any) => m.id !== memberId))

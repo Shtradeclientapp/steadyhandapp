@@ -1,4 +1,5 @@
 'use client'
+import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
@@ -22,6 +23,7 @@ const STAGE_PATH: Record<string, string> = {
 type Tab = 'overview'|'consult'|'quote'|'delivery'|'documents'|'messages'
 
 export default function TradieJobHub() {
+  const params = useParams()
   const supabase = useSupabase()
   const [profile, setProfile] = useState<any>(null)
   const [job, setJob] = useState<any>(null)
@@ -36,7 +38,7 @@ export default function TradieJobHub() {
   const [stageDropdown, setStageDropdown] = useState(false)
 
   useEffect(() => {
-    const jobId = window.location.pathname.split('/').pop() || new URLSearchParams(window.location.search).get('id')
+    const jobId = (params?.id as string) || window.location.pathname.split('/').pop() || new URLSearchParams(window.location.search).get('id')
     if (!jobId) { window.location.href = '/tradie/dashboard'; return }
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {

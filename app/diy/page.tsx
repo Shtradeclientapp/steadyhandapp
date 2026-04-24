@@ -40,6 +40,7 @@ const WA_CHECKLIST = [
 export default function DIYPage() {
   const [user, setUser] = useState<any>(null)
   const [projects, setProjects] = useState<any[]>([])
+  const [deleteProjectConfirmId, setDeleteProjectConfirmId] = useState<string|null>(null)
   const [tasks, setTasks] = useState<any[]>([])
   const [expenses, setExpenses] = useState<any[]>([])
   const [checklist, setChecklist] = useState<any[]>([])
@@ -107,7 +108,8 @@ export default function DIYPage() {
   const [projectStartDate, setProjectStartDate] = useState('')
 
   const deleteProject = async (projectId: string) => {
-    if (!window.confirm('Delete this project and all its data? This cannot be undone.')) return
+    if (deleteProjectConfirmId !== projectId) { setDeleteProjectConfirmId(projectId); return }
+    setDeleteProjectConfirmId(null)
     const supabase = createClient()
     await supabase.from('ob_checklist_items').delete().eq('project_id', projectId)
     await supabase.from('diy_tasks').delete().eq('project_id', projectId)

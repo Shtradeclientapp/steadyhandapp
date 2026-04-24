@@ -6,6 +6,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 export default function WorkersPage() {
   const [profile, setProfile] = useState<any>(null)
   const [workers, setWorkers] = useState<any[]>([])
+  const [removeConfirmId, setRemoveConfirmId] = useState<string|null>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name:'', email:'', phone:'' })
@@ -98,7 +99,8 @@ export default function WorkersPage() {
   }
 
   const removeWorker = async (id: string) => {
-    if (!window.confirm('Remove this worker from your team?')) return
+    if (removeConfirmId !== workerId) { setRemoveConfirmId(workerId); return }
+    setRemoveConfirmId(null)
     const supabase = createClient()
     await supabase.from('tradie_workers').update({ status: 'removed' }).eq('id', id)
     setWorkers(prev => prev.filter(w => w.id !== id))

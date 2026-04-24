@@ -1,4 +1,5 @@
 'use client'
+import { useParams } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -14,6 +15,7 @@ const STATUS_COLOR: Record<string, string> = {
 }
 
 export default function PropertyDetailPage() {
+  const params = useParams()
   const [property, setProperty] = useState<any>(null)
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,7 +40,7 @@ export default function PropertyDetailPage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      const id = window.location.pathname.split('/').pop()
+      const id = (params?.id as string) || window.location.pathname.split('/').pop()
       const { data: prop } = await supabase.from('properties').select('*').eq('id', id).single()
       setProperty(prop)
       if (prop?.tenant_name) setTenantForm({ name: prop.tenant_name || '', email: prop.tenant_email || '', phone: prop.tenant_phone || '' })
