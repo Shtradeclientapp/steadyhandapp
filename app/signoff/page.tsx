@@ -154,7 +154,7 @@ export default function SignoffPage() {
           })
         }
       }
-    } catch { /* non-critical */ }
+    } catch (err) { console.error('signoff error:', err) } finally { setSubmitting(false) }
 
     // Request certificate of compliance from tradie
     if (job.tradie_id) {
