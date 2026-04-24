@@ -290,8 +290,8 @@ export function ObservatoryWidget() {
           {active.url && <a href={active.url} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:active.categoryColor, textDecoration:'none', fontWeight:500 }}>Source ↗</a>}
         </div>
       </div>
-      <div style={{ padding:'10px 14px', display:'flex', gap:'6px', justifyContent:'center' }}>
-        {items.map((_,i) => <button key={i} type="button" onClick={() => setActiveIdx(i)} style={{ width: i===activeIdx?'20px':'6px', height:'6px', borderRadius:'3px', border:'none', background: i===activeIdx?'#D4522A':'rgba(28,43,50,0.15)', cursor:'pointer', padding:0, transition:'all 0.2s' }} />)}
+      <div style={{ padding:'10px 14px', display:'flex', gap:'6px', justifyContent:'center', alignItems:'center', flexWrap:'nowrap' as const }}>
+        {items.map((_,i) => <button key={i} type="button" onClick={() => setActiveIdx(i)} style={{ width: i===activeIdx?'20px':'6px', height:'6px', borderRadius:'3px', border:'none', background: i===activeIdx?'#D4522A':'rgba(28,43,50,0.15)', cursor:'pointer', padding:0, transition:'all 0.2s', flexShrink:0 }} />)}
       </div>
     </div>
   )
@@ -405,10 +405,10 @@ export function ObservatoryCarousel() {
         </div>
 
         {/* Progress dots */}
-        <div style={{ display:'flex', gap:'6px', justifyContent:'center', marginTop:'24px' }}>
+        <div style={{ display:'flex', gap:'6px', justifyContent:'center', alignItems:'center', marginTop:'24px', flexWrap:'nowrap' as const }}>
           {items.map((_, i) => (
             <button key={i} type="button" onClick={() => setActiveIdx(i)}
-              style={{ width: i === activeIdx ? '24px' : '6px', height:'4px', borderRadius:'2px', border:'none', background: i === activeIdx ? '#D4522A' : 'rgba(255,255,255,0.15)', cursor:'pointer', padding:0, transition:'all 0.3s' }} />
+              style={{ width: i === activeIdx ? '24px' : '6px', height:'4px', borderRadius:'2px', border:'none', background: i === activeIdx ? '#D4522A' : 'rgba(255,255,255,0.15)', cursor:'pointer', padding:0, transition:'all 0.3s', flexShrink:0 }} />
           ))}
         </div>
 

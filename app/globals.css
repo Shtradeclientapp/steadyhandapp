@@ -1084,3 +1084,34 @@ html, body { overflow-x: hidden; max-width: 100vw; }
     display: none !important;
   }
 }
+
+/* ── Dashboard auto-fill grids ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Capability/guide cards */
+  div[style*="minmax(200px"] {
+    grid-template-columns: 1fr !important;
+  }
+  div[style*="minmax(260px"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Observatory carousel item list hidden on mobile */
+  .observatory-grid > div:last-child {
+    display: none !important;
+  }
+  /* Org portfolio grid */
+  div[style*="minmax(160px"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* Job record grid */
+  div[style*="minmax(140px"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* NavHeader padding */
+  .nav-inner {
+    padding: 0 16px !important;
+  }
+  /* Request form full width inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
