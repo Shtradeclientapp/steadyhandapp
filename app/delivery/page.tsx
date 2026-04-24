@@ -121,6 +121,7 @@ function VariationCard({ v, isTradie, onRespond }: { v: any, isTradie: boolean, 
 
 export default function DeliveryPage() {
   const [job, setJob] = useState<any>(null)
+  const [noJobId, setNoJobId] = useState(false)
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
@@ -157,7 +158,8 @@ export default function DeliveryPage() {
 
       if (jobs && jobs.length > 0) {
         setAllJobs(jobs)
-        const deliveryJob = urlJobId ? jobs[0] : (jobs.find((j: any) => j.status === 'delivery') || jobs[0])
+        const deliveryJob = urlJobId ? jobs[0] : jobs.find((j: any) => j.status === 'delivery') || (jobs.length === 1 ? jobs[0] : null)
+        if (!deliveryJob) { setNoJobId(true); return }
         setJob(deliveryJob)
         const { data: ms } = await supabase
           .from('milestones')
@@ -404,6 +406,17 @@ export default function DeliveryPage() {
   )
 
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
+
+  if (noJobId) return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+      <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'400px', width:'100%', textAlign:'center' as const }}>
+        <p style={{ fontSize:'24px', marginBottom:'12px' }}>🔍</p>
+        <h2 style={{ fontSize:'18px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>Which job is this for?</h2>
+        <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.6, marginBottom:'20px' }}>You have multiple active jobs. Please go back to your dashboard and navigate to this page from the job you want to work on.</p>
+        <a href="/dashboard" style={{ display:'inline-block', background:'#0A0A0A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>← Back to dashboard</a>
+      </div>
+    </div>
+  )
 
   if (!job) return (
     <>{nav}

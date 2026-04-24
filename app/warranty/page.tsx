@@ -10,6 +10,7 @@ import { JobSelector } from '@/components/ui/JobSelector'
 
 export default function WarrantyPage() {
   const [job, setJob] = useState<any>(null)
+  const [noJobId, setNoJobId] = useState(false)
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [issues, setIssues] = useState<any[]>([])
@@ -40,6 +41,7 @@ export default function WarrantyPage() {
       const { data: jobs } = await wQuery
         
       if (jobs && jobs.length > 0) {
+        if (!urlJobId && jobs.length > 1) { setNoJobId(true); return }
         setJob(jobs[0])
         const { data: iss } = await supabase.from('warranty_issues').select('*').eq('job_id', jobs[0].id).order('created_at', { ascending: false })
         setIssues(iss || [])
@@ -141,6 +143,17 @@ export default function WarrantyPage() {
   )
 
   if (loading) return <>{nav}<div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'calc(100vh - 64px)', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading...</p></div></>
+
+  if (noJobId) return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+      <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'400px', width:'100%', textAlign:'center' as const }}>
+        <p style={{ fontSize:'24px', marginBottom:'12px' }}>🔍</p>
+        <h2 style={{ fontSize:'18px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>Which job is this for?</h2>
+        <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.6, marginBottom:'20px' }}>You have multiple active jobs. Please go back to your dashboard and navigate to this page from the job you want to work on.</p>
+        <a href="/dashboard" style={{ display:'inline-block', background:'#0A0A0A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>← Back to dashboard</a>
+      </div>
+    </div>
+  )
 
   if (!job) return (
     <>{nav}

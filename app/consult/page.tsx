@@ -26,6 +26,7 @@ const TRADIE_PROMPTS = [
 
 export default function AssessPage() {
   const [job, setJob] = useState<any>(null)
+  const [noJobId, setNoJobId] = useState(false)
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -293,6 +294,17 @@ export default function AssessPage() {
   }
 
   const inp = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const, fontFamily:'sans-serif', lineHeight:'1.6' }
+
+  if (noJobId) return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+      <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'400px', width:'100%', textAlign:'center' as const }}>
+        <p style={{ fontSize:'24px', marginBottom:'12px' }}>🔍</p>
+        <h2 style={{ fontSize:'18px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>Which job is this for?</h2>
+        <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.6, marginBottom:'20px' }}>You have multiple active jobs. Please go back to your dashboard and navigate to this page from the job you want to work on.</p>
+        <a href="/dashboard" style={{ display:'inline-block', background:'#0A0A0A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>← Back to dashboard</a>
+      </div>
+    </div>
+  )
 
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>

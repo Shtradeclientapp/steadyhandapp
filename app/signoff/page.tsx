@@ -21,6 +21,7 @@ const BASE_CHECKS = [
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
+  const [noJobId, setNoJobId] = useState(false)
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [profile, setProfile] = useState<any>(null)
   const [milestones, setMilestones] = useState<any[]>([])
@@ -59,11 +60,13 @@ export default function SignoffPage() {
       const { data: jobs } = await signoffQuery
         
       if (jobs && jobs.length > 0) {
-        setJob(urlJobId ? jobs[0] : (jobs.find((j: any) => j.status === 'signoff') || jobs[0]))
+        const signoffJob = urlJobId ? jobs[0] : jobs.find((j: any) => j.status === 'signoff') || (jobs.length === 1 ? jobs[0] : null)
+        if (!signoffJob) { setNoJobId(true); return }
+        setJob(signoffJob)
         const { data: ms } = await supabase
           .from('milestones')
           .select('*')
-          .eq('job_id', jobs[0].id)
+          .eq('job_id', signoffJob.id)
           .order('order_index', { ascending: true })
         setMilestones(ms || [])
 
@@ -72,10 +75,10 @@ export default function SignoffPage() {
           label: m.label + ' — completed and approved',
           sub: m.description || 'Milestone signed off by client',
         }))
-        const scopeCheck = jobs[0].description ? [{
+        const scopeCheck = signoffJob.description ? [{
           id: 'scope',
           label: 'All scope items completed as described',
-          sub: jobs[0].description.slice(0, 100) + (jobs[0].description.length > 100 ? '...' : ''),
+          sub: signoffJob.description.slice(0, 100) + (signoffJob.description.length > 100 ? '...' : ''),
         }] : []
         setDynamicChecks([...scopeCheck, ...milestoneChecks])
       }
@@ -190,6 +193,17 @@ export default function SignoffPage() {
   }
 
   const isPastSignoff = job && ['warranty', 'complete'].includes(job.status)
+
+  if (noJobId) return (
+    <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
+      <div style={{ background:'white', borderRadius:'14px', padding:'32px', maxWidth:'400px', width:'100%', textAlign:'center' as const }}>
+        <p style={{ fontSize:'24px', marginBottom:'12px' }}>🔍</p>
+        <h2 style={{ fontSize:'18px', fontWeight:600, color:'#0A0A0A', marginBottom:'8px' }}>Which job is this for?</h2>
+        <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:1.6, marginBottom:'20px' }}>You have multiple active jobs. Please go back to your dashboard and navigate to this page from the job you want to work on.</p>
+        <a href="/dashboard" style={{ display:'inline-block', background:'#0A0A0A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>← Back to dashboard</a>
+      </div>
+    </div>
+  )
 
   if (loading) return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
