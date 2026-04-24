@@ -274,8 +274,8 @@ export default function TradieDashboard() {
   const tradieSlides = [
     {
       icon: '👋',
-      title: 'Welcome to Steadyhand',
-      body: 'When a client selects you from their shortlist, a quote request lands on your dashboard. From there, Steadyhand guides both of you through consult, scope, milestones and warranty — step by step.',
+      title: 'Your jobs, properly managed',
+      body: 'When a client invites you, a quote request lands here. Steadyhand then guides both of you through consult, scope agreement, milestone payments and warranty — so every job has a clean paper trail from start to finish.',
     },
     {
       icon: '📋',

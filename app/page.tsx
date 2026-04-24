@@ -111,7 +111,7 @@ export default function Home() {
             { icon:'🧭', title:'Guided', label:'Through every stage' },
             { icon:'✅', title:'Verified', label:'Licence & insurance checked' },
             { icon:'✍️', title:'Protected', label:'Signed scope before work starts' },
-            { icon:'💳', title:'No upfront cost', label:'Pay only when work is approved' },
+            { icon:'💳', title:'Milestone payments', label:'Work approved before funds release' },
           ].map(s => (
             <div key={s.label} className="stat-item">
               <div style={{ fontSize:'22px', marginBottom:'6px' }}>{s.icon}</div>

@@ -400,17 +400,17 @@ export default function DashboardPage() {
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
               <div style={{ position:'relative', zIndex:1 }}>
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>YOUR FIRST JOB</p>
-                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Describe the work - we'll handle the rest</p>
+                <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>From first request to 90-day warranty — guided at every stage</p>
               </div>
             </div>
             <div style={{ padding:'24px' }}>
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'20px' }}>
-                Steadyhand takes your job from first request all the way through to a 90-day warranty - with a signed scope agreement, milestone payments, and a permanent document record at every step.
+                Steadyhand stays with you from the first request through to a signed scope, staged payments, and a 90-day warranty — with a permanent document record the whole way. Nothing proceeds until both parties agree.
               </p>
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'10px', marginBottom:'20px' }}>
                 {[
                   { icon:'📋', title:'Describe the work', body:'Tell us what needs doing and where. The more detail, the better your quotes.' },
-                  { icon:'🤝', title:'Invite a tradie', body:'Invite a tradie you already trust, or ask Steadyhand to suggest one.' },
+                  { icon:'🤝', title:'Invite a tradie', body:'Invite someone you already trust. They join Steadyhand and the job begins under a shared record.' },
                   { icon:'✍️', title:'Sign a scope agreement', body:'Both parties sign before work starts. No more verbal agreements.' },
                   { icon:'🛡', title:'Warranty included', body:'Every completed job comes with a 90-day warranty, tracked automatically.' },
                 ].map(item => (
@@ -604,7 +604,7 @@ export default function DashboardPage() {
       <OnboardingModal storageKey="seen_client_onboarding" slides={[
         {
           icon: '🏠',
-          title: 'Welcome to Steadyhand',
+          title: 'You\'re in — let\'s get your first job started',
           body: 'Getting work done on your home shouldn\'t be stressful. Steadyhand stays with you from your first request all the way through to your 90-day warranty - so you always know what\'s happening and what happens next.',
         },
         {

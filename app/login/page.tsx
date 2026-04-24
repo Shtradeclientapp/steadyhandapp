@@ -123,11 +123,11 @@ export default function LoginPage() {
        <div className="login-right" style={{ background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', padding:'60px 64px', position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 60%, rgba(212,82,42,0.15), transparent 55%)' }} />
           <blockquote style={{ position:'relative', zIndex:1, maxWidth:'360px' }}>
-            <p style={{ fontFamily:'sans-serif', fontSize:'18px', fontStyle:'italic', fontWeight:'300', lineHeight:'1.7', color:'rgba(216,228,225,0.85)', marginBottom:'20px' }}>
-              "Steadyhand gave us a genuine pipeline of local jobs. We've stopped chasing leads on three other platforms."
+            <p style={{ fontFamily:'sans-serif', fontSize:'17px', fontStyle:'italic', fontWeight:'300', lineHeight:'1.7', color:'rgba(216,228,225,0.85)', marginBottom:'20px' }}>
+              "Not only did we achieve our ROI expectations, but I was able to come at my business from a new perspective — less on the tools and more in a position of strategic leadership over the direction and feel of our services."
             </p>
             <cite style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', fontStyle:'normal', fontFamily:'sans-serif' }}>
-              — Chris Creevey, Re-Gutters Margaret River
+              — Cullum Creevey, Margaret River Regutters
             </cite>
           </blockquote>
         </div>
