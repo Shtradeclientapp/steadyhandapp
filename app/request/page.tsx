@@ -310,9 +310,12 @@ sessionStorage.removeItem('diy_project_id')
               <label style={labelStyle}>
                 Warranty period
                 <select value={form.warranty_period} onChange={set('warranty_period')} style={inputStyle}>
-                  <option value="90">Standard — 90 days (recommended for most jobs)</option>
-                  <option value="180">Extended — 6 months (complex or high-value work)</option>
-                  <option value="365">Full — 12 months (major renovations)</option>
+                  <option value="30">30 days — minor repairs, labour-only work</option>
+                  <option value="90">90 days — standard (recommended for most jobs)</option>
+                  <option value="180">6 months — complex or high-value work</option>
+                  <option value="365">12 months — major installations or renovations</option>
+                  <option value="730">2 years — significant building or structural work</option>
+                  <option value="1825">5 years — waterproofing, structural, long-term works</option>
                 </select>
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>This is written into the scope agreement that both parties sign before work begins. The tradie is formally obligated to this period.</span>
               </label>
@@ -353,7 +356,7 @@ sessionStorage.removeItem('diy_project_id')
                   { label:'Property', value:form.property_type },
                   { label:'Urgency', value:form.urgency },
                   { label:'Budget', value:form.budget_range || 'Not specified' },
-                  { label:'Protect', value:form.warranty_period === '90' ? '90 days' : form.warranty_period === '180' ? '6 months' : '12 months' },
+                  { label:'Protect', value: form.warranty_period === '30' ? '30 days' : form.warranty_period === '90' ? '90 days' : form.warranty_period === '180' ? '6 months' : form.warranty_period === '365' ? '12 months' : form.warranty_period === '730' ? '2 years' : '5 years' },
                 ].map(item => (
                   <div key={item.label} style={{ display:'flex', gap:'12px', padding:'10px 0', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
                     <span style={{ fontSize:'13px', color:'#7A9098', minWidth:'90px', flexShrink:0, fontFamily:'sans-serif' }}>{item.label}</span>

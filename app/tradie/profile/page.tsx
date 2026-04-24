@@ -61,6 +61,21 @@ export default function TradieProfilePage() {
     }
   }
 
+  const addProduct = () => {
+    const current = (form.preferred_products || []) as any[]
+    setF('preferred_products', [...current, { name: '', brand: '', warranty_years: '', notes: '' }])
+  }
+  const updateProduct = (idx: number, key: string, val: string) => {
+    const current = [...((form.preferred_products || []) as any[])]
+    current[idx] = { ...current[idx], [key]: val }
+    setF('preferred_products', current)
+  }
+  const removeProduct = (idx: number) => {
+    const current = [...((form.preferred_products || []) as any[])]
+    current.splice(idx, 1)
+    setF('preferred_products', current)
+  }
+
   const uploadLogo = async (file: File) => {
     if (!profile) return
     setUploadingLogo(true)
@@ -102,6 +117,7 @@ export default function TradieProfilePage() {
       phone: form.phone,
       preferred_contact: form.preferred_contact,
       availability_status: form.availability_status,
+      preferred_products: form.preferred_products,
     }).eq('id', profile.id)
     if (tradieErr) { setSaveError('Save failed — please check your connection and try again.'); setSaving(false); return }
     setSaving(false)
@@ -403,6 +419,69 @@ export default function TradieProfilePage() {
             </div>
           </div>
         )}
+
+        {/* Preferred Products & Materials */}
+        <div style={{ marginTop:'28px', background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 3px' }}>Preferred Products & Materials</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Products you regularly use — these can be referenced in scope agreements and warranty certificates.</p>
+            </div>
+            <button type="button" onClick={addProduct}
+              style={{ background:'#2E7D60', color:'white', border:'none', borderRadius:'7px', padding:'7px 14px', fontSize:'12px', fontWeight:500, cursor:'pointer', flexShrink:0, marginLeft:'12px' }}>
+              + Add product
+            </button>
+          </div>
+          {((form.preferred_products || []) as any[]).length === 0 && (
+            <p style={{ fontSize:'12px', color:'#9AA5AA', fontStyle:'italic', margin:0 }}>No products added yet. Add the brands and materials you most commonly install.</p>
+          )}
+          {((form.preferred_products || []) as any[]).map((p: any, idx: number) => (
+            <div key={idx} style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px', marginBottom:'10px' }}>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Product / material name</p>
+                  <input value={p.name || ''} onChange={e => updateProduct(idx, 'name', e.target.value)}
+                    placeholder="e.g. Hot water system, Roof tiles"
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Brand / manufacturer</p>
+                  <input value={p.brand || ''} onChange={e => updateProduct(idx, 'brand', e.target.value)}
+                    placeholder="e.g. Rheem, Colorbond, James Hardie"
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+                </div>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:'10px' }}>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Manufacturer warranty</p>
+                  <select value={p.warranty_years || ''} onChange={e => updateProduct(idx, 'warranty_years', e.target.value)}
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                    <option value="">Not specified</option>
+                    <option value="1">1 year</option>
+                    <option value="2">2 years</option>
+                    <option value="5">5 years</option>
+                    <option value="7">7 years</option>
+                    <option value="10">10 years</option>
+                    <option value="12">12 years</option>
+                    <option value="15">15 years</option>
+                    <option value="20">20 years</option>
+                    <option value="25">25 years</option>
+                  </select>
+                </div>
+                <div>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Notes (optional)</p>
+                  <input value={p.notes || ''} onChange={e => updateProduct(idx, 'notes', e.target.value)}
+                    placeholder="e.g. Requires annual service to maintain warranty"
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+                </div>
+              </div>
+              <button type="button" onClick={() => removeProduct(idx)}
+                style={{ marginTop:'10px', fontSize:'11px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
 
         <div style={{ marginTop: '28px' }}>
           {saveError && (
