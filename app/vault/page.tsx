@@ -111,7 +111,7 @@ export default function VaultPage() {
   }
 
   const deleteDoc = async (id: string) => {
-    if (deleteConfirmId !== docId) { setDeleteConfirmId(docId); return }
+    if (deleteConfirmId !== id) { setDeleteConfirmId(id); return }
     setDeleteConfirmId(null)
     await supabase.from('vault_documents').delete().eq('id', id)
     setDocs(prev => prev.filter(d => d.id !== id))
