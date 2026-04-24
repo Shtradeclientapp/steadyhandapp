@@ -99,7 +99,7 @@ export default function WorkersPage() {
   }
 
   const removeWorker = async (id: string) => {
-    if (removeConfirmId !== workerId) { setRemoveConfirmId(workerId); return }
+    if (removeConfirmId !== id) { setRemoveConfirmId(id); return }
     setRemoveConfirmId(null)
     const supabase = createClient()
     await supabase.from('tradie_workers').update({ status: 'removed' }).eq('id', id)
