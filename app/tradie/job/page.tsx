@@ -615,12 +615,12 @@ export default function TradieJobPage() {
           {!currentQuote && !quoteSubmitted && !showQuoteForm && job?.status === 'shortlisted' && (
             <div style={{ padding:'0 20px 12px' }}>
               <button type="button" onClick={async () => {
-                if (declineConfirmId !== qr.id) { setDeclineConfirmId(qr.id); return }
+                if (declineConfirmId !== job.id) { setDeclineConfirmId(job.id); return }
                 setDeclineConfirmId(null)
                 const supabase = createClient()
                 const { data: { session } } = await supabase.auth.getSession()
-                const { data: qr } = await supabase.from('quote_requests').select('id').eq('job_id', job.id).eq('tradie_id', session?.user.id).single()
-                if (qr) await supabase.from('quote_requests').update({ status: 'declined' }).eq('id', qr.id)
+                const { data: qrData } = await supabase.from('quote_requests').select('id').eq('job_id', job.id).eq('tradie_id', session?.user.id).single()
+                if (qrData) await supabase.from('quote_requests').update({ status: 'declined' }).eq('id', qrData.id)
                 await supabase.from('job_messages').insert({
                   job_id: job.id,
                   sender_id: session?.user.id,
