@@ -79,6 +79,7 @@ export default function AssessPage() {
 
       if (jobs && jobs.length > 0) {
         setAllJobs(jobs)
+        if (!urlJobId && jobs.length > 1) { setNoJobId(true); return }
         setJob(jobs[0])
         const { data: assess } = await supabase
           .from('site_assessments')
