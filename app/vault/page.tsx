@@ -297,7 +297,7 @@ export default function VaultPage() {
 
         {filteredDocs.length === 0 ? (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'48px', textAlign:'center' as const }}>
-            <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.3 }}>\U0001f5c4</div>
+            <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.3 }}>🗃</div>
             <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:500, marginBottom:'6px' }}>
               {filter === 'all' ? 'Your vault is empty' : 'No ' + (DOC_TYPES.find(t => t.value === filter)?.label.toLowerCase() || '') + ' documents yet'}
             </p>
