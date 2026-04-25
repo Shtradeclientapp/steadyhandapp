@@ -44,30 +44,65 @@ export async function POST(request: NextRequest) {
     if (action === 'create_payment_intent') {
       const { data: job } = await supabase.from('jobs').select('*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id, email))').eq('id', job_id).single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
-      const { data: quote } = await supabase.from('quotes').select('*').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
-      if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
       const tradieAccountId = job.tradie?.profile?.stripe_account_id
       if (!tradieAccountId) return NextResponse.json({ error: 'Tradie has not connected Stripe yet' }, { status: 400 })
-      const amountCents = Math.round(Number(quote.total_price) * 100)
+      // Use milestone amount if provided, otherwise fall back to quote total
+      let amountCents: number
+      if (milestone_id) {
+        const { data: milestone } = await supabase.from('milestones').select('amount').eq('id', milestone_id).single()
+        if (!milestone?.amount) return NextResponse.json({ error: 'Milestone amount not set' }, { status: 400 })
+        amountCents = Math.round(Number(milestone.amount) * 100)
+      } else {
+        const { data: quote } = await supabase.from('quotes').select('total_price').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
+        if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
+        amountCents = Math.round(Number(quote.total_price) * 100)
+      }
       const feeRate = job.tradie?.founding_member ? 0.03 : 0.035
       const platformFeeCents = Math.round(amountCents * feeRate)
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountCents, currency: 'aud',
         application_fee_amount: platformFeeCents,
         transfer_data: { destination: tradieAccountId },
-        metadata: { job_id, client_id },
+        metadata: { job_id, milestone_id: milestone_id || '', client_id: client_id || '' },
         automatic_payment_methods: { enabled: true },
       })
-      await supabase.from('jobs').update({ stripe_payment_intent_id: paymentIntent.id }).eq('id', job_id)
+      await supabase.from('milestones').update({ stripe_payment_intent_id: paymentIntent.id }).eq('id', milestone_id)
       return NextResponse.json({ client_secret: paymentIntent.client_secret, amount: amountCents, fee: platformFeeCents })
     }
 
-    // ── Release milestone ────────────────────────────────────────
+    // ── Release milestone — transfer funds to tradie ────────────
     if (action === 'release_milestone') {
-      const { data: milestone } = await supabase.from('milestones').select('*').eq('id', milestone_id).single()
+      const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)))').eq('id', milestone_id).single()
       if (!milestone) return NextResponse.json({ error: 'Milestone not found' }, { status: 404 })
-      await supabase.from('milestones').update({ paid_at: new Date().toISOString() }).eq('id', milestone_id)
-      return NextResponse.json({ success: true })
+      const tradieAccountId = milestone.job?.tradie?.profile?.stripe_account_id
+      const amountCents = Math.round(Number(milestone.amount) * 100)
+      const feeRate = milestone.job?.tradie?.founding_member ? 0.03 : 0.035
+      const platformFeeCents = Math.round(amountCents * feeRate)
+      const transferAmount = amountCents - platformFeeCents
+      if (tradieAccountId && transferAmount > 0) {
+        try {
+          const transfer = await stripe.transfers.create({
+            amount: transferAmount,
+            currency: 'aud',
+            destination: tradieAccountId,
+            metadata: { milestone_id, job_id: milestone.job_id || '' },
+          })
+          await supabase.from('milestones').update({
+            paid_at: new Date().toISOString(),
+            stripe_transfer_id: transfer.id,
+          }).eq('id', milestone_id)
+          return NextResponse.json({ success: true, transfer_id: transfer.id, amount_transferred: transferAmount })
+        } catch (stripeErr: any) {
+          console.error('Stripe transfer failed:', stripeErr.message)
+          // Still mark paid in DB but flag transfer error
+          await supabase.from('milestones').update({ paid_at: new Date().toISOString() }).eq('id', milestone_id)
+          return NextResponse.json({ success: true, transfer_error: stripeErr.message })
+        }
+      } else {
+        // No Stripe account connected — mark paid in DB only
+        await supabase.from('milestones').update({ paid_at: new Date().toISOString() }).eq('id', milestone_id)
+        return NextResponse.json({ success: true, note: 'Tradie Stripe account not connected — marked paid in DB only' })
+      }
     }
 
     // ── Stripe Connect account status ────────────────────────────

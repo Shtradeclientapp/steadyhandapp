@@ -27,10 +27,27 @@ export async function POST(request: NextRequest) {
       case 'payment_intent.succeeded': {
         const pi = event.data.object as Stripe.PaymentIntent
         const jobId = pi.metadata?.job_id
-        if (jobId) {
-          await supabase.from('jobs').update({
-            status: 'delivery',
-          }).eq('id', jobId).eq('status', 'agreement')
+        const milestoneId = pi.metadata?.milestone_id
+        const clientId = pi.metadata?.client_id
+        if (milestoneId) {
+          // Mark milestone as paid and move job to delivery if needed
+          await supabase.from('milestones').update({
+            status: 'approved',
+            approved_at: new Date().toISOString(),
+            payment_held: true,
+            stripe_payment_intent_id: pi.id,
+          }).eq('id', milestoneId)
+          if (jobId) {
+            await supabase.from('jobs').update({ status: 'delivery' }).eq('id', jobId).eq('status', 'agreement')
+            await supabase.from('job_messages').insert({
+              job_id: jobId,
+              sender_id: clientId || null,
+              body: '💳 Payment received and held in Steadyhand. Funds will be released to the tradie on approval.',
+            })
+          }
+          console.log('Payment succeeded for milestone:', milestoneId)
+        } else if (jobId) {
+          await supabase.from('jobs').update({ status: 'delivery' }).eq('id', jobId).eq('status', 'agreement')
           console.log('Payment succeeded for job:', jobId)
         }
         break
