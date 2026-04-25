@@ -200,6 +200,7 @@ export default function TradieDashboard() {
       }
       if (step === 'invite_client' || step === 'first_job') {
         const seen = prof.tradie?.spotlight_seen
+        if (seen && typeof window !== 'undefined') localStorage.setItem('seen_tradie_onboarding', '1')
         if (!seen) {
           setShowSpotlight(true)
           supabase.from('tradie_profiles').update({ spotlight_seen: true }).eq('id', prof.tradie.id).then(() => {})

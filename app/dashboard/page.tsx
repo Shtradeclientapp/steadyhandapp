@@ -111,6 +111,7 @@ export default function DashboardPage() {
       setBuilds(buildsData || [])
       setUnreadCount(unreadTotal || 0)
       if (!prof?.onboarding_complete) setShowClientWizard(true)
+      else if (typeof window !== 'undefined') localStorage.setItem('seen_client_onboarding', '1')
 
       // Assessments depend on job IDs so run after
       const jobIds = (data || []).map((j: any) => j.id)
