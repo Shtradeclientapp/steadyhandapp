@@ -17,7 +17,7 @@ export default function WarrantyPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate' })
+  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship' })
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const [issueError, setIssueError] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
@@ -84,6 +84,7 @@ export default function WarrantyPage() {
       title: form.title,
       description: form.description,
       severity: form.severity,
+      warranty_type: form.warranty_type,
       status: 'open',
       response_due_at: responseDue,
     }).select().single()
@@ -93,7 +94,7 @@ export default function WarrantyPage() {
       await supabase.from('job_messages').insert({
         job_id: job.id,
         sender_id: session?.user.id,
-        body: '⚠ Warranty issue logged: "' + form.title + '" — ' + form.severity + ' severity. Response required within 5 business days.',
+        body: '⚠ Warranty issue logged: "' + form.title + '" — ' + form.severity + ' severity, ' + form.warranty_type + ' issue. Response required within 5 business days.',
       })
       await fetch('/api/email', {
         method: 'POST',
@@ -107,7 +108,7 @@ export default function WarrantyPage() {
       return
     }
     setIssueError(null)
-    setForm({ title: '', description: '', severity: 'moderate' })
+    setForm({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship' })
     setShowForm(false)
     setSubmitting(false)
   }
@@ -223,6 +224,17 @@ export default function WarrantyPage() {
               <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Detailed description</label>
               <textarea placeholder="Describe the problem, when it started, and how it affects you." value={form.description} onChange={set('description')}
                 style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical', minHeight:'80px', fontFamily:'sans-serif' }} />
+            </div>
+            <div style={{ marginBottom:'16px' }}>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Nature of issue</label>
+              <select value={form.warranty_type} onChange={set('warranty_type')}
+                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                <option value="workmanship">Workmanship — how the work was carried out</option>
+                <option value="product">Product / material — a product or material has failed</option>
+                <option value="both">Both — workmanship and product issues are involved</option>
+                <option value="unclear">Unclear — I am not sure which applies</option>
+              </select>
+              <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>This helps direct the claim to the right party. If unsure, select "Unclear" — Steadyhand will document both possibilities.</span>
             </div>
             <div style={{ marginBottom:'16px' }}>
               <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Severity</label>
