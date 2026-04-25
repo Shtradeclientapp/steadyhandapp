@@ -429,6 +429,7 @@ export default function TradieDashboard() {
                   { label:'Availability status', href:'/tradie/availability' },
                   { label:'Dialogue Rating', href:'/tradie/dialogue' },
                   { label:'Subscription plans', href:'/tradie/subscribe' },
+                  { label:'Help & support', href:'/help' },
                 ].map(item => (
                   <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
                     style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>

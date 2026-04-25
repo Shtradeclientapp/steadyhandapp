@@ -216,6 +216,7 @@ export default function DashboardPage() {
                   { label:'Build Journal', href:'/diy' },
                   { label:'Messages', href:'/messages' },
                   { label:'Organisation dashboard', href:'/org/dashboard' },
+                  { label:'Help & support', href:'/help' },
                 ].map(item => (
                   <a key={item.href} href={item.href} onClick={() => setDropdownOpen(false)}
                     style={{ display:'block', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', textDecoration:'none', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
