@@ -11,7 +11,7 @@ const supabase = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier } = body
+    const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier, return_url: customReturnUrl } = body
 
     // ── Stripe Connect onboarding ────────────────────────────────
     if (action === 'create_connect_account') {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         const link = await stripe.accountLinks.create({
           account: profile.stripe_account_id,
           refresh_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard',
-          return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard?stripe=connected',
+          return_url: customReturnUrl || process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard?stripe=connected',
           type: 'account_onboarding',
         })
         return NextResponse.json({ url: link.url })

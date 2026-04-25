@@ -25,6 +25,11 @@ export default function AgreementPage() {
   const [drafting, setDrafting]       = useState(false)
   const [signing, setSigning]         = useState(false)
   const [stripeRequired, setStripeRequired] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('stripe') === 'connected') {
+      setStripeRequired(false)
+    }
+  }, [])
   const [saving, setSaving]           = useState(false)
   const [savedAt, setSavedAt]         = useState<string|null>(null)
   const [saveError, setSaveError]     = useState<string|null>(null)
@@ -394,7 +399,8 @@ export default function AgreementPage() {
                   <button type="button" onClick={async () => {
                     const supabase = createClient()
                     const { data: { session } } = await supabase.auth.getSession()
-                    const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: session?.user.id, email: session?.user.email }) })
+                    const returnUrl = window.location.origin + '/agreement?job_id=' + job?.id + '&stripe=connected'
+                    const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: session?.user.id, email: session?.user.email, return_url: returnUrl }) })
                     const data = await res.json()
                     if (data.url) window.location.href = data.url
                   }} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
