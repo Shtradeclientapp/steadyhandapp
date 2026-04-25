@@ -33,7 +33,7 @@ export default function TradieProfilePage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('*, stripe_account_id').eq('id', session.user.id).single()
       const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
       if (prof) setProfile(prof)
       if (trad) { setTradie(trad); setForm({ ...prof, ...trad }); setLogoUrl(trad.logo_url || null) }
@@ -149,6 +149,7 @@ export default function TradieProfilePage() {
     { label: 'Service areas', done: (form.service_areas || []).length > 0 },
     { label: 'ABN', done: !!form.abn },
     { label: 'Licence number', done: !!form.licence_number },
+    { label: 'Bank account (Stripe)', done: !!(tradie as any)?.profile?.stripe_account_id || !!(profile as any)?.stripe_account_id },
     { label: 'Logo', done: !!logoUrl },
   ]
   const completionPct = Math.round(completionItems.filter(i => i.done).length / completionItems.length * 100)

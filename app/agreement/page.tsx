@@ -24,6 +24,7 @@ export default function AgreementPage() {
   const [loading, setLoading]         = useState(true)
   const [drafting, setDrafting]       = useState(false)
   const [signing, setSigning]         = useState(false)
+  const [stripeRequired, setStripeRequired] = useState(false)
   const [saving, setSaving]           = useState(false)
   const [savedAt, setSavedAt]         = useState<string|null>(null)
   const [saveError, setSaveError]     = useState<string|null>(null)
@@ -192,6 +193,13 @@ export default function AgreementPage() {
 
   const signScope = async () => {
     if (!job || !scope) return
+    // Gate tradie signing on Stripe Connect being set up
+    if (isTradie) {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      const { data: prof } = await supabase.from('profiles').select('stripe_account_id').eq('id', session?.user.id).single()
+      if (!prof?.stripe_account_id) { setStripeRequired(true); return }
+    }
     setSigning(true)
     setSaveError(null)
     try {
@@ -379,6 +387,21 @@ export default function AgreementPage() {
               ))}
               {saving && <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px' }}>Saving...</p>}
               {savedAt && !saving && !saveError && <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'8px' }}>✓ Saved {savedAt}</p>}
+              {stripeRequired && isTradie && (
+                <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'10px', padding:'16px 20px', marginBottom:'16px' }}>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#D4522A', margin:'0 0 6px' }}>⚠ Bank account required before signing</p>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 12px', lineHeight:1.6 }}>Connect your bank account via Stripe before signing this scope. This is how you'll receive payment at job signoff.</p>
+                  <button type="button" onClick={async () => {
+                    const supabase = createClient()
+                    const { data: { session } } = await supabase.auth.getSession()
+                    const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: session?.user.id, email: session?.user.email }) })
+                    const data = await res.json()
+                    if (data.url) window.location.href = data.url
+                  }} style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
+                    Connect bank account →
+                  </button>
+                </div>
+              )}
               {saveError && <p style={{ fontSize:'11px', color:'#D4522A', marginTop:'8px' }}>⚠ {saveError}</p>}
             </div>
           </div>
