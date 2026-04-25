@@ -80,11 +80,12 @@ export default function AssessPage() {
       if (jobs && jobs.length > 0) {
         setAllJobs(jobs)
         if (!urlJobId && jobs.length > 1) { setNoJobId(true); return }
-        setJob(jobs[0])
+        const consultJob = jobs[0]
+        setJob(consultJob)
         const { data: assess } = await supabase
           .from('site_assessments')
           .select('*')
-          .eq('job_id', jobs[0].id)
+          .eq('job_id', consultJob.id)
           .single()
 
         if (assess) {
@@ -92,11 +93,11 @@ export default function AssessPage() {
           setForm(assess)
           setClientPhotos(assess.client_photo_urls || [])
           setTradiePhotos(assess.tradie_photo_urls || [])
-        } else if (jobs[0].tradie_id) {
+        } else if (consultJob.tradie_id) {
           // Only create assessment record if a tradie has been assigned
           const { data: newAssess } = await supabase
             .from('site_assessments')
-            .insert({ job_id: jobs[0].id, consult_date: new Date().toISOString() })
+            .insert({ job_id: consultJob.id, consult_date: new Date().toISOString() })
             .select()
             .single()
           if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
