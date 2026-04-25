@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       const link = await stripe.accountLinks.create({
         account: account.id,
         refresh_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard',
-        return_url: process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard?stripe=connected',
+        return_url: customReturnUrl || process.env.NEXT_PUBLIC_APP_URL + '/tradie/dashboard?stripe=connected',
         type: 'account_onboarding',
       })
       return NextResponse.json({ url: link.url })
