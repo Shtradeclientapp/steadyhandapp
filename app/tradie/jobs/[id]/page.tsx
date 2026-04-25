@@ -38,7 +38,7 @@ export default function TradieJobHub() {
   const [stageDropdown, setStageDropdown] = useState(false)
 
   useEffect(() => {
-    const jobId = (params?.id as string) || window.location.pathname.split('/').pop() || new URLSearchParams(window.location.search).get('id')
+    const jobId = params?.id as string
     if (!jobId) { window.location.href = '/tradie/dashboard'; return }
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {

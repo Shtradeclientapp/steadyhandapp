@@ -40,7 +40,8 @@ export default function PropertyDetailPage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      const id = (params?.id as string) || window.location.pathname.split('/').pop()
+      const id = params?.id as string
+      if (!id) { window.location.href = '/org/dashboard'; return }
       const { data: prop } = await supabase.from('properties').select('*').eq('id', id).single()
       setProperty(prop)
       if (prop?.tenant_name) setTenantForm({ name: prop.tenant_name || '', email: prop.tenant_email || '', phone: prop.tenant_phone || '' })

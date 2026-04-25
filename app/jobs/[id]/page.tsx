@@ -42,7 +42,8 @@ export default function JobHubPage() {
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       if (prof?.role === 'tradie') { window.location.href = '/tradie/dashboard'; return }
       setProfile(prof)
-      const id = (params?.id as string) || window.location.pathname.split('/').pop()
+      const id = params?.id as string
+      if (!id) { window.location.href = '/dashboard'; return }
       const { data: jobData } = await supabase
         .from('jobs')
         .select('*, tradie:tradie_profiles(business_name, trade_categories, rating_avg, licence_verified, suburb), client:profiles!jobs_client_id_fkey(full_name, email)')
