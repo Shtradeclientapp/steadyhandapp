@@ -222,7 +222,7 @@ export default function VaultPage() {
           <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 4px' }}>About your documents</p>
           <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:1.6 }}>
             Your vault contains two kinds of records. <strong>Uploaded files</strong> (PDF, photos, certificates) can be opened and downloaded directly.{' '}
-            <strong>Steadyhand records</strong> (scope agreements, milestone confirmations, warranty certificates, consult notes) are structured data records — the information is stored securely in Steadyhand and shown here as a reference. PDF export for these records is on the roadmap.
+            <strong>Steadyhand records</strong> (scope agreements, milestone confirmations, warranty certificates, consult notes) are structured data records — the information is stored securely in Steadyhand and shown here as a reference. Scope agreements and warranty certificates can be downloaded using the Download button on each record.
           </p>
         </div>
 
@@ -321,6 +321,7 @@ export default function VaultPage() {
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
             {filteredDocs.map(doc => {
               const docType = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
+              const isMetadataOnly = !doc.file_url && ['scope','warranty','milestone','consult'].includes(doc.document_type)
               const isExpired = doc.expiry_date && new Date(doc.expiry_date) < new Date()
               const isExpiringSoon = doc.expiry_date && !isExpired && new Date(doc.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
               return (
@@ -347,10 +348,17 @@ export default function VaultPage() {
                       </div>
                     </div>
                     <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0 }}>
+                      {isMetadataOnly && <span style={{ fontSize:'10px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'4px', padding:'2px 7px', whiteSpace:'nowrap' as const }}>Steadyhand record</span>}
+                      {isMetadataOnly && doc.job_id && (doc.document_type === 'scope' || doc.document_type === 'warranty') && (
+                        <a href={'/api/pdf/' + doc.document_type + '?job_id=' + doc.job_id} target="_blank" rel="noreferrer"
+                          style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'none', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 10px', whiteSpace:'nowrap' as const }}>
+                          ↓ Download
+                        </a>
+                      )}
                       {doc.file_url && (
                         <a href={doc.file_url} target="_blank" rel="noreferrer"
                           style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px' }}>
-                          View \u2192
+                          View →
                         </a>
                       )}
                       <button type="button" onClick={() => deleteDoc(doc.id)}
