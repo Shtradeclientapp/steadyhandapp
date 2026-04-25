@@ -205,6 +205,27 @@ export default function AgreementPage() {
       await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)
       if (updated.client_signed_at && updated.tradie_signed_at) {
         await supabase.from('jobs').update({ status:'delivery' }).eq('id', job.id)
+        // File signed scope to both vaults
+        try {
+          const scopeNotes = [
+            'Signed by both parties on ' + new Date().toLocaleDateString('en-AU'),
+            scope.inclusions ? 'Inclusions: ' + scope.inclusions.slice(0, 200) : null,
+            scope.exclusions ? 'Exclusions: ' + scope.exclusions.slice(0, 200) : null,
+            scope.total_price ? 'Total agreed price: $' + Number(scope.total_price).toLocaleString() : null,
+            scope.warranty_days ? 'Warranty period: ' + scope.warranty_days + ' days' : null,
+          ].filter(Boolean).join(' | ')
+          const scopeDoc = {
+            job_id: job.id,
+            job_title: job.title,
+            title: job.title + ' — signed scope agreement',
+            document_type: 'scope',
+            tradie_name: job.tradie?.business_name || null,
+            issued_date: new Date().toISOString().split('T')[0],
+            notes: scopeNotes,
+          }
+          if (job.client_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: job.client_id })
+          if (job.tradie_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: job.tradie_id })
+        } catch { /* non-critical */ }
         setTimeout(() => { window.location.href = isTradie ? '/tradie/jobs/' + job.id : '/delivery?job_id=' + job.id }, 1000)
       }
     } catch (err: any) {

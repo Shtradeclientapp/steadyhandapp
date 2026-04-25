@@ -218,7 +218,15 @@ export default function VaultPage() {
                 <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, margin:0 }}>\u26a0 {expired.length} document{expired.length > 1 ? 's have' : ' has'} expired — {expired.map(d => d.title).join(', ')}</p>
               </div>
             )}
-            {expiringSoon.length > 0 && (
+            <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+          <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 4px' }}>About your documents</p>
+          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:1.6 }}>
+            Your vault contains two kinds of records. <strong>Uploaded files</strong> (PDF, photos, certificates) can be opened and downloaded directly.{' '}
+            <strong>Steadyhand records</strong> (scope agreements, milestone confirmations, warranty certificates, consult notes) are structured data records — the information is stored securely in Steadyhand and shown here as a reference. PDF export for these records is on the roadmap.
+          </p>
+        </div>
+
+        {expiringSoon.length > 0 && (
               <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 16px' }}>
                 <p style={{ fontSize:'13px', color:'#C07830', fontWeight:500, margin:0 }}>\u23f1 {expiringSoon.length} document{expiringSoon.length > 1 ? 's expire' : ' expires'} within 30 days</p>
               </div>
@@ -380,6 +388,7 @@ export default function VaultPage() {
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
               {sharedWithMe.map((doc: any) => {
                 const docType = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
+                const isMetadataOnly = !doc.file_url && ['scope','warranty','milestone','consult'].includes(doc.document_type)
                 return (
                   <div key={doc.id} style={{ background:'#E8F0EE', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:'12px', flex:1, minWidth:0 }}>
