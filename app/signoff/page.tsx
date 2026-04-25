@@ -7,7 +7,7 @@ import { useSupabase } from '@/lib/hooks'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js'
+import { EmbeddedCheckout, EmbeddedCheckoutProvider, Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -18,6 +18,41 @@ const BASE_CHECKS = [
   { id:'clean', label:'Site left clean and tidy', sub:'All rubbish removed, surfaces wiped down, tools cleared' },
   { id:'cert', label:'Any required certificates provided', sub:'Compliance certificates, warranty documents, permits' },
 ]
+
+function SignoffPaymentForm({ jobId, amount, onSuccess, onCancel }: { jobId: string, amount: number, onSuccess: () => void, onCancel: () => void }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [paying, setPaying] = useState(false)
+  const [error, setError] = useState<string|null>(null)
+
+  const handlePay = async () => {
+    if (!stripe || !elements) return
+    setPaying(true)
+    setError(null)
+    const { error: confirmError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: window.location.href },
+      redirect: 'if_required',
+    })
+    if (confirmError) { setError(confirmError.message || 'Payment failed'); setPaying(false); return }
+    onSuccess()
+  }
+
+  return (
+    <div style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px', marginBottom:'20px' }}>
+      <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'4px' }}>Pay tradie — ${Number(amount).toLocaleString()}</p>
+      <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'16px' }}>Payment is held by Steadyhand and transferred to the tradie after signoff is confirmed.</p>
+      <PaymentElement />
+      {error && <p style={{ fontSize:'12px', color:'#D4522A', marginTop:'10px' }}>⚠ {error}</p>}
+      <div style={{ display:'flex', gap:'10px', marginTop:'16px' }}>
+        <button type="button" onClick={onCancel} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', cursor:'pointer' }}>Cancel</button>
+        <button type="button" onClick={handlePay} disabled={paying || !stripe} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity: paying || !stripe ? 0.6 : 1 }}>
+          {paying ? 'Processing...' : 'Confirm payment →'}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function SignoffPage() {
   const [job, setJob] = useState<any>(null)
@@ -31,6 +66,9 @@ export default function SignoffPage() {
   const [rating, setRating] = useState(0)
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [paymentRequired, setPaymentRequired] = useState(false)
+  const [paymentDone, setPaymentDone] = useState(false)
   const [done, setDone] = useState(false)
   const [contributionAmount, setContributionAmount] = useState<number|null>(null)
   const [customAmount, setCustomAmount] = useState('')
@@ -88,6 +126,31 @@ export default function SignoffPage() {
 
   const allChecks = [...dynamicChecks, ...BASE_CHECKS]
   const allChecked = allChecks.every(c => checks[c.id])
+
+  const initiateSignoffPayment = async () => {
+    if (!job) return
+    setSubmitting(true)
+    try {
+      const { data: scope } = await supabase.from('scope_agreements').select('total_price').eq('job_id', job.id).order('created_at', { ascending: false }).limit(1).single()
+      const total = scope?.total_price
+      if (!total || Number(total) <= 0) { await submitSignoff(); return }
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/stripe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_payment_intent', job_id: job.id, client_id: session?.user.id }),
+      })
+      const data = await res.json()
+      if (data.client_secret) {
+        setClientSecret(data.client_secret)
+        setPaymentRequired(true)
+      } else {
+        // No Stripe connected — proceed without payment
+        await submitSignoff()
+      }
+    } catch { await submitSignoff() }
+    setSubmitting(false)
+  }
 
   const submitSignoff = async () => {
     if (!job || !allChecked || rating === 0) return

@@ -6,6 +6,8 @@ import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
+const MVP_PAYMENT_NOTE = 'Deposit and milestone payments will be available in Steadyhand v1. During the current preview, a single payment is made at job signoff.'
+
 export default function AgreementPage() {
   const [user, setUser]               = useState<any>(null)
   const [profile, setProfile]         = useState<any>(null)
@@ -705,6 +707,9 @@ export default function AgreementPage() {
                   </div>
                 )}
 
+                <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
+                  <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>🔒 <strong>Preview release:</strong> Milestones are recorded in the scope as documentation. A single payment is collected at signoff. Deposit and per-milestone payments will be available in Steadyhand v1.</p>
+                </div>
                 <MilestoneEditor scope={scope} currentQuote={currentQuote} onSave={(milestones:any) => saveEdit({ milestones })} />
 
                 {/* Warranty terms */}

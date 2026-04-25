@@ -282,20 +282,8 @@ export default function DeliveryPage() {
   }
 
   const initiatePayment = async (id: string, amount: number) => {
-    if (amount <= 0) { approveM(id); return }
-    const res = await fetch('/api/stripe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create_payment_intent', job_id: job.id, milestone_id: id }),
-    })
-    const data = await res.json()
-    if (data.client_secret) {
-      setClientSecret(data.client_secret)
-      setPayingMilestone(id)
-    } else {
-      // Stripe not connected — fall through to record-only approval below
-      approveM(id)
-    }
+    // MVP: milestone payments are documentation-only — single payment fires at signoff
+    await approveWorkOnly(id)
   }
 
   const approveWorkOnly = async (id: string) => {
@@ -499,6 +487,9 @@ export default function DeliveryPage() {
             )}
           </div>
         )}
+        <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
+          <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>🔒 <strong>Preview release:</strong> Milestone approvals are recorded here as documentation. A single payment for the full agreed amount is collected at signoff. Deposit and per-milestone payments will be available in Steadyhand v1.</p>
+        </div>
         <div style={{ display:'flex', flexDirection:'column', gap:'0' }}>
           {milestones.map((m, i) => {
             const isDone = m.status === 'approved'
