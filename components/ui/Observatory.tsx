@@ -16,7 +16,26 @@ const PINNED_ITEMS: any[] = [
   { id: 'pin-2', category: 'fairwork', title: 'Employee vs Contractor: High Court clarification', summary: 'CFMEU v Personnel Contracting [2022] HCA 1 continues to reshape how trade businesses structure subcontractor arrangements. Key test: written terms of the contract govern.', date: '2022-02-09', source: 'High Court of Australia', url: 'https://www.hcourt.gov.au', pinned: true },
 ]
 
+const CACHE_TTL = 2 * 60 * 60 * 1000 // 2 hours
+
+function getCached(key: string) {
+  try {
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    const { data, ts } = JSON.parse(raw)
+    if (Date.now() - ts > CACHE_TTL) { localStorage.removeItem(key); return null }
+    return data
+  } catch { return null }
+}
+
+function setCache(key: string, data: any) {
+  try { localStorage.setItem(key, JSON.stringify({ data, ts: Date.now() })) } catch {}
+}
+
 async function fetchIntelligence(category: any) {
+  const cacheKey = 'sh_obs_' + category.id
+  const cached = getCached(cacheKey)
+  if (cached) return cached
   try {
     const response = await fetch('/api/observatory', {
       method: 'POST',
@@ -26,7 +45,9 @@ async function fetchIntelligence(category: any) {
       }),
     })
     const data = await response.json()
-    return (data.items || []).map((i: any) => ({ ...i, category: category.id }))
+    const result = (data.items || []).map((i: any) => ({ ...i, category: category.id }))
+    setCache('sh_obs_' + category.id, result)
+    return result
   } catch { return [] }
 }
 
