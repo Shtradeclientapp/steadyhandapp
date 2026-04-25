@@ -34,10 +34,8 @@ export default function LoginPage() {
       setStatus('Error: ' + error.message)
       setLoading(false)
     } else {
-      const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user?.id).single()
-    const adminEmails = ['anthony.coxeter@gmail.com']
-    const isAdmin = adminEmails.includes(data.user?.email || '')
-    const dest = isAdmin ? '/admin' : profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
+      const { data: profile } = await supabase.from('profiles').select('role, is_admin').eq('id', data.user?.id).single()
+    const dest = profile?.is_admin ? '/admin' : profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
     window.location.replace(dest)
     }
   }
