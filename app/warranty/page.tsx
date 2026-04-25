@@ -46,7 +46,6 @@ export default function WarrantyPage() {
         setJob(warrantyJob)
         const { data: iss } = await supabase.from('warranty_issues').select('*').eq('job_id', warrantyJob.id).order('created_at', { ascending: false })
         setIssues(iss || [])
-      }
       // Auto-complete if warranty period has expired
       const jobData = warrantyJob
       if (jobData?.warranty_ends_at && new Date(jobData.warranty_ends_at) < new Date() && jobData.status === 'warranty') {
@@ -68,6 +67,7 @@ export default function WarrantyPage() {
             })
           }
         } catch (_e) {}
+      }
       }
       setLoading(false)
     })
