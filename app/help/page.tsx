@@ -10,7 +10,7 @@ const FAQS = [
     items: [
       {
         q: 'How does Steadyhand work?',
-        a: 'Steadyhand structures the relationship between a homeowner and a tradie through five stages: Consult → Quote → Agreement → Delivery → Warranty. Each stage creates a written record. Payments are held and released at milestones, and a warranty period begins after sign-off.',
+        a: 'Steadyhand structures the relationship between a homeowner and a tradie through five stages: Consult → Quote → Agreement → Delivery → Warranty. Each stage creates a written record. A single payment is made at signoff, and a warranty period begins immediately after.',
       },
       {
         q: 'Who can use Steadyhand?',
@@ -81,12 +81,12 @@ const FAQS = [
     color: '#2E7D60',
     items: [
       {
-        q: 'How do milestone payments work?',
-        a: 'The tradie sets milestones in the scope agreement (e.g. 30% on start, 40% on rough-in, 30% on completion). When a milestone is submitted, the client reviews it and can approve and pay, or approve and hold payment. Funds are released to the tradie via Stripe Connect.',
+        q: 'How do payments work?',
+        a: 'A single payment for the full agreed amount is made at signoff — once both parties have confirmed the work is complete. Milestones are used during the job as documentation checkpoints, not payment triggers. Funds go directly to the tradie via Stripe Connect. Deposit and per-milestone payments will be available in Steadyhand v1.',
       },
       {
         q: 'What is "approve work, hold payment"?',
-        a: 'This option lets you confirm the work is complete without releasing payment yet. Use it if more work is ongoing and you want to settle at the end, or if you need to raise a concern first. Payment stays held in Steadyhand — it is not released off-platform.',
+        a: 'When you approve a milestone, you are confirming the work at that stage is complete. This creates a documented record of progress. The single payment to the tradie happens at final signoff — not at each milestone.',
       },
       {
         q: 'What if there is a dispute about a milestone?',
