@@ -17,7 +17,7 @@ export default function WarrantyPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open' })
+  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open', product_involved: '' })
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const [issueError, setIssueError] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
@@ -86,6 +86,7 @@ export default function WarrantyPage() {
       severity: form.severity,
       warranty_type: form.warranty_type,
       resolution_status: 'open',
+      product_involved: form.product_involved || null,
       status: 'open',
       response_due_at: responseDue,
     }).select().single()
@@ -109,7 +110,7 @@ export default function WarrantyPage() {
       return
     }
     setIssueError(null)
-    setForm({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open' })
+    setForm({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open', product_involved: '' })
     setShowForm(false)
     setSubmitting(false)
   }
