@@ -80,6 +80,24 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // ── Voluntary contribution — no platform fee, direct to tradie ─
+    if (action === 'create_contribution') {
+      const { data: job } = await supabase.from('jobs').select('*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id))').eq('id', job_id).single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+      const tradieAccountId = job.tradie?.profile?.stripe_account_id
+      if (!tradieAccountId) return NextResponse.json({ error: 'Tradie has not connected Stripe' }, { status: 400 })
+      if (!amount || amount <= 0) return NextResponse.json({ error: 'Invalid amount' }, { status: 400 })
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: 'aud',
+        application_fee_amount: 0, // No platform fee on contributions
+        transfer_data: { destination: tradieAccountId },
+        metadata: { job_id, client_id: client_id || '', type: 'contribution' },
+        automatic_payment_methods: { enabled: true },
+      })
+      return NextResponse.json({ client_secret: paymentIntent.client_secret, amount })
+    }
+
     // ── Release milestone — transfer funds to tradie ────────────
     if (action === 'release_milestone') {
       const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)))').eq('id', milestone_id).single()
