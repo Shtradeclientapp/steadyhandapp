@@ -238,6 +238,15 @@ export default function WarrantyPage() {
               </select>
               <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>This helps direct the claim to the right party. If unsure, select "Unclear" — Steadyhand will document both possibilities.</span>
             </div>
+            {(form.warranty_type === 'product' || form.warranty_type === 'both') && (
+              <div style={{ marginBottom:'16px' }}>
+                <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Product or material involved (optional)</label>
+                <input type="text" value={form.product_involved} onChange={set('product_involved')}
+                  placeholder="e.g. Rheem hot water system, Colorbond roofing, James Hardie cladding"
+                  style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+                <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Name the product or brand if known. This helps establish whether the manufacturer warranty applies.</span>
+              </div>
+            )}
             <div style={{ marginBottom:'16px' }}>
               <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Resolution status</label>
               <select value={form.resolution_status} onChange={set('resolution_status')}
