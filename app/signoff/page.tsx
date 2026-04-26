@@ -24,6 +24,24 @@ function SignoffPaymentForm({ jobId, amount, onSuccess, onCancel }: { jobId: str
   const elements = useElements()
   const [paying, setPaying] = useState(false)
   const [error, setError] = useState<string|null>(null)
+  const [feeInfo, setFeeInfo] = useState<any>(null)
+  const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    // Fetch payment intent and fee breakdown on mount
+    fetch('/api/stripe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create_payment_intent', job_id: jobId }),
+    }).then(r => r.json()).then(data => {
+      if (data.client_secret) {
+        setClientSecret(data.client_secret)
+        setFeeInfo(data)
+        setReady(true)
+      }
+    })
+  }, [jobId])
 
   const handlePay = async () => {
     if (!stripe || !elements) return
@@ -38,16 +56,40 @@ function SignoffPaymentForm({ jobId, amount, onSuccess, onCancel }: { jobId: str
     onSuccess()
   }
 
+  const fmt = (cents: number) => '$' + (cents / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
   return (
     <div style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'20px', marginBottom:'20px' }}>
-      <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'4px' }}>Pay tradie — ${Number(amount).toLocaleString()}</p>
-      <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'16px' }}>Payment is held by Steadyhand and transferred to the tradie after signoff is confirmed.</p>
-      <PaymentElement />
+      <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', marginBottom:'12px' }}>Payment summary</p>
+      {feeInfo && (
+        <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'12px 14px', marginBottom:'16px' }}>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'6px' }}>
+            <span style={{ fontSize:'12px', color:'#4A5E64' }}>Agreed total</span>
+            <span style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A' }}>{fmt(feeInfo.amount)}</span>
+          </div>
+          <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'6px' }}>
+            <span style={{ fontSize:'12px', color:'#4A5E64' }}>Standard platform fee (3.5%)</span>
+            <span style={{ fontSize:'12px', color:'#7A9098', textDecoration: feeInfo.founding_member ? 'line-through' : 'none' }}>{fmt(feeInfo.standard_fee)}</span>
+          </div>
+          {feeInfo.founding_member && (
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'6px' }}>
+              <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>🎖 Founding member — fee waived</span>
+              <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>−{fmt(feeInfo.standard_fee)}</span>
+            </div>
+          )}
+          <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'8px', marginTop:'6px', display:'flex', justifyContent:'space-between' }}>
+            <span style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A' }}>Tradie receives</span>
+            <span style={{ fontSize:'13px', fontWeight:700, color:'#2E7D60' }}>{fmt(feeInfo.tradie_receives)}</span>
+          </div>
+        </div>
+      )}
+      {ready && <PaymentElement />}
+      {!ready && <p style={{ fontSize:'12px', color:'#7A9098' }}>Loading payment details...</p>}
       {error && <p style={{ fontSize:'12px', color:'#D4522A', marginTop:'10px' }}>⚠ {error}</p>}
       <div style={{ display:'flex', gap:'10px', marginTop:'16px' }}>
         <button type="button" onClick={onCancel} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', cursor:'pointer' }}>Cancel</button>
-        <button type="button" onClick={handlePay} disabled={paying || !stripe} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity: paying || !stripe ? 0.6 : 1 }}>
-          {paying ? 'Processing...' : 'Confirm payment →'}
+        <button type="button" onClick={handlePay} disabled={paying || !stripe || !ready} style={{ flex:1, background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:500, cursor:'pointer', opacity: paying || !stripe || !ready ? 0.6 : 1 }}>
+          {paying ? 'Processing...' : feeInfo ? `Pay ${fmt(feeInfo.amount)} →` : 'Loading...'}
         </button>
       </div>
     </div>

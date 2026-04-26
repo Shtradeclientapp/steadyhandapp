@@ -57,8 +57,11 @@ export async function POST(request: NextRequest) {
         if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
         amountCents = Math.round(Number(quote.total_price) * 100)
       }
-      const feeRate = job.tradie?.founding_member ? 0.03 : 0.035
-      const platformFeeCents = Math.round(amountCents * feeRate)
+      const isFoundingMember = !!job.tradie?.founding_member
+      const standardFeeRate = 0.035
+      const actualFeeRate = isFoundingMember ? 0 : standardFeeRate
+      const standardFeeCents = Math.round(amountCents * standardFeeRate)
+      const platformFeeCents = Math.round(amountCents * actualFeeRate)
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountCents, currency: 'aud',
         application_fee_amount: platformFeeCents,
@@ -67,7 +70,14 @@ export async function POST(request: NextRequest) {
         automatic_payment_methods: { enabled: true },
       })
       await supabase.from('milestones').update({ stripe_payment_intent_id: paymentIntent.id }).eq('id', milestone_id)
-      return NextResponse.json({ client_secret: paymentIntent.client_secret, amount: amountCents, fee: platformFeeCents })
+      return NextResponse.json({
+        client_secret: paymentIntent.client_secret,
+        amount: amountCents,
+        fee: platformFeeCents,
+        standard_fee: standardFeeCents,
+        founding_member: isFoundingMember,
+        tradie_receives: amountCents - platformFeeCents,
+      })
     }
 
     // ── Release milestone — transfer funds to tradie ────────────

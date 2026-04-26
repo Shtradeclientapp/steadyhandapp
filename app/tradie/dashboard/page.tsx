@@ -540,7 +540,16 @@ export default function TradieDashboard() {
 
 
         {/* ── Registration status block ── */}
-        {(!stripeConnected || !xeroConnected || !profile?.tradie?.subscription_active || !profile?.tradie?.licence_verified) && (
+        {profile?.tradie?.founding_member && (
+        <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'12px' }}>
+          <span style={{ fontSize:'20px' }}>🎖</span>
+          <div>
+            <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', margin:'0 0 2px' }}>Founding member</p>
+            <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Platform fees are waived on your jobs during the Steadyhand preview. Standard rate of 3.5% applies from v1 launch.</p>
+          </div>
+        </div>
+      )}
+      {(!stripeConnected || !xeroConnected || !profile?.tradie?.subscription_active || !profile?.tradie?.licence_verified) && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'24px' }}>
             <div style={{ padding:'12px 16px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', margin:0 }}>ACCOUNT STATUS</p>
