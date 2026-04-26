@@ -17,7 +17,7 @@ export default function WarrantyPage() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship' })
+  const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open' })
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const [issueError, setIssueError] = useState<string|null>(null)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
@@ -85,6 +85,7 @@ export default function WarrantyPage() {
       description: form.description,
       severity: form.severity,
       warranty_type: form.warranty_type,
+      resolution_status: 'open',
       status: 'open',
       response_due_at: responseDue,
     }).select().single()
@@ -108,7 +109,7 @@ export default function WarrantyPage() {
       return
     }
     setIssueError(null)
-    setForm({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship' })
+    setForm({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open' })
     setShowForm(false)
     setSubmitting(false)
   }
@@ -237,6 +238,17 @@ export default function WarrantyPage() {
               <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>This helps direct the claim to the right party. If unsure, select "Unclear" — Steadyhand will document both possibilities.</span>
             </div>
             <div style={{ marginBottom:'16px' }}>
+              <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Resolution status</label>
+              <select value={form.resolution_status} onChange={set('resolution_status')}
+                style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                <option value="open">Open — issue identified, awaiting tradie response</option>
+                <option value="in_progress">In progress — tradie is addressing the issue</option>
+                <option value="resolved">Resolved — issue has been rectified to satisfaction</option>
+                <option value="escalated">Escalated — referred to Building Commissioner or legal</option>
+              </select>
+              <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Update this as the issue progresses. This data helps build accurate warranty outcome records.</span>
+            </div>
+            <div style={{ marginBottom:'16px' }}>
               <label style={{ display:'block', fontSize:'13px', fontWeight:'500', color:'#0A0A0A', marginBottom:'5px' }}>Severity</label>
               <select value={form.severity} onChange={set('severity')}
                 style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
@@ -288,9 +300,14 @@ export default function WarrantyPage() {
         <div style={{ display:'flex', flexDirection:'column', gap:'12px' }}>
           {issues.map(issue => (
             <div key={issue.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid ' + (statusColor[issue.status] || '#7A9098'), borderRadius:'11px', padding:'18px' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px', flexWrap:'wrap' }}>
-                <span style={{ background: (statusColor[issue.status] || '#7A9098') + '18', border:'1px solid ' + (statusColor[issue.status] || '#7A9098') + '40', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', fontWeight:'500', color: statusColor[issue.status] || '#7A9098', textTransform:'capitalize' }}>{issue.status}</span>
-                <span style={{ background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'3px 10px', fontSize:'12px', color:'#4A5E64', textTransform:'capitalize' }}>{issue.severity}</span>
+              <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px', flexWrap:'wrap' as const }}>
+                {issue.issue_number && <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', flexShrink:0 }}>#{issue.issue_number}</span>}
+                <span style={{ background: (statusColor[issue.status] || '#7A9098') + '18', border:'1px solid ' + (statusColor[issue.status] || '#7A9098') + '40', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', fontWeight:'500', color: statusColor[issue.status] || '#7A9098', textTransform:'capitalize' as const }}>{issue.status}</span>
+                <span style={{ background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'100px', padding:'3px 10px', fontSize:'12px', color:'#4A5E64', textTransform:'capitalize' as const }}>{issue.severity}</span>
+                {issue.warranty_type && <span style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#2E7D60', textTransform:'capitalize' as const }}>{issue.warranty_type}</span>}
+                {issue.resolution_status && issue.resolution_status !== 'open' && (
+                  <span style={{ background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'100px', padding:'3px 10px', fontSize:'11px', color:'#6B4FA8', textTransform:'capitalize' as const }}>{issue.resolution_status.replace('_', ' ')}</span>
+                )}
                 <span style={{ fontSize:'12px', color:'#7A9098', marginLeft:'auto' }}>Logged {new Date(issue.created_at).toLocaleDateString('en-AU')}</span>
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
