@@ -134,7 +134,7 @@ export default function Home() {
             {[
               { icon:'📋', phase:'Before work starts', stages:'Request · Match · Consult · Compare · Contract', body:'Find the right tradie, understand what you are being quoted, and agree on every detail before work begins. Nothing starts until both parties sign the scope.' },
               { icon:'🔧', phase:'During the job', stages:'Build', body:'Work happens in approved stages. You release payment only when each milestone is complete. Progress photos keep you informed. Scope changes are agreed in writing.' },
-              { icon:'🛡', phase:'After it is done', stages:'Sign-off · Warranty', body:'A structured sign-off starts your 90-day warranty from the moment you are satisfied. Issues logged in the warranty period are tracked and responded to within SLA.' },
+              { icon:'🛡', phase:'After it is done', stages:'Sign-off · Warranty', body:'A structured sign-off starts your warranty period. A warranty certificate is issued to your document vault. Issues logged within the period are tracked against a response SLA, with workmanship and product issues recorded separately.' },
             ].map(s => (
               <div key={s.phase} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'28px' }}>
                 <div style={{ fontSize:'32px', marginBottom:'16px' }}>{s.icon}</div>
@@ -206,6 +206,8 @@ export default function Home() {
               { icon:'📋', title:'Dialogue Rating', body:'Every job includes a pre-signing Dialogue Rating across six dimensions — pricing transparency, compliance, risk, timeline and more.' },
               { icon:'🔒', title:'Your workflow respected', body:'Use Xero for invoicing or your own CRM for quoting — bring the signed document back to Steadyhand for warranty tracking.' },
               { icon:'✅', title:'Verified, not just listed', body:'Every trade business has their licence and insurance verified before they appear in any shortlist. Verification is a requirement.' },
+              { icon:'💛', title:'Voluntary contributions', body:'Clients can send an optional contribution to any tradie who went above and beyond. It goes directly to the tradie with no fees taken by Steadyhand.' },
+              { icon:'📄', title:'Downloadable records', body:'Your signed scope agreement and warranty certificate are stored in your vault and downloadable at any time — useful for insurance claims, property sales, or disputes.' },
             ].map(v => (
               <div key={v.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'28px', boxShadow:'0 2px 12px rgba(28,43,50,0.04)' }}>
                 <div style={{ fontSize:'28px', marginBottom:'14px' }}>{v.icon}</div>
@@ -229,7 +231,8 @@ export default function Home() {
             {[
               { title:'Dialogue Rating', body:'Every job you complete builds your Dialogue Rating average. A high score signals to future clients that you engage transparently on pricing, compliance and risk — before work begins.' },
               { title:'Digital scope agreements', body:'Your scope agreement is stored permanently against every job. No more disputes over what was agreed. No more chasing signed documents.' },
-              { title:'Milestone payments', body:'Payments are released by the client at each milestone through Stripe. Funds go directly to your bank account. Steadyhand takes 3.5% — only when you get paid.' },
+              { title:'Single payment at signoff', body:'Once the client signs off on the completed work, a single payment is processed through Stripe. Funds go directly to your bank account. Steadyhand takes 3.5% — only when you get paid.' },
+              { title:'Voluntary contributions', body:'Clients can send an optional contribution if you went above and beyond. It goes directly to your account with no fees taken by Steadyhand.' },
             ].map(s => (
               <div key={s.title} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'14px', padding:'28px' }}>
                 <h3 style={{ fontSize:'17px', fontWeight:600, color:'rgba(216,228,225,0.85)', marginBottom:'10px' }}>{s.title}</h3>
@@ -276,11 +279,11 @@ export default function Home() {
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
             {[
               { q:'How is Steadyhand different from other platforms?', a:'Most platforms connect you with a tradie and step back. Steadyhand stays present through every stage — the scope agreement, the milestone approvals, the warranty period. We earn only when work is completed and approved.' },
-              { q:'What does the 3.5% completion fee mean?', a:'When a milestone payment is released through Steadyhand, we take 3.5%. No subscription fees, no lead fees, no upfront costs for clients. Founding member tradies pay 3% — guaranteed permanently.' },
-              { q:'Do I have to use Steadyhand for payments?', a:'Milestone payments are processed through Steadyhand via Stripe. This is what makes warranty and milestone tracking work — each payment is tied to an approved stage of work.' },
+              { q:'What does the 3.5% completion fee mean?', a:'When a payment is released through Steadyhand at signoff, we take 3.5%. No subscription fees, no lead fees, no upfront costs for clients. Tradies who join during our preview launch have their platform fee waived — and see exactly what they save on every job.' },
+              { q:'Do I have to use Steadyhand for payments?', a:'The final payment at signoff is processed through Steadyhand via Stripe. This is what activates the warranty period and ties the payment to the completed, approved work. Milestone tracking and documentation work regardless of payment.' },
               { q:'What if my tradie is not on Steadyhand?', a:'You can invite any tradie by email. They create a free account and join your job. They do not need an existing profile to be invited.' },
               { q:'Is Steadyhand available outside Western Australia?', a:'Not yet. We are building specifically for WA — metro Perth, the South West, and regional areas. Geographic focus means better tradie verification and a platform that understands WA compliance.' },
-              { q:'What happens if something goes wrong after sign-off?', a:'Any issue logged within the warranty period is tracked against a response SLA. You have a complete documented record — signed scope, milestone photos, variation approvals — to stand on.' },
+              { q:'What happens if something goes wrong after sign-off?', a:'Any issue logged within the warranty period is tracked against a response SLA. You have a complete documented record — signed scope, milestone photos, variation approvals — to stand on. Your warranty certificate and scope agreement are downloadable from your vault at any time.' },
             ].map((item, i) => (
               <div key={i} style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px', padding:'20px 24px' }}>
                 <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.85)', marginBottom:'8px' }}>{item.q}</p>
