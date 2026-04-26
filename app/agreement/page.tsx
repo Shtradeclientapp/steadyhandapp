@@ -6,7 +6,6 @@ import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
 
-const MVP_PAYMENT_NOTE = 'Deposit and milestone payments will be available in Steadyhand v1. During the current preview, a single payment is made at job signoff.'
 
 export default function AgreementPage() {
   const [user, setUser]               = useState<any>(null)
