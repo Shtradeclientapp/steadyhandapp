@@ -313,7 +313,7 @@ export default function WarrantyGuide() {
             {[
               {
                 heading: "You are responsible for your subcontractor's work",
-                body: "When you engage a subcontractor to perform part of a job, your warranty obligation to the client covers their work as well as your own. The client's contract is with you — not with your subcontractor. If the subcontractor's work is defective, the client's claim is against you as the head contractor. You then pursue the subcontractor separately. This is the doctrine of privity of contract, and it applies regardless of what your subcontract says.",
+                body: "When you engage a subcontractor to perform part of a job, your warranty obligation to the client covers their work as well as your own. The client\'s contract is with you — not with your subcontractor. If the subcontractor\'s work is defective, the client\'s claim is against you as the head contractor. You then pursue the subcontractor separately. This is the doctrine of privity of contract, and it applies regardless of what your subcontract says.",
               },
               {
                 heading: "The Building Commissioner cannot hear the client's complaint directly against your subcontractor",
@@ -321,7 +321,7 @@ export default function WarrantyGuide() {
               },
               {
                 heading: "If your subcontractor's work fails a product warranty claim",
-                body: "When a defect is caused by a product or material failure rather than workmanship, the question of who installed it matters. A manufacturer may decline a warranty claim if they can show the product was improperly installed. Your subcontractor's installation methodology and the product they used are therefore directly relevant to your exposure. Keeping a record of what was installed, by whom, using which product, is not administrative overhead — it is your protection.",
+                body: "When a defect is caused by a product or material failure rather than workmanship, the question of who installed it matters. A manufacturer may decline a warranty claim if they can show the product was improperly installed. Your subcontractor\'s installation methodology and the product they used are therefore directly relevant to your exposure. Keeping a record of what was installed, by whom, using which product, is not administrative overhead — it is your protection.",
               },
               {
                 heading: 'Practical steps to protect yourself',
