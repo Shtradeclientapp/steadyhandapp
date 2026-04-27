@@ -26,6 +26,43 @@ export default function TradieProfilePage() {
   const [saveError, setSaveError] = useState<string|null>(null)
   const [form, setForm] = useState<any>({})
   const [activeTab, setActiveTab] = useState<'profile'|'business'|'availability'>('profile')
+  const [wizardStep, setWizardStep] = useState<number|null>(null)
+  const [wizardSaving, setWizardSaving] = useState(false)
+
+  // Activate wizard if ?required=true in URL
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('required') === 'true') setWizardStep(0)
+    }
+  }, [])
+
+  const WIZARD_STEPS = [
+    { id: 'welcome', label: 'Welcome' },
+    { id: 'profile', label: 'Public profile' },
+    { id: 'business', label: 'Business details' },
+    { id: 'availability', label: 'Availability' },
+    { id: 'bank', label: 'Bank account' },
+    { id: 'checkin', label: 'Book a check-in' },
+  ]
+
+  const advanceWizard = async () => {
+    setWizardSaving(true)
+    await handleSave()
+    setWizardSaving(false)
+    if (wizardStep !== null && wizardStep < WIZARD_STEPS.length - 1) {
+      setWizardStep(wizardStep + 1)
+    }
+  }
+
+  const completeWizard = async () => {
+    const supabase = (await import('@/lib/supabase/client')).createClient()
+    if (tradie?.id) {
+      await supabase.from('tradie_profiles').update({ onboarding_step: 'active', onboarding_completed_at: new Date().toISOString() }).eq('id', tradie.id)
+    }
+    setWizardStep(null)
+    window.history.replaceState({}, '', '/tradie/profile')
+  }
   const [logoUrl, setLogoUrl] = useState<string|null>(null)
   const [uploadingLogo, setUploadingLogo] = useState(false)
 
@@ -240,7 +277,226 @@ export default function TradieProfilePage() {
 
       <div style={{ maxWidth: '780px', margin: '0 auto', padding: '32px 24px' }}>
 
-        {/* TABS */}
+        {/* ── WIZARD MODE ── */}
+        {wizardStep !== null && (
+          <div style={{ marginBottom: '32px' }}>
+            {/* Progress bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '28px' }}>
+              {WIZARD_STEPS.map((s, i) => (
+                <div key={s.id} style={{ flex: 1, height: '4px', borderRadius: '2px', background: i <= wizardStep ? '#D4522A' : 'rgba(28,43,50,0.12)', transition: 'background 0.3s' }} />
+              ))}
+            </div>
+            <p style={{ fontSize: '11px', color: '#7A9098', margin: '0 0 4px', letterSpacing: '0.5px' }}>STEP {wizardStep + 1} OF {WIZARD_STEPS.length}</p>
+
+            {/* Step 0 — Welcome */}
+            {wizardStep === 0 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 12px' }}>LET&apos;S GET YOU SET UP</h2>
+                <p style={{ fontSize: '15px', color: '#4A5E64', lineHeight: '1.7', margin: '0 0 20px', maxWidth: '520px' }}>
+                  This takes about 5 minutes. We&apos;ll walk you through your public profile, business details, availability, and bank account setup. Once you&apos;re done, you can invite clients and start jobs immediately.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '10px', marginBottom: '28px', maxWidth: '420px' }}>
+                  {[
+                    { icon: '👤', text: 'Public profile — bio, trade categories, service areas' },
+                    { icon: '🏢', text: 'Business details — name, ABN, licence number' },
+                    { icon: '📅', text: 'Availability — when you can take jobs' },
+                    { icon: '🏦', text: 'Bank account — to receive payments via Stripe' },
+                    { icon: '📞', text: 'Book a check-in — optional call with the Steadyhand team' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <span style={{ fontSize: '18px', flexShrink: 0 }}>{item.icon}</span>
+                      <p style={{ fontSize: '13px', color: '#4A5E64', margin: 0 }}>{item.text}</p>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: '12px', color: '#7A9098', margin: '0 0 20px' }}>
+                  You can invite clients and use all features up to the scope agreement without being verified. Your licence and insurance verification is handled by the Steadyhand team — we&apos;ll be in touch.
+                </p>
+                <button type="button" onClick={() => setWizardStep(1)}
+                  style={{ background: '#D4522A', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                  Get started →
+                </button>
+              </div>
+            )}
+
+            {/* Step 1 — Public profile */}
+            {wizardStep === 1 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '20px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 6px' }}>YOUR PUBLIC PROFILE</h2>
+                <p style={{ fontSize: '13px', color: '#7A9098', margin: '0 0 24px' }}>This is what clients see when you appear on their shortlist.</p>
+                <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '20px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>About your business <span style={{ color: '#D4522A' }}>*</span></label>
+                    <p style={{ fontSize: '12px', color: '#7A9098', margin: '0 0 6px' }}>2–3 sentences about your experience and approach</p>
+                    <textarea value={form.bio || ''} onChange={e => setF('bio', e.target.value)}
+                      rows={4} placeholder="e.g. Licensed electrician with 12 years experience across residential and commercial projects in Perth Metro..."
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', resize: 'vertical' as const, boxSizing: 'border-box' as const }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Trade categories <span style={{ color: '#D4522A' }}>*</span></label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px', marginTop: '4px' }}>
+                      {ALL_CATEGORIES.map(cat => {
+                        const selected = (form.trade_categories || []).includes(cat)
+                        return (
+                          <button key={cat} type="button" onClick={() => toggleCategory(cat)}
+                            style={{ padding: '7px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 500, border: '1.5px solid ' + (selected ? '#D4522A' : 'rgba(28,43,50,0.15)'), background: selected ? 'rgba(212,82,42,0.08)' : '#F4F8F7', color: selected ? '#D4522A' : '#4A5E64', cursor: 'pointer' }}>
+                            {cat}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Service areas</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '8px', marginTop: '4px' }}>
+                      {ALL_AREAS.map(area => {
+                        const selected = (form.service_areas || []).includes(area)
+                        return (
+                          <button key={area} type="button" onClick={() => toggleArea(area)}
+                            style={{ padding: '7px 14px', borderRadius: '100px', fontSize: '12px', fontWeight: 500, border: '1.5px solid ' + (selected ? '#2E6A8F' : 'rgba(28,43,50,0.15)'), background: selected ? 'rgba(46,106,143,0.08)' : '#F4F8F7', color: selected ? '#2E6A8F' : '#4A5E64', cursor: 'pointer' }}>
+                            {area}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>
+                  <button type="button" onClick={advanceWizard} disabled={wizardSaving || !form.bio || !(form.trade_categories || []).length}
+                    style={{ background: '#D4522A', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', opacity: !form.bio || !(form.trade_categories || []).length ? 0.5 : 1 }}>
+                    {wizardSaving ? 'Saving...' : 'Save and continue →'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2 — Business details */}
+            {wizardStep === 2 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '20px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 6px' }}>BUSINESS DETAILS</h2>
+                <p style={{ fontSize: '13px', color: '#7A9098', margin: '0 0 24px' }}>Used for verification and included in your scope agreements.</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Business name <span style={{ color: '#D4522A' }}>*</span></label>
+                    <input type="text" value={form.business_name || ''} onChange={e => setF('business_name', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="Your business name" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>ABN</label>
+                    <input type="text" value={form.abn || ''} onChange={e => setF('abn', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="12 345 678 901" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Years in business</label>
+                    <input type="number" value={form.years_experience || ''} onChange={e => setF('years_experience', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="e.g. 8" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Licence number <span style={{ color: '#D4522A' }}>*</span></label>
+                    <input type="text" value={form.licence_number || ''} onChange={e => setF('licence_number', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="e.g. EC-12345" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Licence type</label>
+                    <input type="text" value={form.licence_type || ''} onChange={e => setF('licence_type', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="e.g. Electrical contractor" />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#0A0A0A', marginBottom: '5px' }}>Phone</label>
+                    <input type="tel" value={form.phone || ''} onChange={e => setF('phone', e.target.value)}
+                      style={{ width: '100%', padding: '10px 13px', border: '1.5px solid rgba(28,43,50,0.18)', borderRadius: '8px', fontSize: '14px', background: '#F4F8F7', color: '#0A0A0A', outline: 'none', boxSizing: 'border-box' as const }} placeholder="0400 000 000" />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>
+                  <button type="button" onClick={() => setWizardStep(1)} style={{ background: 'transparent', color: '#7A9098', border: '1px solid rgba(28,43,50,0.15)', borderRadius: '8px', padding: '12px 20px', fontSize: '13px', cursor: 'pointer' }}>← Back</button>
+                  <button type="button" onClick={advanceWizard} disabled={wizardSaving || !form.business_name || !form.licence_number}
+                    style={{ background: '#D4522A', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', opacity: !form.business_name || !form.licence_number ? 0.5 : 1 }}>
+                    {wizardSaving ? 'Saving...' : 'Save and continue →'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3 — Availability */}
+            {wizardStep === 3 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '20px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 6px' }}>AVAILABILITY</h2>
+                <p style={{ fontSize: '13px', color: '#7A9098', margin: '0 0 24px' }}>Let clients know when you can take new jobs. You can update this any time.</p>
+                <p style={{ fontSize: '13px', color: '#4A5E64', margin: '0 0 20px' }}>You can set your detailed availability after completing setup. For now, just confirm you&apos;re open to new jobs.</p>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' as const }}>
+                  {['Available now', 'Available in 1–2 weeks', 'Available in 3–4 weeks', 'Not currently available'].map(opt => (
+                    <button key={opt} type="button" onClick={() => setF('availability_status', opt.toLowerCase().replace(/ /g, '_'))}
+                      style={{ padding: '10px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, border: '1.5px solid ' + (form.availability_status === opt.toLowerCase().replace(/ /g, '_') ? '#2E7D60' : 'rgba(28,43,50,0.15)'), background: form.availability_status === opt.toLowerCase().replace(/ /g, '_') ? 'rgba(46,125,96,0.08)' : '#F4F8F7', color: form.availability_status === opt.toLowerCase().replace(/ /g, '_') ? '#2E7D60' : '#4A5E64', cursor: 'pointer' }}>
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>
+                  <button type="button" onClick={() => setWizardStep(2)} style={{ background: 'transparent', color: '#7A9098', border: '1px solid rgba(28,43,50,0.15)', borderRadius: '8px', padding: '12px 20px', fontSize: '13px', cursor: 'pointer' }}>← Back</button>
+                  <button type="button" onClick={advanceWizard} style={{ background: '#D4522A', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                    {wizardSaving ? 'Saving...' : 'Save and continue →'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4 — Bank account */}
+            {wizardStep === 4 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '20px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 6px' }}>BANK ACCOUNT</h2>
+                <p style={{ fontSize: '13px', color: '#7A9098', margin: '0 0 8px' }}>Connect your bank account via Stripe to receive payments from clients.</p>
+                <p style={{ fontSize: '12px', color: '#4A5E64', lineHeight: '1.7', margin: '0 0 24px', maxWidth: '480px' }}>
+                  You can invite clients and progress jobs to the agreement stage without this. Your bank account is required before the scope agreement can be signed — the client pays at signoff, and funds go directly to your account.
+                </p>
+                <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '20px', marginBottom: '24px', maxWidth: '400px' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 8px' }}>🏦 Stripe Connect</p>
+                  <p style={{ fontSize: '12px', color: '#4A5E64', margin: '0 0 14px', lineHeight: '1.6' }}>Steadyhand uses Stripe to process payments. Connecting takes 3–5 minutes and requires your BSB, account number, and identity verification.</p>
+                  <button type="button" onClick={async () => {
+                    const res = await fetch('/api/stripe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'create_connect_account', tradie_id: tradie?.id, email: profile?.email, return_url: window.location.origin + '/tradie/profile?required=true&stripe=connected&step=4' }) })
+                    const { url } = await res.json()
+                    if (url) window.location.href = url
+                  }} style={{ background: '#0A0A0A', color: 'white', border: 'none', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                    Connect bank account →
+                  </button>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button type="button" onClick={() => setWizardStep(3)} style={{ background: 'transparent', color: '#7A9098', border: '1px solid rgba(28,43,50,0.15)', borderRadius: '8px', padding: '12px 20px', fontSize: '13px', cursor: 'pointer' }}>← Back</button>
+                  <button type="button" onClick={() => setWizardStep(5)} style={{ background: 'transparent', color: '#4A5E64', border: '1px solid rgba(28,43,50,0.15)', borderRadius: '8px', padding: '12px 20px', fontSize: '13px', cursor: 'pointer' }}>Skip for now →</button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5 — Book a check-in */}
+            {wizardStep === 5 && (
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '20px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 6px' }}>BOOK A CHECK-IN</h2>
+                <p style={{ fontSize: '13px', color: '#7A9098', margin: '0 0 20px' }}>Optional — but recommended for your first job.</p>
+                <div style={{ background: '#E8F0EE', border: '1px solid rgba(28,43,50,0.1)', borderRadius: '12px', padding: '24px', marginBottom: '24px', maxWidth: '480px' }}>
+                  <p style={{ fontSize: '28px', margin: '0 0 10px' }}>📞</p>
+                  <p style={{ fontSize: '14px', fontWeight: 600, color: '#0A0A0A', margin: '0 0 8px' }}>Talk to the Steadyhand team</p>
+                  <p style={{ fontSize: '13px', color: '#4A5E64', lineHeight: '1.7', margin: '0 0 16px' }}>
+                    A 15-minute call to walk through your first job, answer any questions about the platform, and make sure your verification is on track. No obligation — we just want your first job to go smoothly.
+                  </p>
+                  <a href="mailto:support@steadyhanddigital.com?subject=Check-in call request&body=Hi, I just completed my Steadyhand profile setup and would like to book a check-in call. My business name is: " target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'inline-block', background: '#2E7D60', color: 'white', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: 600, textDecoration: 'none', marginRight: '10px' }}>
+                    📧 Request a call
+                  </a>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button type="button" onClick={() => setWizardStep(4)} style={{ background: 'transparent', color: '#7A9098', border: '1px solid rgba(28,43,50,0.15)', borderRadius: '8px', padding: '12px 20px', fontSize: '13px', cursor: 'pointer' }}>← Back</button>
+                  <button type="button" onClick={completeWizard}
+                    style={{ background: '#D4522A', color: 'white', border: 'none', borderRadius: '8px', padding: '12px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                    Complete setup →
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TABS — only shown when not in wizard mode */}
+        {wizardStep === null && (
+          <>
         <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)', marginBottom: '24px' }}>
           {([
             { id: 'profile', label: 'Public profile' },
@@ -483,6 +739,9 @@ export default function TradieProfilePage() {
             </div>
           ))}
         </div>
+
+          </>
+        )}
 
         <div style={{ marginTop: '28px' }}>
           {saveError && (
