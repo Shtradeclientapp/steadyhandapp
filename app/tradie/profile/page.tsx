@@ -48,7 +48,7 @@ export default function TradieProfilePage() {
 
   const advanceWizard = async () => {
     setWizardSaving(true)
-    await handleSave()
+    await save()
     setWizardSaving(false)
     if (wizardStep !== null && wizardStep < WIZARD_STEPS.length - 1) {
       setWizardStep(wizardStep + 1)
