@@ -113,6 +113,17 @@ export default function WorkersPage() {
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={true} backLabel="← Dashboard" backHref="/tradie/dashboard" />
+      <div style={{ background:'rgba(212,82,42,0.04)', borderBottom:'1px solid rgba(212,82,42,0.15)', padding:'12px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+        <div style={{ display:'flex', alignItems:'flex-start', gap:'10px' }}>
+          <span style={{ fontSize:'16px', flexShrink:0 }}>⚖️</span>
+          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.6' }}>
+            <strong style={{ color:'#0A0A0A' }}>Your warranty covers your subcontractors&apos; work.</strong> When you bring a worker onto a job, your warranty obligation to the client covers their work as well as your own.
+          </p>
+        </div>
+        <a href="/guides/warranty-wa" style={{ fontSize:'12px', color:'#D4522A', fontWeight:600, textDecoration:'none', whiteSpace:'nowrap' as const, flexShrink:0 }}>
+          Understand your liability →
+        </a>
+      </div>
 
       <div style={{ background:'#0A0A0A', padding:'28px 24px' }}>
         <div style={{ maxWidth:'860px', margin:'0 auto' }}>
