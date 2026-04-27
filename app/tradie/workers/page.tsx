@@ -54,7 +54,7 @@ export default function WorkersPage() {
     })
   }, [])
 
-  const seatsAllowed = 5 // preview default; DB columns added post-migration
+  const seatsAllowed: number = 5 // preview default; DB columns added post-migration
   const activeWorkers = workers.filter((w:any) => w.status === 'active').length
 
   const inviteWorker = async () => {
