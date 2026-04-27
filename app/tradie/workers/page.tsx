@@ -26,7 +26,7 @@ export default function WorkersPage() {
       const prof = profRaw as any
       if (!prof) { window.location.href = '/login'; return }
       if (prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
-      // tradie_profiles join may be null if not yet created — still show page
+      if (!prof.tradie?.id) { window.location.href = '/tradie/profile?required=true'; return }
       setProfile(prof)
       setLoading(false)
 
@@ -54,7 +54,7 @@ export default function WorkersPage() {
     })
   }, [])
 
-  const seatsAllowed = (profile?.tradie?.worker_seats_included || 0) + (profile?.tradie?.worker_seats_extra || 0)
+  const seatsAllowed = 5 // preview default; DB columns added post-migration
   const activeWorkers = workers.filter((w:any) => w.status === 'active').length
 
   const inviteWorker = async () => {
