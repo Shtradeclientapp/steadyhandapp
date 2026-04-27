@@ -268,6 +268,17 @@ export default function TradieLead() {
         </div>
       )}
 
+      {/* Profile incomplete notice */}
+      {profileIncomplete && (
+        <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'12px', padding:'20px 24px', marginBottom:'20px' }}>
+          <p style={{ fontSize:'14px', fontWeight:600, color:'#D4522A', margin:'0 0 6px' }}>⚠ Complete your profile before inviting clients</p>
+          <p style={{ fontSize:'13px', color:'#4A5E64', margin:'0 0 14px', lineHeight:'1.6' }}>Your business name, licence number, and trade categories are required. This information appears on the scope agreement your client will sign.</p>
+          <a href="/tradie/profile">
+            <button type="button" style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>Complete your profile →</button>
+          </a>
+        </div>
+      )}
+
       {/* Signup prompt modal */}
       {showSignupPrompt && (
         <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:100, padding:'24px' }}>
