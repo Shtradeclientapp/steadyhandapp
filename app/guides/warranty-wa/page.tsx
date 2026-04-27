@@ -300,6 +300,51 @@ export default function WarrantyGuide() {
           </Link>
         </div>
 
+        {/* For trade businesses — subcontractor warranty liability */}
+        <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.12)', borderRadius:'16px', padding:'32px', marginBottom:'28px' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' }}>
+            <div style={{ width:'3px', height:'20px', background:'#D4522A', borderRadius:'2px', flexShrink:0 }} />
+            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>FOR TRADE BUSINESSES — SUBCONTRACTORS AND WARRANTY LIABILITY</h2>
+          </div>
+          <p style={{ fontSize:'13px', color:'#7A9098', margin:'0 0 20px', lineHeight:'1.7' }}>
+            This section is written for tradies and contractors who bring workers or subcontractors onto jobs. The warranty obligations are different — and often misunderstood.
+          </p>
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px' }}>
+            {[
+              {
+                heading: 'You are responsible for your subcontractor's work',
+                body: 'When you engage a subcontractor to perform part of a job, your warranty obligation to the client covers their work as well as your own. The client's contract is with you — not with your subcontractor. If the subcontractor's work is defective, the client's claim is against you as the head contractor. You then pursue the subcontractor separately. This is the doctrine of privity of contract, and it applies regardless of what your subcontract says.',
+              },
+              {
+                heading: 'The Building Commissioner cannot hear the client's complaint directly against your subcontractor',
+                body: 'The Building Services (Complaint Resolution and Administration) Act 2011 explicitly excludes work carried out by a person who is in turn obliged to perform the work under another contract — that is, subcontractor work. A homeowner cannot lodge a complaint directly against your subcontractor with the Building Commissioner. The complaint is against you. If a rectification order is issued, you must comply — and then pursue your subcontractor separately if their work caused the defect.',
+              },
+              {
+                heading: 'If your subcontractor's work fails a product warranty claim',
+                body: 'When a defect is caused by a product or material failure rather than workmanship, the question of who installed it matters. A manufacturer may decline a warranty claim if they can show the product was improperly installed. Your subcontractor's installation methodology and the product they used are therefore directly relevant to your exposure. Keeping a record of what was installed, by whom, using which product, is not administrative overhead — it is your protection.',
+              },
+              {
+                heading: 'Practical steps to protect yourself',
+                body: 'Use a written subcontract for every engagement — even for small jobs. Specify the scope clearly. Require the subcontractor to carry their own public liability insurance and provide evidence of it. Keep records of who did what work and when. If you use Steadyhand, adding the worker to the job record creates a timestamped record of their involvement that is available to you if a dispute arises. This does not create a direct contractual relationship between the subcontractor and your client — but it creates the evidence trail that supports your claim against the subcontractor if their work is later found to be defective.',
+              },
+              {
+                heading: 'The ACL applies to your subcontractor's work too',
+                body: 'Under the Australian Consumer Law, the service guarantee of due care and skill applies to every trade transaction. Your subcontractor's obligation to perform with due care and skill runs from them to you (under your subcontract). Your obligation to deliver with due care and skill runs from you to the client. Both obligations exist simultaneously. If a subcontractor's poor workmanship causes a defect, you have an ACL claim against the subcontractor — but your client's ACL claim is against you.',
+              },
+            ].map(item => (
+              <div key={item.heading} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'16px 18px' }}>
+                <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 8px' }}>{item.heading}</p>
+                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', margin:0 }}>{item.body}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:'20px', padding:'14px 16px', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px' }}>
+            <p style={{ fontSize:'12px', color:'#D4522A', margin:0, lineHeight:'1.7' }}>
+              <strong>Note:</strong> This information is educational and not legal advice. If you are dealing with a specific subcontractor dispute or warranty claim, seek advice from a qualified construction lawyer or contact the Master Builders Association WA or HIA for member support.
+            </p>
+          </div>
+        </div>
+
         {/* References */}
         <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', margin:'0 0 12px' }}>REFERENCES AND FURTHER READING</p>
