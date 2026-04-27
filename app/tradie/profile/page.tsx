@@ -157,7 +157,8 @@ export default function TradieProfilePage() {
   return (
     <div style={{ minHeight: '100vh', background: '#C8D5D2', fontFamily: 'sans-serif' }}>
       {completionPct < 100 && (
-        <div style={{ background: completionPct < 60 ? 'rgba(212,82,42,0.06)' : 'rgba(192,120,48,0.06)', borderBottom: '1px solid ' + (completionPct < 60 ? 'rgba(212,82,42,0.2)' : 'rgba(192,120,48,0.2)'), padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' as const }}>
+        <div style={{ background: completionPct < 60 ? 'rgba(212,82,42,0.06)' : 'rgba(192,120,48,0.06)', borderBottom: '1px solid ' + (completionPct < 60 ? 'rgba(212,82,42,0.2)' : 'rgba(192,120,48,0.2)'), padding: '12px 24px', display: 'flex', flexDirection:'column' as const, gap: '8px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '80px', height: '6px', background: 'rgba(28,43,50,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: completionPct + '%', background: completionPct < 60 ? '#D4522A' : '#C07830', borderRadius: '3px' }} />

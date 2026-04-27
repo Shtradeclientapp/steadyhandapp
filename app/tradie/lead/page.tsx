@@ -25,6 +25,7 @@ export default function TradieLead() {
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState<string|null>(null)
   const [profileLoaded, setProfileLoaded] = useState(false)
+  const [profileIncomplete, setProfileIncomplete] = useState(false)
   const [guestInviteCount, setGuestInviteCount] = useState(0)
   const [showSignupPrompt, setShowSignupPrompt] = useState(false)
   const [showFreeInviteInfo, setShowFreeInviteInfo] = useState(false)
@@ -59,6 +60,9 @@ export default function TradieLead() {
       }
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
+      const trad = prof?.tradie
+      const missingRequired = !trad?.business_name || !trad?.licence_number || !(trad?.trade_categories?.length > 0)
+      if (missingRequired) setProfileIncomplete(true)
       setProfileLoaded(true)
       if (!prof?.tradie?.id) {
         setSendError('Your tradie profile is not fully set up — please complete your profile before inviting clients.')
@@ -351,7 +355,7 @@ export default function TradieLead() {
               </div>
               <div><label style={lbl}>Job title (optional — helps them write a better request)</label><input type="text" placeholder="e.g. Kitchen renovation — Fremantle" value={invite.job_title} onChange={setI('job_title')} style={inp} /></div>
               <div><label style={lbl}>Personal note to client</label><textarea placeholder="e.g. Great to meet you on site last week — please use this link to submit the job details as we discussed." value={invite.notes} onChange={setI('notes')} style={{ ...inp, minHeight:'80px', resize:'vertical' as const }} /></div>
-              <button type="button" onClick={handleInvite} disabled={sending || !invite.client_email}
+              <button type="button" onClick={handleInvite} disabled={sending || !invite.client_email || profileIncomplete}
                 style={{ background: sending || !invite.client_email ? 'rgba(28,43,50,0.3)' : '#D4522A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {sending ? 'Sending...' : 'Send invitation →'}
               </button>
@@ -439,7 +443,7 @@ export default function TradieLead() {
                 </div>
               )}
 
-              <button type="button" onClick={handleImport} disabled={sending || !imp.client_name || !imp.job_title}
+              <button type="button" onClick={handleImport} disabled={sending || !imp.client_name || !imp.job_title || profileIncomplete}
                 style={{ background: sending || !imp.client_name || !imp.job_title ? 'rgba(28,43,50,0.3)' : '#0A0A0A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
                 {sending ? 'Importing...' : imp.invite_client && imp.client_email ? 'Import lead & send invitation →' : 'Import lead →'}
               </button>
