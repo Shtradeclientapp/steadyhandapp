@@ -217,6 +217,7 @@ export default function AgreementPage() {
       if (!signRes.ok || !signData.success) throw new Error(signData.error || 'Signing failed')
       const updated = signData.scope
       setScope(updated)
+      const supabase = createClient()
       const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
       await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
       await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)
