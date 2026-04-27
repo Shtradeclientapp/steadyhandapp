@@ -22,7 +22,7 @@ export default function WorkersPage() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
-      const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, worker_seats_included, worker_seats_extra, subscription_tier)').eq('id', session.user.id).single()
+      const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, subscription_tier)').eq('id', session.user.id).single()
       const prof = profRaw as any
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
       setProfile(prof)
