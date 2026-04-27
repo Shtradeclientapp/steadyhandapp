@@ -298,50 +298,26 @@ export default function TradieDashboard() {
 
   return (
     <>
-      {/* ── Invite a client — primary action ── */}
+      {/* ── Primary action bar ── */}
       <div style={{ background:'#141414', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ maxWidth:'900px', margin:'0 auto', padding:'16px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
-          <div style={{ flex:1, minWidth:0 }}>
-            <p style={{ fontSize:'14px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 3px' }}>Invite a client to Steadyhand</p>
-            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)', margin:0, lineHeight:'1.5' }}>
-              Working with a client who values extra care and transparency? Invite them to run the job through Steadyhand — they get a signed scope, milestone payments, and a warranty record. You get a stronger professional reputation.
-            </p>
-          </div>
-          <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0, flexWrap:'wrap' as const }}>
-            <a href="/tradie/lead"
-              style={{ fontSize:'13px', fontWeight:600, color:'white', background:'#D4522A', border:'none', borderRadius:'8px', padding:'10px 20px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
-              + Invite a client
-            </a>
-            <a href="/tradie/availability"
-              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
-              Availability
-            </a>
-            <a href="/tradie/dialogue"
-              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
-              Dialogue Rating
-            </a>
-            <a href="/tradie/workers"
-              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
-              👷 Workers
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Workers summary ── */}
-      <div style={{ background:'#0A0A0A', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'14px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-            <span style={{ fontSize:'18px' }}>👷</span>
-            <div>
-              <p style={{ fontSize:'13px', fontWeight:600, color:'rgba(216,228,225,0.85)', margin:'0 0 2px' }}>Field team</p>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>Add workers, assign them to active jobs, and manage your field team.</p>
-            </div>
-          </div>
-          <a href="/tradie/workers"
-            style={{ fontSize:'12px', fontWeight:600, color:'#2E7D60', background:'rgba(46,125,96,0.12)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'7px', padding:'8px 16px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
-            Manage workers →
+          <a href="/tradie/lead"
+            style={{ fontSize:'13px', fontWeight:600, color:'white', background:'#D4522A', borderRadius:'8px', padding:'10px 22px', textDecoration:'none', whiteSpace:'nowrap' as const, flexShrink:0 }}>
+            + Invite a client
           </a>
+          <div style={{ display:'flex', gap:'6px', alignItems:'center', flexWrap:'wrap' as const }}>
+            {[
+              { label:'Availability', href:'/tradie/availability' },
+              { label:'Dialogue Rating', href:'/tradie/dialogue' },
+              { label:'👷 Workers', href:'/tradie/workers' },
+              { label:'Steadytools', href:'/tradie/steadytools' },
+            ].map(item => (
+              <a key={item.href} href={item.href}
+                style={{ fontSize:'12px', color:'rgba(216,228,225,0.55)', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)', borderRadius:'7px', padding:'7px 13px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+                {item.label}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
