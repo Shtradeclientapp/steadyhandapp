@@ -24,8 +24,11 @@ export default function WorkersPage() {
       if (!session) { window.location.href = '/login'; return }
       const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, subscription_tier)').eq('id', session.user.id).single()
       const prof = profRaw as any
-      if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
+      if (!prof) { window.location.href = '/login'; return }
+      if (prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
+      // tradie_profiles join may be null if not yet created — still show page
       setProfile(prof)
+      setLoading(false)
 
       let w: any[] = [], j: any[] = []
       try {
@@ -48,7 +51,6 @@ export default function WorkersPage() {
           .order('assigned_date', { ascending: true })
         setAssignments(asgn || [])
       }
-      setLoading(false)
     })
   }, [])
 
