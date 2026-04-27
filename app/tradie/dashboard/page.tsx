@@ -320,7 +320,28 @@ export default function TradieDashboard() {
               style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
               Dialogue Rating
             </a>
+            <a href="/tradie/workers"
+              style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+              👷 Workers
+            </a>
           </div>
+        </div>
+      </div>
+
+      {/* ── Workers summary ── */}
+      <div style={{ background:'#0A0A0A', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ maxWidth:'900px', margin:'0 auto', padding:'14px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+            <span style={{ fontSize:'18px' }}>👷</span>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'rgba(216,228,225,0.85)', margin:'0 0 2px' }}>Field team</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>Add workers, assign them to active jobs, and manage your field team.</p>
+            </div>
+          </div>
+          <a href="/tradie/workers"
+            style={{ fontSize:'12px', fontWeight:600, color:'#2E7D60', background:'rgba(46,125,96,0.12)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'7px', padding:'8px 16px', textDecoration:'none', whiteSpace:'nowrap' as const }}>
+            Manage workers →
+          </a>
         </div>
       </div>
 
