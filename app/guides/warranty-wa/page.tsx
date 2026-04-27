@@ -328,8 +328,8 @@ export default function WarrantyGuide() {
                 body: 'Use a written subcontract for every engagement — even for small jobs. Specify the scope clearly. Require the subcontractor to carry their own public liability insurance and provide evidence of it. Keep records of who did what work and when. If you use Steadyhand, adding the worker to the job record creates a timestamped record of their involvement that is available to you if a dispute arises. This does not create a direct contractual relationship between the subcontractor and your client — but it creates the evidence trail that supports your claim against the subcontractor if their work is later found to be defective.',
               },
               {
-                heading: 'The ACL applies to your subcontractor's work too',
-                body: 'Under the Australian Consumer Law, the service guarantee of due care and skill applies to every trade transaction. Your subcontractor's obligation to perform with due care and skill runs from them to you (under your subcontract). Your obligation to deliver with due care and skill runs from you to the client. Both obligations exist simultaneously. If a subcontractor's poor workmanship causes a defect, you have an ACL claim against the subcontractor — but your client's ACL claim is against you.',
+                heading: "The ACL applies to your subcontractor's work too",
+                body: "Under the Australian Consumer Law, the service guarantee of due care and skill applies to every trade transaction. Your subcontractor\'s obligation to perform with due care and skill runs from them to you (under your subcontract). Your obligation to deliver with due care and skill runs from you to the client. Both obligations exist simultaneously. If a subcontractor's poor workmanship causes a defect, you have an ACL claim against the subcontractor — but your client\'s ACL claim is against you.",
               },
             ].map(item => (
               <div key={item.heading} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'16px 18px' }}>
