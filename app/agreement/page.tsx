@@ -207,12 +207,15 @@ export default function AgreementPage() {
     setSigning(true)
     setSaveError(null)
     try {
-      const supabase = createClient()
-      const field = isTradie ? 'tradie_signed_at' : 'client_signed_at'
-      const now = new Date().toISOString()
-      const { error: signErr } = await supabase.from('scope_agreements').update({ [field]: now }).eq('id', scope.id)
-      if (signErr) throw new Error(signErr.message)
-      const updated = { ...scope, [field]: now }
+      // Use server-side signing to capture IP address and user agent for ETA compliance
+      const signRes = await fetch('/api/sign-scope', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scope_id: scope.id, role: isTradie ? 'tradie' : 'client' }),
+      })
+      const signData = await signRes.json()
+      if (!signRes.ok || !signData.success) throw new Error(signData.error || 'Signing failed')
+      const updated = signData.scope
       setScope(updated)
       const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
       await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
