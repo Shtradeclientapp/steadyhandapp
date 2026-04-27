@@ -27,16 +27,20 @@ export default function WorkersPage() {
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
       setProfile(prof)
 
-      const [{ data: w }, { data: j }, { data: a }] = await Promise.all([
-        supabase.from('tradie_workers').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false }),
-        supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['consult','assess','compare','quote','agreement','delivery']).order('created_at', { ascending: false }),
-        supabase.from('job_worker_assignments').select('*, worker:tradie_workers(name), job:jobs(title, suburb)').in('job_id', []).order('assigned_date', { ascending: true }),
-      ])
-      setWorkers(w || [])
-      setJobs(j || [])
+      let w: any[] = [], j: any[] = []
+      try {
+        const [wRes, jRes] = await Promise.all([
+          supabase.from('tradie_workers').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false }),
+          supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['consult','assess','compare','quote','agreement','delivery']).order('created_at', { ascending: false }),
+        ])
+        w = wRes.data || []
+        j = jRes.data || []
+      } catch { /* tables may not exist yet */ }
+      setWorkers(w)
+      setJobs(j)
 
       // Load assignments for all workers
-      if (w && w.length > 0) {
+      if (w.length > 0) {
         const { data: asgn } = await supabase.from('job_worker_assignments')
           .select('*, worker:tradie_workers(name), job:jobs(title, suburb)')
           .in('worker_id', w.map((x:any) => x.id))
