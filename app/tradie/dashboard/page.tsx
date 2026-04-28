@@ -381,7 +381,7 @@ export default function TradieDashboard() {
               <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px', marginBottom:'24px' }}>
                 {[
                   {
-                    done: !!(profile?.tradie?.business_name && profile?.tradie?.trade_categories?.length && profile?.tradie?.service_areas?.length),
+                    done: profile?.tradie?.onboarding_step === 'active',
                     label: 'Complete your business profile',
                     sub: 'Business name, trade category and service area',
                     href: '/tradie/profile?required=true',

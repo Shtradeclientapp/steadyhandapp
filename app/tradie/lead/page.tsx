@@ -61,11 +61,11 @@ export default function TradieLead() {
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
       setProfile(prof)
       const trad = prof?.tradie
-      const missingRequired = !trad?.business_name || !trad?.licence_number || !(trad?.trade_categories?.length > 0)
+      const missingRequired = trad?.onboarding_step !== 'active'
       if (missingRequired) setProfileIncomplete(true)
       setProfileLoaded(true)
       if (!prof?.tradie?.id) {
-        setSendError('Your tradie profile is not fully set up — please complete your profile before inviting clients.')
+        setSendError('Please complete your profile setup before inviting clients — it only takes a few minutes.')
       }
       const { data: existing } = await supabase.from('tradie_leads').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false })
       setLeads(existing || [])
