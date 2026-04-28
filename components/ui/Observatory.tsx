@@ -296,7 +296,7 @@ export function ObservatoryWidget() {
   return (
     <div style={{ background:'white', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)', overflow:'hidden' }}>
       <div style={{ background:'#0A0A0A', padding:'10px 14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <span style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.5)', fontWeight:500 }}>{active.categoryIcon} Trade Observatory</span>
+        <span style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.5)', fontWeight:500 }}>{active.categoryIcon} Steadyhand WA Data Tracker</span>
         <a href="/observatory" style={{ fontSize:'11px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>View all →</a>
       </div>
       <div style={{ padding:'14px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
@@ -377,7 +377,7 @@ export function ObservatoryCarousel() {
         {/* Header */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap' as const, gap:'12px' }}>
           <div>
-            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Digital & Trade Labour Tracker</p>
+            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Steadyhand WA Data Tracker</p>
             <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>STEADYHAND WA DATA OBSERVATORY</h2>
           </div>
           <a href="/observatory" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', padding:'8px 16px', borderRadius:'7px' }}>
