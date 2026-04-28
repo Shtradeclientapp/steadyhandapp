@@ -136,6 +136,8 @@ export default function TradieDashboard() {
   const [consults, setConsults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [workers, setWorkers] = useState<any[]>([])
+  const [workersLoaded, setWorkersLoaded] = useState(false)
   const [tradieAnalytics, setTradieAnalytics] = useState<any[]>([])
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [stripeConnected, setStripeConnected] = useState(false)
@@ -158,6 +160,11 @@ export default function TradieDashboard() {
 
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
       if (!prof.tradie?.id) { window.location.href = '/tradie/profile?required=true'; return }
+      // Load workers in background
+      supabase.from('tradie_workers').select('*').eq('tradie_id', prof.tradie.id).eq('status', 'active').order('name').then(({ data }) => {
+        setWorkers(data || [])
+        setWorkersLoaded(true)
+      }).catch(() => setWorkersLoaded(true))
 
       setUser(session.user)
       setProfile(prof)
