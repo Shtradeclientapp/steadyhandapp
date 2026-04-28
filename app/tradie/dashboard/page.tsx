@@ -149,7 +149,10 @@ export default function TradieDashboard() {
 
   useEffect(() => {
     const supabase = createClient()
+    // Redirect to login if session check hangs for more than 6 seconds
+    const loadingTimeout = setTimeout(() => { window.location.href = '/login' }, 6000)
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      clearTimeout(loadingTimeout)
       if (!session) { window.location.href = '/login'; return }
 
       const { data: prof } = await supabase
