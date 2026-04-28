@@ -497,17 +497,22 @@ export default function TradieProfilePage() {
         {/* TABS — only shown when not in wizard mode */}
         {wizardStep === null && (
           <>
-        <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)', marginBottom: '24px' }}>
-          {([
-            { id: 'profile', label: 'Public profile' },
-            { id: 'business', label: 'Business details' },
-            { id: 'availability', label: 'Availability' },
-          ] as const).map(t => (
-            <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
-              style={{ padding: '10px 20px', border: 'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#0A0A0A' : '#7A9098' }}>
-              {t.label}
-            </button>
-          ))}
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid rgba(28,43,50,0.1)' }}>
+            {([
+              { id: 'profile', label: 'Public profile', n: 1 },
+              { id: 'business', label: 'Business details', n: 2 },
+              { id: 'availability', label: 'Availability', n: 3 },
+            ] as const).map(t => (
+              <button key={t.id} type="button" onClick={() => setActiveTab(t.id)}
+                style={{ padding: '10px 20px', border: 'none', borderBottom: activeTab === t.id ? '2px solid #D4522A' : '2px solid transparent', background: 'transparent', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === t.id ? 600 : 400, color: activeTab === t.id ? '#0A0A0A' : '#7A9098' }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <p style={{ fontSize: '11px', color: '#7A9098', margin: '6px 0 0', paddingLeft: '2px' }}>
+            {activeTab === 'profile' ? 'Section 1 of 3 — complete all three sections to finish your profile' : activeTab === 'business' ? 'Section 2 of 3 — complete all three sections to finish your profile' : 'Section 3 of 3 — save to complete your profile'}
+          </p>
         </div>
 
         {activeTab === 'profile' && (
