@@ -75,12 +75,6 @@ export default function DashboardPage() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { clearTimeout(loadingTimeout); window.location.href = '/login'; return }
 
-      // Handle session expiry
-      supabase.auth.onAuthStateChange((event) => {
-        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-          if (event === 'SIGNED_OUT') window.location.href = '/login'
-        }
-      })
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       // Redirect tradie immediately before loading any job data
