@@ -1,54 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
-import { createClient } from '@supabase/supabase-js'
-import { randomBytes } from 'crypto'
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
-const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.steadyhandtrade.app'
+const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { worker_name, worker_email, worker_phone, tradie_id, business_name } = await request.json()
-    if (!worker_email || !tradie_id) return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    const supabase = await createClient()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const token = randomBytes(32).toString('hex')
+    const { name, email, phone } = await req.json()
+    if (!name || !email) return NextResponse.json({ error: 'Name and email required' }, { status: 400 })
 
-    // Create worker record
-    const { data: worker, error } = await supabase.from('tradie_workers').insert({
-      tradie_id,
-      name: worker_name || worker_email,
-      email: worker_email,
-      phone: worker_phone || null,
-      status: 'invited',
-      invite_token: token,
-    }).select().single()
+    const { data: tradie } = await supabase
+      .from('tradie_profiles')
+      .select('id, business_name')
+      .eq('id', session.user.id)
+      .single()
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (!tradie) return NextResponse.json({ error: 'Tradie not found' }, { status: 404 })
 
-    // Send invite email
-    const inviteUrl = APP_URL + '/worker/accept?token=' + token
-    const html = `
-      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;background:#E8F0EE;">
-        <h1 style="font-size:22px;color:#0A0A0A;letter-spacing:2px;margin:0 0 20px;font-family:Georgia,serif;">STEADYHAND</h1>
-        <p style="font-size:14px;color:#0A0A0A;">Hi ${worker_name || 'there'},</p>
-        <p style="font-size:14px;color:#4A5E64;line-height:1.7;"><strong>${business_name || 'Your employer'}</strong> has invited you to join their team on Steadyhand. You will be able to view your assigned jobs, site briefs and submit field updates from your phone.</p>
-        <div style="background:#0A0A0A;border-radius:10px;padding:20px;margin:20px 0;">
-          <p style="font-size:13px;color:rgba(216,228,225,0.6);margin:0 0 12px;">What you can do on Steadyhand:</p>
-          <p style="font-size:13px;color:rgba(216,228,225,0.7);margin:0 0 6px;">✓ View your jobs and site briefs for the day</p>
-          <p style="font-size:13px;color:rgba(216,228,225,0.7);margin:0 0 6px;">✓ Get directions and client contact details</p>
-          <p style="font-size:13px;color:rgba(216,228,225,0.7);margin:0 0 6px;">✓ Submit completion photos and site notes</p>
-          <p style="font-size:13px;color:rgba(216,228,225,0.7);margin:0;">✓ Mark work stages complete for your boss to approve</p>
-        </div>
-        <a href="${inviteUrl}" style="display:inline-block;background:#D4522A;color:white;padding:13px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px;">Accept invitation →</a>
-        <p style="font-size:12px;color:#9AA5AA;margin-top:24px;">This invitation expires in 7 days. If you did not expect this email, you can ignore it.</p>
-      </div>
-    `
-    await resend.emails.send({ from: FROM, to: worker_email, subject: business_name + ' invited you to Steadyhand', html })
+    const token = crypto.randomUUID()
 
-    return NextResponse.json({ worker })
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    const { data: worker, error: workerErr } = await supabase
+      .from('tradie_workers')
+      .upsert({ tradie_id: session.user.id, name, email, phone: phone || null, status: 'invited', invite_token: token }, { onConflict: 'tradie_id,email' })
+      .select()
+      .single()
+
+    if (workerErr) return NextResponse.json({ error: workerErr.message }, { status: 500 })
+
+    const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/worker/setup?token=${token}`
+
+    await resend.emails.send({
+      from: 'Steadyhand <no-reply@steadyhandtrade.app>',
+      to: email,
+      subject: `${tradie.business_name} has invited you to Steadyhand`,
+      html: `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
+        <h2 style="font-size:20px;color:#0A0A0A;margin:0 0 12px;">You've been invited to join ${tradie.business_name}'s field team</h2>
+        <p style="font-size:14px;color:#4A5E64;line-height:1.6;margin:0 0 24px;">${tradie.business_name} uses Steadyhand to manage jobs and coordinate their field team. Click below to set up your worker account.</p>
+        <a href="${inviteUrl}" style="display:inline-block;background:#D4522A;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">Accept invite →</a>
+        <p style="font-size:12px;color:#9AA5AA;margin:24px 0 0;">This link expires in 7 days.</p>
+      </div>`
+    })
+
+    return NextResponse.json({ ok: true, worker_id: worker.id })
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

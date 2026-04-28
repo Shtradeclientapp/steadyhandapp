@@ -737,6 +737,9 @@ export default function TradieDashboard() {
           })}
         </div>
 
+        {/* ── Field team ── */}
+        <FieldTeamPanel tradieId={profile?.tradie?.id} activeJobs={activeJobs} />
+
         {/* ── Completed ── */}
         {completedJobs.length > 0 && (
           <>
