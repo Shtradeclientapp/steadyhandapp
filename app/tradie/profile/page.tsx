@@ -61,7 +61,7 @@ export default function TradieProfilePage() {
       await supabase.from('tradie_profiles').update({ onboarding_step: 'active', onboarding_completed_at: new Date().toISOString() }).eq('id', tradie.id)
     }
     setWizardStep(null)
-    window.history.replaceState({}, '', '/tradie/profile')
+    window.location.href = '/tradie/dashboard'
   }
   const [logoUrl, setLogoUrl] = useState<string|null>(null)
   const [uploadingLogo, setUploadingLogo] = useState(false)
@@ -186,8 +186,6 @@ export default function TradieProfilePage() {
     { label: 'Service areas', done: (form.service_areas || []).length > 0 },
     { label: 'ABN', done: !!form.abn },
     { label: 'Licence number', done: !!form.licence_number },
-    { label: 'Bank account (Stripe)', done: !!(tradie as any)?.profile?.stripe_account_id || !!(profile as any)?.stripe_account_id },
-    { label: 'Logo', done: !!logoUrl },
   ]
   const completionPct = Math.round(completionItems.filter(i => i.done).length / completionItems.length * 100)
 
