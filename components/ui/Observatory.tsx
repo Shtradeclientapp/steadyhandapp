@@ -330,21 +330,48 @@ export function ObservatoryCarousel() {
   const [paused, setPaused] = useState(false)
 
   useEffect(() => {
-    // Load 2 items from 3 random categories for variety
     const shuffled = [...CATEGORIES].sort(() => Math.random() - 0.5).slice(0, 3)
-    Promise.all(shuffled.map(cat =>
-      fetchIntelligence(cat).then(items =>
-        items.slice(0, 2).map((i: any) => ({
+
+    // Render pinned items immediately — zero wait
+    const pinnedAsItems = PINNED_ITEMS.slice(0, 3).map((p: any) => ({
+      ...p,
+      categoryLabel: 'WA Update',
+      categoryColor: '#2E6A8F',
+      categoryIcon: '📋',
+    }))
+
+    // Check cache first
+    const cachedItems = shuffled.flatMap(cat => {
+      const cached = getCached('sh_obs_' + cat.id)
+      if (!cached) return []
+      return cached.slice(0, 2).map((i: any) => ({
+        ...i,
+        categoryLabel: cat.label,
+        categoryColor: cat.color,
+        categoryIcon: cat.icon,
+      }))
+    }).slice(0, 5)
+
+    // Show immediately — cached AI items if available, otherwise pinned items
+    setItems(cachedItems.length >= 2 ? cachedItems : pinnedAsItems)
+    setLoading(false)
+
+    // Fetch AI content in background without blocking
+    if (cachedItems.length < 2) {
+      const firstCat = shuffled[0]
+      Promise.resolve(fetchIntelligence(firstCat)).then((items: any[]) => {
+        const aiItems = items.slice(0, 5).map((i: any) => ({
           ...i,
-          categoryLabel: cat.label,
-          categoryColor: cat.color,
-          categoryIcon: cat.icon,
+          categoryLabel: firstCat.label,
+          categoryColor: firstCat.color,
+          categoryIcon: firstCat.icon,
         }))
-      )
-    )).then(results => {
-      setItems(results.flat().slice(0, 5))
-      setLoading(false)
-    }).catch(() => setLoading(false))
+        if (aiItems.length > 0) setItems(aiItems)
+        shuffled.slice(1).forEach(cat => fetchIntelligence(cat))
+      }).catch(() => {})
+    } else {
+      shuffled.forEach(cat => { if (!getCached('sh_obs_' + cat.id)) fetchIntelligence(cat) })
+    }
   }, [])
 
   // Auto-advance every 5s
