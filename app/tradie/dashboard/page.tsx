@@ -152,7 +152,7 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
   const sendInvite = async () => {
     if (!inviteName || !inviteEmail) return
     setInviting(true); setInviteMsg('')
-    const res = await fetch('/api/worker-invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: inviteName, email: inviteEmail, phone: invitePhone }) })
+    const res = await fetch('/api/worker-invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: inviteName, email: inviteEmail, phone: invitePhone, tradie_id: tradieId }) })
     const data = await res.json()
     if (data.ok) {
       setInviteMsg('Invite sent ✓'); setInviteName(''); setInviteEmail(''); setInvitePhone('')
@@ -176,13 +176,14 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
 
   return (
     <div style={{ marginBottom:'32px' }}>
-      <div onClick={() => setExpanded(!expanded)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: expanded ? '14px' : 0, cursor:'pointer', userSelect:'none' as const }}>
+      <div onClick={() => setExpanded(!expanded)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px', cursor:'pointer', userSelect:'none' as const }}>
         <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
           <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
           {activeWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{activeWorkers.length} active</span>}
           {pendingWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(192,120,48,0.1)', color:'#C07830', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{pendingWorkers.length} invited</span>}
+          {workers.length === 0 && <span style={{ fontSize:'12px', color:'#9AA5AA' }}>— invite your first worker</span>}
         </div>
-        <span style={{ fontSize:'16px', color:'#9AA5AA' }}>{expanded ? '▲' : '▼'}</span>
+        <span style={{ fontSize:'13px', color:'#7A9098', fontWeight:500 }}>{expanded ? 'Close ▲' : 'Manage ▼'}</span>
       </div>
 
       {expanded && (
