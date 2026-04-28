@@ -16,7 +16,7 @@ const PINNED_ITEMS: any[] = [
   { id: 'pin-2', category: 'fairwork', title: 'Employee vs Contractor: High Court clarification', summary: 'CFMEU v Personnel Contracting [2022] HCA 1 continues to reshape how trade businesses structure subcontractor arrangements. Key test: written terms of the contract govern.', date: '2022-02-09', source: 'High Court of Australia', url: 'https://www.hcourt.gov.au', pinned: true },
 ]
 
-const CACHE_TTL = 2 * 60 * 60 * 1000 // 2 hours
+const CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours
 
 function getCached(key: string) {
   try {
