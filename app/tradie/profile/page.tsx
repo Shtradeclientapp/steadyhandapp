@@ -57,8 +57,13 @@ export default function TradieProfilePage() {
 
   const completeWizard = async () => {
     const supabase = (await import('@/lib/supabase/client')).createClient()
-    if (tradie?.id) {
-      await supabase.from('tradie_profiles').update({ onboarding_step: 'active', onboarding_completed_at: new Date().toISOString() }).eq('id', tradie.id)
+    // Use session user ID directly — tradie state may not be loaded yet
+    const { data: { session } } = await supabase.auth.getSession()
+    if (session?.user?.id) {
+      await supabase.from('tradie_profiles').update({
+        onboarding_step: 'active',
+        onboarding_completed_at: new Date().toISOString()
+      }).eq('id', session.user.id)
     }
     setWizardStep(null)
     window.location.href = '/tradie/dashboard'
