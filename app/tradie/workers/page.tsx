@@ -20,9 +20,9 @@ export default function WorkersPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { window.location.href = '/login'; return }
-      const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, subscription_tier)').eq('id', session.user.id).single()
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) { window.location.href = '/login'; return }
+      const { data: profRaw } = await supabase.from('profiles').select('id, email, full_name, role, tradie:tradie_profiles(business_name, id, subscription_tier)').eq('id', user.id).single()
       const prof = profRaw as any
       if (!prof) { window.location.href = '/login'; return }
       if (prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
