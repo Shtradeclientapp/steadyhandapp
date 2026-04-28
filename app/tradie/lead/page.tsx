@@ -58,7 +58,7 @@ export default function TradieLead() {
         setProfileLoaded(true)
         return
       }
-      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id)').eq('id', session.user.id).single()
+      const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, id, onboarding_step)').eq('id', session.user.id).single()
       setProfile(prof)
       const trad = prof?.tradie
       const missingRequired = trad?.onboarding_step !== 'active'
