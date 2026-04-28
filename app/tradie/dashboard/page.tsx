@@ -178,12 +178,12 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
     <div style={{ marginBottom:'32px' }}>
       <div onClick={() => setExpanded(!expanded)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px', cursor:'pointer', userSelect:'none' as const }}>
         <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
           {activeWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{activeWorkers.length} active</span>}
           {pendingWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(192,120,48,0.1)', color:'#C07830', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{pendingWorkers.length} invited</span>}
-          {workers.length === 0 && <span style={{ fontSize:'12px', color:'#9AA5AA' }}>— invite your first worker</span>}
+          {workers.length === 0 && <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)' }}>— invite your first worker</span>}
         </div>
-        <span style={{ fontSize:'13px', color:'#7A9098', fontWeight:500 }}>{expanded ? 'Close ▲' : 'Manage ▼'}</span>
+        <span style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', fontWeight:500 }}>{expanded ? 'Close ▲' : 'Manage ▼'}</span>
       </div>
 
       {expanded && (
@@ -191,11 +191,11 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
           {workers.length > 0 && (
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
               {workers.map(w => (
-                <div key={w.id} style={{ background:'#E8F0EE', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                <div key={w.id} style={{ background:'rgba(216,228,225,0.06)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                     <div style={{ width:'32px', height:'32px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:600, color:'white', flexShrink:0 }}>{w.name?.charAt(0)?.toUpperCase() || '?'}</div>
                     <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{w.name}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'rgba(216,228,225,0.9)', margin:0 }}>{w.name}</p>
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{w.email}{w.phone ? ` · ${w.phone}` : ''}</p>
                     </div>
                   </div>
@@ -850,7 +850,9 @@ export default function TradieDashboard() {
         </div>
 
         {/* ── Field team ── */}
-        <FieldTeamPanel tradieId={profile?.tradie?.id} activeJobs={activeJobs} />
+        <div style={{ background:'#0A0A0A', borderRadius:'16px', padding:'24px', marginBottom:'32px' }}>
+          <FieldTeamPanel tradieId={profile?.tradie?.id} activeJobs={activeJobs} />
+        </div>
 
         {/* ── Completed ── */}
         {completedJobs.length > 0 && (
