@@ -184,8 +184,6 @@ export default function TradieProfilePage() {
     { label: 'Bio (50+ chars)', done: !!form.bio && form.bio.length > 50 },
     { label: 'Trade categories', done: (form.trade_categories || []).length > 0 },
     { label: 'Service areas', done: (form.service_areas || []).length > 0 },
-    { label: 'ABN', done: !!form.abn },
-    { label: 'Licence number', done: !!form.licence_number },
   ]
   const completionPct = Math.round(completionItems.filter(i => i.done).length / completionItems.length * 100)
 
