@@ -129,6 +129,117 @@ const STAGE_LABEL: Record<string, string> = {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
+function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, activeJobs: any[] }) {
+  const [workers, setWorkers] = useState<any[]>([])
+  const [expanded, setExpanded] = useState(false)
+  const [inviteName, setInviteName] = useState('')
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [invitePhone, setInvitePhone] = useState('')
+  const [inviting, setInviting] = useState(false)
+  const [inviteMsg, setInviteMsg] = useState('')
+  const [assigningJob, setAssigningJob] = useState<string|null>(null)
+  const [assignBrief, setAssignBrief] = useState('')
+  const [assignWorker, setAssignWorker] = useState('')
+  const [assigning, setAssigning] = useState(false)
+
+  useEffect(() => {
+    if (!tradieId) return
+    const supabase = createClient()
+    supabase.from('tradie_workers').select('*').eq('tradie_id', tradieId).order('name')
+      .then(({ data }) => setWorkers(data || []))
+  }, [tradieId])
+
+  const sendInvite = async () => {
+    if (!inviteName || !inviteEmail) return
+    setInviting(true); setInviteMsg('')
+    const res = await fetch('/api/worker-invite', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: inviteName, email: inviteEmail, phone: invitePhone }) })
+    const data = await res.json()
+    if (data.ok) {
+      setInviteMsg('Invite sent ✓'); setInviteName(''); setInviteEmail(''); setInvitePhone('')
+      const supabase = createClient()
+      const { data: ws } = await supabase.from('tradie_workers').select('*').eq('tradie_id', tradieId).order('name')
+      setWorkers(ws || [])
+    } else { setInviteMsg('Error: ' + data.error) }
+    setInviting(false)
+  }
+
+  const assignToJob = async () => {
+    if (!assignWorker || !assigningJob) return
+    setAssigning(true)
+    const supabase = createClient()
+    await supabase.from('job_worker_assignments').upsert({ job_id: assigningJob, worker_id: assignWorker, site_brief: assignBrief, assigned_date: new Date().toISOString().split('T')[0], status: 'assigned' }, { onConflict: 'job_id,worker_id' })
+    setAssigningJob(null); setAssignBrief(''); setAssignWorker(''); setAssigning(false)
+  }
+
+  const activeWorkers = workers.filter(w => w.status === 'active')
+  const pendingWorkers = workers.filter(w => w.status === 'invited')
+
+  return (
+    <div style={{ marginBottom:'32px' }}>
+      <div onClick={() => setExpanded(!expanded)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: expanded ? '14px' : 0, cursor:'pointer', userSelect:'none' as const }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
+          {activeWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{activeWorkers.length} active</span>}
+          {pendingWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(192,120,48,0.1)', color:'#C07830', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{pendingWorkers.length} invited</span>}
+        </div>
+        <span style={{ fontSize:'16px', color:'#9AA5AA' }}>{expanded ? '▲' : '▼'}</span>
+      </div>
+
+      {expanded && (
+        <div>
+          {workers.length > 0 && (
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
+              {workers.map(w => (
+                <div key={w.id} style={{ background:'#E8F0EE', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                    <div style={{ width:'32px', height:'32px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:600, color:'white', flexShrink:0 }}>{w.name?.charAt(0)?.toUpperCase() || '?'}</div>
+                    <div>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{w.name}</p>
+                      <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{w.email}{w.phone ? ` · ${w.phone}` : ''}</p>
+                    </div>
+                  </div>
+                  <span style={{ fontSize:'11px', color: w.status === 'active' ? '#2E7D60' : '#C07830', background: w.status === 'active' ? 'rgba(46,125,96,0.08)' : 'rgba(192,120,48,0.08)', border: '1px solid ' + (w.status === 'active' ? 'rgba(46,125,96,0.2)' : 'rgba(192,120,48,0.2)'), borderRadius:'100px', padding:'3px 10px', fontWeight:500 }}>
+                    {w.status === 'active' ? 'Active' : 'Invited'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeWorkers.length > 0 && activeJobs.length > 0 && (
+            <div style={{ background:'white', borderRadius:'12px', padding:'16px', marginBottom:'16px', border:'1px solid rgba(28,43,50,0.08)' }}>
+              <p style={{ fontSize:'12px', fontWeight:600, color:'#4A5E64', margin:'0 0 12px', letterSpacing:'0.5px' }}>ASSIGN WORKER TO JOB</p>
+              <select value={assignWorker} onChange={e => setAssignWorker(e.target.value)} style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'8px', background:'#F4F8F7', outline:'none' }}>
+                <option value="">Select worker...</option>
+                {activeWorkers.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+              </select>
+              <select value={assigningJob || ''} onChange={e => setAssigningJob(e.target.value)} style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'8px', background:'#F4F8F7', outline:'none' }}>
+                <option value="">Select job...</option>
+                {activeJobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.suburb || j.client?.suburb || ''}</option>)}
+              </select>
+              <textarea value={assignBrief} onChange={e => setAssignBrief(e.target.value)} placeholder="Site brief (optional) — what should the worker know?" style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'10px', resize:'vertical' as const, minHeight:'72px', outline:'none', fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+              <button onClick={assignToJob} disabled={assigning || !assignWorker || !assigningJob} style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: (assigning || !assignWorker || !assigningJob) ? 0.5 : 1 }}>
+                {assigning ? 'Assigning...' : 'Assign to job →'}
+              </button>
+            </div>
+          )}
+
+          <div style={{ background:'white', borderRadius:'12px', padding:'16px', border:'1px solid rgba(28,43,50,0.08)' }}>
+            <p style={{ fontSize:'12px', fontWeight:600, color:'#4A5E64', margin:'0 0 12px', letterSpacing:'0.5px' }}>INVITE A WORKER</p>
+            <input value={inviteName} onChange={e => setInviteName(e.target.value)} placeholder="Full name" style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'8px', background:'#F4F8F7', outline:'none', boxSizing:'border-box' as const }} />
+            <input value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="Email address" type="email" style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'8px', background:'#F4F8F7', outline:'none', boxSizing:'border-box' as const }} />
+            <input value={invitePhone} onChange={e => setInvitePhone(e.target.value)} placeholder="Phone (optional)" type="tel" style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', marginBottom:'10px', background:'#F4F8F7', outline:'none', boxSizing:'border-box' as const }} />
+            {inviteMsg && <p style={{ fontSize:'12px', color: inviteMsg.includes('✓') ? '#2E7D60' : '#D4522A', marginBottom:'8px' }}>{inviteMsg}</p>}
+            <button onClick={sendInvite} disabled={inviting || !inviteName || !inviteEmail} style={{ background:'#2E7D60', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: (inviting || !inviteName || !inviteEmail) ? 0.5 : 1 }}>
+              {inviting ? 'Sending...' : 'Send invite →'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function TradieDashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [user, setUser]       = useState<any>(null)
