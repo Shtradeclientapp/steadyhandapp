@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
+import { SetupModal } from '@/components/ui/SetupModal'
 import { ObservatoryWidget } from '@/components/ui/Observatory'
 
 // ── Next-action prompt per pipeline stage ────────────────────────────────────
@@ -436,7 +437,16 @@ export default function TradieDashboard() {
         </div>
       </div>
 
-      <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
+      {profile?.tradie?.onboarding_step !== 'active' && profile?.tradie?.id && (
+        <SetupModal
+          userId={user?.id || ''}
+          tradieId={profile.tradie.id}
+          onComplete={() => { window.location.reload() }}
+        />
+      )}
+      {profile?.tradie?.onboarding_step === 'active' && (
+        <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
+      )}
 
       {/* ── Setup wizard ── */}
       {showSetupWizard && (
