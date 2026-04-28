@@ -316,7 +316,6 @@ export default function TradieDashboard() {
             {[
               { label:'Availability', href:'/tradie/availability' },
               { label:'Dialogue Rating', href:'/tradie/dialogue' },
-              { label:'👷 Workers', href:'/tradie/workers' },
               { label:'Steadytools', href:'/tradie/steadytools' },
             ].map(item => (
               <a key={item.href} href={item.href}
@@ -329,45 +328,6 @@ export default function TradieDashboard() {
       </div>
 
       <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
-
-      {/* ── Field team ── */}
-      {workersLoaded && (
-        <div style={{ marginBottom:'32px' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
-            <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
-            <a href="/tradie/workers" style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'none', fontWeight:500 }}>Manage →</a>
-          </div>
-          {workers.length === 0 ? (
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
-              <div>
-                <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 3px' }}>No workers added yet</p>
-                <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Add workers to assign them to active jobs and manage your field team.</p>
-              </div>
-              <a href="/tradie/workers" style={{ fontSize:'12px', fontWeight:600, color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'7px', padding:'8px 14px', textDecoration:'none', whiteSpace:'nowrap' as const, flexShrink:0 }}>
-                Add workers →
-              </a>
-            </div>
-          ) : (
-            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
-              {workers.map((w: any) => (
-                <div key={w.id} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
-                  <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                    <div style={{ width:'32px', height:'32px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:600, color:'white', flexShrink:0 }}>
-                      {w.name?.charAt(0)?.toUpperCase() || '?'}
-                    </div>
-                    <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{w.name}</p>
-                      {w.phone && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{w.phone}</p>}
-                    </div>
-                  </div>
-                  <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'3px 10px', fontWeight:500 }}>Active</span>
-                </div>
-              ))}
-              <a href="/tradie/workers" style={{ fontSize:'12px', color:'#7A9098', textDecoration:'none', textAlign:'center' as const, padding:'8px', display:'block' }}>Manage workers →</a>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* ── Setup wizard ── */}
       {showSetupWizard && (
