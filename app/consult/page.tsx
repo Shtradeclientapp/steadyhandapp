@@ -66,7 +66,7 @@ export default function AssessPage() {
       const urlJobId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('job_id') : null
       let jobsQuery = supabase
         .from('jobs')
-        .select('*, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
+        .select('*, consult_skipped_by_client, tradie:tradie_profiles(business_name, id), client:profiles!jobs_client_id_fkey(full_name)')
         .in('status', ['assess', 'consult', 'quote', 'compare', 'agreement', 'shortlisted', 'matching', 'delivery', 'signoff', 'warranty', 'complete'])
         .order('updated_at', { ascending: false })
       if (urlJobId) {
@@ -400,6 +400,19 @@ export default function AssessPage() {
         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'32px' }}>
           Record your notes from the site consultation. Share them with {theirLabel} and acknowledge theirs before quoting begins. Both records become part of the job file.
         </p>
+
+        {/* Consult skipped notice for tradie */}
+        {isTradie && (job?.consult_skipped_by_client || job?.status === 'compare') && (
+          <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'12px', padding:'20px 24px', marginBottom:'28px' }}>
+            <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:'0 0 6px' }}>⚡ Client has skipped the site consult</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 16px' }}>
+              {job?.client?.full_name || 'The client'} has chosen to proceed directly to quoting without a site visit. You can still complete consult notes below if helpful, or go straight to submitting your quote.
+            </p>
+            <a href={'/agreement?job_id=' + job?.id} style={{ display:'inline-block', background:'#C07830', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:600, textDecoration:'none' }}>
+              Submit your quote →
+            </a>
+          </div>
+        )}
 
         {/* CONSULT DATE */}
         {!isTradie && !myShared && (
