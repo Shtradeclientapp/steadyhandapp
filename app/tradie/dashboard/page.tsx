@@ -242,6 +242,19 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
   )
 }
 
+const STATUS_TO_STAGE: Record<string, string> = {
+  shortlisted: '/consult',
+  assess:      '/consult',
+  consult:     '/consult',
+  quote:       '/agreement',
+  compare:     '/agreement',
+  agreement:   '/agreement',
+  delivery:    '/delivery',
+  signoff:     '/signoff',
+  warranty:    '/warranty',
+  complete:    '/warranty',
+}
+
 export default function TradieDashboard() {
   const [profile, setProfile] = useState<any>(null)
   const [user, setUser]       = useState<any>(null)
@@ -807,7 +820,7 @@ export default function TradieDashboard() {
             const milestonesTotal = job.milestones?.length ?? 0
 
             return (
-              <a key={job.id} href={'/tradie/jobs/' + job.id} style={{ textDecoration:'none' }}>
+              <a key={job.id} href={(STATUS_TO_STAGE[job.status] || '/tradie/jobs/' + job.id) + '?job_id=' + job.id} style={{ textDecoration:'none' }}>
                 <div style={{
                   background: '#E8F0EE',
                   border: '1px solid rgba(28,43,50,0.1)',
