@@ -1,11 +1,22 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-const STAGES = [
+const CLIENT_STAGES = [
   { n:1, l:'Request',   p:'/request'  },
   { n:2, l:'Match',     p:'/shortlist' },
   { n:3, l:'Consult',   p:'/consult'  },
   { n:4, l:'Compare',   p:'/compare'  },
+  { n:5, l:'Agreement', p:'/agreement'},
+  { n:6, l:'Build',     p:'/delivery' },
+  { n:7, l:'Sign off',  p:'/signoff'  },
+  { n:8, l:'Protected', p:'/warranty' },
+]
+
+const TRADIE_STAGES = [
+  { n:1, l:'Request',   p:'/request'  },
+  { n:2, l:'Match',     p:'/shortlist' },
+  { n:3, l:'Consult',   p:'/consult'  },
+  { n:4, l:'Quote',     p:'/consult'  },
   { n:5, l:'Agreement', p:'/agreement'},
   { n:6, l:'Build',     p:'/delivery' },
   { n:7, l:'Sign off',  p:'/signoff'  },
@@ -23,9 +34,10 @@ const STAGE_COLOR: Record<number,string> = {
   5:'#6B4FA8', 6:'#C07830', 7:'#D4522A', 8:'#1A6B5A',
 }
 
-interface StageRailProps { currentPath: string; jobStatus?: string }
+interface StageRailProps { currentPath: string; jobStatus?: string; role?: 'tradie' | 'client' }
 
-export function StageRail({ currentPath, jobStatus }: StageRailProps) {
+export function StageRail({ currentPath, jobStatus, role }: StageRailProps) {
+  const STAGES = role === 'tradie' ? TRADIE_STAGES : CLIENT_STAGES
   const [jobId, setJobId] = useState<string|null>(null)
 
   useEffect(() => {
