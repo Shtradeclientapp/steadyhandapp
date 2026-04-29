@@ -100,7 +100,7 @@ export default function AdminPage() {
       {/* Header */}
       <div style={{ padding:'16px 24px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
-          <a href="/tradie/dashboard" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
+          <a href="/admin" style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#D4522A', letterSpacing:'2px', textDecoration:'none' }}>STEADYHAND</a>
           <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', letterSpacing:'1px' }}>ADMIN</span>
         </div>
         {msg && <span style={{ fontSize:'13px', color: msg.startsWith('Error') ? '#D4522A' : '#2E7D60', background: msg.startsWith('Error') ? 'rgba(212,82,42,0.1)' : 'rgba(46,125,96,0.1)', padding:'6px 14px', borderRadius:'6px' }}>{msg}</span>}
