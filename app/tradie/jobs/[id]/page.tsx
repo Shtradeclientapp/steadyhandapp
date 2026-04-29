@@ -19,6 +19,11 @@ const STAGE_PATH: Record<string, string> = {
   quote:'/tradie/job', compare:'/tradie/job', agreement:'/agreement',
   delivery:'/delivery', signoff:'/signoff', warranty:'/warranty', complete:'/warranty',
 }
+const STATUS_TO_TAB: Record<string, Tab> = {
+  shortlisted:'overview', assess:'consult', consult:'consult',
+  quote:'quote', compare:'quote', agreement:'quote',
+  delivery:'delivery', signoff:'delivery', warranty:'documents', complete:'documents',
+}
 
 type Tab = 'overview'|'consult'|'quote'|'delivery'|'documents'|'messages'
 
@@ -70,6 +75,9 @@ export default function TradieJobHub() {
 
       if (!jobData) { window.location.href = '/tradie/dashboard'; return }
       setJob(jobData)
+      // Auto-select tab based on current job status
+      const autoTab = STATUS_TO_TAB[jobData.status] || 'overview'
+      setTab(autoTab)
       setAssessment(assessData)
       setQuotes(quotesData || [])
       setScope(scopeData)

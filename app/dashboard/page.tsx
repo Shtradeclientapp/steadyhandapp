@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
 import Link from 'next/link'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
+import { ClientSetupModal } from '@/components/ui/ClientSetupModal'
 import { ObservatoryWidget } from '@/components/ui/Observatory'
 
 function getClientNextAction(job: any): { icon: string; headline: string; sub: string; urgent: boolean } {
@@ -104,7 +105,7 @@ export default function DashboardPage() {
       setJobs(data || [])
       setBuilds(buildsData || [])
       setUnreadCount(unreadTotal || 0)
-      if (!prof?.onboarding_complete) setShowClientWizard(true)
+      if (!prof?.full_name || !prof?.suburb) setShowClientWizard(true)
       else if (typeof window !== 'undefined') localStorage.setItem('seen_client_onboarding', '1')
 
       // Assessments depend on job IDs so run after
@@ -540,6 +541,17 @@ export default function DashboardPage() {
       </div>
       {/* ── Client setup wizard ── */}
       {showClientWizard && (
+        <ClientSetupModal
+          userId={user?.id || ''}
+          onComplete={async (fullName: string, suburb: string) => {
+            const supabase = createClient()
+            await supabase.from('profiles').update({ full_name: fullName, suburb, onboarding_complete: true }).eq('id', user?.id)
+            setShowClientWizard(false)
+            window.location.reload()
+          }}
+        />
+      )}
+      {false && showClientWizard && (
         <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
             <div style={{ background:'#0A0A0A', padding:'20px 28px' }}>
