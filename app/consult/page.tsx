@@ -414,6 +414,28 @@ export default function AssessPage() {
           </div>
         )}
 
+        {/* Tradie skip option — when consult not yet skipped by either party */}
+        {isTradie && !job?.consult_skipped_by_client && job?.status !== 'compare' && !assessment?.tradie_shared_at && (
+          <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 20px', marginBottom:'20px', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
+            <div style={{ flex:1 }}>
+              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 4px' }}>Skip the site consult?</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', margin:0 }}>
+                If you already have enough information to quote — or the client has agreed to proceed without a visit — you can go straight to submitting your quote. Your consult notes will be marked as not required.
+              </p>
+            </div>
+            <button type="button" onClick={async () => {
+              if (!job) return
+              const supabase = (await import('@/lib/supabase/client')).createClient()
+              const { data: { session } } = await supabase.auth.getSession()
+              await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
+              await supabase.from('job_messages').insert({ job_id: job.id, sender_id: session?.user.id, body: 'Tradie has proposed to skip the site consult and proceed directly to quoting.' })
+              window.location.href = '/agreement?job_id=' + job.id
+            }} style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', whiteSpace:'nowrap' as const, flexShrink:0 }}>
+              Skip to quote →
+            </button>
+          </div>
+        )}
+
         {/* CONSULT DATE */}
         {!isTradie && !myShared && (
           <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
@@ -447,16 +469,10 @@ export default function AssessPage() {
               )}
             </div>
             {/* ── Consult scheduling — via messenger ── */}
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px' }}>
-              <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'4px' }}>Arranging the site visit</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'12px' }}>
-                Use the message thread to agree on a time, location and who will attend. All consult arrangements are kept in the message record so both parties have a clear reference.
-              </p>
-              <a href={'/messages' + (job?.id ? '?job=' + job.id : '')}
-                style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>
-                Open message thread →
-              </a>
-            </div>
+            <a href={'/messages' + (job?.id ? '?job=' + job.id : '')}
+              style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'8px 14px', borderRadius:'8px', fontSize:'12px', fontWeight:500, textDecoration:'none', whiteSpace:'nowrap' as const }}>
+              Message thread →
+            </a>
 
             {assessment?.consult_date && (
               <div style={{ marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
