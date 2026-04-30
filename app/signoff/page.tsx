@@ -4,7 +4,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
-import { StageRail } from '@/components/ui'
+import { StageRail, WaitingPanel } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
 import { EmbeddedCheckout, EmbeddedCheckoutProvider, Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
@@ -331,6 +331,11 @@ export default function SignoffPage() {
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/signoff" jobStatus={job?.status} />
+      {isTradie && job?.status === 'signoff' && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
+          <WaitingPanel role="tradie" stage="signoff" jobId={job?.id} otherPartyName={job?.client?.full_name} />
+        </div>
+      )}
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'680px', margin:'0 auto', padding:'16px 24px 0' }}>
           <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={id => setJob(allJobs.find(j => j.id === id))} />

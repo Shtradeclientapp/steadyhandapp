@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
-import { StageRail } from '@/components/ui'
+import { StageRail, WaitingPanel } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { HintPanel } from '@/components/ui/HintPanel'
 
@@ -125,6 +125,11 @@ export default function ComparePage() {
     <>
       {nav}
       <StageRail currentPath="/compare" jobStatus={selectedJob?.status} />
+      {profile?.role === 'tradie' && selectedJob && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
+          <WaitingPanel role="tradie" stage="compare" jobId={selectedJob?.id} otherPartyName={selectedJob?.client?.full_name} />
+        </div>
+      )}
       <div style={{ minHeight:'calc(100vh - 110px)', background:'#C8D5D2', padding:'32px 24px', fontFamily:'sans-serif' }}>
         <div style={{ maxWidth:'860px', margin:'0 auto' }}>
 

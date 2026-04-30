@@ -244,3 +244,4 @@ export function StepDots({ total, current }: { total: number; current: number })
 }
 
 export { StageRail } from './StageRail'
+export { WaitingPanel } from './WaitingPanel'

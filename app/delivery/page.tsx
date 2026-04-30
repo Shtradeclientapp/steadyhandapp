@@ -5,7 +5,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
-import { StageRail } from '@/components/ui'
+import { StageRail, WaitingPanel } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
@@ -384,6 +384,11 @@ export default function DeliveryPage() {
     <div>
       <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/delivery" jobStatus={job?.status} />
+      {!isTradie && job && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
+          <WaitingPanel role="client" stage="delivery" jobId={job?.id} otherPartyName={job?.tradie?.business_name} />
+        </div>
+      )}
       {job?.id && (
         <div style={{ background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'8px 24px' }}>
           <a href={'/tradie/jobs/' + job.id} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>← Back to job overview</a>

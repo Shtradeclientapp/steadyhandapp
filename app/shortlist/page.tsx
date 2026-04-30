@@ -4,7 +4,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
-import { StageRail } from '@/components/ui'
+import { StageRail, WaitingPanel } from '@/components/ui'
 import { HintPanel } from '@/components/ui/HintPanel'
 
 export default function ShortlistPage() {
@@ -124,6 +124,11 @@ export default function ShortlistPage() {
     <div>
       <NavHeader profile={profile} isTradie={false} />
       <StageRail currentPath="/shortlist" jobStatus={selectedJob?.status} />
+      {profile?.role === 'tradie' && selectedJob && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
+          <WaitingPanel role="tradie" stage="match" jobId={selectedJob?.id} otherPartyName={selectedJob?.client?.full_name} />
+        </div>
+      )}
     </div>
   )
 

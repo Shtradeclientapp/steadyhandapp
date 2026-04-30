@@ -5,7 +5,7 @@ import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
-import { StageRail } from '@/components/ui'
+import { StageRail, WaitingPanel } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 
 export default function WarrantyPage() {
@@ -143,6 +143,11 @@ export default function WarrantyPage() {
     <div>
       <NavHeader profile={profile} isTradie={isTradie} />
       <StageRail currentPath="/warranty" jobStatus={job?.status} />
+      {!isTradie && job && (
+        <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
+          <WaitingPanel role="client" stage="warranty" jobId={job?.id} />
+        </div>
+      )}
     </div>
   )
 
