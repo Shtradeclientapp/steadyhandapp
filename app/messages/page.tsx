@@ -34,11 +34,33 @@ function MessagesPageInner() {
       setProfile(prof)
 
       const isTradie = prof?.role === 'tradie'
-      const { data: jobData } = await supabase
-        .from('jobs')
-        .select('*, client:profiles!jobs_client_id_fkey(full_name), tradie:tradie_profiles(business_name)')
-        .eq(isTradie ? 'tradie_id' : 'client_id', session.user.id)
-        .order('updated_at', { ascending: false })
+      let jobData: any[] = []
+      if (isTradie) {
+        // Tradies are linked via quote_requests before quote acceptance, tradie_id after
+        const { data: qrJobs } = await supabase
+          .from('jobs')
+          .select('*, client:profiles!jobs_client_id_fkey(full_name), tradie:tradie_profiles(business_name)')
+          .eq('tradie_id', session.user.id)
+          .order('updated_at', { ascending: false })
+        const { data: qrData } = await supabase
+          .from('quote_requests')
+          .select('job:jobs(*, client:profiles!jobs_client_id_fkey(full_name), tradie:tradie_profiles(business_name))')
+          .eq('tradie_id', session.user.id)
+          .not('status', 'eq', 'declined')
+        const qrJobList = (qrData || []).map((r: any) => r.job).filter(Boolean)
+        const seen = new Set((qrJobs || []).map((j: any) => j.id))
+        const extra = qrJobList.filter((j: any) => !seen.has(j.id))
+        jobData = [...(qrJobs || []), ...extra].sort((a: any, b: any) =>
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        )
+      } else {
+        const { data } = await supabase
+          .from('jobs')
+          .select('*, client:profiles!jobs_client_id_fkey(full_name), tradie:tradie_profiles(business_name)')
+          .eq('client_id', session.user.id)
+          .order('updated_at', { ascending: false })
+        jobData = data || []
+      }
 
       setJobs(jobData || [])
 

@@ -182,12 +182,21 @@ export default function AssessPage() {
   }
 
   const share = async () => {
-    if (!assessment || !job) return
+    if (!job) return
     setSharing(true)
     const field = isTradie ? 'tradie_shared_at' : 'client_shared_at'
-    await supabase.from('site_assessments').update({
-      [field]: new Date().toISOString(),
-    }).eq('id', assessment.id)
+    // Upsert assessment if it doesn't exist yet
+    let assessId = assessment?.id
+    if (!assessId) {
+      const { data: newAssess } = await supabase.from('site_assessments')
+        .upsert({ job_id: job.id, [field]: new Date().toISOString() }, { onConflict: 'job_id' })
+        .select().single()
+      if (newAssess) { setAssessment(newAssess); assessId = newAssess.id }
+    } else {
+      await supabase.from('site_assessments').update({
+        [field]: new Date().toISOString(),
+      }).eq('id', assessId)
+    }
 
     await supabase.from('job_messages').insert({
       job_id: job.id,
