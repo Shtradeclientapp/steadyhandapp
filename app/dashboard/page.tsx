@@ -14,11 +14,10 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
       return { icon: '👥', headline: 'Review your matches', sub: 'Tradies have been shortlisted - compare and invite one to quote', urgent: true }
     case 'consult':
       return { icon: '💬', headline: 'Arrange your site visit', sub: 'Message your tradie to agree on a time — all consult arrangements are kept in the job thread', urgent: true }
-    case 'compare': {
-      const hasQuote = job.quotes?.length > 0
-      if (!hasQuote) return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote - you will be notified when it arrives', urgent: false }
+    case 'compare':
+      return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote - you will be notified when it arrives', urgent: false }
+    case 'quote':
       return { icon: '📊', headline: 'Review your quote', sub: 'Your tradie has submitted a quote - review and accept to proceed', urgent: true }
-    }
     case 'agreement': {
       const clientSigned = job.scope_agreements?.[0]?.client_signed_at
       const tradieSigned = job.scope_agreements?.[0]?.tradie_signed_at
@@ -43,6 +42,20 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
   }
 }
 
+
+const CLIENT_STAGE_PATH: Record<string,string> = {
+  draft:       '/request',
+  matching:    '/shortlist',
+  shortlisted: '/shortlist',
+  consult:     '/consult',
+  compare:     '/compare',
+  quote:       '/compare',
+  agreement:   '/agreement',
+  delivery:    '/delivery',
+  signoff:     '/signoff',
+  warranty:    '/warranty',
+  complete:    '/warranty',
+}
 
 const STAGES: Record<string, { label: string; path: string; color: string }> = {
   draft:       { label: 'Draft',          path: '/request',    color: '#7A9098' },
@@ -347,7 +360,7 @@ export default function DashboardPage() {
               {activeJobs.map(job => {
                 const stage = STAGES[job.status] || STAGES.draft
                 return (
-                  <a key={job.id} href={'/jobs/' + job.id} style={{ textDecoration:'none' }}>
+                  <a key={job.id} href={(CLIENT_STAGE_PATH[job.status] || '/jobs/' + job.id) + '?job_id=' + job.id} style={{ textDecoration:'none' }}>
                     {(() => {
                       const next = getClientNextAction(job)
                       return (
