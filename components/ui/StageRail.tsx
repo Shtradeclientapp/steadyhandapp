@@ -43,26 +43,36 @@ export function StageRail({ currentPath, jobStatus, role }: StageRailProps) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
-      // Support ?job_id=, ?id=, and path-based /tradie/jobs/[id]
       const pathId = window.location.pathname.match(/\/tradie\/jobs\/([^/?]+)/)?.[1]
       setJobId(params.get('job_id') || params.get('id') || pathId || null)
     }
   }, [])
 
-  const currentN = STAGES.find(s => s.p === currentPath)?.n ?? 1
-  const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : currentN
+  const jobStageN = jobStatus ? (STATUS_TO_STAGE[jobStatus] ?? 1) : 1
+
+  // For tradie rail: Consult (n:3) and Quote (n:4) both use /consult path.
+  // Use jobStatus to determine which one is actually current — not just path matching.
+  const getCurrentN = () => {
+    if (role === 'tradie' && currentPath === '/consult') {
+      // quote/compare status means tradie is at Quote stage (4), not Consult (3)
+      if (jobStatus && ['quote','compare'].includes(jobStatus)) return 4
+      return 3
+    }
+    // For all other paths, find by path match
+    return STAGES.find(s => s.p === currentPath)?.n ?? 1
+  }
+  const currentN = getCurrentN()
   const completedUpTo = Math.max(jobStageN - 1, currentN - 1)
 
   const getHref = (stage: typeof STAGES[0]) => {
     if (!isClickable(stage)) return '#'
-    // Pass job_id to all stage pages that support it
     if (jobId && stage.p !== '/request') return stage.p + '?job_id=' + jobId
     return stage.p
   }
 
   const isClickable = (stage: typeof STAGES[0]) => {
     const isComplete = stage.n <= completedUpTo
-    const isCurrent = stage.p === currentPath
+    const isCurrent = stage.n === currentN
     return isComplete || isCurrent
   }
 
@@ -70,7 +80,7 @@ export function StageRail({ currentPath, jobStatus, role }: StageRailProps) {
     <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', display:'flex', overflowX:'auto' as const }}>
       {STAGES.map(s => {
         const isComplete = s.n <= completedUpTo
-        const isCurrent = s.p === currentPath
+        const isCurrent = s.n === currentN
         const clickable = isClickable(s)
         const color = STAGE_COLOR[s.n] || '#7A9098'
         return (
