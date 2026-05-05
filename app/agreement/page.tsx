@@ -516,7 +516,7 @@ export default function AgreementPage() {
                       ))}
                       <button type="button" onClick={() => acceptQuote(q)} disabled={acceptingQuote}
                         style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'9px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', marginTop:'10px', opacity: acceptingQuote ? 0.7 : 1 }}>
-                        {acceptingQuote ? 'Processing...' : 'Select this quote and draft scope →'}
+                        {acceptingQuote ? 'Processing...' : 'Proceed to scope agreement →'}
                       </button>
                     </div>
                   )

@@ -352,7 +352,7 @@ export default function AssessPage() {
                   // use the job already in context rather than re-querying
                   if (job) await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
                 }
-                window.location.href = '/compare'
+                window.location.href = '/compare?job_id=' + job?.id
               }} style={{ fontSize:'13px', color:'#4A5E64', background:'rgba(28,43,50,0.06)', border:'1px solid rgba(28,43,50,0.15)', padding:'10px 18px', borderRadius:'8px', cursor:'pointer' }}>Skip to quote →</button>
             </div>
           </>
@@ -498,11 +498,11 @@ export default function AssessPage() {
           <div style={{ background:'rgba(46,125,96,0.08)', border:'2px solid rgba(46,125,96,0.3)', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
             <div>
               <p style={{ fontSize:'14px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px' }}>Consult complete</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Both parties have acknowledged the consult record. You can now compare quotes.</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>{isTradie ? 'Both parties have acknowledged. Submit your quote to proceed.' : 'Both parties have acknowledged. Review the quote and proceed to scope agreement.'}</p>
             </div>
-            <a href={'/quote?job_id=' + job?.id}>
+            <a href={isTradie ? '/quote?job_id=' + job?.id : '/compare?job_id=' + job?.id}>
               <button type="button" style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:600, border:'none', cursor:'pointer', whiteSpace:'nowrap' as const }}>
-                Submit your quote →
+                {isTradie ? 'Submit your quote →' : 'Review quotes →'}
               </button>
             </a>
           </div>
@@ -926,9 +926,9 @@ export default function AssessPage() {
                   </div>
                   <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6' }}>
                     Both parties have acknowledged each other&apos;s notes. The consult record is saved.
-                    {isTradie ? ' Quoting is now open — the client will compare quotes and progress to scope agreement.' : ' You are ready to compare quotes and progress to scope agreement.'}
+                    {isTradie ? ' Quoting is now open. Submit your quote and the client will proceed to scope agreement.' : ' You are ready to review the quote and proceed to scope agreement.'}
                   </p>
-                  <a href={isTradie ? '/tradie/dashboard' : '/compare'} style={{ textDecoration:'none' }}>
+                  <a href={isTradie ? '/quote?job_id=' + job?.id : '/compare?job_id=' + job?.id} style={{ textDecoration:'none' }}>
                     <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:600, border:'none', cursor:'pointer', width:'100%' }}>
                       {isTradie ? 'Submit your quote →' : 'Review quotes →'}
                     </button>
@@ -942,10 +942,10 @@ export default function AssessPage() {
                     <p style={{ fontSize:'13px', fontWeight:600, color:'#C07830', margin:0 }}>Waiting for {theirLabel} to acknowledge</p>
                   </div>
                   <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'14px', lineHeight:'1.6' }}>
-                    You&apos;ve acknowledged {theirLabel}&apos;s notes. {isTradie ? 'The client will be notified.' : 'You can proceed to compare quotes now, or wait for them to acknowledge first.'}
+                    You&apos;ve acknowledged {theirLabel}&apos;s notes. {isTradie ? 'The client will be notified when they can proceed.' : 'You can review the quote now, or wait for your tradie to acknowledge first.'}
                   </p>
                   {!isTradie && (
-                    <a href="/compare" style={{ textDecoration:'none' }}>
+                    <a href={'/compare?job_id=' + job?.id} style={{ textDecoration:'none' }}>
                       <button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 22px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                         Proceed to compare quotes →
                       </button>

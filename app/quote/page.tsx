@@ -179,7 +179,7 @@ export default function QuotePage() {
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: session.user.id,
-      body: (profile.tradie?.business_name || 'Your tradie') + ' has submitted a quote of $' + fmt(totalRaw) + (gstIncluded ? ' inc. GST' : ' excl. GST') + '. You can review and accept it on your compare page.',
+      body: (profile.tradie?.business_name || 'Your tradie') + ' has submitted a quote of $' + fmt(totalRaw) + (gstIncluded ? ' inc. GST' : ' excl. GST') + '. You can review it and proceed to scope agreement when ready.',
     })
 
     setSubmitted(true)
@@ -227,11 +227,12 @@ export default function QuotePage() {
               Your quote of <strong>${fmt(totalRaw)}</strong> {gstIncluded ? '(inc. GST)' : '(excl. GST)'} has been sent to <strong>{job.client?.full_name || 'the client'}</strong>.
             </p>
             <p style={{ fontSize: '13px', color: '#7A9098', lineHeight: '1.6', marginBottom: '28px' }}>
-              They will receive a notification and can review your quote. Once accepted, you will both move to the scope agreement stage.
+              They will receive a notification and can review your quote. Once they proceed to scope agreement, you will both move to the agreement stage to finalise the scope.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' as const }}>
               <a href={'/consult?job_id=' + job.id} style={{ display: 'inline-block', background: 'rgba(28,43,50,0.08)', color: '#0A0A0A', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>← Consult notes</a>
-              <a href={'/messages?job=' + job.id} style={{ display: 'inline-block', background: '#0A0A0A', color: 'white', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Message thread →</a>
+              <a href={'/messages?job=' + job.id} style={{ display: 'inline-block', background: 'rgba(46,106,143,0.12)', color: '#2E6A8F', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>Message thread</a>
+              <a href={'/agreement?job_id=' + job.id} style={{ display: 'inline-block', background: '#0A0A0A', color: 'white', padding: '10px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none' }}>View scope agreement →</a>
             </div>
           </div>
         </div>

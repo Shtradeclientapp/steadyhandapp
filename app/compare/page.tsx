@@ -16,6 +16,7 @@ export default function ComparePage() {
   const [accepting, setAccepting] = useState<string|null>(null)
   const [acceptError, setAcceptError] = useState<string|null>(null)
   const [accepted, setAccepted] = useState<string|null>(null)
+  const [confirming, setConfirming] = useState<string|null>(null)
   const [expandedQuote, setExpandedQuote] = useState<string|null>(null)
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [reviseId, setReviseId] = useState<string|null>(null)
@@ -63,7 +64,6 @@ export default function ComparePage() {
   }
 
   const acceptQuote = async (quote: any) => {
-    if (!confirm('Proceed to scope agreement with ' + quote.tradie?.business_name + '? You can review and negotiate the full scope before anything is signed.')) return
     setAccepting(quote.id)
     setAcceptError(null)
     try {

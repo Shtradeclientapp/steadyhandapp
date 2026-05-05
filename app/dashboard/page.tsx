@@ -17,7 +17,7 @@ function getClientNextAction(job: any): { icon: string; headline: string; sub: s
     case 'compare':
       return { icon: '⏳', headline: 'Waiting for your quote', sub: 'Your tradie is preparing a quote - you will be notified when it arrives', urgent: false }
     case 'quote':
-      return { icon: '📊', headline: 'Review your quote', sub: 'Your tradie has submitted a quote - review and accept to proceed', urgent: true }
+      return { icon: '📊', headline: 'Review your quote', sub: 'Your tradie has submitted a quote — review and proceed to scope agreement when ready', urgent: true }
     case 'agreement': {
       const clientSigned = job.scope_agreements?.[0]?.client_signed_at
       const tradieSigned = job.scope_agreements?.[0]?.tradie_signed_at
