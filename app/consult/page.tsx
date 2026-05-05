@@ -436,9 +436,9 @@ export default function AssessPage() {
               if (!job) return
               const supabase = (await import('@/lib/supabase/client')).createClient()
               const { data: { session } } = await supabase.auth.getSession()
-              await supabase.from('jobs').update({ consult_skipped_by_client: true }).eq('id', job.id)
+              await supabase.from('jobs').update({ consult_skipped_by_client: true, status: 'quote' }).eq('id', job.id)
               await supabase.from('job_messages').insert({ job_id: job.id, sender_id: session?.user.id, body: 'Tradie has proposed to skip the site consult and proceed directly to quoting.' })
-              window.location.href = '/agreement?job_id=' + job.id
+              window.location.href = '/quote?job_id=' + job.id
             }} style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', whiteSpace:'nowrap' as const, flexShrink:0 }}>
               Skip to quote →
             </button>
@@ -456,13 +456,13 @@ export default function AssessPage() {
                 job_id: job.id,
                 client_what_discussed: 'Consult skipped by client — proceeded directly to quoting.',
               }, { onConflict: 'job_id' })
-              await supabase.from('jobs').update({ status: 'compare' }).eq('id', job.id)
+              await supabase.from('jobs').update({ status: 'quote', consult_skipped_by_client: true }).eq('id', job.id)
               await supabase.from('job_messages').insert({
                 job_id: job.id,
                 sender_id: session?.user.id,
                 body: 'Consult skipped — client has proceeded directly to quoting.',
               })
-              window.location.href = '/compare'
+              window.location.href = '/compare?job_id=' + job.id
             }} style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'6px', padding:'6px 14px', cursor:'pointer', whiteSpace:'nowrap' as const }}>
               Skip consult →
             </button>
@@ -930,7 +930,7 @@ export default function AssessPage() {
                   </p>
                   <a href={isTradie ? '/tradie/dashboard' : '/compare'} style={{ textDecoration:'none' }}>
                     <button type="button" style={{ background:'#2E7D60', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:600, border:'none', cursor:'pointer', width:'100%' }}>
-                      {isTradie ? 'Back to dashboard →' : 'Compare quotes →'}
+                      {isTradie ? 'Submit your quote →' : 'Review quotes →'}
                     </button>
                   </a>
                 </div>

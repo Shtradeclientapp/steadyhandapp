@@ -247,7 +247,7 @@ const STATUS_TO_STAGE: Record<string, string> = {
   assess:      '/consult',
   consult:     '/consult',
   quote:       '/quote',
-  compare:     '/consult',
+  compare:     '/quote',
   agreement:   '/agreement',
   delivery:    '/delivery',
   signoff:     '/signoff',
