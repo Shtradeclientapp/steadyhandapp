@@ -500,9 +500,9 @@ export default function AssessPage() {
               <p style={{ fontSize:'14px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px' }}>Consult complete</p>
               <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Both parties have acknowledged the consult record. You can now compare quotes.</p>
             </div>
-            <a href="/quotes">
+            <a href={'/quote?job_id=' + job?.id}>
               <button type="button" style={{ background:'#2E7D60', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:600, border:'none', cursor:'pointer', whiteSpace:'nowrap' as const }}>
-                Compare quotes →
+                Submit your quote →
               </button>
             </a>
           </div>

@@ -16,7 +16,7 @@ const TRADIE_STAGES = [
   { n:1, l:'Request',   p:'/request'  },
   { n:2, l:'Match',     p:'/shortlist' },
   { n:3, l:'Consult',   p:'/consult'  },
-  { n:4, l:'Quote',     p:'/consult'  },
+  { n:4, l:'Quote',     p:'/quote'    },
   { n:5, l:'Agreement', p:'/agreement'},
   { n:6, l:'Build',     p:'/delivery' },
   { n:7, l:'Sign off',  p:'/signoff'  },
@@ -53,10 +53,14 @@ export function StageRail({ currentPath, jobStatus, role }: StageRailProps) {
   // For tradie rail: Consult (n:3) and Quote (n:4) both use /consult path.
   // Use jobStatus to determine which one is actually current — not just path matching.
   const getCurrentN = () => {
-    if (role === 'tradie' && currentPath === '/consult') {
-      // quote/compare status means tradie is at Quote stage (4), not Consult (3)
-      if (jobStatus && ['quote','compare'].includes(jobStatus)) return 4
-      return 3
+    if (role === 'tradie') {
+      // /quote path always = stage 4
+      if (currentPath === '/quote') return 4
+      // On /consult: use jobStatus to distinguish Consult (3) vs Quote (4)
+      if (currentPath === '/consult') {
+        if (jobStatus && ['quote','compare'].includes(jobStatus)) return 4
+        return 3
+      }
     }
     // For all other paths, find by path match
     return STAGES.find(s => s.p === currentPath)?.n ?? 1
