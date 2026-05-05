@@ -385,7 +385,7 @@ export default function AssessPage() {
           body: "Once both parties have shared their notes, you each acknowledge the other's record. This unlocks the quoting stage and makes the consult notes a permanent part of the job file.",
         },
       ]} />
-      <StageRail currentPath="/consult" jobStatus={job?.status} />
+      <StageRail currentPath="/consult" jobStatus={job?.status} role={isTradie ? 'tradie' : 'client'} />
       {allJobs.length > 1 && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'16px 24px 0' }}>
           <JobSelector jobs={allJobs} selectedJobId={job?.id} onSelect={async (id) => {

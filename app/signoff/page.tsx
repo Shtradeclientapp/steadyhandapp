@@ -330,7 +330,7 @@ export default function SignoffPage() {
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={isTradie} />
-      <StageRail currentPath="/signoff" jobStatus={job?.status} />
+      <StageRail currentPath="/signoff" jobStatus={job?.status} role={isTradie ? 'tradie' : 'client'} />
       {isTradie && job?.status === 'signoff' && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
           <WaitingPanel role="tradie" stage="signoff" jobId={job?.id} otherPartyName={job?.client?.full_name} />

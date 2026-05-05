@@ -142,7 +142,7 @@ export default function WarrantyPage() {
   const nav = (
     <div>
       <NavHeader profile={profile} isTradie={isTradie} />
-      <StageRail currentPath="/warranty" jobStatus={job?.status} />
+      <StageRail currentPath="/warranty" jobStatus={job?.status} role={isTradie ? 'tradie' : 'client'} />
       {!isTradie && job && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
           <WaitingPanel role="client" stage="warranty" jobId={job?.id} />

@@ -123,7 +123,7 @@ export default function ShortlistPage() {
   const nav = (
     <div>
       <NavHeader profile={profile} isTradie={false} />
-      <StageRail currentPath="/shortlist" jobStatus={selectedJob?.status} />
+      <StageRail currentPath="/shortlist" jobStatus={selectedJob?.status} role={profile?.role === 'tradie' ? 'tradie' : 'client'} />
       {profile?.role === 'tradie' && selectedJob && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
           <WaitingPanel role="tradie" stage="match" jobId={selectedJob?.id} otherPartyName={selectedJob?.client?.full_name} />

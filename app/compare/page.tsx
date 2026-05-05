@@ -124,7 +124,7 @@ export default function ComparePage() {
   return (
     <>
       {nav}
-      <StageRail currentPath="/compare" jobStatus={selectedJob?.status} />
+      <StageRail currentPath="/compare" jobStatus={selectedJob?.status} role={profile?.role === 'tradie' ? 'tradie' : 'client'} />
       {profile?.role === 'tradie' && selectedJob && (
         <div style={{ maxWidth:'780px', margin:'0 auto', padding:'24px 24px 0' }}>
           <WaitingPanel role="tradie" stage="compare" jobId={selectedJob?.id} otherPartyName={selectedJob?.client?.full_name} />
