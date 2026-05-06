@@ -374,7 +374,7 @@ export default function TradieLead() {
                   Hi — I use Steadyhand to manage jobs, quotes and payments. It keeps everything transparent and documented for both of us. You can post your job at <strong style={{ color:'#0A0A0A' }}>steadyhandtrade.app</strong> — once you&apos;re in, invite me and I&apos;ll be notified to quote.
                 </div>
                 <button type="button"
-                  onClick={() => navigator.clipboard.writeText('Hi — I use Steadyhand to manage jobs, quotes and payments. It keeps everything transparent and documented for both of us. You can post your job at steadyhandtrade.app — once you're in, invite me and I'll be notified to quote.')}
+                  onClick={() => navigator.clipboard.writeText("Hi — I use Steadyhand to manage jobs, quotes and payments. It keeps everything transparent and documented for both of us. You can post your job at steadyhandtrade.app — once you're in, invite me and I'll be notified to quote.")}
                   style={{ marginTop:'8px', background:'transparent', color:'#4A5E64', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'8px 14px', fontSize:'12px', cursor:'pointer' }}>
                   Copy message
                 </button>
