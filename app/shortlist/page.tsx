@@ -94,10 +94,10 @@ export default function ShortlistPage() {
       const tradies = data || []
       setMatches(tradies)
       // Generate match reasoning for each tradie
-      if (tradies.length > 0 && job) {
-        const jobDesc = (job as any).description || ''
-        const jobTrade = (job as any).trade_category || ''
-        const jobSuburb = (job as any).suburb || ''
+      if (tradies.length > 0 && jobs.length > 0) {
+        const jobDesc = jobs[0].description || ''
+        const jobTrade = jobs[0].trade_category || ''
+        const jobSuburb = jobs[0].suburb || ''
         fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

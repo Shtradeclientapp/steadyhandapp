@@ -48,6 +48,9 @@ export default function AssessPage() {
   const [preVisitGuidance, setPreVisitGuidance] = useState<string|null>(null)
   const [guidanceLoading, setGuidanceLoading] = useState(false)
   const [guidanceOpen, setGuidanceOpen] = useState(false)
+  const [preVisitGuidance, setPreVisitGuidance] = useState<string|null>(null)
+  const [guidanceLoading, setGuidanceLoading] = useState(false)
+  const [guidanceOpen, setGuidanceOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
   const supabase = useSupabase()
 
@@ -316,6 +319,24 @@ export default function AssessPage() {
   const theirAcknowledged = isTradie ? assessment?.client_acknowledged_at : assessment?.tradie_acknowledged_at
   const myPrompts = isTradie ? TRADIE_PROMPTS : CLIENT_PROMPTS
   const theirLabel = isTradie ? (job?.client?.full_name || 'the client') : (job?.tradie?.business_name || 'your tradie')
+
+  const loadPreVisitGuidance = async () => {
+    if (!job || preVisitGuidance) { setGuidanceOpen(v => !v); return }
+    setGuidanceLoading(true)
+    setGuidanceOpen(true)
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 700,
+          messages: [{ role: 'user', content: 'A homeowner is about to have a tradie visit their property for a site consult. Help them prepare.\n\nJob: ' + (job.title||'') + '\nTrade: ' + (job.trade_category||'') + '\nDescription: ' + (job.description||'Not provided') + '\nProperty type: ' + (job.property_type||'residential') + '\n\nProvide:\n1. THINGS TO LOOK FOR — 3-4 specific things to observe during the visit\n2. QUESTIONS TO ASK — 3-4 direct questions to put to the tradie\n3. WHAT TO HAVE READY — 2-3 practical things to prepare before they arrive\n\nBe specific to this job. No generic advice.' }]
+        })
+      })
+      const data = await res.json()
+      setPreVisitGuidance(data.content?.find((b: any) => b.type === 'text')?.text || null)
+    } catch { setPreVisitGuidance(null) }
+    setGuidanceLoading(false)
+  }
 
   const saveInternalNotes = async () => {
     if (!assessment) return
@@ -661,6 +682,28 @@ export default function AssessPage() {
                 <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>YOUR CONSULT NOTES</p>
               </div>
               <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+                {/* AI pre-visit guidance — client only */}
+                {!isTradie && (
+                  <div>
+                    <button type="button" onClick={loadPreVisitGuidance}
+                      style={{ display:'flex', alignItems:'center', gap:'8px', background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'12px 16px', width:'100%', cursor:'pointer', textAlign:'left' as const, marginBottom: guidanceOpen ? 0 : '0' }}>
+                      <span style={{ fontSize:'15px' }}>✦</span>
+                      <div style={{ flex:1 }}>
+                        <p style={{ fontSize:'13px', fontWeight:600, color:'#6B4FA8', margin:0 }}>AI pre-visit guidance</p>
+                        <p style={{ fontSize:'11px', color:'#9B6B9B', margin:0 }}>What to look for, what to ask, and what to have ready</p>
+                      </div>
+                      <span style={{ fontSize:'11px', color:'#9B6B9B' }}>{guidanceOpen ? '▲' : '▼'}</span>
+                    </button>
+                    {guidanceOpen && (
+                      <div style={{ background:'rgba(107,79,168,0.03)', border:'1px solid rgba(107,79,168,0.15)', borderTop:'none', borderRadius:'0 0 10px 10px', padding:'14px 16px' }}>
+                        {guidanceLoading
+                          ? <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Preparing guidance for your visit...</p>
+                          : <div style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', whiteSpace:'pre-wrap' as const }}>{preVisitGuidance}</div>
+                        }
+                      </div>
+                    )}
+                  </div>
+                )}
                 {myPrompts.map(prompt => (
                   <div key={prompt.key}>
                     <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>{prompt.label}</p>
