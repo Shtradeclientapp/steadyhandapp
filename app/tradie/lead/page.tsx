@@ -343,33 +343,59 @@ export default function TradieLead() {
           </div>
         )}
 
-        {/* ── Invite mode ── */}
+        {/* ── Invite mode — referral panel only ── */}
         {mode === 'invite' && (
           <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
             <div style={{ padding:'14px 20px', background:'rgba(28,43,50,0.04)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>INVITE A CLIENT</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Send a personalised invitation. When they respond, the job comes directly to you.</p>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>RECOMMEND STEADYHAND</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Share Steadyhand with a client. They sign up, post their job, and invite you directly — the full pipeline then runs as normal.</p>
             </div>
-            <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'12px' }}>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
-                <div><label style={lbl}>Client name</label><input type="text" placeholder="Jane Smith" value={invite.client_name} onChange={setI('client_name')} style={inp} /></div>
-                <div><label style={lbl}>Client email *</label><input type="email" placeholder="jane@example.com" value={invite.client_email} onChange={setI('client_email')} style={inp} /></div>
-              </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
-                <div><label style={lbl}>Trade category</label>
-                  <select value={invite.trade_category} onChange={setI('trade_category')} style={inp}>
-                    <option value="">Select trade</option>
-                    {TRADES.map(t => <option key={t}>{t}</option>)}
-                  </select>
+            <div style={{ padding:'20px', display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+
+              {/* Link copy */}
+              <div>
+                <p style={{ fontSize:'12px', fontWeight:600, color:'#4A5E64', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'8px' }}>Steadyhand link</p>
+                <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+                  <div style={{ flex:1, background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', padding:'10px 14px', fontSize:'13px', color:'#0A0A0A', fontFamily:'monospace' }}>
+                    steadyhandtrade.app
+                  </div>
+                  <button type="button"
+                    onClick={() => { navigator.clipboard.writeText('https://steadyhandtrade.app'); }}
+                    style={{ background:'#0A0A0A', color:'white', border:'none', borderRadius:'8px', padding:'10px 16px', fontSize:'13px', fontWeight:500, cursor:'pointer', flexShrink:0 }}>
+                    Copy link
+                  </button>
                 </div>
-                <div><label style={lbl}>Suburb</label><input type="text" placeholder="e.g. Subiaco" value={invite.suburb} onChange={setI('suburb')} style={inp} /></div>
               </div>
-              <div><label style={lbl}>Job title (optional — helps them write a better request)</label><input type="text" placeholder="e.g. Kitchen renovation — Fremantle" value={invite.job_title} onChange={setI('job_title')} style={inp} /></div>
-              <div><label style={lbl}>Personal note to client</label><textarea placeholder="e.g. Great to meet you on site last week — please use this link to submit the job details as we discussed." value={invite.notes} onChange={setI('notes')} style={{ ...inp, minHeight:'80px', resize:'vertical' as const }} /></div>
-              <button type="button" onClick={handleInvite} disabled={sending || !invite.client_email || profileIncomplete}
-                style={{ background: sending || !invite.client_email ? 'rgba(28,43,50,0.3)' : '#D4522A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                {sending ? 'Sending...' : 'Send invitation →'}
-              </button>
+
+              {/* SMS template */}
+              <div>
+                <p style={{ fontSize:'12px', fontWeight:600, color:'#4A5E64', textTransform:'uppercase' as const, letterSpacing:'0.5px', marginBottom:'8px' }}>Ready-to-send message</p>
+                <div style={{ background:'#F4F8F7', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', fontSize:'13px', color:'#4A5E64', lineHeight:'1.65' }}>
+                  Hi — I use Steadyhand to manage jobs, quotes and payments. It keeps everything transparent and documented for both of us. You can post your job at <strong style={{ color:'#0A0A0A' }}>steadyhandtrade.app</strong> — once you&apos;re in, invite me and I&apos;ll be notified to quote.
+                </div>
+                <button type="button"
+                  onClick={() => navigator.clipboard.writeText('Hi — I use Steadyhand to manage jobs, quotes and payments. It keeps everything transparent and documented for both of us. You can post your job at steadyhandtrade.app — once you're in, invite me and I'll be notified to quote.')}
+                  style={{ marginTop:'8px', background:'transparent', color:'#4A5E64', border:'1px solid rgba(28,43,50,0.2)', borderRadius:'8px', padding:'8px 14px', fontSize:'12px', cursor:'pointer' }}>
+                  Copy message
+                </button>
+              </div>
+
+              {/* How it works */}
+              <div style={{ background:'rgba(46,125,96,0.05)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
+                <p style={{ fontSize:'12px', fontWeight:600, color:'#2E7D60', margin:'0 0 8px' }}>How the client pipeline works</p>
+                {[
+                  'Client signs up free at steadyhandtrade.app',
+                  'They post their job and describe what they need',
+                  'They find you in the directory and send an invite',
+                  'You receive a quote request — the full Steadyhand pipeline begins',
+                ].map((step, i) => (
+                  <div key={i} style={{ display:'flex', gap:'10px', marginBottom: i < 3 ? '6px' : 0 }}>
+                    <span style={{ fontSize:'11px', fontWeight:600, color:'#2E7D60', minWidth:'18px' }}>{i+1}.</span>
+                    <p style={{ fontSize:'13px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{step}</p>
+                  </div>
+                ))}
+              </div>
+
             </div>
           </div>
         )}
