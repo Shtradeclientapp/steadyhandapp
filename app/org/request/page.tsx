@@ -43,7 +43,6 @@ export default function OrgRequestPage() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { setSubmitError('Not logged in'); setSubmitting(false); return }
     let created = 0
-    let firstJobId: string | null = null
     for (const propId of selectedProperties) {
       const prop = properties.find(p => p.id === propId)
       const { data: newJob, error } = await supabase.from('jobs').insert({
@@ -63,13 +62,7 @@ export default function OrgRequestPage() {
       else if (!error) created++
     }
     setSubmitting(false)
-    if (created > 0) {
-      if (firstJobId) {
-        window.location.href = '/shortlist?job_id=' + firstJobId
-      } else {
-        setSubmitted(true)
-      }
-    }
+    if (created > 0) { window.location.href = '/shortlist' }
     else setSubmitError('Failed to create jobs — please try again')
   }
 
