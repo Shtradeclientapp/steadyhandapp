@@ -405,7 +405,7 @@ export default function AgreementPage() {
         <div style={{ background:'#0A0A0A', padding:'20px 24px' }}>
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:'0 0 4px' }}>SCOPE AGREEMENT</p>
           <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:0 }}>
-            {isTradie ? 'No active job found' : 'Waiting for your tradie to prepare the scope'}
+            {isTradie ? 'No active job found' : 'Write your intent scope or wait for your tradie'}
           </p>
         </div>
         <div style={{ padding:'24px' }}>

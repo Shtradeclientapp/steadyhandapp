@@ -366,7 +366,7 @@ export default function AssessPage() {
           <>
             <p style={{ fontSize:'15px', fontWeight:500, color:'#0A0A0A', margin:'0 0 8px' }}>No consult notes yet</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
-              If you skipped the consult stage, contact your tradie through messages to arrange a site visit. Or continue to the quote stage if a consult is not needed.
+              If you skipped the consult stage, contact your tradie through messages to arrange a site visit. Or continue to the estimate stage if a consult is not needed.
             </p>
             <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, justifyContent:'center' }}>
               <a href="/shortlist" style={{ fontSize:'13px', color:'white', background:'#0A0A0A', padding:'10px 18px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>← Back to matches</a>

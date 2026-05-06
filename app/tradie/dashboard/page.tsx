@@ -39,7 +39,7 @@ function getNextAction(job: any, tradieUserId: string): {
     case 'shortlisted':
       return {
         icon: '👋',
-        headline: 'Quote requested',
+        headline: 'Estimate requested',
         sub: 'You have been shortlisted — visit the job to propose a consult time or submit a quote',
         urgent: true,
       }
