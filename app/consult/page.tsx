@@ -48,9 +48,6 @@ export default function AssessPage() {
   const [preVisitGuidance, setPreVisitGuidance] = useState<string|null>(null)
   const [guidanceLoading, setGuidanceLoading] = useState(false)
   const [guidanceOpen, setGuidanceOpen] = useState(false)
-  const [preVisitGuidance, setPreVisitGuidance] = useState<string|null>(null)
-  const [guidanceLoading, setGuidanceLoading] = useState(false)
-  const [guidanceOpen, setGuidanceOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
   const supabase = useSupabase()
 
