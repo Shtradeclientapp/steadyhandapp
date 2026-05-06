@@ -2,25 +2,25 @@
 import { useEffect, useState } from 'react'
 
 const CLIENT_STAGES = [
-  { n:1, l:'Request',   p:'/request'  },
-  { n:2, l:'Match',     p:'/shortlist' },
-  { n:3, l:'Consult',   p:'/consult'  },
-  { n:4, l:'Compare',   p:'/compare'  },
-  { n:5, l:'Agreement', p:'/agreement'},
-  { n:6, l:'Build',     p:'/delivery' },
-  { n:7, l:'Sign off',  p:'/signoff'  },
-  { n:8, l:'Protected', p:'/warranty' },
+  { n:1, l:'Request',   s:'You: describe',  p:'/request'  },
+  { n:2, l:'Match',     s:'You: choose',    p:'/shortlist' },
+  { n:3, l:'Consult',   s:'You: explore',   p:'/consult'  },
+  { n:4, l:'Compare',   s:'You: decide',    p:'/compare'  },
+  { n:5, l:'Agreement', s:'You: intend',    p:'/agreement'},
+  { n:6, l:'Build',     s:'You: observe',   p:'/delivery' },
+  { n:7, l:'Sign off',  s:'You: confirm',   p:'/signoff'  },
+  { n:8, l:'Protected', s:'You: review',    p:'/warranty' },
 ]
 
 const TRADIE_STAGES = [
-  { n:1, l:'Request',   p:'/request'  },
-  { n:2, l:'Match',     p:'/shortlist' },
-  { n:3, l:'Consult',   p:'/consult'  },
-  { n:4, l:'Quote',     p:'/quote'    },
-  { n:5, l:'Agreement', p:'/agreement'},
-  { n:6, l:'Build',     p:'/delivery' },
-  { n:7, l:'Sign off',  p:'/signoff'  },
-  { n:8, l:'Protected', p:'/warranty' },
+  { n:1, l:'Request',   s:'You: receive',   p:'/request'  },
+  { n:2, l:'Match',     s:'You: respond',   p:'/shortlist' },
+  { n:3, l:'Consult',   s:'You: assess',    p:'/consult'  },
+  { n:4, l:'Estimate',  s:'You: price',     p:'/quote'    },
+  { n:5, l:'Agreement', s:'You: scope',     p:'/agreement'},
+  { n:6, l:'Build',     s:'You: deliver',   p:'/delivery' },
+  { n:7, l:'Sign off',  s:'You: complete',  p:'/signoff'  },
+  { n:8, l:'Protected', s:'You: warrant',   p:'/warranty' },
 ]
 
 const STATUS_TO_STAGE: Record<string,number> = {
@@ -97,6 +97,7 @@ export function StageRail({ currentPath, jobStatus, role }: StageRailProps) {
               {isComplete ? '✓' : s.n}
             </div>
             <div style={{ fontSize:'11px', color:isCurrent?'#0A0A0A':isComplete?'#2E7D60':'#7A9098', fontWeight:isCurrent?600:400, whiteSpace:'nowrap' as const }}>{s.l}</div>
+            {isCurrent && (s as any).s && <div style={{ fontSize:'9px', color:color, fontWeight:500, whiteSpace:'nowrap' as const, opacity:0.8 }}>{(s as any).s}</div>}
           </a>
         )
       })}

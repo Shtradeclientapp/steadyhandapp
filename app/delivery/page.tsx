@@ -128,6 +128,9 @@ export default function DeliveryPage() {
   const [loading, setLoading] = useState(true)
   const [payingMilestone, setPayingMilestone] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
+  const [observation, setObservation] = useState('')
+  const [postingObs, setPostingObs] = useState(false)
+  const [obsPosted, setObsPosted] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState<string|null>(null)
   const [variations, setVariations] = useState<any[]>([])
   const [showVariationForm, setShowVariationForm] = useState(false)
@@ -710,6 +713,40 @@ export default function DeliveryPage() {
         )}
       </div>
     </div>
+      {!isT && (
+        <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 24px 24px' }}>
+          <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'12px', padding:'20px 24px' }}>
+            <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>Site observation log</p>
+            <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 12px', lineHeight:'1.5' }}>If anything looks different from what was agreed in the scope, log it here. Your tradie will be notified. Early communication prevents late disputes.</p>
+            {obsPosted ? (
+              <p style={{ fontSize:'13px', color:'#2E7D60', margin:0 }}>✓ Observation logged and tradie notified.</p>
+            ) : (
+              <div style={{ display:'flex', gap:'8px' }}>
+                <textarea value={observation} onChange={e => setObservation(e.target.value)}
+                  placeholder="e.g. The tile grout colour looks darker than the sample we agreed on. Can we discuss before the next section is done?"
+                  rows={3}
+                  style={{ flex:1, padding:'10px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                <button type="button" disabled={!observation.trim() || postingObs}
+                  onClick={async () => {
+                    if (!observation.trim()) return
+                    setPostingObs(true)
+                    const supabase = (await import('@/lib/supabase/client')).createClient()
+                    const { data: { session } } = await supabase.auth.getSession()
+                    const jobId = new URLSearchParams(window.location.search).get('job_id')
+                    if (jobId && session) {
+                      await supabase.from('job_messages').insert({ job_id: jobId, sender_id: session.user.id, body: '📋 Site observation: ' + observation })
+                    }
+                    setObsPosted(true)
+                    setPostingObs(false)
+                  }}
+                  style={{ alignSelf:'flex-end', background:'#1C2B32', color:'white', padding:'10px 16px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: !observation.trim() || postingObs ? 0.5 : 1, whiteSpace:'nowrap' as const }}>
+                  {postingObs ? 'Logging...' : 'Log observation'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <StageGuideModal
         storageKey="seen_delivery_guide"
         stageNumber={6}

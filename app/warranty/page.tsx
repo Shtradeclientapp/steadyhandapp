@@ -1,4 +1,5 @@
 'use client'
+// Warranty close-out checklist items
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 
@@ -396,6 +397,35 @@ export default function WarrantyPage() {
 
       </div>
     </div>
+      <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 24px 24px' }}>
+        <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'12px', padding:'20px 24px' }}>
+          <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>Close-out checklist</p>
+          <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 16px' }}>Complete this before your warranty period ends to confirm the job is fully resolved.</p>
+          <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'16px' }}>
+            {[
+              'All agreed work has been completed to the standard described in the scope',
+              'Any defects raised during warranty have been resolved',
+              'I have downloaded my scope agreement and warranty certificate from the vault',
+              'I have left a rating for this tradie',
+            ].map((item, i) => (
+              <label key={i} style={{ display:'flex', alignItems:'flex-start', gap:'10px', cursor:'pointer' }}>
+                <input type="checkbox" style={{ marginTop:'2px', accentColor:'#2E7D60', flexShrink:0 }} />
+                <span style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.5' }}>{item}</span>
+              </label>
+            ))}
+          </div>
+          <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+            <a href="/vault"
+              style={{ fontSize:'12px', color:'white', background:'#1C2B32', padding:'8px 14px', borderRadius:'7px', textDecoration:'none', fontWeight:500 }}>
+              ↓ Go to document vault
+            </a>
+            <a href="/signoff"
+              style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
+              View sign-off record
+            </a>
+          </div>
+        </div>
+      </div>
       <StageGuideModal
         storageKey="seen_warranty_guide"
         stageNumber={8}
