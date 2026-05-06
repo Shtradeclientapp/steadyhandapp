@@ -23,6 +23,11 @@ export default function ComparePage() {
   const [reviseId, setReviseId] = useState<string|null>(null)
   const [reviseNote, setReviseNote] = useState('')
   const [sendingRevise, setSendingRevise] = useState(false)
+  const [sortBy, setSortBy] = useState<'price'|'rating'|'completeness'>('price')
+  const [tags, setTags] = useState<Record<string,string>>({})
+  const [aiAnalysis, setAiAnalysis] = useState<string|null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+  const [showAi, setShowAi] = useState(false)
   const supabase = useSupabase()
 
   useEffect(() => {
@@ -62,6 +67,25 @@ export default function ComparePage() {
     setQuotes(data || [])
     const acc = (data || []).find((q: any) => q.status === 'accepted')
     if (acc) setAccepted(acc.id)
+  }
+
+  const runAiAnalysis = async () => {
+    if (!quotes.length || !selectedJob) return
+    setAiLoading(true); setShowAi(true)
+    try {
+      const prompt = 'You are a trade advisor helping a homeowner compare quotes.\n\nJob: ' + (selectedJob.title||'') + '\nTrade: ' + (selectedJob.trade_category||'') + '\nDescription: ' + (selectedJob.description||'Not provided') + '\n\nQuotes:\n' + quotes.map((q:any,i:number) => 'Quote '+(i+1)+' — '+(q.tradie?.business_name||'Unknown')+'\n- Total: $'+(q.total_price||0)+(q.gst_included?' (GST incl.)':'')+'\n- Dialogue Rating: '+(q.tradie?.dialogue_score_avg?Math.round(q.tradie.dialogue_score_avg)+'/100':'Not rated')+'\n- Summary: '+(q.summary||'None')+'\n- Conditions: '+(q.conditions||'None')+'\n- Line items: '+(q.line_items?.length?q.line_items.map((l:any)=>l.description+' $'+l.amount).join(', '):'Not itemised')).join('\n\n') + '\n\nProvide:\n1. KEY RISKS — red flags or missing info (2-4 points)\n2. WHAT TO ASK — questions to ask before deciding (2-3 questions)\n3. RECOMMENDATION — which looks strongest and why (2-3 sentences, be direct)'
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+      })
+      const data = await res.json()
+      setAiAnalysis(data.content?.find((b:any) => b.type==='text')?.text || 'Analysis unavailable.')
+    } catch { setAiAnalysis('Analysis could not be completed.') }
+    setAiLoading(false)
+  }
+
+  const toggleTag = (quoteId: string, tag: string) => {
+    setTags(prev => ({ ...prev, [quoteId]: prev[quoteId] === tag ? '' : tag }))
   }
 
   const acceptQuote = async (quote: any) => {
@@ -207,6 +231,63 @@ export default function ComparePage() {
 
           {quotes.length > 0 && (
             <>
+              {/* Sort + AI bar */}
+              {!accepted && (
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', marginBottom:'16px', flexWrap:'wrap' as const }}>
+                  <div style={{ display:'flex', gap:'6px', alignItems:'center' }}>
+                    <p style={{ fontSize:'11px', color:'#7A9098', margin:0, flexShrink:0 }}>Sort by</p>
+                    {(['price','rating','completeness'] as const).map(s => (
+                      <button key={s} type="button" onClick={() => setSortBy(s)}
+                        style={{ padding:'5px 12px', borderRadius:'100px', fontSize:'12px', fontWeight: sortBy===s ? 600 : 400, background: sortBy===s ? '#0A0A0A' : 'rgba(28,43,50,0.06)', color: sortBy===s ? 'white' : '#4A5E64', border:'none', cursor:'pointer' }}>
+                        {s === 'price' ? 'Price' : s === 'rating' ? 'Dialogue rating' : 'Completeness'}
+                      </button>
+                    ))}
+                  </div>
+                  <button type="button" onClick={runAiAnalysis} disabled={aiLoading}
+                    style={{ background: showAi ? '#6B4FA8' : 'rgba(107,79,168,0.08)', color: showAi ? 'white' : '#6B4FA8', border:'1px solid rgba(107,79,168,0.25)', borderRadius:'8px', padding:'7px 14px', fontSize:'12px', fontWeight:500, cursor:'pointer', opacity: aiLoading ? 0.7 : 1 }}>
+                    {aiLoading ? '⏳ Analysing...' : '✦ AI analysis'}
+                  </button>
+                </div>
+              )}
+
+              {/* AI panel */}
+              {showAi && (
+                <div style={{ background:'rgba(107,79,168,0.04)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'12px', padding:'18px 20px', marginBottom:'16px' }}>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+                    <p style={{ fontSize:'13px', fontWeight:600, color:'#6B4FA8', margin:0 }}>✦ Steadyhand AI — quote analysis</p>
+                    <button type="button" onClick={() => setShowAi(false)} style={{ background:'none', border:'none', color:'#9AA5AA', cursor:'pointer', fontSize:'16px' }}>×</button>
+                  </div>
+                  {aiLoading
+                    ? <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>Reading your quotes and identifying risks...</p>
+                    : <div style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', whiteSpace:'pre-wrap' as const }}>{aiAnalysis}</div>
+                  }
+                </div>
+              )}
+
+              {/* Price bar */}
+              {quotes.length > 1 && !accepted && (() => {
+                const prices = quotes.map((q: any) => q.total_price || 0)
+                const maxP = Math.max(...prices), minP = Math.min(...prices)
+                return (
+                  <div style={{ background:'#E8F0EE', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', textTransform:'uppercase' as const, letterSpacing:'0.5px', margin:'0 0 10px' }}>Price comparison</p>
+                    {[...quotes].sort((a:any,b:any) => (a.total_price||0)-(b.total_price||0)).map((q:any) => {
+                      const pct = maxP > minP ? Math.round(((q.total_price||0)-minP)/(maxP-minP)*100) : 50
+                      return (
+                        <div key={q.id} style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'8px' }}>
+                          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, width:'120px', flexShrink:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{q.tradie?.business_name||'—'}</p>
+                          <div style={{ flex:1, background:'rgba(28,43,50,0.08)', borderRadius:'4px', height:'8px' }}>
+                            <div style={{ width:(40+pct*0.55)+'%', background: pct===0?'#2E7D60':pct<40?'#C07830':'#D4522A', height:'8px', borderRadius:'4px' }}/>
+                          </div>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:0, width:'72px', textAlign:'right' as const }}>${(q.total_price||0).toLocaleString()}</p>
+                        </div>
+                      )
+                    })}
+                    <p style={{ fontSize:'11px', color:'#9AA5AA', margin:'4px 0 0' }}>Spread: ${(maxP-minP).toLocaleString()} between lowest and highest</p>
+                  </div>
+                )
+              })()}
+
               {accepted && (
                 <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', padding:'12px 18px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'10px' }}>
                   <span style={{ fontSize:'18px' }}>✓</span>
@@ -218,13 +299,24 @@ export default function ComparePage() {
               )}
 
               <div style={{ display:'grid', gridTemplateColumns: quotes.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(280px, 1fr))', gap:'14px' }}>
-                {quotes.map((q: any) => {
+                {[...quotes].sort((a:any,b:any) => {
+                  if (sortBy==='price') return (a.total_price||0)-(b.total_price||0)
+                  if (sortBy==='rating') return (b.tradie?.dialogue_score_avg||0)-(a.tradie?.dialogue_score_avg||0)
+                  const sc = (q:any) => (q.summary?1:0)+(q.line_items?.length?1:0)+(q.conditions?1:0)
+                  return sc(b)-sc(a)
+                }).map((q: any) => {
                   const isAccepted = accepted === q.id
                   const isRejected = accepted && accepted !== q.id
                   const isExpanded = expandedQuote === q.id
                   const isRevisingThis = reviseId === q.id
                   const score = q.tradie?.dialogue_score_avg
                   const scoreColor = score >= 75 ? '#2E7D60' : score >= 50 ? '#C07830' : '#7A9098'
+                  const tag = tags[q.id] || ''
+                  const completeness = (q.summary?1:0)+(q.line_items?.length?1:0)+(q.conditions?1:0)
+                  const allPrices = quotes.map((x:any)=>x.total_price||0)
+                  const maxP = Math.max(...allPrices), minP = Math.min(...allPrices)
+                  const priceScore = allPrices.length>1 ? (1-((q.total_price||0)-minP)/(maxP-minP||1))*40 : 20
+                  const compositeScore = Math.round((score||0)*0.4 + priceScore + completeness*6.67)
 
                   return (
                     <div key={q.id} style={{ background:'#E8F0EE', border:'2px solid ' + (isAccepted ? '#2E7D60' : isRejected ? 'rgba(28,43,50,0.08)' : 'rgba(28,43,50,0.12)'), borderRadius:'14px', overflow:'hidden', opacity: isRejected ? 0.55 : 1, transition:'opacity 0.3s' }}>
@@ -244,6 +336,21 @@ export default function ComparePage() {
                         {q.tradie?.availability_visible && q.tradie?.availability_message && (
                           <p style={{ fontSize:'11px', color:'#C07830', margin:'6px 0 0', background:'rgba(192,120,48,0.12)', borderRadius:'4px', padding:'3px 8px', display:'inline-block' }}>
                             ⏱ {q.tradie.availability_message}
+                          </p>
+                        )}
+                        {!accepted && (
+                          <div style={{ display:'flex', gap:'6px', marginTop:'10px', flexWrap:'wrap' as const }}>
+                            {([['⭐','preferred'],['👍','shortlisted'],['⚠️','concerns']] as const).map(([icon,t]) => (
+                              <button key={t} type="button" onClick={() => toggleTag(q.id, t)}
+                                style={{ fontSize:'11px', padding:'3px 10px', borderRadius:'100px', border:'1px solid rgba(255,255,255,0.15)', background: tag===t?'rgba(255,255,255,0.18)':'rgba(255,255,255,0.06)', color: tag===t?'rgba(216,228,225,0.95)':'rgba(216,228,225,0.5)', cursor:'pointer', fontWeight: tag===t?600:400 }}>
+                                {icon} {t}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {compositeScore > 0 && !accepted && (
+                          <p style={{ fontSize:'10px', color:'rgba(216,228,225,0.35)', margin:'8px 0 0' }}>
+                            Steadyhand score <span style={{ color: compositeScore>=65?'rgba(46,125,96,0.9)':compositeScore>=40?'rgba(192,120,48,0.9)':'rgba(122,144,152,0.9)', fontWeight:600 }}>{compositeScore}/100</span>
                           </p>
                         )}
                       </div>
