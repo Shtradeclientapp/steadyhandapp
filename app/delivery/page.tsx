@@ -713,7 +713,7 @@ export default function DeliveryPage() {
         )}
       </div>
     </div>
-      {!isT && (
+      {!isTradie && (
         <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 24px 24px' }}>
           <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'12px', padding:'20px 24px' }}>
             <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>Site observation log</p>
