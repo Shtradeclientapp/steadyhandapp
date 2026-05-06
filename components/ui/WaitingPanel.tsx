@@ -2,9 +2,10 @@
 
 interface WaitingPanelProps {
   role: 'tradie' | 'client'
-  stage: 'match' | 'consult' | 'compare' | 'delivery' | 'signoff' | 'warranty'
+  stage: 'match' | 'consult' | 'compare' | 'agreement' | 'delivery' | 'signoff' | 'warranty'
   otherPartyName?: string
   jobId?: string
+  stats?: { label: string; value: string | number }[]
 }
 
 const MESSAGES = {
@@ -14,6 +15,18 @@ const MESSAGES = {
       body: 'Your invitation is being processed. While you wait, make sure your profile is complete — business name, bio, trade categories and service areas. This is what the client is looking at right now.',
       reflection: "Tradies who win more work aren't necessarily cheaper — they're clearer. A well-written bio and accurate service areas signal professionalism before you've said a word.",
       cta: { label: 'Review your profile →', href: (_?: string) => '/tradie/profile' },
+    },
+    consult: {
+      heading: 'Waiting for the client to acknowledge',
+      body: 'You have shared your consult notes. The client will review and acknowledge them before quotes are requested. This is a good moment to prepare your quote draft.',
+      reflection: 'Clients who receive well-structured consult notes — observations, concerns, proposed approach — are more likely to proceed. Notes are a selling tool, not just a record.',
+      cta: { label: 'Review your profile →', href: (_?: string) => '/tradie/profile' },
+    },
+    agreement: {
+      heading: 'Waiting for the client to sign',
+      body: 'You have submitted the scope agreement. The client is reviewing the inclusions, milestones and warranty terms. You will be notified by email when they sign.',
+      reflection: 'A scope agreement that mirrors exactly what was discussed in the consult builds trust. Any gaps between the consult record and the scope are the most common source of late disputes.',
+      cta: undefined,
     },
     compare: {
       heading: 'The client is comparing quotes',
@@ -50,7 +63,7 @@ const MESSAGES = {
   },
 } as const
 
-export function WaitingPanel({ role, stage, otherPartyName, jobId }: WaitingPanelProps) {
+export function WaitingPanel({ role, stage, otherPartyName, jobId, stats }: WaitingPanelProps) {
   const msg = (MESSAGES[role] as any)[stage]
   if (!msg) return null
 
@@ -68,6 +81,16 @@ export function WaitingPanel({ role, stage, otherPartyName, jobId }: WaitingPane
           <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.7', margin:0, fontStyle:'italic' }}>
             💡 {msg.reflection}
           </p>
+        </div>
+      )}
+      {stats && stats.length > 0 && (
+        <div style={{ display:'flex', gap:'16px', flexWrap:'wrap', marginBottom: msg.cta ? '16px' : 0 }}>
+          {stats.map((s, i) => (
+            <div key={i} style={{ background:'rgba(46,106,143,0.06)', borderRadius:'8px', padding:'8px 14px', minWidth:'80px' }}>
+              <p style={{ fontSize:'18px', fontWeight:600, color:'#2E6A8F', margin:'0 0 2px' }}>{s.value}</p>
+              <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{s.label}</p>
+            </div>
+          ))}
         </div>
       )}
       {msg.cta && (

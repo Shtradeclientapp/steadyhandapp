@@ -1,3 +1,5 @@
+'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 "use client"
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -337,6 +339,22 @@ export default function ComparePage() {
           )}
         </div>
       </div>
+      <StageGuideModal
+        storageKey="seen_compare_guide"
+        stageNumber={4}
+        stageColor="#854F0B"
+        stageLabel="Compare"
+        headline="Choose the right quote — not just the cheapest"
+        intro="You now have quotes from multiple tradies. This stage is about making a confident, informed decision — not just picking the lowest number."
+        checklist={[
+          { text: 'Check inclusions and exclusions, not just the total price', emphasis: true },
+          { text: 'A tradie with a higher Dialogue Rating has a stronger communication track record', emphasis: false },
+          { text: 'Use quote revision to ask for clarification before committing', emphasis: false },
+          { text: 'Once you accept, the other tradies are notified and scope agreement begins', emphasis: false },
+        ]}
+        warning="Accepting a quote locks you into scope agreement. Make sure you are comfortable with all the terms before proceeding."
+        ctaLabel="Review quotes"
+      />
     </>
   )
 }

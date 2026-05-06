@@ -1,4 +1,5 @@
 'use client'
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -848,6 +849,28 @@ export default function AgreementPage() {
           </div>
         </div>
       </div>
-    </div></>
+    </div>
+      <StageGuideModal
+        storageKey="seen_agreement_guide"
+        stageNumber={5}
+        stageColor="#534AB7"
+        stageLabel="Contract"
+        headline={isTradie ? "Draft the scope — this is your professional record" : "Review the scope before you sign"}
+        intro={isTradie ? "The scope agreement defines exactly what work is included, the payment milestones and the warranty period. Draft it carefully — it protects you as much as the client." : "The scope agreement is the legal foundation of the job. Read every section before signing — it defines what is included, how you will pay and what warranty applies."}
+        checklist={isTradie ? [
+          { text: 'Make sure the scope matches exactly what was discussed in the consult', emphasis: true },
+          { text: 'Set realistic milestone amounts — front-loading payments creates client resistance', emphasis: false },
+          { text: 'Include exclusions clearly — this prevents scope creep later', emphasis: false },
+          { text: 'Once both parties sign, variations require a formal change order', emphasis: false },
+        ] : [
+          { text: 'Check that the scope reflects what was discussed at the consult', emphasis: true },
+          { text: 'Review the milestone amounts — you pay as each stage is approved', emphasis: false },
+          { text: 'Confirm the warranty period and what it covers', emphasis: false },
+          { text: 'Once signed, any changes go through the variations process', emphasis: false },
+        ]}
+        warning={isTradie ? "A scope that is vague or misaligned with the consult record is the most common source of disputes. Be specific." : "Do not sign until you are comfortable with every section. You can request edits before signing."}
+        ctaLabel={isTradie ? "Draft scope" : "Review scope"}
+      />
+    </>
   )
 }

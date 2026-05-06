@@ -458,6 +458,22 @@ export default function ShortlistPage() {
 
         </div>
       </div>
+      <StageGuideModal
+        storageKey="seen_shortlist_guide"
+        stageNumber={2}
+        stageColor="#2E6A8F"
+        stageLabel="Match"
+        headline="Choose who quotes on your job"
+        intro="Steadyhand gives you three ways to find a tradie — AI-matched recommendations, a browseable directory of verified tradies, or a direct invite to someone you already trust."
+        checklist={[
+          { text: 'Select 2 to 4 tradies for the best comparison', emphasis: true },
+          { text: 'AI Matches shows verified tradies ranked by trade and location', emphasis: false },
+          { text: 'Browse lets you search by trade category and suburb', emphasis: false },
+          { text: 'Invite lets you bring in a tradie you already know', emphasis: false },
+        ]}
+        warning="Selecting just one tradie means no comparison. Two to four quotes gives you real leverage and the information to make a confident decision."
+        ctaLabel="Find tradies"
+      />
     </>
   )
 }

@@ -3,6 +3,7 @@ import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
+import { WaitingPanel } from '@/components/ui/WaitingPanel'
 
 const STAGE_COLOR: Record<string, string> = {
   shortlisted:'#2E6A8F', assess:'#9B6B9B', consult:'#9B6B9B',
@@ -41,6 +42,7 @@ export default function TradieJobHub() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('overview')
   const [stageDropdown, setStageDropdown] = useState(false)
+  const [qrCount, setQrCount] = useState<number>(0)
 
   useEffect(() => {
     const jobId = params?.id as string
@@ -74,6 +76,12 @@ export default function TradieJobHub() {
       ])
 
       if (!jobData) { window.location.href = '/tradie/dashboard'; return }
+
+      // Fetch total quote requests for this job (for data-driven insight)
+      const { count } = await supabase.from('quote_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('job_id', jobId)
+      setQrCount(count || 0)
       setJob(jobData)
       // Auto-select tab based on current job status
       const autoTab = STATUS_TO_TAB[jobData.status] || 'overview'
@@ -198,6 +206,29 @@ export default function TradieJobHub() {
 
         {/* ── OVERVIEW ── */}
         {tab === 'overview' && (
+          <>
+          {['shortlisted','consult','compare','agreement','signoff'].includes(job.status) && (
+            <WaitingPanel
+              role="tradie"
+              stage={
+                job.status === 'shortlisted' ? 'match' :
+                job.status === 'consult' || job.status === 'assess' ? 'consult' :
+                job.status === 'compare' ? 'compare' :
+                job.status === 'agreement' ? 'agreement' :
+                'signoff'
+              }
+              otherPartyName={job.client?.full_name}
+              jobId={job.id}
+              stats={job.status === 'shortlisted' && qrCount > 1 ? [
+                { label: 'tradies invited', value: qrCount },
+                { label: 'trade category', value: job.trade_category || '—' },
+                { label: 'job suburb', value: job.suburb || '—' },
+              ] : job.status === 'compare' ? [
+                { label: 'quotes submitted', value: quotes.length },
+                { label: 'competing quotes', value: Math.max(0, qrCount - 1) },
+              ] : undefined}
+            />
+          )}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
 
             {/* Job details */}
@@ -255,6 +286,7 @@ export default function TradieJobHub() {
             </div>
 
           </div>
+          </>
         )}
 
         {/* ── CONSULT ── */}
