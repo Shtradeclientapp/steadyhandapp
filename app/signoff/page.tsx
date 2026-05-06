@@ -204,8 +204,7 @@ export default function SignoffPage() {
       signoff_at: new Date().toISOString(),
       warranty_ends_at: new Date(Date.now() + (job.warranty_period || 90) * 24 * 60 * 60 * 1000).toISOString(),
     }).eq('id', job.id)
-    // Trigger dialogue score calculation on signoff
-    fetch('/api/dialogue', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ job_id: job.id }) }).catch(console.error)
+    // Dialogue score calculated below with full action payload
     if (review && session) {
       await supabase.from('reviews').insert({
         job_id: job.id,

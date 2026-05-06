@@ -316,23 +316,7 @@ export default function TradieDashboard() {
       // Setup wizard + onboarding checks
       const step = prof.tradie?.onboarding_step || 'profile'
       if (step !== 'active' && step !== 'complete') setShowSetupWizard(true)
-      if (step === 'invite_client' && prof.tradie?.id) {
-        const joined = new Date(prof.created_at || Date.now())
-        const daysSince = (Date.now() - joined.getTime()) / 86400000
-        const checkinSent = prof.tradie?.checkin_sent
-        if (daysSince >= 7 && !checkinSent) {
-          fetch('/api/onboarding', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ tradie_id: prof.tradie.id, email_type:'checkin' }) }).catch(() => {})
-          supabase.from('tradie_profiles').update({ checkin_sent: true }).eq('id', prof.tradie.id).then(() => {})
-        }
-      }
-      if (step === 'invite_client' || step === 'first_job') {
-        const seen = prof.tradie?.spotlight_seen
-        if (seen && typeof window !== 'undefined') localStorage.setItem('seen_tradie_onboarding', '1')
-        if (!seen) {
-          setShowSpotlight(true)
-          supabase.from('tradie_profiles').update({ spotlight_seen: true }).eq('id', prof.tradie.id).then(() => {})
-        }
-      }
+      // onboarding steps: profile → active (invite_client step retired)
 
       // Merge assigned jobs + quoted jobs (deduplicated)
       const quotedJobIds = (qrs || []).map((q: any) => q.job_id)
@@ -447,13 +431,7 @@ export default function TradieDashboard() {
         </div>
       </div>
 
-      {profile?.tradie?.onboarding_step !== 'active' && profile?.tradie?.id && (
-        <SetupModal
-          userId={user?.id || ''}
-          tradieId={profile.tradie.id}
-          onComplete={() => { window.location.reload() }}
-        />
-      )}
+
       {profile?.tradie?.onboarding_step === 'active' && (
         <OnboardingModal storageKey="seen_tradie_onboarding" slides={tradieSlides} />
       )}

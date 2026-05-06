@@ -41,7 +41,7 @@ export default function SubscribeReturnPage() {
             await supabase.from('tradie_profiles').update({
               subscription_active: true,
               subscription_tier: data.tier,
-              onboarding_step: 'invite_client',
+              onboarding_step: 'active',
               worker_seats_included: data.tier === 'pro' ? 5 : data.tier === 'business' ? 2 : 0,
             }).eq('id', data.tradie_id)
           }
