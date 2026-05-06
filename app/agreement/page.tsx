@@ -23,6 +23,11 @@ export default function AgreementPage() {
   const [newMessage, setNewMessage]   = useState('')
   const [loading, setLoading]         = useState(true)
   const [drafting, setDrafting]       = useState(false)
+  const [intentForm, setIntentForm]   = useState({ goal:'', concern:'', success:'', access:'' })
+  const [intentSent, setIntentSent]   = useState(false)
+  const [intentDrafting, setIntentDrafting] = useState(false)
+  const [siteBrief, setSiteBrief]     = useState<string|null>(null)
+  const [briefLoading, setBriefLoading] = useState(false)
   const [signing, setSigning]         = useState(false)
   const [stripeRequired, setStripeRequired] = useState(false)
   useEffect(() => {
@@ -168,6 +173,59 @@ export default function AgreementPage() {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:'smooth' }) }, [messages])
 
   // ── Actions ──────────────────────────────────────────────────────────────
+  const draftClientIntent = async () => {
+    if (!job) return
+    setIntentDrafting(true)
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 600,
+          messages: [{ role: 'user', content: 'A homeowner needs to write a plain-language intent statement for a trade job scope agreement. Help them fill in these four fields based on their job description. Return ONLY a JSON object with keys: goal, concern, success, access.\n\nJob: ' + (job.title||'') + '\nTrade: ' + (job.trade_category||'') + '\nDescription: ' + (job.description||'Not provided') + '\n\nKeep each field to 1-2 plain sentences. Use first-person voice ("I want...", "I am worried...", "I will consider it done when..."). The access field should note practical site access information.' }]
+        })
+      })
+      const data = await res.json()
+      const text = data.content?.find((b: any) => b.type === 'text')?.text || ''
+      const clean = text.replace(/```json|```/g, '').trim()
+      const parsed = JSON.parse(clean)
+      setIntentForm({ goal: parsed.goal||'', concern: parsed.concern||'', success: parsed.success||'', access: parsed.access||'' })
+    } catch { /* leave form empty */ }
+    setIntentDrafting(false)
+  }
+
+  const sendClientIntent = async () => {
+    if (!job || !user) return
+    const supabase = createClient()
+    const body = '📋 Client intent for scope:\n\nWhat I want achieved: ' + intentForm.goal + '\n\nWhat I am worried about: ' + intentForm.concern + '\n\nWhat success looks like: ' + intentForm.success + '\n\nSite access notes: ' + intentForm.access
+    await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user.id, body })
+    setIntentSent(true)
+  }
+
+  const loadSiteBrief = async () => {
+    if (!job) return
+    setBriefLoading(true)
+    const supabase = createClient()
+    const { data: msgs } = await supabase.from('job_messages').select('body, sender:profiles(role, full_name)').eq('job_id', job.id).order('created_at', { ascending: true }).limit(40)
+    const intentMsg = msgs?.find((m: any) => m.body?.startsWith('📋 Client intent'))?.body || ''
+    const consultMsgs = msgs?.filter((m: any) => !m.body?.startsWith('📋') && !m.body?.includes('has signed')).map((m: any) => '[' + (m.sender?.role||'user') + ']: ' + m.body).join('\n') || ''
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 800,
+          messages: [{ role: 'user', content: 'You are preparing a site brief for a tradie about to draft a scope agreement.\n\nJob: ' + (job.title||'') + '\nTrade: ' + (job.trade_category||'') + '\nSuburb: ' + (job.suburb||'') + '\nDescription: ' + (job.description||'') + (intentMsg ? '\n\nClient intent statement:\n' + intentMsg : '') + (consultMsgs ? '\n\nConsult dialogue:\n' + consultMsgs : '') + '\n\nWrite a concise site brief covering: (1) What the client actually wants in plain terms, (2) Their key concerns or worries to address in the scope, (3) Access and site conditions to note, (4) Scope risks or things to be specific about. Use clear headings, 3-5 sentences total per section. Professional tone.' }]
+        })
+      })
+      const data = await res.json()
+      setSiteBrief(data.content?.find((b: any) => b.type === 'text')?.text || null)
+    } catch { setSiteBrief(null) }
+    setBriefLoading(false)
+  }
+
   const draftScope = async (suggestion?: string) => {
     if (!job) return
     setDrafting(true); setDraftError(null)
@@ -673,15 +731,65 @@ export default function AgreementPage() {
                       <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 4px' }}>Your client is waiting for the scope agreement</p>
                       <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>Draft the scope below. This defines what is included, the payment milestones and warranty terms. Your client will be notified to review and sign once you submit.</p>
                     </div>
+                    {!siteBrief && (
+                      <button type="button" onClick={loadSiteBrief} disabled={briefLoading}
+                        style={{ background:'rgba(107,79,168,0.08)', color:'#6B4FA8', border:'1px solid rgba(107,79,168,0.2)', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, cursor:'pointer', marginBottom:'12px', opacity: briefLoading ? 0.7 : 1 }}>
+                        {briefLoading ? '⏳ Compiling brief...' : '✦ Generate site brief from job history'}
+                      </button>
+                    )}
+                    {siteBrief && (
+                      <div style={{ background:'rgba(107,79,168,0.04)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'10px', padding:'16px 18px', marginBottom:'16px', textAlign:'left' as const }}>
+                        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'10px' }}>
+                          <p style={{ fontSize:'12px', fontWeight:600, color:'#6B4FA8', margin:0, textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>✦ Site brief — compiled from job history</p>
+                          <button type="button" onClick={() => setSiteBrief(null)} style={{ background:'none', border:'none', color:'#9AA5AA', cursor:'pointer', fontSize:'14px' }}>×</button>
+                        </div>
+                        <div style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.7', whiteSpace:'pre-wrap' as const }}>{siteBrief}</div>
+                      </div>
+                    )}
                     <button type="button" onClick={() => draftScope()} disabled={drafting}
                       style={{ background:'#6B4FA8', color:'white', padding:'13px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: drafting ? 0.7 : 1 }}>
                       {drafting ? 'Drafting...' : 'Draft scope with Steadyhand →'}
                     </button>
                   </>
                 ) : (
-                  <div style={{ background:'rgba(107,79,168,0.06)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
-                    <p style={{ fontSize:'13px', fontWeight:500, color:'#6B4FA8', margin:'0 0 4px' }}>Waiting for tradie to draft the scope</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Your tradie will prepare the scope agreement. You will be notified when it is ready to review and sign.</p>
+                  <div>
+                    {!intentSent ? (
+                      <div style={{ background:'rgba(107,79,168,0.04)', border:'1px solid rgba(107,79,168,0.15)', borderRadius:'12px', padding:'20px 24px', marginBottom:'16px', textAlign:'left' as const }}>
+                        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
+                          <div>
+                            <p style={{ fontSize:'14px', fontWeight:600, color:'#6B4FA8', margin:'0 0 2px' }}>Write your intent scope</p>
+                            <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Tell the tradie what you want in plain language — they will turn this into a technical scope agreement.</p>
+                          </div>
+                          <button type="button" onClick={draftClientIntent} disabled={intentDrafting}
+                            style={{ background:'rgba(107,79,168,0.1)', color:'#6B4FA8', border:'1px solid rgba(107,79,168,0.25)', borderRadius:'7px', padding:'6px 12px', fontSize:'12px', fontWeight:500, cursor:'pointer', flexShrink:0, opacity: intentDrafting ? 0.7 : 1 }}>
+                            {intentDrafting ? 'Drafting...' : '✦ AI draft'}
+                          </button>
+                        </div>
+                        {[
+                          { key:'goal', label:'What do you want achieved?', placeholder:'e.g. I want the hot water system replaced with a new gas unit of similar capacity, installed in the same location.' },
+                          { key:'concern', label:'What are you worried about?', placeholder:'e.g. I am worried about hidden pipe damage behind the wall, and whether the warranty covers parts and labour.' },
+                          { key:'success', label:'What does success look like?', placeholder:'e.g. I will consider it done when the new system is working, the area is clean, and I have the warranty paperwork.' },
+                          { key:'access', label:'Site access and practical notes', placeholder:'e.g. Access via side gate, code is 1234. Available Mon–Fri after 9am. Parking on street.' },
+                        ].map(({ key, label, placeholder }) => (
+                          <div key={key} style={{ marginBottom:'12px' }}>
+                            <label style={{ display:'block', fontSize:'11px', fontWeight:600, color:'#4A5E64', marginBottom:'5px', textTransform:'uppercase' as const, letterSpacing:'0.4px' }}>{label}</label>
+                            <textarea value={(intentForm as any)[key]} onChange={e => setIntentForm(f => ({ ...f, [key]: e.target.value }))}
+                              placeholder={placeholder} rows={2}
+                              style={{ width:'100%', padding:'9px 12px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
+                          </div>
+                        ))}
+                        <button type="button" onClick={sendClientIntent}
+                          disabled={!intentForm.goal.trim()}
+                          style={{ background:'#6B4FA8', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !intentForm.goal.trim() ? 0.5 : 1 }}>
+                          Send to tradie →
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px' }}>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#2E7D60', margin:'0 0 4px' }}>✓ Intent scope sent to your tradie</p>
+                        <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>You will be notified by email when the scope agreement is ready to review and sign.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
