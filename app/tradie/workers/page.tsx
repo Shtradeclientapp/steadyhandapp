@@ -34,7 +34,7 @@ export default function WorkersPage() {
       try {
         const [wRes, jRes] = await Promise.all([
           supabase.from('tradie_workers').select('*').eq('tradie_id', prof?.tradie?.id).order('created_at', { ascending: false }),
-          supabase.from('jobs').select('id, title, suburb, status').eq('tradie_id', prof?.tradie?.id).in('status', ['consult','assess','compare','quote','agreement','delivery']).order('created_at', { ascending: false }),
+          supabase.from('quote_requests').select('job:jobs(id, title, suburb, status)').eq('tradie_id', prof?.tradie?.id).in('job.status', ['consult','assess','compare','quote','agreement','delivery']),
         ])
         w = wRes.data || []
         j = jRes.data || []

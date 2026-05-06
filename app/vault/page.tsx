@@ -124,16 +124,16 @@ export default function VaultPage() {
     if (!job) { setSharing(false); return }
     await supabase.from('vault_document_shares').upsert({
       vault_document_id: selectedDoc.id,
-      tradie_id: job.tradie_id,
+      tradie_id: job.accepted_tradie_id,
       job_id: shareJobId,
-      shared_with: job.tradie_id,
+      shared_with: job.accepted_tradie_id,
       shared_by: profile?.id,
       document_title: selectedDoc.title,
       permission: 'view',
     }, { onConflict: 'vault_document_id,tradie_id,job_id' })
     // Notify tradie
     await supabase.from('notifications').insert({
-      user_id: job.tradie_id,
+      user_id: job.accepted_tradie_id,
       message: (profile?.full_name || 'Your client') + ' shared a document with you: ' + selectedDoc.title,
       job_id: shareJobId,
     })

@@ -108,6 +108,7 @@ export default function SignoffPage() {
   const [rating, setRating] = useState(0)
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [acceptedTradieId, setAcceptedTradieId] = useState<string|null>(null)
   const [clientSecret, setClientSecret] = useState<string|null>(null)
   const [paymentRequired, setPaymentRequired] = useState(false)
   const [paymentDone, setPaymentDone] = useState(false)
@@ -233,9 +234,12 @@ export default function SignoffPage() {
         notes: (job.warranty_period || 90) + '-day warranty — signed off ' + new Date().toLocaleDateString('en-AU'),
       })
       // Also file to tradie vault
-      if (job.tradie_id) {
+      const { data: acceptedQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', job.id).eq('qr_status','accepted').maybeSingle()
+      const resolvedTradieId = acceptedQr?.tradie_id
+      setAcceptedTradieId(resolvedTradieId ?? null)
+      if (resolvedTradieId) {
         await supabase.from('vault_documents').insert({
-          user_id: job.tradie_id,
+          user_id: resolvedTradieId,
           job_id: job.id,
           job_title: job.title,
           title: job.title + ' - warranty record',
@@ -247,11 +251,11 @@ export default function SignoffPage() {
         })
       }
       // Auto-archive job notes and photos to tradie vault on signoff
-      if (job.tradie_id) {
+      if (resolvedTradieId) {
         const { data: jf } = await supabase.from('job_files').select('*').eq('job_id', job.id).maybeSingle()
         if (jf && (jf.notes || (jf.photo_urls && jf.photo_urls.length > 0))) {
           await supabase.from('vault_documents').insert({
-            user_id: job.tradie_id,
+            user_id: resolvedTradieId,
             job_id: job.id,
             job_title: job.title,
             title: 'Job notes — ' + job.title,
@@ -265,7 +269,8 @@ export default function SignoffPage() {
     } catch (err) { console.error('signoff error:', err) } finally { setSubmitting(false) }
 
     // Request certificate of compliance from tradie
-    if (job.tradie_id) {
+    const { data: certQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', job.id).eq('qr_status','accepted').maybeSingle()
+    if (certQr?.tradie_id) {
       const { data: { session: sess3 } } = await supabase.auth.getSession()
       await supabase.from('job_messages').insert({
         job_id: job.id,
@@ -456,7 +461,7 @@ export default function SignoffPage() {
                             body: JSON.stringify({
                               action: 'create_contribution',
                               job_id: job.id,
-                              tradie_id: job.tradie_id,
+                              tradie_id: acceptedTradieId,
                               amount: Math.round(finalAmount * 100),
                               message: contributionMessage,
                               client_id: session?.user.id,

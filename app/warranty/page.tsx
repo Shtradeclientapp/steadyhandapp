@@ -56,7 +56,7 @@ export default function WarrantyPage() {
           const { data: jf } = await supabase.from('job_files').select('*').eq('job_id', jobData.id).maybeSingle()
           if (jf && (jf.notes || (jf.photo_urls && jf.photo_urls.length > 0))) {
             await supabase.from('vault_documents').insert({
-              user_id: jobData.tradie_id,
+              user_id: jobData.accepted_tradie_id,
               job_id: jobData.id,
               job_title: jobData.title,
               title: 'Job notes — ' + jobData.title,

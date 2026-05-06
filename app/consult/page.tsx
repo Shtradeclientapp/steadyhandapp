@@ -93,14 +93,16 @@ export default function AssessPage() {
           setForm(assess)
           setClientPhotos(assess.client_photo_urls || [])
           setTradiePhotos(assess.tradie_photo_urls || [])
-        } else if (consultJob.tradie_id) {
-          // Only create assessment record if a tradie has been assigned
-          const { data: newAssess } = await supabase
-            .from('site_assessments')
-            .insert({ job_id: consultJob.id, consult_date: new Date().toISOString() })
-            .select()
-            .single()
-          if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
+        } else {
+          const { data: acceptedQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', consultJob.id).eq('qr_status','accepted').maybeSingle()
+          if (acceptedQr?.tradie_id) {
+            const { data: newAssess } = await supabase
+              .from('site_assessments')
+              .insert({ job_id: consultJob.id, consult_date: new Date().toISOString() })
+              .select()
+              .single()
+            if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
+          }
         }
       }
       setLoading(false)
@@ -256,7 +258,8 @@ export default function AssessPage() {
           notes: 'Consult notes acknowledged by both parties on ' + new Date().toLocaleDateString('en-AU'),
         }
         if (job.client_id) docs.push({ ...consultNote, user_id: job.client_id })
-        if (job.tradie_id) docs.push({ ...consultNote, user_id: job.tradie_id })
+        const { data: cqr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', job.id).eq('qr_status','accepted').maybeSingle()
+        if (cqr?.tradie_id) docs.push({ ...consultNote, user_id: cqr.tradie_id })
         if (docs.length > 0) {
           await fetch('/api/vault/file', {
             method: 'POST',

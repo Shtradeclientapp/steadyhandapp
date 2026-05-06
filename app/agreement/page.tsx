@@ -266,7 +266,8 @@ export default function AgreementPage() {
             notes: scopeNotes,
           }
           if (job.client_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: job.client_id })
-          if (job.tradie_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: job.tradie_id })
+          const { data: acceptedQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', job.id).eq('qr_status','accepted').maybeSingle()
+          if (acceptedQr?.tradie_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: acceptedQr.tradie_id })
         } catch { /* non-critical */ }
         setTimeout(() => { window.location.href = isTradie ? '/tradie/jobs/' + job.id : '/delivery?job_id=' + job.id }, 1000)
       }
@@ -280,10 +281,12 @@ export default function AgreementPage() {
     if (!job) return
     setAcceptingQuote(true)
     const supabase = createClient()
-    await supabase.from('jobs').update({ tradie_id: quote.tradie_id, status:'agreement' }).eq('id', job.id)
+    await supabase.from('quote_requests').update({ qr_status: 'accepted' }).eq('job_id', job.id).eq('tradie_id', quote.tradie_id)
+    await supabase.from('quote_requests').update({ qr_status: 'declined' }).eq('job_id', job.id).neq('tradie_id', quote.tradie_id)
+    await supabase.from('jobs').update({ status:'agreement' }).eq('id', job.id)
     await supabase.from('quote_requests').update({ status:'accepted' }).eq('job_id', job.id).eq('tradie_id', quote.tradie_id)
     await supabase.from('quote_requests').update({ status:'declined' }).eq('job_id', job.id).neq('tradie_id', quote.tradie_id)
-    setJob({ ...job, tradie_id: quote.tradie_id, status:'agreement' })
+    setJob({ ...job, status:'agreement' })
     setCurrentQuote(quote)
     setAcceptingQuote(false)
     // Tradie drafts the scope — notify them via email
