@@ -26,7 +26,7 @@ export default function WorkersPage() {
       const prof = profRaw as any
       if (!prof) { window.location.href = '/login'; return }
       if (prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
-      if (!prof.tradie?.id) { window.location.href = '/tradie/profile?required=true'; return }
+      if (!prof.tradie?.id) { window.location.href = '/tradie/profile'; return }
       setProfile(prof)
       setLoading(false)
 

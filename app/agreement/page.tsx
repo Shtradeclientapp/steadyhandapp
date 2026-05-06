@@ -84,47 +84,35 @@ export default function AgreementPage() {
         let tradieJobs: any[] = []
 
         if (urlJobId) {
-          // Direct load by job ID — try tradie_id match first, then quote_requests
+          // Direct load by job ID — try direct first, then via quote_requests (Option A)
           const { data: directJob } = await supabase
             .from('jobs')
             .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
             .eq('id', urlJobId)
-            .single()
+            .maybeSingle()
           if (directJob) {
             tradieJobs = [directJob]
           } else {
-            // Job may not be accessible via tradie_id yet — try via quote_requests
+            // Tradie can't read job directly via RLS — go via accepted quote_request
             const { data: qrJob } = await supabase
-              .from('jobs')
-              .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
-              .eq('id', urlJobId)
-              .in('status', ['compare','quote','agreement','delivery','signoff','warranty','complete'])
-              .single()
-            if (qrJob) tradieJobs = [qrJob]
-          }
-        } else {
-          // No job_id — load most recent active job for this tradie
-          // Check both tradie_id (post-acceptance) and quote_requests (pre-acceptance)
-          const { data: directJobs } = await supabase
-            .from('jobs')
-            .select('*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb)')
-            .eq('tradie_id', session.user.id)
-            .in('status', ['agreement','delivery','signoff','warranty','complete'])
-            .order('updated_at', { ascending: false })
-            .limit(1)
-          if (directJobs && directJobs.length > 0) {
-            tradieJobs = directJobs
-          } else {
-            // Fall back to quote_requests to find jobs with submitted quotes
-            const { data: qrData } = await supabase
               .from('quote_requests')
               .select('job:jobs(*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb))')
               .eq('tradie_id', session.user.id)
-              .in('status', ['requested','accepted'])
-              .order('created_at', { ascending: false })
-              .limit(5)
-            tradieJobs = (qrData || []).map((r: any) => r.job).filter(Boolean)
+              .eq('qr_status', 'accepted')
+              .eq('job_id', urlJobId)
+              .maybeSingle()
+            if (qrJob?.job) tradieJobs = [qrJob.job]
           }
+        } else {
+          // No job_id — Option A: load via accepted quote_requests (tradie_id on jobs deprecated)
+          const { data: qrData } = await supabase
+            .from('quote_requests')
+            .select('job:jobs(*, tradie:tradie_profiles(*, profile:profiles(full_name, email)), client:profiles!jobs_client_id_fkey(full_name, email, suburb))')
+            .eq('tradie_id', session.user.id)
+            .eq('qr_status', 'accepted')
+            .order('created_at', { ascending: false })
+            .limit(5)
+          tradieJobs = (qrData || []).map((r: any) => r.job).filter(Boolean)
         }
 
         if (tradieJobs.length > 0) {
