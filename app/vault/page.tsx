@@ -1,95 +1,117 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
 import { NavHeader } from '@/components/ui/NavHeader'
 
 const DOC_TYPES = [
-  { value: 'scope', label: 'Scope agreement', icon: '📄', color: '#2E6A8F' },
-  { value: 'milestone', label: 'Milestone record', icon: '✅', color: '#2E7D60' },
-  { value: 'compliance', label: 'Compliance certificate', icon: '🔒', color: '#6B4FA8' },
-  { value: 'warranty', label: 'Warranty certificate', icon: '🛡', color: '#D4522A' },
-  { value: 'receipt', label: 'Receipt / invoice', icon: '💳', color: '#C07830' },
-  { value: 'permit', label: 'Permit / approval', icon: '📋', color: '#2E7D60' },
-  { value: 'insurance', label: 'Insurance document', icon: '🏠', color: '#2E6A8F' },
-  { value: 'uploaded', label: 'Other document', icon: '📎', color: '#7A9098' },
+  { value: 'scope',       label: 'Scope agreement',       icon: '📄', color: '#2E6A8F' },
+  { value: 'milestone',   label: 'Milestone record',      icon: '✅', color: '#2E7D60' },
+  { value: 'compliance',  label: 'Compliance certificate',icon: '🔒', color: '#6B4FA8' },
+  { value: 'warranty',    label: 'Warranty certificate',  icon: '🛡', color: '#D4522A' },
+  { value: 'receipt',     label: 'Receipt / invoice',     icon: '💳', color: '#C07830' },
+  { value: 'permit',      label: 'Permit / approval',     icon: '📋', color: '#2E7D60' },
+  { value: 'insurance',   label: 'Insurance document',    icon: '🏠', color: '#2E6A8F' },
+  { value: 'consult',     label: 'Consult record',        icon: '📝', color: '#9B6B9B' },
+  { value: 'uploaded',    label: 'Other document',        icon: '📎', color: '#7A9098' },
+]
+
+const FOLDERS = [
+  { key: 'all',        label: 'All documents',    icon: '🗃' },
+  { key: 'scope',      label: 'Scope agreements', icon: '📄' },
+  { key: 'milestone',  label: 'Milestones',       icon: '✅' },
+  { key: 'warranty',   label: 'Warranty',         icon: '🛡' },
+  { key: 'compliance', label: 'Compliance',       icon: '🔒' },
+  { key: 'consult',    label: 'Consult records',  icon: '📝' },
+  { key: 'receipt',    label: 'Receipts',         icon: '💳' },
+  { key: 'uploaded',   label: 'My uploads',       icon: '📎' },
 ]
 
 export default function VaultPage() {
-  const [profile, setProfile] = useState<any>(null)
-  const [docs, setDocs] = useState<any[]>([])
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string|null>(null)
-  const [loading, setLoading] = useState(true)
-  const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState<string|null>(null)
-  const [showUpload, setShowUpload] = useState(false)
-  const [activeTab, setActiveTab] = useState<'documents'|'shared'|'templates'>('documents')
-  const [filter, setFilter] = useState('all')
-  const [form, setForm] = useState({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [selectedDoc, setSelectedDoc] = useState<any>(null)
-  const [annotationText, setAnnotationText] = useState('')
-  const [signedUrl, setSignedUrl] = useState<string|null>(null)
-  const [loadingSignedUrl, setLoadingSignedUrl] = useState(false)
-  const [savingAnnotation, setSavingAnnotation] = useState(false)
-  const [annotationSaved, setAnnotationSaved] = useState(false)
-  const [shareJobId, setShareJobId] = useState('')
-  const [sharing, setSharing] = useState(false)
-  const [shareSuccess, setShareSuccess] = useState(false)
-  const [jobs, setJobs] = useState<any[]>([])
-  const [sharedWithMe, setSharedWithMe] = useState<any[]>([])
-
   const supabase = useSupabase()
+  const [profile, setProfile]           = useState<any>(null)
+  const [docs, setDocs]                 = useState<any[]>([])
+  const [loading, setLoading]           = useState(true)
+  const [folder, setFolder]             = useState('all')
+  const [selectedDoc, setSelectedDoc]   = useState<any>(null)
+  const [viewerUrl, setViewerUrl]       = useState<string|null>(null)
+  const [loadingUrl, setLoadingUrl]     = useState(false)
+  const [annotation, setAnnotation]     = useState('')
+  const [savingNote, setSavingNote]     = useState(false)
+  const [noteSaved, setNoteSaved]       = useState(false)
+  const [showUpload, setShowUpload]     = useState(false)
+  const [uploading, setUploading]       = useState(false)
+  const [uploadError, setUploadError]   = useState<string|null>(null)
+  const [search, setSearch]             = useState('')
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File|null>(null)
+  const [form, setForm] = useState({ title:'', document_type:'uploaded', notes:'', expiry_date:'', issued_date:'', tradie_name:'' })
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { window.location.href = '/login'; return }
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       setProfile(prof)
-      const { data: vaultDocs, error: vaultErr } = await supabase
+      const { data: vaultDocs } = await supabase
         .from('vault_documents')
         .select('*')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
-      if (vaultErr) console.error('Vault load error:', vaultErr.message)
       setDocs(vaultDocs || [])
-      // Load jobs for sharing
-      const { data: jobsData } = await supabase
-        .from('jobs')
-        .select('id, title, tradie_id, tradie:tradie_profiles(business_name)')
-        .eq('client_id', session.user.id)
-        .not('tradie_id', 'is', null)
-        .in('status', ['agreement','delivery','signoff','warranty','complete'])
-      setJobs(jobsData || [])
-      // Load documents shared with this client by tradies
-      const { data: shares } = await supabase
-        .from('vault_document_shares')
-        .select('*, document:vault_documents(*, job:jobs(title, trade_category, suburb))')
-        .eq('shared_with', session.user.id)
-      setSharedWithMe((shares || []).map((s: any) => ({ ...s.document, _shared: true, _share_id: s.id, _shared_by_name: s.document?.tradie_name || 'Your tradie' })))
-
       setLoading(false)
     })
   }, [])
 
+  const openDoc = async (doc: any) => {
+    setSelectedDoc(doc)
+    setAnnotation(doc.notes || '')
+    setViewerUrl(null)
+    if (doc.file_url) {
+      setLoadingUrl(true)
+      // Try to get a signed URL if it looks like a storage path
+      if (doc.file_url.startsWith('http')) {
+        setViewerUrl(doc.file_url)
+      } else {
+        const { data } = await supabase.storage.from('Documents').createSignedUrl(doc.file_url, 3600)
+        setViewerUrl(data?.signedUrl || null)
+      }
+      setLoadingUrl(false)
+    }
+  }
+
+  const saveNote = async () => {
+    if (!selectedDoc) return
+    setSavingNote(true)
+    await supabase.from('vault_documents').update({ notes: annotation }).eq('id', selectedDoc.id)
+    setDocs(prev => prev.map(d => d.id === selectedDoc.id ? { ...d, notes: annotation } : d))
+    setSelectedDoc((d: any) => ({ ...d, notes: annotation }))
+    setNoteSaved(true)
+    setTimeout(() => setNoteSaved(false), 2000)
+    setSavingNote(false)
+  }
+
+  const deleteDoc = async (id: string) => {
+    if (!confirm('Delete this document?')) return
+    await supabase.from('vault_documents').delete().eq('id', id)
+    setDocs(prev => prev.filter(d => d.id !== id))
+    if (selectedDoc?.id === id) setSelectedDoc(null)
+  }
+
   const uploadDoc = async () => {
     if (!form.title || !profile) return
     setUploading(true)
+    setUploadError(null)
     let file_url = null
     let file_name = null
     if (selectedFile) {
       const ext = selectedFile.name.split('.').pop()
-      const path = 'vault/' + profile.id + '/' + Date.now() + '.' + ext
+      const path = profile.id + '/' + Date.now() + '.' + ext
       const { error } = await supabase.storage.from('Documents').upload(path, selectedFile)
       if (error) {
-        setUploadError('File upload failed — the Documents bucket may be missing or have no upload policy. Check Supabase Storage settings.')
+        setUploadError('Upload failed — check that the Documents storage bucket exists and has an upload policy.')
         setUploading(false)
         return
       }
-      // Use signed URL for private bucket (1 year expiry)
-      const { data: signedData } = await supabase.storage.from('Documents').createSignedUrl(path, 60 * 60 * 24 * 365)
-      file_url = signedData?.signedUrl || null
+      file_url = path
       file_name = selectedFile.name
     }
     const { data: doc } = await supabase.from('vault_documents').insert({
@@ -104,411 +126,292 @@ export default function VaultPage() {
       file_name,
     }).select().single()
     if (doc) setDocs(prev => [doc, ...prev])
-    setForm({ title: '', document_type: 'uploaded', notes: '', expiry_date: '', issued_date: '', tradie_name: '' })
+    setForm({ title:'', document_type:'uploaded', notes:'', expiry_date:'', issued_date:'', tradie_name:'' })
     setSelectedFile(null)
+    if (fileRef.current) fileRef.current.value = ''
     setShowUpload(false)
     setUploading(false)
   }
 
-  const deleteDoc = async (id: string) => {
-    if (deleteConfirmId !== id) { setDeleteConfirmId(id); return }
-    setDeleteConfirmId(null)
-    await supabase.from('vault_documents').delete().eq('id', id)
-    setDocs(prev => prev.filter(d => d.id !== id))
-  }
+  const filtered = docs.filter(d => {
+    const matchFolder = folder === 'all' || d.document_type === folder
+    const matchSearch = !search || d.title?.toLowerCase().includes(search.toLowerCase()) || d.tradie_name?.toLowerCase().includes(search.toLowerCase()) || d.job_title?.toLowerCase().includes(search.toLowerCase())
+    return matchFolder && matchSearch
+  })
 
-  const shareWithTradie = async () => {
-    if (!selectedDoc || !shareJobId) return
-    setSharing(true)
-    const job = jobs.find((j: any) => j.id === shareJobId)
-    if (!job) { setSharing(false); return }
-    await supabase.from('vault_document_shares').upsert({
-      vault_document_id: selectedDoc.id,
-      tradie_id: job.accepted_tradie_id,
-      job_id: shareJobId,
-      shared_with: job.accepted_tradie_id,
-      shared_by: profile?.id,
-      document_title: selectedDoc.title,
-      permission: 'view',
-    }, { onConflict: 'vault_document_id,tradie_id,job_id' })
-    // Notify tradie
-    await supabase.from('notifications').insert({
-      user_id: job.accepted_tradie_id,
-      message: (profile?.full_name || 'Your client') + ' shared a document with you: ' + selectedDoc.title,
-      job_id: shareJobId,
-    })
-    setShareSuccess(true)
-    setSharing(false)
-  }
+  const counts: Record<string,number> = { all: docs.length }
+  docs.forEach(d => { counts[d.document_type] = (counts[d.document_type] || 0) + 1 })
 
-  const saveAnnotation = async () => {
-    if (!selectedDoc) return
-    setSavingAnnotation(true)
-    await supabase.from('vault_documents').update({ notes: annotationText }).eq('id', selectedDoc.id)
-    setDocs(prev => prev.map(d => d.id === selectedDoc.id ? { ...d, notes: annotationText } : d))
-    setAnnotationSaved(true)
-    setTimeout(() => setAnnotationSaved(false), 2000)
-    setSavingAnnotation(false)
-  }
-
-  const filteredDocs = filter === 'all' ? docs : docs.filter(d => d.document_type === filter)
-  const expiringSoon = docs.filter(d => d.expiry_date && new Date(d.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) && new Date(d.expiry_date) > new Date())
-  const expired = docs.filter(d => d.expiry_date && new Date(d.expiry_date) < new Date())
+  const inp: React.CSSProperties = { width:'100%', padding:'8px 10px', border:'1px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box', fontFamily:'sans-serif' }
 
   if (loading) return (
-    <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}>
-      <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading vault...</p>
+    <div style={{ background:'#C8D5D2', minHeight:'100vh' }}>
+      <NavHeader profile={null} isTradie={false} />
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'60vh' }}>
+        <p style={{ color:'#4A5E64', fontFamily:'sans-serif' }}>Loading vault...</p>
+      </div>
     </div>
   )
 
   return (
-    <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif' }}>
+    <div style={{ background:'#C8D5D2', minHeight:'100vh', fontFamily:'sans-serif' }}>
       <NavHeader profile={profile} isTradie={false} />
-      <div style={{ maxWidth:'800px', margin:'0 auto', padding:'32px 24px' }}>
 
-        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'24px', flexWrap:'wrap', gap:'12px' }}>
-          <div>
-            <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'8px' }}>
-              <span style={{ fontSize:'11px', color:'#6B4FA8', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Home vault</span>
-            </div>
-            <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'4px' }}>DOCUMENT VAULT</h1>
-            <p style={{ fontSize:'14px', color:'#4A5E64', fontWeight:300, lineHeight:'1.7', marginBottom:'20px' }}>Your permanent home record — scope agreements, warranties, certificates and receipts.</p>
-
-            {/* Explainer */}
-            <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', overflow:'hidden', marginBottom:'8px' }}>
-              <div style={{ padding:'16px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', background:'#0A0A0A' }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.85)', letterSpacing:'0.5px', margin:0 }}>WHAT GETS STORED HERE</p>
-              </div>
-              <div style={{ padding:'16px 20px' }}>
-                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
-                  Every Steadyhand job generates a set of documents — the written record of what was agreed, inspected, built and warranted. These aren&apos;t just files. They are the lasting evidence of the dialogue that happened before, during and after the work: the consult notes both parties signed off on, the scope agreement that defined what was included, the milestone records that confirmed completion, and the warranty certificate that protects you after the tradie leaves.
-                </p>
-                <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.75', marginBottom:'16px' }}>
-                  Most homeowners lose this paper trail. It gets emailed once and never filed. When something goes wrong — or when you sell the property — there is nothing to show. The Document Vault changes that. It accumulates automatically as you use Steadyhand, and you can add your own documents from jobs done outside the platform too.
-                </p>
-                <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
-                  {[
-                    { icon:'📋', stage:'Consult', desc:'Site visit notes — what was observed, agreed and flagged before quoting began.' },
-                    { icon:'📄', stage:'Contract', desc:'Signed scope agreement — the written record of what the tradie committed to deliver.' },
-                    { icon:'✅', stage:'Build', desc:'Milestone records — completion confirmed at each stage of the work.' },
-                    { icon:'🛡', stage:'Protected', desc:'Warranty certificate — your formal protection after the job is signed off.' },
-                  ].map(item => (
-                    <div key={item.stage} style={{ display:'flex', gap:'10px', alignItems:'flex-start', padding:'10px', background:'rgba(28,43,50,0.03)', borderRadius:'8px', border:'1px solid rgba(28,43,50,0.06)' }}>
-                      <span style={{ fontSize:'18px', flexShrink:0 }}>{item.icon}</span>
-                      <div>
-                        <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{item.stage}</p>
-                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Top bar */}
+      <div style={{ background:'white', borderBottom:'1px solid rgba(28,43,50,0.08)', padding:'12px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' }}>
+        <div>
+          <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#1C2B32', letterSpacing:'1px', margin:'0 0 2px' }}>DOCUMENT VAULT</h1>
+          <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{docs.length} document{docs.length !== 1 ? 's' : ''} · scope agreements, warranties, consult records and certificates</p>
+        </div>
+        <div style={{ display:'flex', gap:'8px', alignItems:'center' }}>
+          <input type="text" placeholder="Search documents..." value={search} onChange={e => setSearch(e.target.value)}
+            style={{ ...inp, width:'220px' }} />
           <button type="button" onClick={() => setShowUpload(!showUpload)}
-            style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', flexShrink:0 }}>
-            + Add document
+            style={{ background:'#1C2B32', color:'white', padding:'9px 16px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', whiteSpace:'nowrap' }}>
+            + Upload
           </button>
         </div>
-
-        {(expiringSoon.length > 0 || expired.length > 0) && (
-          <div style={{ marginBottom:'20px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
-            {expired.length > 0 && (
-              <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'12px 16px' }}>
-                <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:500, margin:0 }}>\u26a0 {expired.length} document{expired.length > 1 ? 's have' : ' has'} expired — {expired.map(d => d.title).join(', ')}</p>
-              </div>
-            )}
-            <div style={{ background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
-          <p style={{ fontSize:'13px', fontWeight:600, color:'#2E6A8F', margin:'0 0 4px' }}>About your documents</p>
-          <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:1.6 }}>
-            Your vault contains two kinds of records. <strong>Uploaded files</strong> (PDF, photos, certificates) can be opened and downloaded directly.{' '}
-            <strong>Steadyhand records</strong> (scope agreements, milestone confirmations, warranty certificates, consult notes) are structured data records — the information is stored securely in Steadyhand and shown here as a reference. Scope agreements and warranty certificates can be downloaded using the Download button on each record.
-          </p>
-        </div>
-
-        {expiringSoon.length > 0 && (
-              <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 16px' }}>
-                <p style={{ fontSize:'13px', color:'#C07830', fontWeight:500, margin:0 }}>\u23f1 {expiringSoon.length} document{expiringSoon.length > 1 ? 's expire' : ' expires'} within 30 days</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {showUpload && (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'16px' }}>ADD DOCUMENT</p>
-            <div style={{ display:'flex', flexDirection:'column' as const, gap:'12px' }}>
-              <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Document title *</label>
-                <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                  placeholder="e.g. Walsh Plumbing — hot water compliance certificate"
-                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
-              </div>
-              <div className='form-2col' style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
-                <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Document type *</label>
-                  <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
-                    {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Trade business</label>
-                  <input value={form.tradie_name} onChange={e => setForm(f => ({ ...f, tradie_name: e.target.value }))}
-                    placeholder="e.g. Walsh Plumbing"
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
-                </div>
-                <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Issue date</label>
-                  <input type="date" value={form.issued_date} onChange={e => setForm(f => ({ ...f, issued_date: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
-                </div>
-                <div>
-                  <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Expiry date</label>
-                  <input type="date" value={form.expiry_date} onChange={e => setForm(f => ({ ...f, expiry_date: e.target.value }))}
-                    style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }} />
-                </div>
-              </div>
-              <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Notes</label>
-                <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                  rows={2} placeholder="Any additional notes..."
-                  style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
-              </div>
-              <div>
-                <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Upload file (optional)</label>
-                <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  onChange={e => setSelectedFile(e.target.files?.[0] || null)}
-                  style={{ fontSize:'13px', color:'#4A5E64' }} />
-                {selectedFile && <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'4px' }}>\u2713 {selectedFile.name}</p>}
-              </div>
-              <div style={{ display:'flex', gap:'10px' }}>
-                <button type="button" onClick={() => setShowUpload(false)}
-                  style={{ background:'transparent', color:'#0A0A0A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor:'pointer' }}>Cancel</button>
-                <button type="button" onClick={uploadDoc} disabled={!form.title || uploading}
-                  style={{ flex:1, background:'#0A0A0A', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:!form.title || uploading ? 'not-allowed' : 'pointer', opacity:!form.title || uploading ? 0.5 : 1 }}>
-                  {uploading ? 'Saving...' : 'Save to vault \u2192'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div style={{ display:'flex', gap:'6px', marginBottom:'16px', flexWrap:'wrap' as const }}>
-          {[{ value:'all', label:'All' }, ...DOC_TYPES].map(t => (
-            <button key={t.value} type="button" onClick={() => setFilter(t.value)}
-              style={{ padding:'5px 12px', borderRadius:'100px', fontSize:'12px', fontWeight:filter === t.value ? 600 : 400, background:filter === t.value ? '#0A0A0A' : 'rgba(28,43,50,0.06)', color:filter === t.value ? 'white' : '#4A5E64', border:'1px solid ' + (filter === t.value ? '#0A0A0A' : 'rgba(28,43,50,0.1)'), cursor:'pointer' }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {filteredDocs.length === 0 ? (
-          <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'48px', textAlign:'center' as const }}>
-            <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.3 }}>🗃</div>
-            <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:500, marginBottom:'6px' }}>
-              {filter === 'all' ? 'Your vault is empty' : 'No ' + (DOC_TYPES.find(t => t.value === filter)?.label.toLowerCase() || '') + ' documents yet'}
-            </p>
-            <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'16px' }}>
-              Completed Steadyhand jobs automatically deposit scope agreements, milestone records and warranty certificates here.
-            </p>
-            <button type="button" onClick={() => setShowUpload(true)}
-              style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-              + Add your first document
-            </button>
-          </div>
-        ) : (
-          <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px' }}>
-            {filteredDocs.map(doc => {
-              const docType = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
-              const isMetadataOnly = !doc.file_url && ['scope','warranty','milestone','consult'].includes(doc.document_type)
-              const isExpired = doc.expiry_date && new Date(doc.expiry_date) < new Date()
-              const isExpiringSoon = doc.expiry_date && !isExpired && new Date(doc.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-              return (
-                <div key={doc.id} style={{ background:'#E8F0EE', border:'1px solid ' + (isExpired ? 'rgba(212,82,42,0.3)' : isExpiringSoon ? 'rgba(192,120,48,0.3)' : 'rgba(28,43,50,0.1)'), borderRadius:'12px', padding:'16px 20px' }}>
-                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px' }}>
-                    <div style={{ display:'flex', alignItems:'flex-start', gap:'12px', flex:1 }}>
-                      <div style={{ width:'36px', height:'36px', borderRadius:'10px', background:docType.color + '18', border:'1px solid ' + docType.color + '30', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px', flexShrink:0 }}>
-                        {docType.icon}
-                      </div>
-                      <div style={{ flex:1 }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'3px', flexWrap:'wrap' as const }}>
-                          <p style={{ fontSize:'14px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{doc.title}</p>
-                          <span style={{ fontSize:'10px', color:docType.color, background:docType.color + '12', border:'1px solid ' + docType.color + '25', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>{docType.label}</span>
-                          {isExpired && <span style={{ fontSize:'10px', color:'#D4522A', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>EXPIRED</span>}
-                          {isExpiringSoon && <span style={{ fontSize:'10px', color:'#C07830', background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'4px', padding:'1px 7px', fontWeight:600 }}>EXPIRING SOON</span>}
-                        </div>
-                        <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' as const }}>
-                          {doc.tradie_name && <span style={{ fontSize:'12px', color:'#7A9098' }}>{doc.tradie_name}</span>}
-                          {doc.issued_date && <span style={{ fontSize:'12px', color:'#7A9098' }}>Issued {new Date(doc.issued_date).toLocaleDateString('en-AU')}</span>}
-                          {doc.expiry_date && <span style={{ fontSize:'12px', color:isExpired ? '#D4522A' : isExpiringSoon ? '#C07830' : '#7A9098' }}>Expires {new Date(doc.expiry_date).toLocaleDateString('en-AU')}</span>}
-                          {doc.job_title && <span style={{ fontSize:'12px', color:'#7A9098' }}>Job: {doc.job_title}</span>}
-                        </div>
-                        {doc.notes && <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'6px', lineHeight:'1.5' }}>{doc.notes}</p>}
-                      </div>
-                    </div>
-                    <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0 }}>
-                      {isMetadataOnly && <span style={{ fontSize:'10px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'4px', padding:'2px 7px', whiteSpace:'nowrap' as const }}>Steadyhand record</span>}
-                      {isMetadataOnly && doc.job_id && (doc.document_type === 'scope' || doc.document_type === 'warranty') && (
-                        <a href={'/api/pdf/' + doc.document_type + '?job_id=' + doc.job_id} target="_blank" rel="noreferrer"
-                          style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'none', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 10px', whiteSpace:'nowrap' as const }}>
-                          ↓ Download
-                        </a>
-                      )}
-                      {doc.file_url && (
-                        <a href={doc.file_url} target="_blank" rel="noreferrer"
-                          style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px' }}>
-                          View →
-                        </a>
-                      )}
-                      <button type="button" onClick={() => deleteDoc(doc.id)}
-                        style={{ fontSize:'12px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:'4px' }}>\xd7</button>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-
-        {docs.length > 0 && (
-          <div className='vault-stats-grid' style={{ marginTop:'24px', display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'10px' }}>
-            {[
-              { label:'Total documents', value:docs.length },
-              { label:'With files', value:docs.filter(d => d.file_url).length },
-              { label:'Expiring soon', value:expiringSoon.length, alert:expiringSoon.length > 0 },
-            ].map(s => (
-              <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px 16px', textAlign:'center' as const }}>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:(s as any).alert ? '#C07830' : '#0A0A0A', margin:'0 0 3px' }}>{s.value}</p>
-                <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ── Shared with me ── */}
-        {sharedWithMe.length > 0 && (
-          <div style={{ marginTop:'32px' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'14px' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:0 }}>SHARED WITH YOU</p>
-              <span style={{ fontSize:'11px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', color:'#2E6A8F', borderRadius:'100px', padding:'2px 8px', fontWeight:600 }}>{sharedWithMe.length}</span>
-            </div>
-            <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
-              {sharedWithMe.map((doc: any) => {
-                const docType = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
-                const isMetadataOnly = !doc.file_url && ['scope','warranty','milestone','consult'].includes(doc.document_type)
-                return (
-                  <div key={doc.id} style={{ background:'#E8F0EE', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'12px', padding:'14px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'12px', flex:1, minWidth:0 }}>
-                      <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'rgba(46,106,143,0.1)', border:'1px solid rgba(46,106,143,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px', flexShrink:0 }}>
-                        {docType.icon}
-                      </div>
-                      <div style={{ minWidth:0 }}>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{doc.title}</p>
-                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
-                          Shared by {doc._shared_by_name || 'your tradie'}
-                          {doc.job?.title ? ' · ' + doc.job.title : ''}
-                        </p>
-                      </div>
-                    </div>
-                    <div style={{ display:'flex', gap:'8px', alignItems:'center', flexShrink:0 }}>
-                      <span style={{ fontSize:'10px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'100px', padding:'2px 8px' }}>View only</span>
-                      {doc.file_url && (
-                        <a href={doc.file_url} target="_blank" rel="noreferrer"
-                          style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'5px 10px' }}>
-                          Open →
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
       </div>
 
-      {/* DOCUMENT VIEWER MODAL */}
-      {selectedDoc && (
-        <div style={{ position:'fixed', inset:0, background:'rgba(28,43,50,0.7)', zIndex:500, display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}
-          onClick={e => { if (e.target === e.currentTarget) setSelectedDoc(null) }}>
-          <div style={{ background:'white', borderRadius:'16px', width:'100%', maxWidth:'900px', maxHeight:'90vh', overflow:'hidden', display:'flex', flexDirection:'column' as const }}>
-            <div style={{ padding:'16px 20px', borderBottom:'1px solid #F0F0F0', display:'flex', justifyContent:'space-between', alignItems:'center', background:'#0A0A0A' }}>
+      {/* Upload form */}
+      {showUpload && (
+        <div style={{ background:'#E8F0EE', borderBottom:'1px solid rgba(28,43,50,0.1)', padding:'20px 24px' }}>
+          <div style={{ maxWidth:'780px', margin:'0 auto' }}>
+            <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', marginBottom:'14px' }}>Add document to vault</p>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px', marginBottom:'10px' }}>
               <div>
-                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'rgba(216,228,225,0.9)', margin:0 }}>{selectedDoc.title}</p>
-                <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', margin:'2px 0 0' }}>{selectedDoc.document_type}</p>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Title *</label>
+                <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Electrical scope — Subiaco" style={inp} />
               </div>
-              <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
-                <a href={selectedDoc.file_url} target="_blank" rel="noreferrer"
-                  style={{ fontSize:'12px', color:'rgba(216,228,225,0.7)', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(216,228,225,0.2)', borderRadius:'6px' }}>
-                  Open in new tab ↗
-                </a>
-                <button type="button" onClick={() => setSelectedDoc(null)}
-                  style={{ background:'none', border:'none', color:'rgba(216,228,225,0.6)', cursor:'pointer', fontSize:'20px', lineHeight:1, padding:'0 4px' }}>×</button>
+              <div>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Type</label>
+                <select value={form.document_type} onChange={e => setForm(f => ({ ...f, document_type: e.target.value }))} style={inp}>
+                  {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Trade business</label>
+                <input type="text" value={form.tradie_name} onChange={e => setForm(f => ({ ...f, tradie_name: e.target.value }))} placeholder="e.g. Smith Electrical" style={inp} />
               </div>
             </div>
-            <div className='vault-viewer-grid' style={{ display:'grid', gridTemplateColumns:'1fr 280px', flex:1, overflow:'hidden', minHeight:0 }}>
-              <div style={{ overflow:'auto', background:'#F4F8F7', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'16px' }}>
-                {loadingSignedUrl ? (
-                  <div style={{ display:'flex', alignItems:'center', justifyContent:'center', width:'100%', height:'200px' }}><p style={{ color:'#7A9098', fontSize:'13px' }}>Loading document...</p></div>
-                ) : signedUrl?.match(/\.(jpg|jpeg|png|gif|webp)/i) ? (
-                  <img src={signedUrl} alt={selectedDoc.title} style={{ maxWidth:'100%', borderRadius:'8px', boxShadow:'0 4px 20px rgba(28,43,50,0.15)' }} />
-                ) : signedUrl?.match(/\.pdf/i) ? (
-                  <iframe src={signedUrl} style={{ width:'100%', height:'600px', border:'none', borderRadius:'8px' }} title={selectedDoc.title} />
-                ) : (
-                  <div style={{ textAlign:'center' as const, padding:'40px' }}>
-                    <p style={{ fontSize:'40px', marginBottom:'12px' }}>📎</p>
-                    <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'16px' }}>Preview not available for this file type</p>
-                    <a href={signedUrl || selectedDoc.file_url} target="_blank" rel="noreferrer"
-                      style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', textDecoration:'none', fontSize:'13px' }}>
-                      Download file →
-                    </a>
-                  </div>
-                )}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px', marginBottom:'10px' }}>
+              <div>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Issue date</label>
+                <input type="date" value={form.issued_date} onChange={e => setForm(f => ({ ...f, issued_date: e.target.value }))} style={inp} />
               </div>
-              <div className='vault-viewer-sidebar' style={{ padding:'16px', borderLeft:'1px solid #F0F0F0', display:'flex', flexDirection:'column' as const, gap:'12px', overflow:'auto' }}>
-                <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Document details</p>
-                  {selectedDoc.issued_date && <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'4px' }}>Issued: {new Date(selectedDoc.issued_date).toLocaleDateString('en-AU')}</p>}
-                  {selectedDoc.expiry_date && <p style={{ fontSize:'12px', color: new Date(selectedDoc.expiry_date) < new Date() ? '#D4522A' : '#4A5E64', marginBottom:'4px' }}>Expires: {new Date(selectedDoc.expiry_date).toLocaleDateString('en-AU')}</p>}
-                  {selectedDoc.tradie_name && <p style={{ fontSize:'12px', color:'#4A5E64', marginBottom:'4px' }}>Tradie: {selectedDoc.tradie_name}</p>}
-                </div>
-                <div style={{ flex:1 }}>
-                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Notes &amp; annotations</p>
-                  <textarea value={annotationText} onChange={e => setAnnotationText(e.target.value)}
-                    placeholder="Add notes, observations or annotations about this document..."
-                    style={{ width:'100%', minHeight:'160px', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', color:'#0A0A0A', background:'#F4F8F7', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', boxSizing:'border-box' as const }} />
-                  <button type="button" onClick={saveAnnotation} disabled={savingAnnotation}
-                    style={{ width:'100%', marginTop:'8px', background: annotationSaved ? '#2E7D60' : '#0A0A0A', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                    {annotationSaved ? '✓ Saved' : savingAnnotation ? 'Saving...' : 'Save notes →'}
-                  </button>
-                </div>
-
-                {/* Share with tradie */}
-                {jobs.length > 0 && (
-                  <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', paddingTop:'12px' }}>
-                    <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', marginBottom:'8px', textTransform:'uppercase' as const }}>Share with tradie</p>
-                    <select value={shareJobId} onChange={e => setShareJobId(e.target.value)}
-                      style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'12px', background:'#F4F8F7', color:'#0A0A0A', marginBottom:'8px', boxSizing:'border-box' as const }}>
-                      <option value="">Select a job...</option>
-                      {jobs.map((j: any) => <option key={j.id} value={j.id}>{j.title} — {j.tradie?.business_name}</option>)}
-                    </select>
-                    {shareSuccess ? (
-                      <p style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500, margin:0 }}>✓ Shared with tradie</p>
-                    ) : (
-                      <button type="button" onClick={shareWithTradie} disabled={sharing || !shareJobId}
-                        style={{ width:'100%', background: sharing || !shareJobId ? 'rgba(28,43,50,0.2)' : '#2E6A8F', color:'white', padding:'8px', borderRadius:'8px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                        {sharing ? 'Sharing...' : 'Share with tradie →'}
-                      </button>
-                    )}
-                  </div>
-                )}
+              <div>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Expiry date</label>
+                <input type="date" value={form.expiry_date} onChange={e => setForm(f => ({ ...f, expiry_date: e.target.value }))} style={inp} />
               </div>
+              <div>
+                <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>File (optional)</label>
+                <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  onChange={e => setSelectedFile(e.target.files?.[0] || null)}
+                  style={{ fontSize:'12px', color:'#4A5E64', width:'100%' }} />
+              </div>
+            </div>
+            <div style={{ marginBottom:'12px' }}>
+              <label style={{ display:'block', fontSize:'11px', fontWeight:500, color:'#4A5E64', marginBottom:'4px' }}>Notes</label>
+              <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2}
+                placeholder="Any relevant context or notes about this document..."
+                style={{ ...inp, resize:'vertical', minHeight:'60px' }} />
+            </div>
+            {uploadError && <p style={{ fontSize:'12px', color:'#D4522A', marginBottom:'8px' }}>{uploadError}</p>}
+            <div style={{ display:'flex', gap:'8px' }}>
+              <button type="button" onClick={uploadDoc} disabled={!form.title || uploading}
+                style={{ background:'#1C2B32', color:'white', padding:'9px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: !form.title || uploading ? 0.5 : 1 }}>
+                {uploading ? 'Saving...' : 'Save to vault →'}
+              </button>
+              <button type="button" onClick={() => setShowUpload(false)}
+                style={{ background:'none', color:'#7A9098', padding:'9px 14px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.15)', cursor:'pointer' }}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Three-panel layout */}
+      <div style={{ display:'grid', gridTemplateColumns:'220px 1fr', minHeight:'calc(100vh - 130px)' }}>
+
+        {/* ── File tree sidebar ── */}
+        <div style={{ background:'white', borderRight:'1px solid rgba(28,43,50,0.08)', padding:'16px 0' }}>
+          {FOLDERS.map(f => (
+            <button key={f.key} type="button" onClick={() => { setFolder(f.key); setSelectedDoc(null) }}
+              style={{ display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%', padding:'8px 16px', background: folder === f.key ? '#E8F0EE' : 'transparent', border:'none', borderLeft: folder === f.key ? '3px solid #1C2B32' : '3px solid transparent', cursor:'pointer', textAlign:'left' }}>
+              <span style={{ fontSize:'13px', color: folder === f.key ? '#1C2B32' : '#4A5E64', fontWeight: folder === f.key ? 600 : 400 }}>
+                {f.icon} {f.label}
+              </span>
+              {counts[f.key] > 0 && (
+                <span style={{ fontSize:'11px', color:'#7A9098', background:'rgba(28,43,50,0.06)', borderRadius:'100px', padding:'1px 7px' }}>
+                  {counts[f.key]}
+                </span>
+              )}
+            </button>
+          ))}
+
+          <div style={{ borderTop:'1px solid rgba(28,43,50,0.08)', marginTop:'12px', padding:'12px 16px' }}>
+            <p style={{ fontSize:'11px', color:'#9AA5AA', lineHeight:'1.6', margin:0 }}>
+              Documents are auto-filed here when jobs complete — scope agreements, milestone records, consult notes and warranty certificates.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Main content + viewer ── */}
+        <div style={{ display:'grid', gridTemplateColumns: selectedDoc ? '1fr 420px' : '1fr', minHeight:0 }}>
+
+          {/* Document list */}
+          <div style={{ padding:'20px', overflowY:'auto' }}>
+            {filtered.length === 0 ? (
+              <div style={{ background:'#E8F0EE', borderRadius:'14px', padding:'48px', textAlign:'center' }}>
+                <div style={{ fontSize:'36px', marginBottom:'12px', opacity:0.3 }}>🗃</div>
+                <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:500, marginBottom:'6px' }}>
+                  {search ? 'No documents match your search' : folder === 'all' ? 'Your vault is empty' : 'No documents in this folder yet'}
+                </p>
+                <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'16px' }}>
+                  Completed jobs automatically deposit scope agreements, milestone records and warranty certificates here.
+                </p>
+                <button type="button" onClick={() => setShowUpload(true)}
+                  style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  + Add document
+                </button>
+              </div>
+            ) : (
+              <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+                {filtered.map(doc => {
+                  const dt = DOC_TYPES.find(t => t.value === doc.document_type) || DOC_TYPES[DOC_TYPES.length - 1]
+                  const isExpired = doc.expiry_date && new Date(doc.expiry_date) < new Date()
+                  const isExpiringSoon = doc.expiry_date && !isExpired && new Date(doc.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                  const isSelected = selectedDoc?.id === doc.id
+                  return (
+                    <div key={doc.id}
+                      onClick={() => openDoc(doc)}
+                      style={{ background: isSelected ? 'white' : '#E8F0EE', border:'1px solid ' + (isSelected ? '#1C2B32' : isExpired ? 'rgba(212,82,42,0.3)' : isExpiringSoon ? 'rgba(192,120,48,0.3)' : 'rgba(28,43,50,0.1)'), borderRadius:'10px', padding:'12px 16px', cursor:'pointer', transition:'all 0.1s' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                        <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:dt.color + '18', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'14px', flexShrink:0 }}>
+                          {dt.icon}
+                        </div>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px' }}>
+                            <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{doc.title}</p>
+                            {isExpired && <span style={{ fontSize:'9px', color:'#D4522A', background:'rgba(212,82,42,0.08)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>EXPIRED</span>}
+                            {isExpiringSoon && <span style={{ fontSize:'9px', color:'#C07830', background:'rgba(192,120,48,0.08)', borderRadius:'4px', padding:'1px 6px', fontWeight:600 }}>EXPIRING</span>}
+                            {!doc.file_url && <span style={{ fontSize:'9px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', borderRadius:'4px', padding:'1px 6px' }}>Record</span>}
+                            {doc.file_url && <span style={{ fontSize:'9px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', borderRadius:'4px', padding:'1px 6px' }}>File</span>}
+                          </div>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                            {dt.label}
+                            {doc.tradie_name ? ' · ' + doc.tradie_name : ''}
+                            {doc.job_title ? ' · ' + doc.job_title : ''}
+                            {doc.issued_date ? ' · ' + new Date(doc.issued_date).toLocaleDateString('en-AU') : ''}
+                          </p>
+                        </div>
+                        <button type="button" onClick={e => { e.stopPropagation(); deleteDoc(doc.id) }}
+                          style={{ fontSize:'16px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:'2px 6px', flexShrink:0 }}>
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* ── Document viewer + annotation panel ── */}
+          {selectedDoc && (
+            <div style={{ background:'white', borderLeft:'1px solid rgba(28,43,50,0.08)', display:'flex', flexDirection:'column', height:'100%', overflow:'hidden' }}>
+              {/* Viewer header */}
+              <div style={{ padding:'14px 16px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{selectedDoc.title}</p>
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                    {DOC_TYPES.find(t => t.value === selectedDoc.document_type)?.label}
+                    {selectedDoc.tradie_name ? ' · ' + selectedDoc.tradie_name : ''}
+                  </p>
+                </div>
+                <button type="button" onClick={() => setSelectedDoc(null)}
+                  style={{ fontSize:'18px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:'0 4px', marginLeft:'8px' }}>×</button>
+              </div>
+
+              {/* File viewer */}
+              <div style={{ flex:1, overflow:'hidden', background:'#F4F8F7', position:'relative', minHeight:'300px' }}>
+                {loadingUrl && (
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100%' }}>
+                    <p style={{ fontSize:'13px', color:'#7A9098' }}>Loading document...</p>
+                  </div>
+                )}
+                {!loadingUrl && !selectedDoc.file_url && (
+                  <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:'100%', padding:'24px', textAlign:'center' }}>
+                    <div style={{ fontSize:'32px', marginBottom:'10px', opacity:0.4 }}>📋</div>
+                    <p style={{ fontSize:'13px', fontWeight:500, color:'#4A5E64', marginBottom:'6px' }}>Steadyhand record</p>
+                    <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'16px' }}>
+                      This document was auto-filed from your job. No separate file is attached — the record exists in your job history.
+                    </p>
+                    {selectedDoc.job_id && (selectedDoc.document_type === 'scope' || selectedDoc.document_type === 'warranty') && (
+                      <a href={'/api/pdf/' + selectedDoc.document_type + '?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                        style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 16px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
+                        ↓ Download PDF
+                      </a>
+                    )}
+                  </div>
+                )}
+                {!loadingUrl && viewerUrl && (() => {
+                  const ext = (viewerUrl.split('?')[0].split('.').pop() || '').toLowerCase()
+                  if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                    return <img src={viewerUrl} alt={selectedDoc.title} style={{ width:'100%', height:'100%', objectFit:'contain', padding:'16px', boxSizing:'border-box' }} />
+                  }
+                  return (
+                    <div style={{ height:'100%', display:'flex', flexDirection:'column' }}>
+                      <iframe src={viewerUrl} style={{ flex:1, border:'none', width:'100%' }} title={selectedDoc.title} />
+                      <div style={{ padding:'8px 12px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', gap:'8px' }}>
+                        <a href={viewerUrl} target="_blank" rel="noreferrer"
+                          style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', padding:'5px 10px', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', background:'rgba(46,106,143,0.06)' }}>
+                          Open in new tab →
+                        </a>
+                        <a href={viewerUrl} download={selectedDoc.file_name || selectedDoc.title}
+                          style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'none', padding:'5px 10px', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', background:'rgba(46,125,96,0.06)' }}>
+                          ↓ Download
+                        </a>
+                      </div>
+                    </div>
+                  )
+                })()}
+              </div>
+
+              {/* Metadata */}
+              <div style={{ padding:'14px 16px', borderTop:'1px solid rgba(28,43,50,0.08)', borderBottom:'1px solid rgba(28,43,50,0.08)' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'6px' }}>
+                  {[
+                    ['Trade business', selectedDoc.tradie_name],
+                    ['Job', selectedDoc.job_title],
+                    ['Issued', selectedDoc.issued_date ? new Date(selectedDoc.issued_date).toLocaleDateString('en-AU') : null],
+                    ['Expires', selectedDoc.expiry_date ? new Date(selectedDoc.expiry_date).toLocaleDateString('en-AU') : null],
+                  ].filter(([, v]) => v).map(([k, v]) => (
+                    <div key={String(k)}>
+                      <p style={{ fontSize:'10px', color:'#9AA5AA', margin:'0 0 1px', textTransform:'uppercase', letterSpacing:'0.3px' }}>{k}</p>
+                      <p style={{ fontSize:'12px', color:'#1C2B32', margin:0 }}>{v}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Annotation */}
+              <div style={{ padding:'14px 16px' }}>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#4A5E64', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 8px' }}>Notes & annotations</p>
+                <textarea value={annotation} onChange={e => setAnnotation(e.target.value)}
+                  placeholder="Add notes about this document — reminders, context, or follow-up actions..."
+                  rows={4}
+                  style={{ ...inp, resize:'vertical', marginBottom:'8px' }} />
+                <button type="button" onClick={saveNote} disabled={savingNote}
+                  style={{ background:'#1C2B32', color:'white', padding:'7px 14px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: savingNote ? 0.7 : 1 }}>
+                  {noteSaved ? '✓ Saved' : savingNote ? 'Saving...' : 'Save note'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

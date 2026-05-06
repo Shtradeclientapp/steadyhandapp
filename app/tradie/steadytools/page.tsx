@@ -101,7 +101,7 @@ export default function SteadytoolsPage() {
             { icon:'👤', label:'Invite or import a lead', sub:'From Simpro, Tradify, paper or phone', href:'/tradie/lead', color:'#D4522A' },
             { icon:'📊', label:'Dialogue Rating', sub:'Your communication score', href:'/tradie/profile', color:'#2E6A8F' },
             { icon:'📅', label:'Your profile', sub:'Business details, categories, areas', href:'/tradie/profile', color:'#C07830' },
-            { icon:'👷', label:'Field Team', sub:'Invite workers, assign to jobs', href:'/tradie/dashboard#field-team', color:'#2E7D60' },
+            { icon:'👷', label:'Field Team', sub:'Invite workers, assign to jobs', href:'/tradie/workers', color:'#2E7D60' },
             { icon:'📋', label:'Active jobs', sub:'Milestones, consults, delivery', href:'/tradie/dashboard', color:'#2E7D60' },
           ].map(item => (
             <a key={item.label} href={item.href} style={{ textDecoration:'none' }}>
@@ -222,10 +222,10 @@ export default function SteadytoolsPage() {
           </div>
           <div style={{ padding:'14px', display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))', gap:'10px' }}>
             {[
-              { icon:'⭐', title:'Improve your Dialogue Rating', body:'Pricing transparency and risk disclosure matter most.', href:'https://www.steadyhanddigital.com', label:'How scoring works →' },
-              { icon:'📄', title:'Writing better scope agreements', body:'Clear inclusions protect you from scope creep and disputes.', href:'https://www.steadyhanddigital.com', label:'Scope writing guide →' },
+              { icon:'⭐', title:'Improve your Dialogue Rating', body:'Pricing transparency and risk disclosure matter most.', href:'/guides', label:'Trade guides →' },
+              { icon:'📄', title:'Writing better scope agreements', body:'Clear inclusions protect you from scope creep and disputes.', href:'/help', label:'Help & support →' },
               { icon:'✅', title:'Licence and compliance — WA', body:'Stay current with WA Building Commission requirements.', href:'https://www.buildingcommission.com.au', label:'Building Commission WA →' },
-              { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty.', href:'https://www.steadyhanddigital.com', label:'Steadyhand Digital →' },
+              { icon:'💻', title:'Digital tools for trade businesses', body:'Xero for invoicing, Steadyhand for scope and warranty.', href:'/tradie/vault', label:'Open your vault →' },
             ].map(card => (
               <a key={card.title} href={card.href} target="_blank" rel="noreferrer" style={{ textDecoration:'none' }}>
                 <div style={{ background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px' }}>

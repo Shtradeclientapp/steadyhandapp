@@ -32,7 +32,7 @@ export default function AdminPage() {
   const loadAll = async (supabase: any) => {
     const [{ data: t }, { data: c }, { data: j }] = await Promise.all([
       supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, is_admin, created_at)').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*').eq('role', 'client').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('*, admin_notes').eq('role', 'client').order('created_at', { ascending: false }),
       supabase.from('jobs').select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name, email)').order('created_at', { ascending: false }).limit(200),
     ])
     setTradies(t || [])
@@ -330,33 +330,113 @@ export default function AdminPage() {
 
         {/* ── CLIENTS ── */}
         {tab === 'clients' && (
-          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', overflow:'hidden' }}>
-            <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:0 }}>ALL CLIENTS</p>
+          <div style={{ display:'grid', gridTemplateColumns: selected ? '1fr 360px' : '1fr', gap:'20px', alignItems:'start' }}>
+            <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', overflow:'hidden' }}>
+              <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:0 }}>ALL CLIENTS</p>
+              </div>
+              <table style={{ width:'100%', borderCollapse:'collapse' as const }}>
+                <thead>
+                  <tr style={{ borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                    {['Name','Email','Suburb','Jobs','Joined','Actions'].map(h => (
+                      <th key={h} style={{ padding:'8px 12px', fontSize:'11px', color:'rgba(216,228,225,0.35)', textAlign:'left' as const, fontWeight:500 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredClients.map(cl => {
+                    const clientJobs = jobs.filter(j => j.client_id === cl.id)
+                    return (
+                      <tr key={cl.id} style={{ borderBottom:'1px solid rgba(255,255,255,0.04)', background: selected?.id === cl.id ? 'rgba(255,255,255,0.04)' : 'transparent' }}>
+                        <td style={{ padding:'10px 12px', fontSize:'13px', color:'rgba(216,228,225,0.8)' }}>{cl.full_name || '—'}</td>
+                        <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{cl.email}</td>
+                        <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{cl.suburb || '—'}</td>
+                        <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{clientJobs.length}</td>
+                        <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.35)' }}>{new Date(cl.created_at).toLocaleDateString('en-AU')}</td>
+                        <td style={{ padding:'10px 12px' }}>
+                          <button type="button" onClick={() => setSelected(selected?.id === cl.id ? null : cl)} style={btn('#2E6A8F')}>
+                            {selected?.id === cl.id ? 'Close' : 'View'}
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
-            <table style={{ width:'100%', borderCollapse:'collapse' as const }}>
-              <thead>
-                <tr style={{ borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
-                  {['Name','Email','Suburb','Jobs','Joined'].map(h => (
-                    <th key={h} style={{ padding:'8px 12px', fontSize:'11px', color:'rgba(216,228,225,0.35)', textAlign:'left' as const, fontWeight:500 }}>{h}</th>
+
+            {selected && tab === 'clients' && (
+              <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', padding:'20px', position:'sticky', top:'24px' }}>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:0 }}>CLIENT DETAIL</p>
+                  <button type="button" onClick={() => setSelected(null)} style={{ background:'none', border:'none', color:'rgba(216,228,225,0.4)', cursor:'pointer', fontSize:'18px' }}>×</button>
+                </div>
+
+                {/* Metadata */}
+                <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 4px' }}>{selected.full_name || '—'}</p>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'0 0 16px' }}>{selected.email}</p>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px', marginBottom:'16px' }}>
+                  {[
+                    ['Role', selected.role],
+                    ['Suburb', selected.suburb || '—'],
+                    ['Phone', selected.phone || '—'],
+                    ['Subscription', selected.subscription_plan || 'free'],
+                    ['Joined', new Date(selected.created_at).toLocaleDateString('en-AU')],
+                    ['Last updated', new Date(selected.updated_at).toLocaleDateString('en-AU')],
+                  ].map(([k, v]) => (
+                    <div key={k} style={{ display:'flex', justifyContent:'space-between', gap:'12px' }}>
+                      <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', margin:0, flexShrink:0 }}>{k}</p>
+                      <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.7)', margin:0, textAlign:'right' as const }}>{v}</p>
+                    </div>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredClients.map(c => {
-                  const clientJobs = jobs.filter(j => j.client_id === c.id)
-                  return (
-                    <tr key={c.id} style={{ borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
-                      <td style={{ padding:'10px 12px', fontSize:'13px', color:'rgba(216,228,225,0.8)' }}>{c.full_name || '—'}</td>
-                      <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{c.email}</td>
-                      <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{c.suburb || '—'}</td>
-                      <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{clientJobs.length}</td>
-                      <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.35)' }}>{new Date(c.created_at).toLocaleDateString('en-AU')}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                </div>
+
+                {/* Jobs */}
+                {jobs.filter(j => j.client_id === selected.id).length > 0 && (
+                  <div style={{ marginBottom:'16px' }}>
+                    <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', textTransform:'uppercase' as const, letterSpacing:'0.5px', margin:'0 0 8px' }}>Jobs</p>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                      {jobs.filter(j => j.client_id === selected.id).map(j => (
+                        <div key={j.id} style={{ background:'rgba(255,255,255,0.04)', borderRadius:'8px', padding:'8px 12px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                          <div>
+                            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.8)', margin:0 }}>{j.title}</p>
+                            <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', margin:0 }}>{j.trade_category} · {j.suburb}</p>
+                          </div>
+                          <span style={{ fontSize:'10px', padding:'2px 8px', borderRadius:'100px', background:'rgba(255,255,255,0.06)', color:'rgba(216,228,225,0.5)' }}>{j.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Subscription override */}
+                <div style={{ marginBottom:'12px' }}>
+                  <label style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', display:'block', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Subscription plan</label>
+                  <select defaultValue={selected.subscription_plan || 'free'}
+                    onChange={e => save({ subscription_plan: e.target.value }, 'profiles', selected.id)}
+                    style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }}>
+                    {['free','home','home_annual'].map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+
+                {/* Admin notes */}
+                <div style={{ marginBottom:'12px' }}>
+                  <label style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', display:'block', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Admin notes</label>
+                  <textarea defaultValue={selected.admin_notes || ''} id="client_admin_notes" rows={3}
+                    style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)', resize:'vertical' as const }} />
+                  <button type="button" onClick={() => {
+                    const val = (document.getElementById('client_admin_notes') as HTMLTextAreaElement)?.value
+                    save({ admin_notes: val }, 'profiles', selected.id)
+                  }} style={{ ...btn('#2E6A8F'), marginTop:'6px' }}>Save notes</button>
+                </div>
+
+                {/* Suspend */}
+                <button type="button" onClick={() => save({ suspended_at: selected.suspended_at ? null : new Date().toISOString() }, 'profiles', selected.id)}
+                  style={btn(selected.suspended_at ? '#2E7D60' : '#D4522A')}>
+                  {selected.suspended_at ? 'Reinstate account' : 'Suspend account'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

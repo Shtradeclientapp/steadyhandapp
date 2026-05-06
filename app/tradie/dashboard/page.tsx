@@ -176,27 +176,25 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
   const pendingWorkers = workers.filter(w => w.status === 'invited')
 
   return (
-    <div style={{ marginBottom:'32px' }}>
-      <div onClick={() => setExpanded(!expanded)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px', cursor:'pointer', userSelect:'none' as const }}>
+    <div style={{ background:'white', borderRadius:'14px', padding:'20px 24px', marginBottom:'24px', border:'1px solid rgba(28,43,50,0.08)' }}>
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
         <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-          <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', margin:0 }}>FIELD TEAM</h2>
+          <h2 style={{ fontSize:'15px', fontWeight:600, color:'#1C2B32', margin:0 }}>Field team</h2>
           {activeWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{activeWorkers.length} active</span>}
           {pendingWorkers.length > 0 && <span style={{ fontSize:'11px', background:'rgba(192,120,48,0.1)', color:'#C07830', borderRadius:'100px', padding:'2px 8px', fontWeight:500 }}>{pendingWorkers.length} invited</span>}
-          {workers.length === 0 && <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)' }}>— invite your first worker</span>}
         </div>
-        <span style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', fontWeight:500 }}>{expanded ? 'Close ▲' : 'Manage ▼'}</span>
+        <a href="/tradie/workers" style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, textDecoration:'none' }}>Manage workers →</a>
       </div>
 
-      {expanded && (
-        <div>
+      <div>
           {workers.length > 0 && (
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
               {workers.map(w => (
-                <div key={w.id} style={{ background:'rgba(216,228,225,0.06)', borderRadius:'10px', padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                <div key={w.id} style={{ background:'#F4F8F7', borderRadius:'10px', padding:'12px 16px', border:'1px solid rgba(28,43,50,0.07)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                     <div style={{ width:'32px', height:'32px', borderRadius:'50%', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:600, color:'white', flexShrink:0 }}>{w.name?.charAt(0)?.toUpperCase() || '?'}</div>
                     <div>
-                      <p style={{ fontSize:'13px', fontWeight:500, color:'rgba(216,228,225,0.9)', margin:0 }}>{w.name}</p>
+                      <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:0 }}>{w.name}</p>
                       <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{w.email}{w.phone ? ` · ${w.phone}` : ''}</p>
                     </div>
                   </div>
@@ -237,7 +235,6 @@ function FieldTeamPanel({ tradieId, activeJobs }: { tradieId: string|undefined, 
             </button>
           </div>
         </div>
-      )}
     </div>
   )
 }
