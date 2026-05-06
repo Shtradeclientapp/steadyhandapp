@@ -767,7 +767,10 @@ export default function AgreementPage() {
                 )}
 
                 <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
-                  <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>🔒 <strong>Preview release:</strong> Milestones are recorded in the scope as documentation. A single payment is collected at signoff. Deposit and per-milestone payments will be available in Steadyhand v1.</p>
+
+                </div>
+                <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
+                  <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>A <strong>deposit + completion</strong> structure is set by default — adjust the amounts and labels to match the job. Clients pay each milestone as work is approved.</p>
                 </div>
                 <MilestoneEditor scope={scope} currentQuote={currentQuote} onSave={(milestones:any) => saveEdit({ milestones })} />
 

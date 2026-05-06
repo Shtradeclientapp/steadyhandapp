@@ -1,27 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const query = request.nextUrl.searchParams.get('query')
-  if (!query) return NextResponse.json({ suggestions: [] })
+export async function GET(req: NextRequest) {
+  const query = req.nextUrl.searchParams.get('query') || ''
+  const type  = req.nextUrl.searchParams.get('type') || 'suburb'
+  const key   = process.env.GOOGLE_PLACES_API_KEY
 
-  try {
-    const apiKey = process.env.GOOGLE_PLACES_API_KEY
-    if (!apiKey) {
-      console.warn('GOOGLE_PLACES_API_KEY is not set — suburb autocomplete will not work')
-      return NextResponse.json({ suggestions: [], error: 'API_KEY_MISSING' })
-    }
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&types=(regions)&components=country:au&key=${apiKey}`
-    const res = await fetch(url)
-    const data = await res.json()
-    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') {
-      return NextResponse.json({ suggestions: [], error: data.status })
-    }
-    const suggestions = (data.predictions || [])
-      .map((p: any) => p.structured_formatting?.main_text || p.description)
-      .filter(Boolean)
-      .slice(0, 5)
+  if (!key) return NextResponse.json({ error: 'No API key' }, { status: 500 })
+  if (query.length < 2) return NextResponse.json({ suggestions: [] })
+
+  if (type === 'suburb') {
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query + ' Western Australia')}&types=(regions)&components=country:au&key=${key}`
+    const r = await fetch(url)
+    const d = await r.json()
+    const suggestions = (d.predictions || []).map((p: any) => p.structured_formatting?.main_text || p.description).slice(0, 6)
     return NextResponse.json({ suggestions })
-  } catch (e) {
-    return NextResponse.json({ suggestions: [] })
   }
+
+  return NextResponse.json({ suggestions: [] })
 }
