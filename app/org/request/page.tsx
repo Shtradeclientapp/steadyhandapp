@@ -57,9 +57,8 @@ export default function OrgRequestPage() {
         suburb: prop?.suburb || '',
         warranty_period: Number(form.warranty_period),
         status: 'matching',
-      }).select('id').single().select().single()
-      if (!error && newJob) { created++; if (!firstJobId) firstJobId = (newJob as any).id }
-      else if (!error) created++
+      })
+      if (!error) created++
     }
     setSubmitting(false)
     if (created > 0) { window.location.href = '/shortlist' }
