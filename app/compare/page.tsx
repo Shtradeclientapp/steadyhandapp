@@ -1,6 +1,5 @@
-'use client'
-import { StageGuideModal } from '@/components/ui/StageGuideModal'
 "use client"
+import { StageGuideModal } from '@/components/ui/StageGuideModal'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useSupabase } from '@/lib/hooks'
