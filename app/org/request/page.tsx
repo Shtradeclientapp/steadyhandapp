@@ -58,7 +58,7 @@ export default function OrgRequestPage() {
         suburb: prop?.suburb || '',
         warranty_period: Number(form.warranty_period),
         status: 'matching',
-      }).select().single()
+      }).select().single().select().single()
       if (!error && newJob) { created++; if (!firstJobId) firstJobId = (newJob as any).id }
       else if (!error) created++
     }
