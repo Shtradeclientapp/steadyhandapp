@@ -23,6 +23,7 @@ export default function ShortlistPage() {
   // AI matches
   const [matches, setMatches] = useState<any[]>([])
   const [matchLoading, setMatchLoading] = useState(false)
+  const [matchReasons, setMatchReasons] = useState<Record<string,string>>({})
   const [selectedTradies, setSelectedTradies] = useState<string[]>([])
 
   // Browse / Google Places
@@ -90,7 +91,27 @@ export default function ShortlistPage() {
         .select('id, business_name, trade_category, suburb, bio, logo_url, is_verified, dialogue_score')
         .eq('is_verified', true)
         .limit(20)
-      setMatches(data || [])
+      const tradies = data || []
+      setMatches(tradies)
+      // Generate match reasoning for each tradie
+      if (tradies.length > 0 && job) {
+        const jobDesc = (job as any).description || ''
+        const jobTrade = (job as any).trade_category || ''
+        const jobSuburb = (job as any).suburb || ''
+        fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 600,
+            messages: [{ role: 'user', content: 'For each tradie below, write a single sentence explaining why they are a good match for this job. Return ONLY valid JSON: {"reasons": {"<id>": "<sentence>"}}.\n\nJob: ' + jobTrade + ' in ' + jobSuburb + '\nDescription: ' + jobDesc.slice(0,200) + '\n\nTradies:\n' + tradies.slice(0,6).map((t: any) => t.id + ': ' + t.business_name + ' — ' + (t.trade_category||'') + ' — ' + (t.suburb||'') + ' — score: ' + (t.dialogue_score||0)).join('\n') }]
+          })
+        }).then(r => r.json()).then(data => {
+          const text = data.content?.find((b: any) => b.type === 'text')?.text || ''
+          const clean = text.replace(/```json|```/g, '').trim()
+          try { setMatchReasons(JSON.parse(clean).reasons || {}) } catch {}
+        }).catch(console.error)
+      }
     } catch(e) { console.error(e) }
     setMatchLoading(false)
   }
@@ -201,6 +222,7 @@ export default function ShortlistPage() {
           </div>
           <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 6px' }}>{t.trade_category}{t.suburb ? ' · ' + t.suburb : ''}</p>
           {t.bio && <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' as const }}>{t.bio}</p>}
+          {matchReasons[t.id] && <p style={{ fontSize:'11px', color:'#6B4FA8', margin:'6px 0 0', background:'rgba(107,79,168,0.06)', borderRadius:'6px', padding:'4px 8px', lineHeight:'1.5' }}>✦ {matchReasons[t.id]}</p>}
         </div>
         {selectable && (
           <button type="button" onClick={() => toggleTradie(t.id)} disabled={alreadyRequested}

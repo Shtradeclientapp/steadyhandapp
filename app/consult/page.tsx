@@ -45,8 +45,31 @@ export default function AssessPage() {
   const [tradiePhotos, setTradiePhotos] = useState<string[]>([])
   const [consultDate, setConsultDate] = useState('')
   const [savingDate, setSavingDate] = useState(false)
+  const [preVisitGuidance, setPreVisitGuidance] = useState<string|null>(null)
+  const [guidanceLoading, setGuidanceLoading] = useState(false)
+  const [guidanceOpen, setGuidanceOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'mine'|'theirs'>('mine')
   const supabase = useSupabase()
+
+  const loadPreVisitGuidance = async () => {
+    if (!job || preVisitGuidance) { setGuidanceOpen(true); return }
+    setGuidanceLoading(true)
+    setGuidanceOpen(true)
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 700,
+          messages: [{ role: 'user', content: 'A homeowner is about to have a tradie visit their property for a site consult. Help them prepare.\n\nJob: ' + (job.title||'') + '\nTrade: ' + (job.trade_category||'') + '\nDescription: ' + (job.description||'Not provided') + '\nProperty type: ' + (job.property_type||'residential') + '\n\nProvide:\n1. THINGS TO LOOK FOR — 3-4 specific things to observe or check during the visit relevant to this trade and job\n2. QUESTIONS TO ASK — 3-4 direct questions to put to the tradie during the consult\n3. WHAT TO HAVE READY — 2-3 practical things to prepare before the tradie arrives (documents, access, decisions)\n\nBe specific to this job. No generic advice.' }]
+        })
+      })
+      const data = await res.json()
+      setPreVisitGuidance(data.content?.find((b: any) => b.type === 'text')?.text || null)
+    } catch { setPreVisitGuidance(null) }
+    setGuidanceLoading(false)
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
