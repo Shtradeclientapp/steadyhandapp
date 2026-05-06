@@ -363,7 +363,7 @@ export default function OrgDashboardPage() {
                           </span>
                         </td>
                         <td style={{ padding:'12px 16px', fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>{job.agreed_price ? '$'+Number(job.agreed_price).toLocaleString() : '—'}</td>
-                        <td style={{ padding:'12px 16px' }}><a href={'/jobs/'+job.id} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>View →</a></td>
+                        <td style={{ padding:'12px 16px' }}><a href={'/shortlist?job_id='+job.id} style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none' }}>View →</a></td>
                       </tr>
                     ))}
                   </tbody>

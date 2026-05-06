@@ -43,9 +43,10 @@ export default function OrgRequestPage() {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { setSubmitError('Not logged in'); setSubmitting(false); return }
     let created = 0
+    let firstJobId: string | null = null
     for (const propId of selectedProperties) {
       const prop = properties.find(p => p.id === propId)
-      const { error } = await supabase.from('jobs').insert({
+      const { data: newJob, error } = await supabase.from('jobs').insert({
         client_id: session.user.id,
         org_id: org.id,
         property_id: propId,
@@ -56,12 +57,19 @@ export default function OrgRequestPage() {
         property_type: prop?.property_type || 'Residential house',
         suburb: prop?.suburb || '',
         warranty_period: Number(form.warranty_period),
-        status: 'draft',
-      })
-      if (!error) created++
+        status: 'matching',
+      }).select().single()
+      if (!error && newJob) { created++; if (!firstJobId) firstJobId = (newJob as any).id }
+      else if (!error) created++
     }
     setSubmitting(false)
-    if (created > 0) setSubmitted(true)
+    if (created > 0) {
+      if (firstJobId) {
+        window.location.href = '/shortlist?job_id=' + firstJobId
+      } else {
+        setSubmitted(true)
+      }
+    }
     else setSubmitError('Failed to create jobs — please try again')
   }
 
