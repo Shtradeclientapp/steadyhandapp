@@ -175,14 +175,16 @@ export default function ShortlistPage() {
 
       await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', selectedJob.id)
       setSent(true)
-      setSelectedTradies([])
-      setPendingInvites([])
       setPendingConfirm(false)
       setTab('requested')
-      const { data: qrs } = await supabase.from('quote_requests')
-        .select('*, tradie:tradie_profiles(business_name, trade_category)')
+      // Re-fetch with full select to get qr_status
+      const { data: qrs, error: qrErr } = await supabase
+        .from('quote_requests')
+        .select('id, job_id, tradie_id, qr_status, status, requested_at, tradie:tradie_profiles(business_name, trade_categories, service_areas)')
         .eq('job_id', selectedJob.id)
-      setQuoteRequests(qrs || [])
+      if (!qrErr) setQuoteRequests(qrs || [])
+      setSelectedTradies([])
+      setPendingInvites([])
     } catch(e) { setSendError('Something went wrong. Please try again.') }
     setSending(false)
   }
@@ -437,9 +439,9 @@ export default function ShortlistPage() {
                             <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{qr.tradie?.business_name}</p>
                           </div>
                           <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px',
-                            background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : 'rgba(192,120,48,0.1)',
-                            color: qr.qr_status === 'accepted' ? '#2E7D60' : '#C07830' }}>
-                            {qr.qr_status === 'accepted' ? '✓ Accepted' : '⏳ Awaiting estimate'}
+                            background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.qr_status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)',
+                            color: qr.qr_status === 'accepted' ? '#2E7D60' : qr.qr_status === 'declined' ? '#D4522A' : '#C07830' }}>
+                            {qr.qr_status === 'accepted' ? '✓ Accepted' : qr.qr_status === 'declined' ? '✗ Declined' : '⏳ Awaiting response'}
                           </span>
                         </div>
                       ))}
