@@ -335,7 +335,10 @@ export default function OrgDashboardPage() {
             {filteredJobs.length === 0 ? (
               <div style={{ textAlign:'center' as const, padding:'48px', background:'#E8F0EE', borderRadius:'14px' }}>
                 <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🏗</div>
-                <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'16px' }}>No jobs yet — add properties and create job requests to get started.</p>
+                <p style={{ fontSize:'15px', color:'#4A5E64', marginBottom:'8px' }}>No jobs yet.</p>
+                <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px', lineHeight:'1.6', maxWidth:'420px', margin:'0 auto 20px' }}>
+                  Start by adding your properties — each job is linked to a property address. Once your properties are set up, you can post job requests and run multiple jobs across different properties at the same time.
+                </p>
                 <a href="/request"><button type="button" style={{ background:'#D4522A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>New job request →</button></a>
               </div>
             ) : (
@@ -395,9 +398,30 @@ export default function OrgDashboardPage() {
               )
             })()}
             {properties.length === 0 ? (
-              <div style={{ textAlign:'center' as const, padding:'48px', background:'#E8F0EE', borderRadius:'14px' }}>
-                <div style={{ fontSize:'40px', marginBottom:'12px', opacity:0.4 }}>🏢</div>
-                <p style={{ fontSize:'15px', color:'#4A5E64' }}>No properties yet — add your first property to start managing jobs by location.</p>
+              <div style={{ background:'#E8F0EE', borderRadius:'14px', padding:'36px', maxWidth:'600px', margin:'0 auto' }}>
+                <div style={{ fontSize:'40px', marginBottom:'16px', textAlign:'center' as const, opacity:0.4 }}>🏢</div>
+                <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'16px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 12px', textAlign:'center' as const }}>START WITH YOUR PROPERTIES</h3>
+                <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.75', margin:'0 0 20px', textAlign:'center' as const }}>
+                  Each job on Steadyhand is linked to a property address. Add your properties first — you can manage as many as your plan allows, and run concurrent job requests across all of them at the same time.
+                </p>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'24px' }}>
+                  {[
+                    { n:'1', text:'Add a property — address, type and any relevant notes' },
+                    { n:'2', text:'Post a job request under that property — describe the work needed' },
+                    { n:'3', text:'Steadyhand matches you with verified local tradies and manages the pipeline' },
+                    { n:'4', text:'Run jobs across multiple properties simultaneously — all tracked here' },
+                  ].map(s => (
+                    <div key={s.n} style={{ display:'flex', gap:'12px', alignItems:'flex-start', background:'white', borderRadius:'8px', padding:'12px 14px', border:'1px solid rgba(28,43,50,0.08)' }}>
+                      <span style={{ fontSize:'13px', fontWeight:700, color:'#D4522A', flexShrink:0, minWidth:'18px' }}>{s.n}.</span>
+                      <p style={{ fontSize:'13px', color:'#4A5E64', margin:0, lineHeight:'1.55' }}>{s.text}</p>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ textAlign:'center' as const }}>
+                  <a href="/org/properties/new" style={{ display:'inline-block', background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
+                    Add your first property →
+                  </a>
+                </div>
               </div>
             ) : (
               <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px,1fr))', gap:'14px' }}>
