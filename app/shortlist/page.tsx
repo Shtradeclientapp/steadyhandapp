@@ -273,7 +273,6 @@ export default function ShortlistPage() {
                 { key:'matches', label:'AI Matches' },
                 { key:'browse', label:'Browse' },
                 { key:'invite', label:'Invite' },
-                { key:'requested', label:'Requested', count: quoteRequests.length },
               ] as any[]).map(t => (
                 <button key={t.key} type="button" onClick={() => setTab(t.key)}
                   style={{ flex:1, padding:'14px 8px', fontSize:'13px', fontWeight: tab === t.key ? 600 : 400,
@@ -416,61 +415,21 @@ export default function ShortlistPage() {
               </div>
             )}
 
-            {/* REQUESTED TAB */}
-            {tab === 'requested' && (
-              <div style={{ padding:'20px' }}>
-                {quoteRequests.length === 0 ? (
-                  <div style={{ textAlign:'center' as const, padding:'32px', color:'#7A9098', fontSize:'14px' }}>
-                    No quote requests sent yet.
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ textAlign:'center' as const, padding:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginBottom:'16px' }}>
-                      <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Estimate requests sent</p>
-                      <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>We have invited {quoteRequests.length} tradie{quoteRequests.length !== 1 ? 's' : ''} to submit an estimate.</p>
-                    </div>
-                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
-                      {quoteRequests.map((qr:any) => (
-                        <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px' }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                            <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
-                              {qr.tradie?.business_name?.charAt(0) || '?'}
-                            </div>
-                            <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{qr.tradie?.business_name}</p>
-                          </div>
-                          <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px',
-                            background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.qr_status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)',
-                            color: qr.qr_status === 'accepted' ? '#2E7D60' : qr.qr_status === 'declined' ? '#D4522A' : '#C07830' }}>
-                            {qr.qr_status === 'accepted' ? '✓ Accepted' : qr.qr_status === 'declined' ? '✗ Declined' : '⏳ Awaiting response'}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px' }}>
-                      <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'4px' }}>Before estimates arrive — book a consult</p>
-                      <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'10px' }}>A consult creates a shared record of site conditions and scope — the foundation for a reliable estimate.</p>
-                      <a href={'/consult?job_id=' + (selectedJob?.id || '')}>
-                        <button type="button" style={{ width:'100%', background:'#9B6B9B', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
-                          Go to consult →
-                        </button>
-                      </a>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+
           </div>
 
           {/* Pending requests panel */}
-          {(selectedTradies.length > 0 || pendingInvites.length > 0) && !sent && (
+          {(selectedTradies.length > 0 || pendingInvites.length > 0 || quoteRequests.length > 0) && (
             <div style={{ marginTop:'16px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'16px', overflow:'hidden', boxShadow:'0 1px 4px rgba(28,43,50,0.06)' }}>
               <div style={{ padding:'14px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                 <div>
                   <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>
-                    Quote request list — {totalSelected} tradie{totalSelected !== 1 ? 's' : ''} selected
+                    {quoteRequests.length > 0 && totalSelected === 0 ? 'Estimate requests sent' : 'Quote request list — ' + totalSelected + ' tradie' + (totalSelected !== 1 ? 's' : '') + ' selected'}
                   </p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
-                    {totalSelected < 2 ? 'Consider selecting at least 2 for comparison' : 'Review your selection then send quote requests'}
+                    {quoteRequests.length > 0 && totalSelected === 0
+                      ? quoteRequests.length + ' tradie' + (quoteRequests.length !== 1 ? 's' : '') + ' invited — awaiting responses'
+                      : totalSelected < 2 ? 'Consider selecting at least 2 for comparison' : 'Review your selection then send estimate requests'}
                   </p>
                 </div>
               </div>
@@ -514,14 +473,44 @@ export default function ShortlistPage() {
                   </div>
                 ))}
               </div>
+              {/* Sent requests */}
+              {quoteRequests.length > 0 && (
+                <div style={{ padding:'12px 20px', borderTop:'1px solid rgba(28,43,50,0.06)' }}>
+                  {quoteRequests.map((qr:any) => (
+                    <div key={qr.id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', marginBottom:'6px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                        <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                          {qr.tradie?.business_name?.charAt(0) || '?'}
+                        </div>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{qr.tradie?.business_name}</p>
+                      </div>
+                      <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px',
+                        background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.qr_status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)',
+                        color: qr.qr_status === 'accepted' ? '#2E7D60' : qr.qr_status === 'declined' ? '#D4522A' : '#C07830' }}>
+                        {qr.qr_status === 'accepted' ? '✓ Accepted' : qr.qr_status === 'declined' ? '✗ Declined' : '⏳ Awaiting response'}
+                      </span>
+                    </div>
+                  ))}
+                  <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'12px 16px', marginTop:'8px' }}>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>Before estimates arrive — book a consult</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:'0 0 10px' }}>A consult creates a shared record of site conditions and scope — the foundation for a reliable estimate.</p>
+                    <a href={'/consult?job_id=' + (selectedJob?.id || '')} style={{ display:'block', background:'#9B6B9B', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none', textAlign:'center' as const }}>
+                      Go to consult →
+                    </a>
+                  </div>
+                </div>
+              )}
+              {/* Send footer — only when there are pending selections */}
+              {(selectedTradies.length > 0 || pendingInvites.length > 0) && (
               <div style={{ padding:'12px 20px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
                 {sendError && <p style={{ fontSize:'12px', color:'#D4522A', margin:0 }}>{sendError}</p>}
                 <div style={{ flex:1 }} />
                 <button type="button" onClick={sendQuoteRequests} disabled={sending}
                   style={{ background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1 }}>
-                  {sending ? 'Sending...' : 'Send quote requests →'}
+                  {sending ? 'Sending...' : 'Send estimate requests →'}
                 </button>
               </div>
+              )}
             </div>
           )}
 
