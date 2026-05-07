@@ -21,6 +21,8 @@ export default function WarrantyPage() {
   const [form, setForm] = useState({ title: '', description: '', severity: 'moderate', warranty_type: 'workmanship', resolution_status: 'open', product_involved: '' })
   const [acceptingId, setAcceptingId] = useState<string|null>(null)
   const [issueError, setIssueError] = useState<string|null>(null)
+  const [respondingId, setRespondingId] = useState<string|null>(null)
+  const [responseForm, setResponseForm] = useState<Record<string, { response: string, notes: string }>>({})
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
   const supabase = useSupabase()
 
@@ -129,6 +131,24 @@ export default function WarrantyPage() {
       body: JSON.stringify({ action: 'score_stage', stage: 'protect', job_id: job?.id }),
     }).catch(console.error)
     setAcceptingId(null)
+  }
+
+  const submitResponse = async (issueId: string) => {
+    const rf = responseForm[issueId] || { response: '', notes: '' }
+    if (!rf.response.trim()) return
+    setRespondingId(issueId)
+    const now = new Date().toISOString()
+    await supabase.from('warranty_issues').update({
+      tradie_response: rf.response,
+      resolution_notes: rf.notes,
+      tradie_responded_at: now,
+      status: 'in_progress',
+    }).eq('id', issueId)
+    setIssues(prev => prev.map(i => i.id === issueId ? {
+      ...i, tradie_response: rf.response, resolution_notes: rf.notes,
+      tradie_responded_at: now, status: 'in_progress'
+    } : i))
+    setRespondingId(null)
   }
 
   const warrantyEnd = job?.warranty_ends_at ? new Date(job.warranty_ends_at) : null
@@ -350,22 +370,43 @@ export default function WarrantyPage() {
                   </p>
                   <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', margin:0 }}>{issue.tradie_response}</p>
                   {issue.resolution_notes && (
-                    <p style={{ fontSize:'12px', color:'#4A5E64', marginTop:'8px', fontStyle:'italic' }}>Resolution plan: {issue.resolution_notes}</p>
+                    <div style={{ marginTop:'8px', padding:'8px 12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'6px' }}>
+                      <p style={{ fontSize:'11px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Resolution plan</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>{issue.resolution_notes}</p>
+                    </div>
                   )}
-                  {issue.status === 'open' && (
-                    <button type="button" onClick={async () => {
-                      await supabase.from('warranty_issues').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', issue.id)
-                      setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, status: 'resolved' } : i))
-                    }} style={{ marginTop:'10px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
-                      Mark as resolved ✓
-                    </button>
+                  {issue.resolved_at && (
+                    <p style={{ fontSize:'11px', color:'#2E7D60', marginTop:'8px', margin:0 }}>✓ Resolved {new Date(issue.resolved_at).toLocaleDateString('en-AU')}</p>
                   )}
-                  {issue.status !== 'resolved' && (
+                  {issue.status === 'in_progress' && !isTradie && (
                     <button type="button" onClick={() => acceptResolution(issue.id)} disabled={acceptingId === issue.id}
                       style={{ marginTop:'10px', background:'#2E7D60', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer', opacity: acceptingId === issue.id ? 0.7 : 1 }}>
                       {acceptingId === issue.id ? 'Accepting...' : '✓ Accept resolution'}
                     </button>
                   )}
+                  {issue.status === 'open' && isTradie && (
+                    <button type="button" onClick={async () => {
+                      await supabase.from('warranty_issues').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', issue.id)
+                      setIssues(prev => prev.map(i => i.id === issue.id ? { ...i, status: 'resolved', resolved_at: new Date().toISOString() } : i))
+                    }} style={{ marginTop:'10px', fontSize:'12px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'5px 12px', cursor:'pointer' }}>
+                      Mark as resolved ✓
+                    </button>
+                  )}
+                </div>
+              )}
+              {isTradie && !issue.tradie_response && issue.status !== 'resolved' && (
+                <div style={{ marginTop:'12px', background:'rgba(28,43,50,0.03)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'8px', padding:'14px' }}>
+                  <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 10px' }}>Respond to this issue</p>
+                  <textarea placeholder="Describe your assessment and proposed resolution..." value={(responseForm[issue.id] || {}).response || ''}
+                    onChange={e => setResponseForm(prev => ({ ...prev, [issue.id]: { ...(prev[issue.id] || { response:'', notes:'' }), response: e.target.value } }))}
+                    style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minHeight:'80px', resize:'vertical' as const, marginBottom:'10px', display:'block', boxSizing:'border-box' as const }} />
+                  <textarea placeholder="Resolution plan — e.g. returning Tue 13 May to rectify silicon seal (optional)" value={(responseForm[issue.id] || {}).notes || ''}
+                    onChange={e => setResponseForm(prev => ({ ...prev, [issue.id]: { ...(prev[issue.id] || { response:'', notes:'' }), notes: e.target.value } }))}
+                    style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', minHeight:'60px', resize:'vertical' as const, marginBottom:'10px', display:'block', boxSizing:'border-box' as const }} />
+                  <button type="button" onClick={() => submitResponse(issue.id)} disabled={respondingId === issue.id || !(responseForm[issue.id] || {}).response}
+                    style={{ background:'#0A0A0A', color:'white', padding:'9px 18px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: respondingId === issue.id ? 0.6 : 1 }}>
+                    {respondingId === issue.id ? 'Submitting...' : 'Submit response →'}
+                  </button>
                 </div>
               )}
               {issue.status === 'resolved' && issue.client_accepted_at && (
