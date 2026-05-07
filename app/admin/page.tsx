@@ -550,6 +550,14 @@ export default function AdminPage() {
                   ))}
                 </div>
 
+                {/* Transaction log link */}
+                <div style={{ marginBottom:'12px' }}>
+                  <a href={'/job/history?job_id=' + selected.id} target="_blank" rel="noreferrer"
+                    style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.7)', padding:'8px 14px', borderRadius:'7px', fontSize:'12px', textDecoration:'none' }}>
+                    ↗ View transaction log
+                  </a>
+                </div>
+
                 {/* Override job status */}
                 <div style={{ marginBottom:'12px' }}>
                   <label style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', display:'block', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Override status</label>
