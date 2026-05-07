@@ -88,8 +88,8 @@ export default function ShortlistPage() {
     try {
       await fetch('/api/match', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ job_id: jobId }) })
       const { data } = await supabase.from('tradie_profiles')
-        .select('id, business_name, trade_category, suburb, bio, logo_url, is_verified, dialogue_score_avg')
-        .eq('is_verified', true)
+        .select('id, business_name, trade_categories, service_areas, bio, logo_url, licence_verified, dialogue_score_avg')
+        .eq('licence_verified', true)
         .limit(20)
       const tradies = data || []
       setMatches(tradies)
@@ -104,7 +104,7 @@ export default function ShortlistPage() {
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 600,
-            messages: [{ role: 'user', content: 'For each tradie below, write a single sentence explaining why they are a good match for this job. Return ONLY valid JSON: {"reasons": {"<id>": "<sentence>"}}.\n\nJob: ' + jobTrade + ' in ' + jobSuburb + '\nDescription: ' + jobDesc.slice(0,200) + '\n\nTradies:\n' + tradies.slice(0,6).map((t: any) => t.id + ': ' + t.business_name + ' — ' + (t.trade_category||'') + ' — ' + (t.suburb||'') + ' — score: ' + (t.dialogue_score_avg||0)).join('\n') }]
+            messages: [{ role: 'user', content: 'For each tradie below, write a single sentence explaining why they are a good match for this job. Return ONLY valid JSON: {"reasons": {"<id>": "<sentence>"}}.\n\nJob: ' + jobTrade + ' in ' + jobSuburb + '\nDescription: ' + jobDesc.slice(0,200) + '\n\nTradies:\n' + tradies.slice(0,6).map((t: any) => t.id + ': ' + t.business_name + ' — ' + (t.trade_categories?.[0] || ''||'') + ' — ' + (t.suburb||'') + ' — score: ' + (t.dialogue_score_avg||0)).join('\n') }]
           })
         }).then(r => r.json()).then(data => {
           const text = data.content?.find((b: any) => b.type === 'text')?.text || ''
@@ -119,8 +119,8 @@ export default function ShortlistPage() {
   const browseDirectory = async () => {
     setBrowseLoading(true)
     let q = supabase.from('tradie_profiles')
-      .select('id, business_name, trade_category, suburb, bio, logo_url, is_verified, dialogue_score_avg')
-      .eq('is_verified', true)
+      .select('id, business_name, trade_categories, service_areas, bio, logo_url, licence_verified, dialogue_score_avg')
+      .eq('licence_verified', true)
     if (browseCategory) q = q.eq('trade_category', browseCategory)
     if (browseSuburb) q = q.ilike('service_areas', '%' + browseSuburb + '%')
     const { data } = await q.limit(30)
@@ -217,7 +217,7 @@ export default function ShortlistPage() {
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'2px', flexWrap:'wrap' as const }}>
             <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:0 }}>{t.business_name}</p>
-            {t.is_verified && <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', padding:'2px 7px', borderRadius:'100px', fontWeight:600 }}>✓ Verified</span>}
+            {t.licence_verified && <span style={{ fontSize:'10px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', padding:'2px 7px', borderRadius:'100px', fontWeight:600 }}>✓ Verified</span>}
             {t.dialogue_score_avg && <span style={{ fontSize:'10px', background:'rgba(107,79,168,0.1)', color:'#534AB7', padding:'2px 7px', borderRadius:'100px', fontWeight:600 }}>⭐ {t.dialogue_score_avg.toFixed(1)}</span>}
           </div>
           <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 6px' }}>{t.trade_category}{t.suburb ? ' · ' + t.suburb : ''}</p>

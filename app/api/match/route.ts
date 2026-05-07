@@ -26,10 +26,7 @@ export async function POST(request: NextRequest) {
     const { data: tradies } = await supabase
       .from('tradie_profiles')
       .select('*, profile:profiles(*)')
-      .eq('subscription_active', true)
-      .eq('licence_verified', true)
       .not('business_name', 'is', null)
-      .not('bio', 'is', null)
     // Filter tradies - exact match OR partial match on trade category
     const jobCat = (job.trade_category || '').toLowerCase()
     const filteredTradies = (tradies || []).filter((t: any) => {
