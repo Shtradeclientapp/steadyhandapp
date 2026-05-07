@@ -89,7 +89,7 @@ export default function ShortlistPage() {
       await fetch('/api/match', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ job_id: jobId }) })
       const { data } = await supabase.from('tradie_profiles')
         .select('id, business_name, trade_categories, service_areas, bio, logo_url, licence_verified, dialogue_score_avg')
-        .eq('licence_verified', true)
+        .eq('subscription_active', true)
         .limit(20)
       const tradies = data || []
       setMatches(tradies)
@@ -121,7 +121,7 @@ export default function ShortlistPage() {
     let q = supabase.from('tradie_profiles')
       .select('id, business_name, trade_categories, service_areas, bio, logo_url, licence_verified, dialogue_score_avg')
       .eq('licence_verified', true)
-    if (browseCategory) q = q.eq('trade_category', browseCategory)
+    if (browseCategory) q = (q as any).contains('trade_categories', [browseCategory])
     if (browseSuburb) q = q.ilike('service_areas', '%' + browseSuburb + '%')
     const { data } = await q.limit(30)
     setBrowseResults(data || [])
