@@ -459,22 +459,67 @@ export default function ShortlistPage() {
             )}
           </div>
 
-          {/* Send bar */}
-          {totalSelected > 0 && !sent && (
-            <div style={{ marginTop:'16px', background:'#0A0A0A', borderRadius:'12px', padding:'16px 20px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
-              <div>
-                <p style={{ fontSize:'14px', fontWeight:500, color:'rgba(216,228,225,0.9)', marginBottom:'2px' }}>
-                  {totalSelected} tradie{totalSelected !== 1 ? 's' : ''} selected
-                </p>
-                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>
-                  {totalSelected < 2 ? 'Consider selecting at least 2 for comparison' : 'Ready to send quote requests'}
-                </p>
+          {/* Pending requests panel */}
+          {(selectedTradies.length > 0 || pendingInvites.length > 0) && !sent && (
+            <div style={{ marginTop:'16px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'16px', overflow:'hidden', boxShadow:'0 1px 4px rgba(28,43,50,0.06)' }}>
+              <div style={{ padding:'14px 20px', borderBottom:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <div>
+                  <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>
+                    Quote request list — {totalSelected} tradie{totalSelected !== 1 ? 's' : ''} selected
+                  </p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>
+                    {totalSelected < 2 ? 'Consider selecting at least 2 for comparison' : 'Review your selection then send quote requests'}
+                  </p>
+                </div>
               </div>
-              {sendError && <p style={{ fontSize:'12px', color:'#D4522A' }}>{sendError}</p>}
-              <button type="button" onClick={sendQuoteRequests} disabled={sending}
-                style={{ background:'#D4522A', color:'white', padding:'12px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1, flexShrink:0 }}>
-                {sending ? 'Sending...' : 'Request quotes →'}
-              </button>
+              <div style={{ padding:'12px 20px', display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                {selectedTradies.map(id => {
+                  const t = [...matches, ...browseResults].find((x:any) => x.id === id)
+                  if (!t) return null
+                  return (
+                    <div key={id} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'rgba(46,125,96,0.05)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'10px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                        <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                          {t.business_name?.charAt(0) || '?'}
+                        </div>
+                        <div>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{t.business_name}</p>
+                          <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{(t.trade_categories?.[0] || t.trade_category || '')} {t.service_areas?.[0] ? '· ' + t.service_areas[0] : ''}</p>
+                        </div>
+                      </div>
+                      <button type="button" onClick={() => toggleTradie(id)}
+                        style={{ fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+                        Remove
+                      </button>
+                    </div>
+                  )
+                })}
+                {pendingInvites.map((inv:any, idx:number) => (
+                  <div key={'inv-'+idx} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 14px', background:'rgba(46,106,143,0.05)', border:'1px solid rgba(46,106,143,0.15)', borderRadius:'10px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                      <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#2E6A8F', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
+                        {inv.business_name?.charAt(0) || '?'}
+                      </div>
+                      <div>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{inv.business_name}</p>
+                        <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>Direct invite · {inv.email}</p>
+                      </div>
+                    </div>
+                    <button type="button" onClick={() => removeInvite(idx)}
+                      style={{ fontSize:'12px', color:'#D4522A', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.15)', borderRadius:'6px', padding:'4px 10px', cursor:'pointer' }}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding:'12px 20px', borderTop:'1px solid rgba(28,43,50,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+                {sendError && <p style={{ fontSize:'12px', color:'#D4522A', margin:0 }}>{sendError}</p>}
+                <div style={{ flex:1 }} />
+                <button type="button" onClick={sendQuoteRequests} disabled={sending}
+                  style={{ background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer', opacity: sending ? 0.7 : 1 }}>
+                  {sending ? 'Sending...' : 'Send quote requests →'}
+                </button>
+              </div>
             </div>
           )}
 
