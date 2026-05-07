@@ -65,6 +65,23 @@ export default function AdminPage() {
     await loadAll(supabase)
   }
 
+  const verifyTradie = async (tradie_id: string, email: string) => {
+    setSaving(true)
+    setMsg(null)
+    const supabase = createClient()
+    const { error } = await supabase.from('tradie_profiles').update({
+      onboarding_step: 'active',
+      licence_verified: true,
+      onboarding_completed_at: new Date().toISOString(),
+    }).eq('id', tradie_id)
+    if (error) { setMsg('Error: ' + error.message); setSaving(false); return }
+    setSelected((prev: any) => prev ? { ...prev, onboarding_step: 'active', licence_verified: true } : prev)
+    setMsg('\u2713 Verified & activated \u2014 ' + email)
+    setTimeout(() => setMsg(null), 4000)
+    setSaving(false)
+    await loadAll(supabase)
+  }
+
   const sendOnboardingEmail = async (tradie_id: string, email_type: string) => {
     setSaving(true)
     const res = await fetch('/api/onboarding', {
@@ -208,7 +225,13 @@ export default function AdminPage() {
                       </td>
                       <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{t.onboarding_step || 'profile'}</td>
                       <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.35)' }}>{new Date(t.profile?.created_at).toLocaleDateString('en-AU')}</td>
-                      <td style={{ padding:'10px 12px' }}>
+                      <td style={{ padding:'10px 12px', display:'flex', gap:'6px', alignItems:'center' }}>
+                        {t.onboarding_step === 'pending_verification' && (
+                          <button type="button" onClick={() => verifyTradie(t.id, t.profile?.email)} disabled={saving}
+                            style={{ fontSize:'11px', padding:'4px 10px', borderRadius:'6px', border:'none', cursor:'pointer', background:'rgba(46,125,96,0.2)', color:'#2E7D60', fontWeight:600, whiteSpace:'nowrap' as const }}>
+                            \u2713 Verify
+                          </button>
+                        )}
                         <button type="button" onClick={() => setSelected(selected?.id === t.id ? null : t)} style={btn('#2E6A8F')}>
                           {selected?.id === t.id ? 'Close' : 'Edit'}
                         </button>
@@ -227,7 +250,28 @@ export default function AdminPage() {
                   <button type="button" onClick={() => setSelected(null)} style={{ background:'none', border:'none', color:'rgba(216,228,225,0.4)', cursor:'pointer', fontSize:'18px' }}>×</button>
                 </div>
                 <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.9)', margin:'0 0 4px' }}>{selected.business_name}</p>
-                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'0 0 20px' }}>{selected.profile?.email}</p>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'0 0 16px' }}>{selected.profile?.email}</p>
+
+                {selected.onboarding_step === 'pending_verification' && (
+                  <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#2E7D60', margin:'0 0 8px' }}>⏳ Pending verification</p>
+                    <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', margin:'0 0 12px', lineHeight:'1.6' }}>
+                      Licence: {selected.licence_number || 'not provided'}<br/>
+                      ABN: {selected.abn || 'not provided'}<br/>
+                      Phone: {selected.phone || 'not provided'}
+                    </p>
+                    <button type="button" onClick={() => verifyTradie(selected.id, selected.profile?.email)} disabled={saving}
+                      style={{ width:'100%', background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px', fontSize:'13px', fontWeight:600, cursor:'pointer' }}>
+                      ✓ Verify & activate tradie
+                    </button>
+                  </div>
+                )}
+
+                {selected.onboarding_step === 'active' && selected.licence_verified && (
+                  <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'10px 14px', marginBottom:'16px' }}>
+                    <p style={{ fontSize:'12px', color:'#2E7D60', margin:0 }}>✓ Verified & active in directory</p>
+                  </div>
+                )}
 
                 <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px' }}>
 
