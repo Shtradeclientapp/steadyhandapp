@@ -90,10 +90,20 @@ export default function AssessPage() {
         const consultJob = jobs[0]
         setJob(consultJob)
         // Get tradie_id from URL if present (per-tradie consult)
-        const urlTradieId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tradie_id') : null
+        const urlTradieIdParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tradie_id') : null
+        if (urlTradieIdParam) {
+          setUrlTradieId(urlTradieIdParam)
+          const { data: tp } = await supabase.from('tradie_profiles')
+            .select('business_name, trade_categories, logo_url, service_areas, licence_verified')
+            .eq('id', urlTradieIdParam).single()
+          if (tp?.business_name) {
+            setUrlTradieName(tp.business_name)
+            setUrlTradieProfile(tp)
+          }
+        }
 
         // For tradie users, their own tradie_id
-        const effectiveTradieId = urlTradieId || (resolvedTradie ? (Array.isArray(tradieProf) ? tradieProf?.[0]?.id : tradieProf?.id) : null)
+        const effectiveTradieId = urlTradieIdParam || (resolvedTradie ? (Array.isArray(tradieProf) ? tradieProf?.[0]?.id : tradieProf?.id) : null)
 
         // Fetch existing assessment for this job+tradie combo
         let assessQuery = supabase.from('site_assessments').select('*').eq('job_id', consultJob.id)
