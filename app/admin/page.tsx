@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-type Tab = 'overview' | 'tradies' | 'clients' | 'jobs' | 'onboarding' | 'directory'
+type Tab = 'overview' | 'tradies' | 'clients' | 'jobs' | 'onboarding' | 'directory' | 'messages'
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
@@ -22,6 +22,13 @@ export default function AdminPage() {
   const [dirCsv, setDirCsv] = useState('')
   const [dirMode, setDirMode] = useState<'form'|'csv'>('form')
   const [dirForm, setDirForm] = useState({ business_name:'', trade_category:'', service_areas:'', bio:'', phone:'', licence_number:'', abn:'', website:'' })
+  const [msgTo, setMsgTo] = useState<any>(null)
+  const [msgSubject, setMsgSubject] = useState('')
+  const [msgBody, setMsgBody] = useState('')
+  const [msgSending, setMsgSending] = useState(false)
+  const [msgLog, setMsgLog] = useState<any[]>([])
+  const [msgType, setMsgType] = useState<'direct'|'broadcast'>('direct')
+  const [broadcastTarget, setBroadcastTarget] = useState<'all'|'clients'|'tradies'>('all')
 
   useEffect(() => {
     const supabase = createClient()
@@ -120,6 +127,7 @@ export default function AdminPage() {
     { id: 'jobs', label: `Jobs (${jobs.length})` },
     { id: 'onboarding', label: 'Onboarding' },
     { id: 'directory', label: 'Directory' },
+    { id: 'messages', label: 'Messages' },
   ]
 
   return (
@@ -809,6 +817,131 @@ export default function AdminPage() {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {tab === 'messages' && (
+        <div style={{ maxWidth:'860px' }}>
+
+          {/* Compose */}
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', padding:'24px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:'0 0 16px' }}>COMPOSE MESSAGE</p>
+
+            {/* Type toggle */}
+            <div style={{ display:'flex', background:'rgba(255,255,255,0.04)', borderRadius:'8px', overflow:'hidden', marginBottom:'16px', width:'fit-content' }}>
+              {(['direct','broadcast'] as const).map(m => (
+                <button key={m} type="button" onClick={() => setMsgType(m)}
+                  style={{ padding:'8px 20px', border:'none', background: msgType === m ? 'rgba(255,255,255,0.12)' : 'transparent', color: msgType === m ? 'rgba(216,228,225,0.9)' : 'rgba(216,228,225,0.4)', fontSize:'12px', cursor:'pointer', fontWeight: msgType === m ? 500 : 400, textTransform:'capitalize' as const }}>
+                  {m === 'direct' ? '✎ Direct message' : '📢 Broadcast'}
+                </button>
+              ))}
+            </div>
+
+            {/* Direct — recipient picker */}
+            {msgType === 'direct' && (
+              <div style={{ marginBottom:'12px' }}>
+                <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Recipient</label>
+                <select value={msgTo?.id || ''} onChange={e => {
+                  const all = [...clients, ...tradies.filter(t => t.profile)]
+                  const found = all.find((u: any) => (u.id || u.profile?.id) === e.target.value)
+                  setMsgTo(found || null)
+                }} style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }}>
+                  <option value="">Select recipient...</option>
+                  <optgroup label="Clients">
+                    {clients.map((c: any) => <option key={c.id} value={c.id}>{c.full_name || c.email} ({c.email})</option>)}
+                  </optgroup>
+                  <optgroup label="Tradies">
+                    {tradies.filter((t: any) => t.profile?.email).map((t: any) => <option key={t.id} value={t.id}>{t.business_name} ({t.profile?.email})</option>)}
+                  </optgroup>
+                </select>
+              </div>
+            )}
+
+            {/* Broadcast — audience picker */}
+            {msgType === 'broadcast' && (
+              <div style={{ marginBottom:'12px' }}>
+                <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'6px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Send to</label>
+                <div style={{ display:'flex', gap:'8px' }}>
+                  {(['all','clients','tradies'] as const).map(t => (
+                    <button key={t} type="button" onClick={() => setBroadcastTarget(t)}
+                      style={{ padding:'7px 16px', borderRadius:'100px', border:'1.5px solid ' + (broadcastTarget === t ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.1)'), background: broadcastTarget === t ? 'rgba(255,255,255,0.1)' : 'transparent', color: broadcastTarget === t ? 'rgba(216,228,225,0.9)' : 'rgba(216,228,225,0.4)', fontSize:'12px', cursor:'pointer', textTransform:'capitalize' as const }}>
+                      {t === 'all' ? 'All users' : t} {t === 'clients' ? '(' + clients.length + ')' : t === 'tradies' ? '(' + tradies.filter((x:any) => x.profile?.email).length + ')' : '(' + (clients.length + tradies.filter((x:any) => x.profile?.email).length) + ')'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div style={{ marginBottom:'12px' }}>
+              <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Subject</label>
+              <input type="text" value={msgSubject} onChange={e => setMsgSubject(e.target.value)} placeholder="e.g. Update from Steadyhand"
+                style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+            </div>
+            <div style={{ marginBottom:'16px' }}>
+              <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Message</label>
+              <textarea value={msgBody} onChange={e => setMsgBody(e.target.value)} rows={6} placeholder="Write your message here..."
+                style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)', resize:'vertical' as const }} />
+            </div>
+            <button type="button" disabled={msgSending || !msgSubject || !msgBody || (msgType === 'direct' && !msgTo)}
+              onClick={async () => {
+                setMsgSending(true)
+                const { data: { session } } = await createClient().auth.getSession()
+                if (msgType === 'direct' && msgTo) {
+                  const recipientId = msgTo.profile?.id || msgTo.id
+                  const recipientEmail = msgTo.email || msgTo.profile?.email
+                  const recipientName = msgTo.full_name || msgTo.business_name
+                  await fetch('/api/admin-message', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ admin_id: session?.user.id, recipient_id: recipientId, recipient_email: recipientEmail, recipient_name: recipientName, subject: msgSubject, body: msgBody, message_type:'direct' }) })
+                } else {
+                  const recipients = broadcastTarget === 'clients' ? clients
+                    : broadcastTarget === 'tradies' ? tradies.filter((t:any) => t.profile?.email)
+                    : [...clients, ...tradies.filter((t:any) => t.profile?.email)]
+                  for (const r of recipients) {
+                    const recipientEmail = r.email || r.profile?.email
+                    if (!recipientEmail) continue
+                    await fetch('/api/admin-message', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ admin_id: session?.user.id, recipient_email: recipientEmail, recipient_name: r.full_name || r.business_name, subject: msgSubject, body: msgBody, message_type:'broadcast' }) })
+                  }
+                }
+                const log = await fetch('/api/admin-message').then(r => r.json())
+                setMsgLog(log)
+                setMsgSubject('')
+                setMsgBody('')
+                setMsgTo(null)
+                setMsgSending(false)
+              }}
+              style={{ background:'#D4522A', color:'white', border:'none', borderRadius:'8px', padding:'10px 24px', fontSize:'13px', fontWeight:600, cursor:'pointer', opacity: msgSending || !msgSubject || !msgBody ? 0.5 : 1 }}>
+              {msgSending ? 'Sending...' : msgType === 'broadcast' ? 'Send broadcast →' : 'Send message →'}
+            </button>
+          </div>
+
+          {/* Message log */}
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', overflow:'hidden' }}>
+            <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:0 }}>SENT MESSAGES</p>
+              <button type="button" onClick={async () => {
+                const log = await fetch('/api/admin-message').then(r => r.json())
+                setMsgLog(log)
+              }} style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', background:'none', border:'none', cursor:'pointer' }}>↻ Refresh</button>
+            </div>
+            {msgLog.length === 0 ? (
+              <p style={{ padding:'24px', textAlign:'center' as const, fontSize:'13px', color:'rgba(216,228,225,0.25)' }}>No messages sent yet — load history with ↻ Refresh</p>
+            ) : (
+              <div style={{ maxHeight:'400px', overflowY:'auto' as const }}>
+                {msgLog.map((m: any) => (
+                  <div key={m.id} style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'4px' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                        <span style={{ fontSize:'11px', padding:'2px 8px', borderRadius:'100px', background: m.message_type === 'broadcast' ? 'rgba(212,82,42,0.15)' : 'rgba(46,106,143,0.15)', color: m.message_type === 'broadcast' ? '#D4522A' : '#2E6A8F', fontWeight:600, textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>{m.message_type}</span>
+                        <span style={{ fontSize:'13px', color:'rgba(216,228,225,0.8)', fontWeight:500 }}>{m.subject}</span>
+                      </div>
+                      <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)' }}>{new Date(m.created_at).toLocaleString('en-AU', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</span>
+                    </div>
+                    <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'0 0 2px' }}>To: {m.recipient_name || m.recipient_email}</p>
+                    <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.3)', margin:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' as const }}>{m.body}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
