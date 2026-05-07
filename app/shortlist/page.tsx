@@ -236,6 +236,10 @@ export default function ShortlistPage() {
           <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 6px' }}>{t.trade_category}{t.suburb ? ' · ' + t.suburb : ''}</p>
           {t.bio && <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' as const }}>{t.bio}</p>}
           {matchReasons[t.id] && <p style={{ fontSize:'11px', color:'#6B4FA8', margin:'6px 0 0', background:'rgba(107,79,168,0.06)', borderRadius:'6px', padding:'4px 8px', lineHeight:'1.5' }}>✦ {matchReasons[t.id]}</p>}
+          <a href={'/tradie/' + t.id} target="_blank" rel="noreferrer"
+            style={{ display:'inline-block', marginTop:'8px', fontSize:'11px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>
+            View full profile ↗
+          </a>
         </div>
         {selectable && (
           <button type="button" onClick={() => toggleTradie(t.id)} disabled={alreadyRequested}
