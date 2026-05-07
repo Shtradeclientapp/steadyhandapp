@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
         jobCard(job.title, job.trade_category, job.suburb, '#D4522A',
           `<p style="margin:8px 0 0;font-size:13px;color:#4A5E64;font-family:Georgia,serif;line-height:1.6;">${job.description || ''}</p>`) +
         para('The next step is the consult — a site visit where you and the client see the job together. After that, you will submit your quote and both parties will sign a scope agreement before work begins.') +
-        btn(APP_URL + '/tradie/dashboard', 'View job on Steadyhand', '#D4522A'),
+        btn(APP_URL + '/login?redirect=/tradie/dashboard', 'View job on Steadyhand', '#D4522A'),
         `${job.client.full_name} has selected you for a job`
       )
       await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `${job.client.full_name} selected you for a job — ${job.title}`, html })
