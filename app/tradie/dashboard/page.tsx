@@ -284,6 +284,10 @@ export default function TradieDashboard() {
 
       if (!prof || prof.role !== 'tradie') { window.location.href = '/dashboard'; return }
       if (!prof.tradie?.id) { window.location.href = '/tradie/profile?required=true'; return }
+      // Auto-launch profile wizard if key fields still missing after activation
+      const tp = prof.tradie
+      const needsProfile = tp?.onboarding_step === 'active' && (!tp?.bio || !(tp?.trade_categories?.length) || !tp?.business_name)
+      if (needsProfile) { window.location.href = '/tradie/profile?required=true'; return }
 
 
       setUser(session.user)
