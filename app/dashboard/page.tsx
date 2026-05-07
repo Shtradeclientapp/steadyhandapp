@@ -344,6 +344,7 @@ export default function DashboardPage() {
           </div>
         </Link>
 
+        {jobs.length > 0 && (
         <div style={{ background:'#2E7D60', borderRadius:'14px', padding:'24px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'20px' }}>
           <div>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'white', letterSpacing:'1px', marginBottom:'4px' }}>START A NEW REQUEST</h2>
@@ -353,6 +354,7 @@ export default function DashboardPage() {
             NEW REQUEST
           </a>
         </div>
+        )}
 
         {activeJobs.length > 0 && (
           <div style={{ marginBottom:'28px' }}>
