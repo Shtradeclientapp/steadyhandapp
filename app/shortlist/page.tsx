@@ -424,8 +424,8 @@ export default function ShortlistPage() {
                 ) : (
                   <>
                     <div style={{ textAlign:'center' as const, padding:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', marginBottom:'16px' }}>
-                      <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Quote requests sent</p>
-                      <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>We have notified {quoteRequests.length} tradie{quoteRequests.length !== 1 ? 's' : ''} about your job.</p>
+                      <p style={{ fontSize:'15px', fontWeight:500, color:'#2E7D60', marginBottom:'4px' }}>Estimate requests sent</p>
+                      <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>We have invited {quoteRequests.length} tradie{quoteRequests.length !== 1 ? 's' : ''} to submit an estimate.</p>
                     </div>
                     <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'16px' }}>
                       {quoteRequests.map((qr:any) => (
@@ -439,14 +439,14 @@ export default function ShortlistPage() {
                           <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px',
                             background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : 'rgba(192,120,48,0.1)',
                             color: qr.qr_status === 'accepted' ? '#2E7D60' : '#C07830' }}>
-                            {qr.qr_status === 'accepted' ? '✓ Accepted' : '⏳ Awaiting quote'}
+                            {qr.qr_status === 'accepted' ? '✓ Accepted' : '⏳ Awaiting estimate'}
                           </span>
                         </div>
                       ))}
                     </div>
                     <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.25)', borderRadius:'10px', padding:'14px 16px' }}>
-                      <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'4px' }}>Before quotes arrive — book a consult</p>
-                      <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'10px' }}>A consult creates a shared record of what was discussed before any quote is submitted.</p>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', marginBottom:'4px' }}>Before estimates arrive — book a consult</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', marginBottom:'10px' }}>A consult creates a shared record of site conditions and scope — the foundation for a reliable estimate.</p>
                       <a href={'/consult?job_id=' + (selectedJob?.id || '')}>
                         <button type="button" style={{ width:'100%', background:'#9B6B9B', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>
                           Go to consult →

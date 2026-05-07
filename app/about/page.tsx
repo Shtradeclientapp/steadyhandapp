@@ -50,6 +50,21 @@ export default function AboutPage() {
           </div>
         </div>
 
+        <div style={{ borderTop: '1px solid rgba(28,43,50,0.1)', paddingTop: '40px', marginBottom: '40px' }}>
+          <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '18px', color: '#0A0A0A', letterSpacing: '0.5px', margin: '0 0 20px' }}>ESTIMATES AND QUOTES</h2>
+          <div style={{ fontSize: '15px', color: '#4A5E64', lineHeight: '1.85' }}>
+            <p style={{ margin: '0 0 18px' }}>
+              Steadyhand makes a deliberate distinction between an estimate and a quote. An estimate is submitted at stage 4, after the tradie has visited the site and reviewed the client&apos;s scope notes. It&apos;s an informed indicative price — not a binding commitment.
+            </p>
+            <p style={{ margin: '0 0 18px' }}>
+              The quote is the priced scope agreement signed by both parties at stage 5. It&apos;s the contract. Milestone payments are drawn from it.
+            </p>
+            <p style={{ margin: 0 }}>
+              This distinction matters because most quote revisions happen when the scope wasn&apos;t properly understood before pricing. Steadyhand&apos;s pipeline front-loads the discovery work — site consult, client intent, observations — so that by the time an estimate is submitted, the tradie has seen the job and the client has communicated what they actually need. The estimate is more reliable precisely because of what preceded it. And because the parties have already explored the scope together, the rate of revision between estimate and signed quote is lower than in a cold-quote process.
+            </p>
+          </div>
+        </div>
+
         <div style={{ borderTop: '1px solid rgba(28,43,50,0.1)', paddingTop: '40px', marginBottom: '48px' }}>
           <h2 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '18px', color: '#0A0A0A', letterSpacing: '0.5px', margin: '0 0 20px' }}>THE PIPELINE</h2>
           <p style={{ fontSize: '15px', color: '#4A5E64', lineHeight: '1.85', margin: '0 0 18px' }}>

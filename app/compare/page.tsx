@@ -142,7 +142,7 @@ export default function ComparePage() {
 
   if (loading) return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <p style={{ color:'#7A9098', fontSize:'14px', fontFamily:'sans-serif' }}>Loading quotes...</p>
+      <p style={{ color:'#7A9098', fontSize:'14px', fontFamily:'sans-serif' }}>Loading estimates...</p>
     </div>
   )
 
@@ -166,7 +166,7 @@ export default function ComparePage() {
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>COMPARE QUOTES</h1>
 
           <HintPanel color="#6B4FA8" hints={[
-            "Review each quote carefully — check the inclusions, exclusions and conditions, not just the price.",
+            "Review each estimate carefully — check the inclusions, exclusions and conditions, not just the price.",
             "Progressing to the scope agreement locks in this tradie for the job. A scope agreement will be drafted for both parties to review and sign before work begins.",
             "If a quote is missing detail, use 'Request revision' to ask the tradie to clarify before you commit.",
           ]} />
@@ -183,7 +183,7 @@ export default function ComparePage() {
               <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'20px' }}>
                 <span style={{ fontSize:'24px' }}>⏳</span>
                 <div>
-                  <p style={{ fontSize:'15px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Waiting for quotes</p>
+                  <p style={{ fontSize:'15px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>Waiting for estimates</p>
                   <p style={{ fontSize:'13px', color:'#7A9098', margin:0 }}>You will be notified as each quote arrives. You can accept the first good one or wait for all to come in.</p>
                 </div>
               </div>

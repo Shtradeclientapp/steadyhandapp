@@ -167,7 +167,7 @@ export default function QuotePage() {
     })
 
     if (insertError) {
-      setSubmitError('Could not submit quote: ' + insertError.message)
+      setSubmitError('Could not submit estimate: ' + insertError.message)
       setSubmitting(false)
       return
     }
@@ -179,7 +179,7 @@ export default function QuotePage() {
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: session.user.id,
-      body: (profile.tradie?.business_name || 'Your tradie') + ' has submitted a quote of $' + fmt(totalRaw) + (gstIncluded ? ' inc. GST' : ' excl. GST') + '. You can review it and proceed to scope agreement when ready.',
+      body: (profile.tradie?.business_name || 'Your tradie') + ' has submitted an estimate of $' + fmt(totalRaw) + (gstIncluded ? ' inc. GST' : ' excl. GST') + '. You can review it and proceed to scope agreement and quote when ready.',
     })
 
     setSubmitted(true)
@@ -222,7 +222,7 @@ export default function QuotePage() {
           <div style={darkHdr}><p style={lbl}>QUOTE SUBMITTED</p></div>
           <div style={{ padding: '40px 28px', textAlign: 'center' as const }}>
             <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(46,125,96,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', margin: '0 auto 16px' }}>✓</div>
-            <p style={{ fontSize: '20px', fontWeight: 700, color: '#2E7D60', marginBottom: '8px' }}>Quote submitted</p>
+            <p style={{ fontSize: '20px', fontWeight: 700, color: '#2E7D60', marginBottom: '8px' }}>Estimate submitted</p>
             <p style={{ fontSize: '13px', color: '#4A5E64', lineHeight: '1.7', marginBottom: '6px' }}>
               Your quote of <strong>${fmt(totalRaw)}</strong> {gstIncluded ? '(inc. GST)' : '(excl. GST)'} has been sent to <strong>{job.client?.full_name || 'the client'}</strong>.
             </p>
@@ -249,9 +249,9 @@ export default function QuotePage() {
 
         {/* Header */}
         <div style={{ marginBottom: '24px' }}>
-          <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '11px', color: '#7A9098', letterSpacing: '1px', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>QUOTE</p>
+          <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '11px', color: '#7A9098', letterSpacing: '1px', textTransform: 'uppercase' as const, margin: '0 0 6px' }}>ESTIMATE</p>
           <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '26px', color: '#0A0A0A', margin: '0 0 4px', letterSpacing: '0.5px' }}>
-            {job.title || (job.description || '').slice(0, 50) || 'Submit your quote'}
+            {job.title || (job.description || '').slice(0, 50) || 'Submit your estimate'}
           </h1>
           <p style={{ fontSize: '13px', color: '#7A9098', margin: 0 }}>
             {[job.trade_category, job.suburb || job.client?.suburb, 'for ' + (job.client?.full_name || 'client')].filter(Boolean).join(' · ')}
