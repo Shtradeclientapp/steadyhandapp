@@ -29,6 +29,7 @@ export default function AssessPage() {
   const [noJobId, setNoJobId] = useState(false)
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
+  const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isTradie, setIsTradie] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -86,11 +87,16 @@ export default function AssessPage() {
         if (!urlJobId && jobs.length > 1) { setNoJobId(true); return }
         const consultJob = jobs[0]
         setJob(consultJob)
-        const { data: assess } = await supabase
-          .from('site_assessments')
-          .select('*')
-          .eq('job_id', consultJob.id)
-          .single()
+        // Get tradie_id from URL if present (per-tradie consult)
+        const urlTradieId = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tradie_id') : null
+
+        // For tradie users, their own tradie_id
+        const effectiveTradieId = urlTradieId || (resolvedTradie ? (Array.isArray(tradieProf) ? tradieProf?.[0]?.id : tradieProf?.id) : null)
+
+        // Fetch existing assessment for this job+tradie combo
+        let assessQuery = supabase.from('site_assessments').select('*').eq('job_id', consultJob.id)
+        if (effectiveTradieId) assessQuery = assessQuery.eq('tradie_id', effectiveTradieId)
+        const { data: assess } = await assessQuery.maybeSingle()
 
         if (assess) {
           setAssessment(assess)
@@ -98,15 +104,14 @@ export default function AssessPage() {
           setClientPhotos(assess.client_photo_urls || [])
           setTradiePhotos(assess.tradie_photo_urls || [])
         } else {
-          const { data: acceptedQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', consultJob.id).eq('qr_status','accepted').maybeSingle()
-          if (acceptedQr?.tradie_id) {
-            const { data: newAssess } = await supabase
-              .from('site_assessments')
-              .insert({ job_id: consultJob.id, consult_date: new Date().toISOString() })
-              .select()
-              .single()
-            if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
-          }
+          // Create new assessment scoped to this tradie
+          const tradieIdForInsert = effectiveTradieId || null
+          const { data: newAssess } = await supabase
+            .from('site_assessments')
+            .insert({ job_id: consultJob.id, tradie_id: tradieIdForInsert, consult_date: new Date().toISOString() })
+            .select()
+            .single()
+          if (newAssess) { setAssessment(newAssess); setForm(newAssess) }
         }
       }
       setLoading(false)
@@ -430,6 +435,11 @@ export default function AssessPage() {
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
+        {(urlTradieName || job.tradie?.business_name) && (
+          <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:500, margin:'0 0 4px' }}>
+            with {urlTradieName || job.tradie?.business_name}
+          </p>
+        )}
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'8px' }}>{job.trade_category} · {job.suburb}</p>
         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'32px' }}>
           Record your notes from the site consultation. Share them with {theirLabel} and acknowledge theirs before quoting begins. Both records become part of the job file.

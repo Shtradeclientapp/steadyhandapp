@@ -512,9 +512,19 @@ export default function ShortlistPage() {
                   <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'12px 16px', marginTop:'8px' }}>
                     <p style={{ fontSize:'12px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>Before estimates arrive — book a consult</p>
                     <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:'0 0 10px' }}>A consult creates a shared record of site conditions and scope — the foundation for a reliable estimate.</p>
-                    <a href={'/consult?job_id=' + (selectedJob?.id || '')} style={{ display:'block', background:'#9B6B9B', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none', textAlign:'center' as const }}>
-                      Go to consult →
-                    </a>
+                    <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
+                      {quoteRequests.filter((qr:any) => qr.tradie_id).map((qr:any) => (
+                        <a key={qr.id} href={'/consult?job_id=' + (selectedJob?.id || '') + '&tradie_id=' + qr.tradie_id}
+                          style={{ display:'block', background:'#9B6B9B', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none', textAlign:'center' as const }}>
+                          Consult with {qr.tradie?.business_name || 'tradie'} →
+                        </a>
+                      ))}
+                      {quoteRequests.filter((qr:any) => qr.tradie_id).length === 0 && (
+                        <a href={'/consult?job_id=' + (selectedJob?.id || '')} style={{ display:'block', background:'#9B6B9B', color:'white', padding:'10px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none', textAlign:'center' as const }}>
+                          Go to consult →
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
