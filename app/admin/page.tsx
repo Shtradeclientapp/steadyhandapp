@@ -646,15 +646,13 @@ export default function AdminPage() {
             <textarea value={dirCsv} onChange={e => {
               setDirCsv(e.target.value)
               // Parse preview
-              const lines = e.target.value.trim().split('
-').filter(l => l.trim() && !l.startsWith('#'))
+              const lines = e.target.value.trim().split('\n').filter(l => l.trim() && !l.startsWith('#'))
               setDirectoryRows(lines.map(line => {
                 const [business_name, trade_category, service_areas_raw, bio, phone, licence_number, abn, website] = line.split(',').map(s => s.trim())
                 return { business_name, trade_category, service_areas: (service_areas_raw||'').split(';').map((s:string)=>s.trim()).filter(Boolean), bio, phone, licence_number, abn, website }
               }).filter(r => r.business_name))
             }}
-              placeholder={'Smith Electrical, Electrical, Subiaco;Nedlands;Claremont, Licensed electrician 15 years residential, 0412 345 678, EC012345, 12 345 678 901, smithelectrical.com.au
-Brown Plumbing, Plumbing, Fremantle;North Fremantle, Family plumbing business since 1998, 0423 456 789,,, '}
+              placeholder="Smith Electrical, Electrical, Subiaco;Nedlands;Claremont, Bio here, 0412 345 678, EC012345, 12 345 678 901, smithelectrical.com.au"
               style={{ width:'100%', minHeight:'140px', padding:'12px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'8px', background:'rgba(255,255,255,0.04)', color:'rgba(216,228,225,0.8)', fontSize:'12px', fontFamily:'monospace', resize:'vertical' as const, outline:'none', boxSizing:'border-box' as const }} />
 
             {directoryRows.length > 0 && (
