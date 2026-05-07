@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-type Tab = 'overview' | 'tradies' | 'clients' | 'jobs' | 'onboarding'
+type Tab = 'overview' | 'tradies' | 'clients' | 'jobs' | 'onboarding' | 'directory'
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
@@ -16,6 +16,10 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<string|null>(null)
   const [search, setSearch] = useState('')
+  const [directoryRows, setDirectoryRows] = useState<any[]>([])
+  const [dirImporting, setDirImporting] = useState(false)
+  const [dirMsg, setDirMsg] = useState<string|null>(null)
+  const [dirCsv, setDirCsv] = useState('')
 
   useEffect(() => {
     const supabase = createClient()
@@ -113,6 +117,7 @@ export default function AdminPage() {
     { id: 'clients', label: `Clients (${clients.length})` },
     { id: 'jobs', label: `Jobs (${jobs.length})` },
     { id: 'onboarding', label: 'Onboarding' },
+    { id: 'directory', label: 'Directory' },
   ]
 
   return (
@@ -630,6 +635,108 @@ export default function AdminPage() {
             })}
           </div>
         )}
+
+      {tab === 'directory' && (
+        <div style={{ maxWidth:'860px' }}>
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', padding:'24px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:'0 0 8px' }}>DIRECTORY IMPORT</p>
+            <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', margin:'0 0 16px', lineHeight:'1.6' }}>
+              Paste CSV rows below. Format: <code style={{ background:'rgba(255,255,255,0.06)', padding:'2px 6px', borderRadius:'4px', fontSize:'12px' }}>business_name, trade_category, service_areas (semicolon separated), bio, phone, licence_number, abn, website</code>
+            </p>
+            <textarea value={dirCsv} onChange={e => {
+              setDirCsv(e.target.value)
+              // Parse preview
+              const lines = e.target.value.trim().split('
+').filter(l => l.trim() && !l.startsWith('#'))
+              setDirectoryRows(lines.map(line => {
+                const [business_name, trade_category, service_areas_raw, bio, phone, licence_number, abn, website] = line.split(',').map(s => s.trim())
+                return { business_name, trade_category, service_areas: (service_areas_raw||'').split(';').map((s:string)=>s.trim()).filter(Boolean), bio, phone, licence_number, abn, website }
+              }).filter(r => r.business_name))
+            }}
+              placeholder={'Smith Electrical, Electrical, Subiaco;Nedlands;Claremont, Licensed electrician 15 years residential, 0412 345 678, EC012345, 12 345 678 901, smithelectrical.com.au
+Brown Plumbing, Plumbing, Fremantle;North Fremantle, Family plumbing business since 1998, 0423 456 789,,, '}
+              style={{ width:'100%', minHeight:'140px', padding:'12px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'8px', background:'rgba(255,255,255,0.04)', color:'rgba(216,228,225,0.8)', fontSize:'12px', fontFamily:'monospace', resize:'vertical' as const, outline:'none', boxSizing:'border-box' as const }} />
+
+            {directoryRows.length > 0 && (
+              <div style={{ marginTop:'16px' }}>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', margin:'0 0 10px' }}>{directoryRows.length} tradie{directoryRows.length !== 1 ? 's' : ''} ready to import:</p>
+                <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px', marginBottom:'16px' }}>
+                  {directoryRows.map((r, i) => (
+                    <div key={i} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'8px 12px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'8px' }}>
+                      <span style={{ fontSize:'13px', color:'rgba(216,228,225,0.8)', fontWeight:500, flex:1 }}>{r.business_name}</span>
+                      <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)' }}>{r.trade_category}</span>
+                      <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)' }}>{r.service_areas?.join(', ')}</span>
+                    </div>
+                  ))}
+                </div>
+                <button type="button" disabled={dirImporting} onClick={async () => {
+                  setDirImporting(true)
+                  setDirMsg(null)
+                  const supabase = createClient()
+                  let ok = 0, fail = 0
+                  for (const r of directoryRows) {
+                    const id = crypto.randomUUID()
+                    const { error } = await supabase.from('tradie_profiles').insert({
+                      id,
+                      business_name: r.business_name,
+                      trade_categories: r.trade_category ? [r.trade_category] : [],
+                      service_areas: r.service_areas || [],
+                      bio: r.bio || null,
+                      phone: r.phone || null,
+                      licence_number: r.licence_number || null,
+                      abn: r.abn || null,
+                      website: r.website || null,
+                      subscription_active: true,
+                      licence_verified: false,
+                      onboarding_step: 'directory',
+                    })
+                    if (error) { console.error(r.business_name, error.message); fail++ }
+                    else ok++
+                  }
+                  setDirMsg(`✓ Imported ${ok} tradie${ok !== 1 ? 's' : ''}${fail ? ` · ${fail} failed (check console)` : ''}`)
+                  setDirImporting(false)
+                  setDirCsv('')
+                  setDirectoryRows([])
+                  await loadAll(createClient())
+                }} style={{ background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px 20px', fontSize:'13px', fontWeight:600, cursor:'pointer', opacity: dirImporting ? 0.6 : 1 }}>
+                  {dirImporting ? 'Importing...' : `Import ${directoryRows.length} tradie${directoryRows.length !== 1 ? 's' : ''} →`}
+                </button>
+              </div>
+            )}
+            {dirMsg && <p style={{ fontSize:'13px', color:'#2E7D60', marginTop:'12px', fontWeight:500 }}>{dirMsg}</p>}
+          </div>
+
+          {/* Directory entries list */}
+          <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', overflow:'hidden' }}>
+            <div style={{ padding:'12px 16px', borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:0 }}>DIRECTORY ENTRIES ({tradies.filter(t => t.onboarding_step === 'directory').length})</p>
+            </div>
+            <table style={{ width:'100%', borderCollapse:'collapse' as const }}>
+              <thead>
+                <tr style={{ borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+                  {['Business','Trade','Areas','Phone','Licence'].map(h => (
+                    <th key={h} style={{ padding:'8px 12px', fontSize:'11px', color:'rgba(216,228,225,0.35)', textAlign:'left' as const, fontWeight:500 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tradies.filter(t => t.onboarding_step === 'directory').map(t => (
+                  <tr key={t.id} style={{ borderBottom:'1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding:'10px 12px', fontSize:'13px', color:'rgba(216,228,225,0.8)' }}>{t.business_name}</td>
+                    <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.45)' }}>{t.trade_categories?.[0] || '—'}</td>
+                    <td style={{ padding:'10px 12px', fontSize:'11px', color:'rgba(216,228,225,0.35)' }}>{(t.service_areas || []).slice(0,2).join(', ')}{t.service_areas?.length > 2 ? '…' : ''}</td>
+                    <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.35)' }}>{t.phone || '—'}</td>
+                    <td style={{ padding:'10px 12px', fontSize:'12px', color:'rgba(216,228,225,0.35)' }}>{t.licence_number || '—'}</td>
+                  </tr>
+                ))}
+                {tradies.filter(t => t.onboarding_step === 'directory').length === 0 && (
+                  <tr><td colSpan={5} style={{ padding:'24px', textAlign:'center' as const, fontSize:'13px', color:'rgba(216,228,225,0.25)' }}>No directory entries yet</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       </div>
     </div>
