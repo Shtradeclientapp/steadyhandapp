@@ -30,7 +30,6 @@ export default function AssessPage() {
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
   const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
-  const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isTradie, setIsTradie] = useState(false)
   const [loading, setLoading] = useState(true)
