@@ -409,6 +409,20 @@ export default function TradieDashboard() {
 
   return (
     <>
+      {profile?.tradie?.onboarding_step === 'pending_verification' && (
+        <div style={{ background:'rgba(192,120,48,0.08)', borderBottom:'2px solid rgba(192,120,48,0.3)', padding:'14px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap' as const }}>
+          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+            <span style={{ fontSize:'18px' }}>⏳</span>
+            <div>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#854F0B', margin:'0 0 2px' }}>Your account is pending verification</p>
+              <p style={{ fontSize:'12px', color:'#C07830', margin:0 }}>The Steadyhand team is reviewing your details. You will be notified by email once you are live in the directory.</p>
+            </div>
+          </div>
+          <a href="/tradie/profile" style={{ fontSize:'12px', color:'#854F0B', background:'rgba(192,120,48,0.1)', border:'1px solid rgba(192,120,48,0.3)', padding:'7px 14px', borderRadius:'7px', textDecoration:'none', fontWeight:500, flexShrink:0 }}>
+            Complete profile →
+          </a>
+        </div>
+      )}
       {/* ── Primary action bar ── */}
       <div style={{ background:'#141414', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'14px 24px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' as const }}>
