@@ -34,7 +34,7 @@ export default function SignupPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [form, setForm] = useState({ fullName:'', email:'', password:'', suburb:'', businessName:'', tradeCategory:'', serviceArea:'', licenceNumber:'', abn:'' })
+  const [form, setForm] = useState({ fullName:'', email:'', password:'', suburb:'', businessName:'', tradeCategory:'', serviceArea:'', licenceNumber:'', abn:'', phone:'' })
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
   const supabase = createClient()
   useEffect(() => {
@@ -51,10 +51,10 @@ export default function SignupPage() {
     const uid = data.user.id
     await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })
     if (role === 'tradie') {
-      await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, subscription_active: false })
+      await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, phone: form.phone, subscription_active: false, onboarding_step: 'pending_verification' })
     }
     // Wait for session to be established before redirecting
-    const dest = role === 'tradie' ? '/tradie/dashboard' : role === 'org' ? '/org/setup' : '/dashboard'
+    const dest = role === 'tradie' ? '/tradie/pending' : role === 'org' ? '/org/setup' : '/dashboard'
     const supabase2 = createClient()
     let attempts = 0
     const waitForSession = setInterval(async () => {

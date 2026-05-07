@@ -41,6 +41,7 @@ export default function AdminPage() {
     setStats({
       total_tradies: (t || []).length,
       active_subs: (t || []).filter((x: any) => x.subscription_active).length,
+      pending_verification: (t || []).filter((x: any) => x.onboarding_step === 'pending_verification').length,
       total_clients: (c || []).length,
       total_jobs: (j || []).length,
       jobs_active: (j || []).filter((x: any) => !['complete','cancelled'].includes(x.status)).length,
