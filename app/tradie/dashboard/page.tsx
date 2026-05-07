@@ -403,7 +403,7 @@ export default function TradieDashboard() {
     {
       icon: '⭐',
       title: 'Your Dialogue Rating',
-      body: 'Your Dialogue Rating is your professional reputation on Steadyhand. It reflects how clearly and transparently you communicate — on pricing, risk, timeline and scope. It builds with every job and is visible to future clients.',
+      body: 'Your Dialogue Rating reflects how clients experienced your communication — not how much you said, but whether they felt informed about pricing, scope, risk and timeline. A tradie who says little but says the right things scores well. It builds with every job and is visible to future clients.',
     },
   ]
 
@@ -594,7 +594,7 @@ export default function TradieDashboard() {
             {[
               { label:'Active jobs', value: activeJobs.length, sub: jobs.filter(j => j.status === 'delivery').length + ' in delivery', color:'#2E7D60' },
               { label:'Jobs completed', value: profile?.tradie?.jobs_completed || 0, sub: jobs.filter(j => j.status === 'warranty').length + ' under warranty', color:'#2E6A8F' },
-              { label:'Dialogue Rating', value: profile?.tradie?.dialogue_score_avg ? Number(profile.tradie.dialogue_score_avg).toFixed(0) : '—', sub: 'based on communication quality', color:'#6B4FA8' },
+              { label:'Dialogue Rating', value: profile?.tradie?.dialogue_score_avg ? Number(profile.tradie.dialogue_score_avg).toFixed(0) : '—', sub: 'client confidence, not volume', color:'#6B4FA8' },
             ].map(s => (
               <div key={s.label} style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'12px', padding:'18px 20px' }}>
                 <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'6px', letterSpacing:'0.3px' }}>{s.label}</p>

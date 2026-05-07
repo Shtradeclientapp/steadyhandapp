@@ -268,7 +268,10 @@ export default function TradieProfilePage() {
                   <span style={{ fontSize: '12px', color: 'rgba(216,228,225,0.6)' }}>⭐ {Number(tradie.rating_avg).toFixed(1)} · {tradie.jobs_completed} jobs</span>
                 )}
                 {tradie?.dialogue_score_avg > 0 && (
+                  <div>
                   <span style={{ fontSize: '12px', color: 'rgba(107,79,168,0.8)' }}>Dialogue Rating: {Number(tradie.dialogue_score_avg).toFixed(0)}</span>
+                  <p style={{ fontSize:'11px', color:'rgba(107,79,168,0.6)', margin:'3px 0 0', lineHeight:'1.5', fontStyle:'italic' }}>Measures client confidence, not communication volume. Discretion has an important place in trade.</p>
+                  </div>
                 )}
               </div>
             </div>
