@@ -928,7 +928,7 @@ export default function TradieDashboard() {
         {/* Observatory */}
         <div style={{ marginTop:'24px' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
-            <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, margin:0 }}>WA Trade Intelligence</p>
+            <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#7A9098', fontWeight:500, margin:0 }}>WA Trade Data Tracker</p>
             <a href="/observatory" style={{ fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>Full observatory →</a>
           </div>
           <ObservatoryWidget />
