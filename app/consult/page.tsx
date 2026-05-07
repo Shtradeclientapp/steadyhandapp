@@ -30,6 +30,8 @@ export default function AssessPage() {
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
   const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
+  const [urlTradieProfile, setUrlTradieProfile] = useState<any>(null)
+  const [urlTradieId, setUrlTradieId] = useState<string|null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isTradie, setIsTradie] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -436,15 +438,31 @@ export default function AssessPage() {
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
-        {(urlTradieName || job.tradie?.business_name) && (
-          <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:500, margin:'0 0 4px' }}>
-            with {urlTradieName || job.tradie?.business_name}
-          </p>
-        )}
-        {(urlTradieName || job.tradie?.business_name) && (
-          <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:500, margin:'0 0 4px' }}>
-            with {urlTradieName || job.tradie?.business_name}
-          </p>
+        {(urlTradieProfile || urlTradieName || job.tradie?.business_name) && (
+          <div style={{ display:'flex', alignItems:'center', gap:'12px', background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.15)', borderRadius:'10px', padding:'10px 14px', marginBottom:'12px' }}>
+            {urlTradieProfile?.logo_url ? (
+              <img src={urlTradieProfile.logo_url} alt="" style={{ width:'36px', height:'36px', borderRadius:'8px', objectFit:'cover' as const, flexShrink:0 }} />
+            ) : (
+              <div style={{ width:'36px', height:'36px', borderRadius:'8px', background:'rgba(155,107,155,0.15)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <span style={{ fontSize:'16px', color:'#9B6B9B', fontWeight:600 }}>{(urlTradieName || job.tradie?.business_name || '?').charAt(0)}</span>
+              </div>
+            )}
+            <div style={{ flex:1, minWidth:0 }}>
+              <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:600, margin:'0 0 2px' }}>
+                {urlTradieName || job.tradie?.business_name}
+                {urlTradieProfile?.licence_verified && <span style={{ marginLeft:'6px', fontSize:'10px', background:'rgba(46,125,96,0.1)', color:'#2E7D60', padding:'1px 6px', borderRadius:'4px', fontWeight:500 }}>✓ Verified</span>}
+              </p>
+              {urlTradieProfile?.trade_categories?.length > 0 && (
+                <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{urlTradieProfile.trade_categories.join(', ')}</p>
+              )}
+            </div>
+            {urlTradieId && (
+              <a href={'/tradie/' + urlTradieId} target="_blank" rel="noreferrer"
+                style={{ fontSize:'11px', color:'#2E6A8F', textDecoration:'none', flexShrink:0 }}>
+                View profile ↗
+              </a>
+            )}
+          </div>
         )}
         <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'8px' }}>{job.trade_category} · {job.suburb}</p>
         <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', marginBottom:'32px' }}>
