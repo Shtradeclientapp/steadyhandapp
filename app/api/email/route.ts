@@ -540,7 +540,8 @@ export async function POST(request: NextRequest) {
         .select('title, trade_category, suburb, client:profiles!jobs_client_id_fkey(full_name)')
         .eq('id', job_id).single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
-      const clientName = job.client?.full_name || 'A homeowner'
+      const clientData = Array.isArray(job.client) ? job.client[0] : job.client
+      const clientName = clientData?.full_name || 'A homeowner'
       const signupUrl = APP_URL + '/signup?role=tradie'
       const html = wrap(
         greeting(business_name || 'there') +
