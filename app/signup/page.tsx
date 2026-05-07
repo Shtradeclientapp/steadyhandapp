@@ -35,6 +35,8 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({ fullName:'', email:'', password:'', suburb:'', businessName:'', tradeCategory:'', serviceArea:'', licenceNumber:'', abn:'', phone:'' })
+  const [hasLicence, setHasLicence] = useState(false)
+  const [hasInsurance, setHasInsurance] = useState(false)
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement|HTMLSelectElement>) => setForm(f => ({ ...f, [k]: e.target.value }))
   const supabase = createClient()
   useEffect(() => {
@@ -120,9 +122,31 @@ export default function SignupPage() {
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Business name</label><input style={inp} placeholder="Walsh Plumbing & Gas" value={form.businessName} onChange={set('businessName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Trade category</label><select style={inp} value={form.tradeCategory} onChange={set('tradeCategory')}><option value="">Select...</option>{TRADES.map(t => <option key={t}>{t}</option>)}</select></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Service area</label><select style={inp} value={form.serviceArea} onChange={set('serviceArea')}><option value="">Select...</option>{SUBURBS.map(s => <option key={s}>{s}</option>)}</select></div>
-              <div style={{ marginBottom:'14px' }}><label style={lbl}>Licence number</label><input style={inp} placeholder="PL12345" value={form.licenceNumber} onChange={set('licenceNumber')} /></div>
-              <div style={{ marginBottom:'16px' }}><label style={lbl}>ABN</label><input style={inp} placeholder="12 345 678 901" value={form.abn} onChange={set('abn')} /></div>
-              <div style={{ padding:'12px', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', fontSize:'12px', color:'#D4522A', marginBottom:'16px' }}>Licence and insurance verified before profile goes live.</div>
+              {/* Licence number with checkbox gate */}
+              <div style={{ marginBottom:'16px' }}>
+                <label style={{ display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom:'8px' }}>
+                  <input type="checkbox" checked={hasLicence} onChange={e => { setHasLicence(e.target.checked); if (!e.target.checked) setForm(f => ({ ...f, licenceNumber:'' })) }}
+                    style={{ width:'16px', height:'16px', accentColor:'#2E7D60', cursor:'pointer', flexShrink:0 }} />
+                  <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>I have my licence number with me</span>
+                </label>
+                <input style={{ ...inp, opacity: hasLicence ? 1 : 0.4, background: hasLicence ? '#F4F8F7' : '#E8F0EE', cursor: hasLicence ? 'text' : 'not-allowed' }}
+                  placeholder="e.g. PL12345" value={form.licenceNumber} onChange={set('licenceNumber')} disabled={!hasLicence} />
+                {!hasLicence && <p style={{ fontSize:'11px', color:'#7A9098', margin:'4px 0 0' }}>You can add this later from your profile — your application will still be reviewed.</p>}
+              </div>
+
+              {/* Insurance / ABN with checkbox gate */}
+              <div style={{ marginBottom:'16px' }}>
+                <label style={{ display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom:'8px' }}>
+                  <input type="checkbox" checked={hasInsurance} onChange={e => { setHasInsurance(e.target.checked); if (!e.target.checked) setForm(f => ({ ...f, abn:'' })) }}
+                    style={{ width:'16px', height:'16px', accentColor:'#2E7D60', cursor:'pointer', flexShrink:0 }} />
+                  <span style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A' }}>I have my ABN with me</span>
+                </label>
+                <input style={{ ...inp, opacity: hasInsurance ? 1 : 0.4, background: hasInsurance ? '#F4F8F7' : '#E8F0EE', cursor: hasInsurance ? 'text' : 'not-allowed' }}
+                  placeholder="e.g. 12 345 678 901" value={form.abn} onChange={set('abn')} disabled={!hasInsurance} />
+                {!hasInsurance && <p style={{ fontSize:'11px', color:'#7A9098', margin:'4px 0 0' }}>You can add this later from your profile.</p>}
+              </div>
+
+              <div style={{ padding:'12px', background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'8px', fontSize:'12px', color:'#D4522A', marginBottom:'16px' }}>Licence and insurance details are verified by Steadyhand before your profile goes live.</div>
               {error && <p style={{ marginBottom:'12px', fontSize:'13px', color:'#D4522A' }}>{error}</p>}
               <div style={{ display:'flex', gap:'10px' }}>
                 <button type="button" onClick={() => setStep(1)} style={{ background:'transparent', color:'#0A0A0A', padding:'13px 20px', borderRadius:'8px', fontSize:'14px', border:'1px solid rgba(28,43,50,0.25)', cursor:'pointer' }}>Back</button>
