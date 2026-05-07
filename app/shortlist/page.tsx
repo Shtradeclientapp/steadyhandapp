@@ -172,14 +172,16 @@ export default function ShortlistPage() {
         await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ type:'tradie_invite', job_id: selectedJob.id, ...inv }) }).catch(console.error)
         // Insert a quote_request row so the invite appears in the panel archive
-        await supabase.from('quote_requests').insert({
-          job_id: selectedJob.id,
-          tradie_id: null,
-          qr_status: 'invited',
-          status: 'requested',
-          requested_at: new Date().toISOString(),
-          notes: JSON.stringify({ type: 'direct_invite', business_name: inv.business_name, email: inv.email, phone: inv.phone || null }),
-        }).catch(() => {})
+        try {
+          await supabase.from('quote_requests').insert({
+            job_id: selectedJob.id,
+            tradie_id: null,
+            qr_status: 'invited',
+            status: 'requested',
+            requested_at: new Date().toISOString(),
+            notes: JSON.stringify({ type: 'direct_invite', business_name: inv.business_name, email: inv.email, phone: inv.phone || null }),
+          })
+        } catch (_) {}
       }
 
       await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', selectedJob.id)
