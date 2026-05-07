@@ -531,6 +531,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // ── Direct tradie invite (external — not on platform) ───────────────────────
+    if (type === 'tradie_invite') {
+      const { email, business_name, personal_message } = body
+      if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('title, trade_category, suburb, client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+      const clientName = job.client?.full_name || 'A homeowner'
+      const signupUrl = APP_URL + '/signup?role=tradie'
+      const html = wrap(
+        greeting(business_name || 'there') +
+        para(`<strong>${clientName}</strong> would like to invite you to submit an estimate for a job on Steadyhand.`) +
+        jobCard(job.title, job.trade_category, job.suburb, '#2E6A8F') +
+        (personal_message ? para(`<em>"${personal_message}"</em>`) : '') +
+        para('Steadyhand is a trade services platform that manages the full job pipeline — from estimate through to sign-off and warranty. To respond to this invitation, create your free tradie account below.') +
+        btn(signupUrl, 'Create your Steadyhand account →', '#D4522A'),
+        `${clientName} has invited you to quote on Steadyhand`
+      )
+      await resend.emails.send({
+        from: FROM,
+        to: email,
+        subject: `${clientName} has invited you to quote — ${job.title}`,
+        html,
+      })
+    }
+
     // ── Admin broadcast ─────────────────────────────────────────────
     if (type === 'admin_broadcast') {
       const { subject, body: msgBody, recipients } = body
