@@ -464,6 +464,10 @@ export default function WarrantyPage() {
               style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
               View sign-off record
             </a>
+            {job && <a href={'/job/history?job_id=' + job.id}
+              style={{ fontSize:'12px', color:'#6B4FA8', background:'rgba(107,79,168,0.08)', border:'1px solid rgba(107,79,168,0.2)', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
+              ↗ Transaction log
+            </a>}
           </div>
         </div>
       </div>}
