@@ -30,6 +30,7 @@ export default function AssessPage() {
   const [allJobs, setAllJobs] = useState<any[]>([])
   const [assessment, setAssessment] = useState<any>(null)
   const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
+  const [urlTradieName, setUrlTradieName] = useState<string|null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [isTradie, setIsTradie] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -435,6 +436,11 @@ export default function AssessPage() {
         </div>
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>CONSULT</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:300, marginBottom:'4px' }}>{job.title}</p>
+        {(urlTradieName || job.tradie?.business_name) && (
+          <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:500, margin:'0 0 4px' }}>
+            with {urlTradieName || job.tradie?.business_name}
+          </p>
+        )}
         {(urlTradieName || job.tradie?.business_name) && (
           <p style={{ fontSize:'13px', color:'#9B6B9B', fontWeight:500, margin:'0 0 4px' }}>
             with {urlTradieName || job.tradie?.business_name}
