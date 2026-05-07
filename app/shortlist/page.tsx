@@ -120,7 +120,7 @@ export default function ShortlistPage() {
     setBrowseLoading(true)
     let q = supabase.from('tradie_profiles')
       .select('id, business_name, trade_categories, service_areas, bio, logo_url, licence_verified, dialogue_score_avg')
-      .eq('licence_verified', true)
+      .in('onboarding_step', ['active', 'directory'])
     if (browseCategory) q = (q as any).contains('trade_categories', [browseCategory])
     if (browseSuburb) q = q.ilike('service_areas', '%' + browseSuburb + '%')
     const { data } = await q.limit(30)
