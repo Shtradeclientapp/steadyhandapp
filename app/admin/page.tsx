@@ -20,6 +20,8 @@ export default function AdminPage() {
   const [dirImporting, setDirImporting] = useState(false)
   const [dirMsg, setDirMsg] = useState<string|null>(null)
   const [dirCsv, setDirCsv] = useState('')
+  const [dirMode, setDirMode] = useState<'form'|'csv'>('form')
+  const [dirForm, setDirForm] = useState({ business_name:'', trade_category:'', service_areas:'', bio:'', phone:'', licence_number:'', abn:'', website:'' })
 
   useEffect(() => {
     const supabase = createClient()
@@ -639,21 +641,96 @@ export default function AdminPage() {
       {tab === 'directory' && (
         <div style={{ maxWidth:'860px' }}>
           <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:'12px', padding:'24px', marginBottom:'20px' }}>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:'0 0 8px' }}>DIRECTORY IMPORT</p>
-            <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', margin:'0 0 16px', lineHeight:'1.6' }}>
-              Paste CSV rows below. Format: <code style={{ background:'rgba(255,255,255,0.06)', padding:'2px 6px', borderRadius:'4px', fontSize:'12px' }}>business_name, trade_category, service_areas (semicolon separated), bio, phone, licence_number, abn, website</code>
-            </p>
-            <textarea value={dirCsv} onChange={e => {
-              setDirCsv(e.target.value)
-              // Parse preview
-              const lines = e.target.value.trim().split('\n').filter(l => l.trim() && !l.startsWith('#'))
-              setDirectoryRows(lines.map(line => {
-                const [business_name, trade_category, service_areas_raw, bio, phone, licence_number, abn, website] = line.split(',').map(s => s.trim())
-                return { business_name, trade_category, service_areas: (service_areas_raw||'').split(';').map((s:string)=>s.trim()).filter(Boolean), bio, phone, licence_number, abn, website }
-              }).filter(r => r.business_name))
-            }}
-              placeholder="Smith Electrical, Electrical, Subiaco;Nedlands;Claremont, Bio here, 0412 345 678, EC012345, 12 345 678 901, smithelectrical.com.au"
-              style={{ width:'100%', minHeight:'140px', padding:'12px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'8px', background:'rgba(255,255,255,0.04)', color:'rgba(216,228,225,0.8)', fontSize:'12px', fontFamily:'monospace', resize:'vertical' as const, outline:'none', boxSizing:'border-box' as const }} />
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'0.5px', margin:'0 0 16px' }}>DIRECTORY IMPORT</p>
+
+            {/* Mode toggle */}
+            <div style={{ display:'flex', background:'rgba(255,255,255,0.04)', borderRadius:'8px', overflow:'hidden', marginBottom:'20px', width:'fit-content' }}>
+              {(['form','csv'] as const).map(m => (
+                <button key={m} type="button" onClick={() => setDirMode(m)}
+                  style={{ padding:'8px 20px', border:'none', background: dirMode === m ? 'rgba(255,255,255,0.12)' : 'transparent', color: dirMode === m ? 'rgba(216,228,225,0.9)' : 'rgba(216,228,225,0.4)', fontSize:'12px', cursor:'pointer', fontWeight: dirMode === m ? 500 : 400 }}>
+                  {m === 'form' ? '✎ Add by form' : '↑ CSV upload'}
+                </button>
+              ))}
+            </div>
+
+            {/* Form mode */}
+            {dirMode === 'form' && (
+              <div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginBottom:'12px' }}>
+                  <div>
+                    <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Business name *</label>
+                    <input type="text" placeholder="Smith Electrical" value={dirForm.business_name} onChange={e => setDirForm(f => ({ ...f, business_name: e.target.value }))}
+                      style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Trade category *</label>
+                    <select value={dirForm.trade_category} onChange={e => setDirForm(f => ({ ...f, trade_category: e.target.value }))}
+                      style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }}>
+                      <option value="">Select trade...</option>
+                      {['Plumbing & Gas','Electrical','Carpentry & Joinery','Tiling','Painting & Decorating','Roofing','Landscaping','Air Conditioning','General Handyman','Bricklaying','Concreting','Fencing','Glazing','Plastering','Rendering','Waterproofing'].map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div style={{ marginBottom:'12px' }}>
+                  <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Service areas (comma separated)</label>
+                  <input type="text" placeholder="Subiaco, Nedlands, Claremont, Cottesloe" value={dirForm.service_areas} onChange={e => setDirForm(f => ({ ...f, service_areas: e.target.value }))}
+                    style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+                </div>
+                <div style={{ marginBottom:'12px' }}>
+                  <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Bio / description</label>
+                  <textarea placeholder="Brief description of the business and specialisation..." value={dirForm.bio} onChange={e => setDirForm(f => ({ ...f, bio: e.target.value }))}
+                    style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)', minHeight:'70px', resize:'vertical' as const }} />
+                </div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'12px', marginBottom:'16px' }}>
+                  <div>
+                    <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Phone</label>
+                    <input type="text" placeholder="04xx xxx xxx" value={dirForm.phone} onChange={e => setDirForm(f => ({ ...f, phone: e.target.value }))}
+                      style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Licence number</label>
+                    <input type="text" placeholder="EC012345" value={dirForm.licence_number} onChange={e => setDirForm(f => ({ ...f, licence_number: e.target.value }))}
+                      style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+                  </div>
+                  <div>
+                    <label style={{ display:'block', fontSize:'11px', color:'rgba(216,228,225,0.4)', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>ABN</label>
+                    <input type="text" placeholder="12 345 678 901" value={dirForm.abn} onChange={e => setDirForm(f => ({ ...f, abn: e.target.value }))}
+                      style={{ ...inp, background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', color:'rgba(216,228,225,0.8)' }} />
+                  </div>
+                </div>
+                <div style={{ display:'flex', gap:'10px' }}>
+                  <button type="button" onClick={() => {
+                    if (!dirForm.business_name || !dirForm.trade_category) return
+                    const areas = dirForm.service_areas.split(',').map((s:string) => s.trim()).filter(Boolean)
+                    setDirectoryRows(prev => [...prev, { ...dirForm, service_areas: areas }])
+                    setDirForm({ business_name:'', trade_category:'', service_areas:'', bio:'', phone:'', licence_number:'', abn:'', website:'' })
+                  }} disabled={!dirForm.business_name || !dirForm.trade_category}
+                    style={{ background:'rgba(255,255,255,0.08)', color:'rgba(216,228,225,0.8)', border:'1px solid rgba(255,255,255,0.12)', borderRadius:'8px', padding:'9px 18px', fontSize:'13px', cursor:'pointer', opacity: !dirForm.business_name || !dirForm.trade_category ? 0.4 : 1 }}>
+                    + Add to batch
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* CSV mode */}
+            {dirMode === 'csv' && (
+              <div>
+                <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', margin:'0 0 8px', lineHeight:'1.6' }}>
+                  One tradie per line: <code style={{ background:'rgba(255,255,255,0.06)', padding:'2px 6px', borderRadius:'4px' }}>business_name, trade, suburb1;suburb2, bio, phone, licence, abn, website</code>
+                </p>
+                <textarea value={dirCsv} onChange={e => {
+                  setDirCsv(e.target.value)
+                  const lines = e.target.value.trim().split('\n').filter((l:string) => l.trim() && !l.startsWith('#'))
+                  const parsed = lines.map((line:string) => {
+                    const [business_name, trade_category, service_areas_raw, bio, phone, licence_number, abn, website] = line.split(',').map((s:string) => s.trim())
+                    return { business_name, trade_category, service_areas: (service_areas_raw||'').split(';').map((s:string)=>s.trim()).filter(Boolean), bio, phone, licence_number, abn, website }
+                  }).filter((r:any) => r.business_name)
+                  setDirectoryRows(parsed)
+                }}
+                  placeholder="Smith Electrical, Electrical, Subiaco;Nedlands, Licensed electrician 15yrs, 0412 345 678, EC012345, 12 345 678 901, smithelectrical.com.au"
+                  style={{ width:'100%', minHeight:'140px', padding:'12px', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'8px', background:'rgba(255,255,255,0.04)', color:'rgba(216,228,225,0.8)', fontSize:'12px', fontFamily:'monospace', resize:'vertical' as const, outline:'none', boxSizing:'border-box' as const }} />
+              </div>
+            )}
 
             {directoryRows.length > 0 && (
               <div style={{ marginTop:'16px' }}>
