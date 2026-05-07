@@ -367,7 +367,7 @@ sessionStorage.removeItem('diy_project_id')
               <div style={{ marginTop:'20px', padding:'14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.15)', borderRadius:'9px' }}>
                 <p style={{ fontSize:'11px', fontWeight:'500', textTransform:'uppercase' as const, letterSpacing:'0.8px', color:'#2E7D60', marginBottom:'6px' }}>What happens next</p>
                 <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', fontFamily:'sans-serif' }}>
-                  Once submitted, you can invite any tradie you trust — or one recommended by someone you know. Steadyhand verifies them, onboards them, and layers them into our system of documentation and trust. Your request is shared with whoever you invite.
+                  Once submitted, Steadyhand matches you with verified tradies in your area. You can review AI-recommended matches, browse the directory, and invite the tradies you want to hear from. Each tradie you invite receives your request and can respond with an estimate.
                 </p>
               </div>
               {submitError && (
