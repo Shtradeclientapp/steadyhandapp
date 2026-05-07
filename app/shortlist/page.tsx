@@ -74,7 +74,7 @@ export default function ShortlistPage() {
 
   const loadJobData = async (jobId: string, userId: string) => {
     const [{ data: qrs }, { data: quotes }] = await Promise.all([
-      supabase.from('quote_requests').select('id, job_id, tradie_id, qr_status, status, requested_at, tradie:tradie_profiles(business_name, trade_categories, service_areas)').eq('job_id', jobId),
+      supabase.from('quote_requests').select('id, job_id, tradie_id, qr_status, status, requested_at, notes, tradie:tradie_profiles(business_name, trade_categories, service_areas)').eq('job_id', jobId),
       supabase.from('quotes').select('*').eq('job_id', jobId),
     ])
     setQuoteRequests(qrs || [])
@@ -185,13 +185,11 @@ export default function ShortlistPage() {
       }
 
       await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', selectedJob.id)
-      setSent(true)
       setPendingConfirm(false)
-      setTab('requested')
       // Re-fetch with full select to get qr_status
       const { data: qrs, error: qrErr } = await supabase
         .from('quote_requests')
-        .select('id, job_id, tradie_id, qr_status, status, requested_at, tradie:tradie_profiles(business_name, trade_categories, service_areas)')
+        .select('id, job_id, tradie_id, qr_status, status, requested_at, notes, tradie:tradie_profiles(business_name, trade_categories, service_areas)')
         .eq('job_id', selectedJob.id)
       if (!qrErr) setQuoteRequests(qrs || [])
       setSelectedTradies([])
