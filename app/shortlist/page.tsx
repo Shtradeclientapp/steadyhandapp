@@ -510,8 +510,8 @@ export default function ShortlistPage() {
                     </div>
                   ))}
                   <div style={{ background:'rgba(155,107,155,0.06)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'12px 16px', marginTop:'8px' }}>
-                    <p style={{ fontSize:'12px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>Before estimates arrive — book a consult</p>
-                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:'0 0 10px' }}>A consult creates a shared record of site conditions and scope — the foundation for a reliable estimate.</p>
+                    <p style={{ fontSize:'12px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>Book a site consult — optional</p>
+                    <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.5', margin:'0 0 10px' }}>A consult creates a shared record of site conditions and scope. Skip if you're happy to go straight to estimates.</p>
                     <div style={{ display:'flex', flexDirection:'column' as const, gap:'6px' }}>
                       {quoteRequests.filter((qr:any) => qr.tradie_id).map((qr:any) => (
                         <a key={qr.id} href={'/consult?job_id=' + (selectedJob?.id || '') + '&tradie_id=' + qr.tradie_id}
@@ -524,6 +524,15 @@ export default function ShortlistPage() {
                           Go to consult →
                         </a>
                       )}
+                      <button type="button" onClick={async () => {
+                        if (!selectedJob) return
+                        const { createClient } = await import('@/lib/supabase/client')
+                        const supabase = createClient()
+                        await supabase.from('jobs').update({ consult_skipped_by_client: true, status: 'compare' }).eq('id', selectedJob.id)
+                        window.location.href = '/compare?job_id=' + selectedJob.id
+                      }} style={{ background:'transparent', border:'none', color:'#7A9098', fontSize:'12px', cursor:'pointer', padding:'4px 0', textAlign:'left' as const, textDecoration:'underline' }}>
+                        Skip consult — go straight to estimates
+                      </button>
                     </div>
                   </div>
                 </div>

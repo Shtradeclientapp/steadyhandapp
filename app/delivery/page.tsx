@@ -711,6 +711,19 @@ export default function DeliveryPage() {
             </a>
           </div>
         )}
+        {!(done === total && total > 0) && job && !isPastDelivery && (
+          <div style={{ textAlign:'center', marginTop:'16px', paddingTop:'16px', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+            <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 8px' }}>Build happening off-platform?</p>
+            <button type="button" onClick={async () => {
+              const { createClient } = await import('@/lib/supabase/client')
+              const supabase = createClient()
+              await supabase.from('jobs').update({ status: 'signoff' }).eq('id', job.id)
+              window.location.href = '/signoff?job_id=' + job.id
+            }} style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.15)', color:'#4A5E64', padding:'9px 20px', borderRadius:'8px', fontSize:'13px', cursor:'pointer' }}>
+              Skip to sign-off →
+            </button>
+          </div>
+        )}
       </div>
     </div>
       {!isTradie && (
