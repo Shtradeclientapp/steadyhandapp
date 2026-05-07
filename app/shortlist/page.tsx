@@ -74,7 +74,7 @@ export default function ShortlistPage() {
 
   const loadJobData = async (jobId: string, userId: string) => {
     const [{ data: qrs }, { data: quotes }] = await Promise.all([
-      supabase.from('quote_requests').select('*, tradie:tradie_profiles(business_name, trade_category, suburb)').eq('job_id', jobId),
+      supabase.from('quote_requests').select('id, job_id, tradie_id, qr_status, status, requested_at, tradie:tradie_profiles(business_name, trade_categories, service_areas)').eq('job_id', jobId),
       supabase.from('quotes').select('*').eq('job_id', jobId),
     ])
     setQuoteRequests(qrs || [])
