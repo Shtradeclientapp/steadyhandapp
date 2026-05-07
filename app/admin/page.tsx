@@ -69,15 +69,17 @@ export default function AdminPage() {
     setSaving(true)
     setMsg(null)
     const supabase = createClient()
-    const { error } = await supabase.from('tradie_profiles').update({
-      onboarding_step: 'active',
-      licence_verified: true,
-      onboarding_completed_at: new Date().toISOString(),
-    }).eq('id', tradie_id)
-    if (error) { setMsg('Error: ' + error.message); setSaving(false); return }
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch('/api/tradie-activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
+      body: JSON.stringify({ tradie_id }),
+    })
+    const data = await res.json()
+    if (!res.ok) { setMsg('Error: ' + data.error); setSaving(false); return }
     setSelected((prev: any) => prev ? { ...prev, onboarding_step: 'active', licence_verified: true } : prev)
-    setMsg('\u2713 Verified & activated \u2014 ' + email)
-    setTimeout(() => setMsg(null), 4000)
+    setMsg('\u2713 Verified & activated \u2014 activation email sent to ' + email)
+    setTimeout(() => setMsg(null), 5000)
     setSaving(false)
     await loadAll(supabase)
   }
