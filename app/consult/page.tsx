@@ -248,9 +248,10 @@ export default function AssessPage() {
     setAssessment((a: any) => ({ ...a, [field]: new Date().toISOString() }))
     setAcknowledging(false)
 
-    // If both acknowledged, move to quotes
+    // Advance to compare once client has acknowledged (tradie ack is encouraged but not blocking)
     const updated = { ...assessment, [field]: new Date().toISOString() }
-    if (updated.client_acknowledged_at && updated.tradie_acknowledged_at) {
+    const canAdvance = updated.client_acknowledged_at && (updated.tradie_acknowledged_at || updated.tradie_shared_at || isTradie)
+    if (canAdvance) {
         await supabase.from('jobs').update({ status: 'compare' }).eq('id', job.id)
       await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'consult_complete', job_id: job.id }) }).catch(console.error)
 

@@ -35,7 +35,8 @@ export default function LoginPage() {
       setLoading(false)
     } else {
       const { data: profile } = await supabase.from('profiles').select('role, is_admin').eq('id', data.user?.id).single()
-    const dest = profile?.is_admin ? '/admin' : profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard'
+    const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null
+    const dest = redirectParam || (profile?.is_admin ? '/admin' : profile?.role === 'tradie' ? '/tradie/dashboard' : '/dashboard')
     window.location.replace(dest)
     }
   }

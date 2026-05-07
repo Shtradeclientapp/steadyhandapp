@@ -49,9 +49,12 @@ export default function TradieJobPage() {
   }, [])
 
   const act = async (action: 'accepted'|'declined') => {
-    if (!qr) return
+    if (!qr || !jobId) return
     setActing(true)
     await supabase.from('quote_requests').update({ qr_status: action }).eq('id', qr.id)
+    if (action === 'accepted' && profile?.tradie?.id) {
+      await supabase.from('jobs').update({ tradie_id: profile.tradie.id, status: 'consult' }).eq('id', jobId)
+    }
     setDone(action)
     setActing(false)
     if (action === 'accepted') {
