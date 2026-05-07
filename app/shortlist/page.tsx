@@ -167,10 +167,19 @@ export default function ShortlistPage() {
           body: JSON.stringify({ type:'tradie_selected', job_id: selectedJob.id, tradie_id: tradieId }) }).catch(console.error)
       }
 
-      // Send invite emails for manually-added tradies
+      // Send invite emails for manually-added tradies and log them to quote_requests
       for (const inv of pendingInvites) {
         await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ type:'tradie_invite', job_id: selectedJob.id, ...inv }) }).catch(console.error)
+        // Insert a quote_request row so the invite appears in the panel archive
+        await supabase.from('quote_requests').insert({
+          job_id: selectedJob.id,
+          tradie_id: null,
+          qr_status: 'invited',
+          status: 'requested',
+          requested_at: new Date().toISOString(),
+          notes: JSON.stringify({ type: 'direct_invite', business_name: inv.business_name, email: inv.email, phone: inv.phone || null }),
+        }).catch(() => {})
       }
 
       await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', selectedJob.id)
@@ -482,7 +491,12 @@ export default function ShortlistPage() {
                         <div style={{ width:'32px', height:'32px', borderRadius:'8px', background:'#1C2B32', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color:'white', fontFamily:'var(--font-aboreto), sans-serif', flexShrink:0 }}>
                           {qr.tradie?.business_name?.charAt(0) || '?'}
                         </div>
-                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{qr.tradie?.business_name}</p>
+                        <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>
+                        {qr.tradie?.business_name || (() => { try { return JSON.parse(qr.notes || '{}').business_name } catch { return 'Direct invite' } })()}
+                      </p>
+                      {!qr.tradie_id && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>
+                        {(() => { try { return JSON.parse(qr.notes || '{}').email } catch { return '' } })()}
+                      </p>}
                       </div>
                       <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', borderRadius:'100px',
                         background: qr.qr_status === 'accepted' ? 'rgba(46,125,96,0.1)' : qr.qr_status === 'declined' ? 'rgba(212,82,42,0.1)' : 'rgba(192,120,48,0.1)',
