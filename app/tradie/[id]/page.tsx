@@ -9,7 +9,7 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
 
   useEffect(() => {
     supabase.from('tradie_profiles')
-      .select('id, business_name, bio, trade_categories, service_areas, logo_url, licence_number, licence_type, licence_verified, years_experience, website, dialogue_score_avg, abn, phone, availability_status')
+      .select('id, business_name, bio, trade_categories, service_areas, logo_url, hero_url, licence_number, licence_type, licence_verified, years_experience, website, dialogue_score_avg, abn, phone, availability_status')
       .eq('id', params.id)
       .single()
       .then(({ data }) => { setTradie(data); setLoading(false) })
@@ -35,8 +35,11 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
     <div style={{ minHeight:'100vh', background:'#F2F6F5' }}>
 
       {/* Hero */}
-      <div style={{ background:'#0A0A0A', position:'relative', overflow:'hidden' }}>
-        <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 100%, rgba(46,125,96,0.25), transparent 60%)', pointerEvents:'none' }} />
+      <div style={{ background:'#0A0A0A', position:'relative', overflow:'hidden', minHeight:'200px' }}>
+        {tradie.hero_url
+          ? <img src={tradie.hero_url} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:0.4 }} />
+          : <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 30% 100%, rgba(46,125,96,0.25), transparent 60%)', pointerEvents:'none' }} />
+        }
         <div style={{ maxWidth:'720px', margin:'0 auto', padding:'40px 24px 36px', position:'relative', zIndex:1 }}>
           <a href="javascript:history.back()" style={{ display:'inline-flex', alignItems:'center', gap:'6px', fontSize:'12px', color:'rgba(216,228,225,0.45)', textDecoration:'none', marginBottom:'28px' }}>
             ← Back

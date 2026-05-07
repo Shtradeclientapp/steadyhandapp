@@ -70,6 +70,8 @@ export default function TradieProfilePage() {
   }
   const [logoUrl, setLogoUrl] = useState<string|null>(null)
   const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [heroUrl, setHeroUrl] = useState<string|null>(null)
+  const [uploadingHero, setUploadingHero] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -78,7 +80,7 @@ export default function TradieProfilePage() {
       const { data: prof } = await supabase.from('profiles').select('*, stripe_account_id').eq('id', session.user.id).single()
       const { data: trad } = await supabase.from('tradie_profiles').select('*').eq('id', session.user.id).single()
       if (prof) setProfile(prof)
-      if (trad) { setTradie(trad); setForm({ ...prof, ...trad }); setLogoUrl(trad.logo_url || null) }
+      if (trad) { setTradie(trad); setForm({ ...prof, ...trad }); setLogoUrl(trad.logo_url || null); setHeroUrl(trad.hero_url || null) }
       setLoading(false)
     })
   }, [])
@@ -135,6 +137,21 @@ export default function TradieProfilePage() {
     setLogoUrl(url)
     await supabase.from('tradie_profiles').update({ logo_url: url }).eq('id', profile.id)
     setUploadingLogo(false)
+  }
+
+  const uploadHero = async (file: File) => {
+    if (!profile) return
+    setUploadingHero(true)
+    const supabase = createClient()
+    const ext = file.name.split('.').pop()
+    const path = `heroes/${profile.id}.${ext}`
+    const { error } = await supabase.storage.from('Job Photos').upload(path, file, { upsert: true })
+    if (error) { console.error('Hero upload failed:', error.message); setUploadingHero(false); return }
+    const { data } = supabase.storage.from('Job Photos').getPublicUrl(path)
+    const url = data.publicUrl
+    setHeroUrl(url)
+    await supabase.from('tradie_profiles').update({ hero_url: url }).eq('id', profile.id)
+    setUploadingHero(false)
   }
 
   const save = async () => {
@@ -215,8 +232,17 @@ export default function TradieProfilePage() {
       </nav>
 
       {/* PROFILE HEADER CARD */}
-      <div style={{ background: '#0A0A0A', padding: '32px 0', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
+      <div style={{ background: '#0A0A0A', padding: '32px 0', position: 'relative', overflow: 'hidden', minHeight: '160px' }}>
+        {/* Hero image or gradient */}
+        {heroUrl
+          ? <img src={heroUrl} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:0.45 }} />
+          : <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 30% 50%, rgba(212,82,42,0.15), transparent 60%)' }} />
+        }
+        {/* Hero upload button */}
+        <label style={{ position:'absolute', top:'12px', right:'12px', zIndex:2, display:'flex', alignItems:'center', gap:'6px', background:'rgba(0,0,0,0.45)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:'8px', padding:'6px 12px', cursor:'pointer', backdropFilter:'blur(4px)' }}>
+          <input type="file" accept="image/*" style={{ display:'none' }} onChange={e => { if (e.target.files?.[0]) uploadHero(e.target.files[0]) }} />
+          <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.8)', fontWeight:500 }}>{uploadingHero ? 'Uploading…' : heroUrl ? '↺ Change cover' : '+ Add cover photo'}</span>
+        </label>
         <div style={{ maxWidth: '780px', margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
         {required && (
           <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'8px', padding:'14px 16px', marginBottom:'20px', marginTop:'16px' }}>
