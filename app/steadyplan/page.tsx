@@ -48,14 +48,10 @@ export default function SteadyplanPage() {
               <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.35)',borderBottom:'1px solid rgba(216,228,225,0.1)',paddingBottom:'3px'}}>{t}</span>
             ))}
           </div>
-          <div style={{display:'flex',gap:'12px',justifyContent:'center',marginTop:'32px',flexWrap:'wrap' as const}}>
-            <button type="button" onClick={()=>{setViewOnly(false);setStep('discover')}}
-              style={{background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',letterSpacing:'0.2px'}}>
-              Get started →
-            </button>
+          <div style={{display:'flex',justifyContent:'center',marginTop:'32px'}}>
             <button type="button" onClick={()=>{setViewOnly(true);setStep('plans')}}
-              style={{background:'transparent',color:'rgba(216,228,225,0.6)',border:'1px solid rgba(255,255,255,0.15)',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer'}}>
-              View plans
+              style={{background:'#D4522A',color:'white',border:'none',padding:'13px 32px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',letterSpacing:'0.2px'}}>
+              View Steadyplans →
             </button>
           </div>
         </div>
