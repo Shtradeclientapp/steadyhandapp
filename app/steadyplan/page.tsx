@@ -208,7 +208,7 @@ export default function SteadyplanPage() {
               {!viewOnly&&<button type="button" onClick={()=>setStep('discover')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(216,228,215,0.4)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>}
               <button type="button" onClick={()=>{if(!selectedPlan)return;if(viewOnly){setViewOnly(false);setStep('discover')}else{setStep('confirm')}}} disabled={!selectedPlan}
                 style={{flex:1,background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:selectedPlan?1:0.4}}>
-                {viewOnly?`Enquire about ${selectedPlan?PLANS.find(p=>p.id===selectedPlan)?.code:'plan'} →`:`Continue with ${selectedPlan?PLANS.find(p=>p.id===selectedPlan)?.code:'plan'} →`}
+                {selectedPlan ? (viewOnly ? 'Tell us about your business →' : `Continue with ${PLANS.find(p=>p.id===selectedPlan)?.code} →`) : 'Select a plan to continue'}
               </button>
             </div>
           </div>
