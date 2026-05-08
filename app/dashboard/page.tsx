@@ -420,19 +420,36 @@ export default function DashboardPage() {
               <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.65', marginBottom:'20px' }}>
                 Steadyhand stays with you from the first request through to a signed scope, staged payments, and a 90-day warranty — with a permanent document record the whole way. Nothing proceeds until both parties agree.
               </p>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px, 1fr))', gap:'10px', marginBottom:'20px' }}>
-                {[
-                  { icon:'📋', title:'Describe the work', body:'Tell us what needs doing and where. The more detail, the better your quotes.' },
-                  { icon:'🤝', title:'Invite a tradie', body:'Invite someone you already trust. They join Steadyhand and the job begins under a shared record.' },
-                  { icon:'✍️', title:'Sign a scope agreement', body:'Both parties sign before work starts. No more verbal agreements.' },
-                  { icon:'🛡', title:'Warranty included', body:'Every completed job comes with a 90-day warranty, tracked automatically.' },
-                ].map(item => (
-                  <div key={item.title} style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px' }}>
-                    <span style={{ fontSize:'20px', display:'block', marginBottom:'8px' }}>{item.icon}</span>
-                    <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 4px' }}>{item.title}</p>
-                    <p style={{ fontSize:'12px', color:'#7A9098', margin:0, lineHeight:'1.5' }}>{item.body}</p>
-                  </div>
-                ))}
+              {/* Pipeline diagram */}
+              <div style={{ marginBottom:'20px', overflowX:'auto' as const }}>
+                <svg width="100%" viewBox="0 0 600 80" style={{ minWidth:'320px' }}>
+                  {/* Step boxes */}
+                  {[
+                    { x:0,   label:'Request',  sub:'Describe the work' },
+                    { x:150, label:'Match',     sub:'Verified tradies' },
+                    { x:300, label:'Scope',     sub:'Both parties sign' },
+                    { x:450, label:'Warranty',  sub:'90-day protection' },
+                  ].map((s, i) => (
+                    <g key={s.label}>
+                      <rect x={s.x} y={8} width={130} height={52} rx={8}
+                        fill="white" stroke="rgba(28,43,50,0.1)" strokeWidth={1}/>
+                      <text x={s.x+65} y={30} textAnchor="middle"
+                        style={{ fontSize:'12px', fontWeight:600, fill:'#0A0A0A', fontFamily:'sans-serif' }}>{s.label}</text>
+                      <text x={s.x+65} y={47} textAnchor="middle"
+                        style={{ fontSize:'11px', fill:'#7A9098', fontFamily:'sans-serif' }}>{s.sub}</text>
+                      {i < 3 && (
+                        <line x1={s.x+130} y1={34} x2={s.x+148} y2={34}
+                          stroke="#D4522A" strokeWidth={1.5}
+                          markerEnd="url(#arr)"/>
+                      )}
+                    </g>
+                  ))}
+                  <defs>
+                    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <path d="M2 1L8 5L2 9" fill="none" stroke="#D4522A" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+                    </marker>
+                  </defs>
+                </svg>
               </div>
               <a href="/request">
                 <button style={{ width:'100%', background:'#D4522A', color:'white', padding:'14px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', fontFamily:'var(--font-aboreto), sans-serif', letterSpacing:'0.5px' }}>
