@@ -12,8 +12,8 @@ const PLANS = [
 type Step = 'discover'|'plans'|'confirm'
 
 export default function SteadyplanPage() {
-  const [step, setStep] = useState<Step>('discover')
-  const [viewOnly, setViewOnly] = useState(false)
+  const [step, setStep] = useState<Step>('plans')
+  const [viewOnly, setViewOnly] = useState(true)
   const [form, setForm] = useState({ name:'', business:'', trade:'', phone:'', email:'', employees:'', revenue:'', challenge:'', timeline:'' })
   const [selectedPlan, setSelectedPlan] = useState<string|null>(null)
   const [bulkPay, setBulkPay] = useState(false)
@@ -41,7 +41,7 @@ export default function SteadyplanPage() {
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(212,82,42,0.12),transparent 65%)'}}/>
         <div style={{position:'relative',zIndex:1,maxWidth:'680px',margin:'0 auto'}}>
           <p style={{fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(216,228,225,0.3)',marginBottom:'16px'}}>Steadyhand Digital</p>
-          <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'2px',lineHeight:1.15,margin:'0 0 20px',fontFamily:aboreto.style.fontFamily}}>STEADYPLANS</h1>
+          <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'2px',lineHeight:1.15,margin:'0 0 20px',fontFamily:aboreto.style.fontFamily,color:'#D4522A'}}>STEADYPLANS</h1>
           <p style={{fontSize:'17px',color:'rgba(216,228,225,0.45)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
           <div style={{display:'flex',gap:'28px',justifyContent:'center',flexWrap:'wrap'}}>
             {['$1,500 /week','4-week minimum','Weekly billing in advance'].map(t=>(
