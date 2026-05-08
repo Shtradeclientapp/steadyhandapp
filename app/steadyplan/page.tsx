@@ -35,20 +35,20 @@ export default function SteadyplanPage() {
   const lbl = { display:'block' as const, fontSize:'11px', letterSpacing:'1px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }
 
   return (
-    <div style={{minHeight:'100vh',background:'#0A0A0A',color:'rgba(216,228,225,0.9)',fontFamily:'Georgia,serif'}}>
+    <div style={{minHeight:'100vh',background:'#C8D5D2',color:'#1C2B32',fontFamily:'Georgia,serif'}}>
       {/* Hero */}
       <div style={{position:'relative',overflow:'hidden',padding:'80px 24px 60px',textAlign:'center'}}>
-        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(212,82,42,0.12),transparent 65%)'}}/>
+        <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(212,82,42,0.08),transparent 65%)'}}/>
         <div style={{position:'relative',zIndex:1,maxWidth:'680px',margin:'0 auto'}}>
-          <p style={{fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(216,228,225,0.3)',marginBottom:'16px'}}>Steadyhand Digital</p>
+          <p style={{fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(28,43,50,0.45)',marginBottom:'16px'}}>Steadyhand Digital</p>
           <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'2px',lineHeight:1.15,margin:'0 0 20px',fontFamily:aboreto.style.fontFamily,color:'#D4522A'}}>STEADYPLANS</h1>
-          <p style={{fontSize:'17px',color:'rgba(216,228,225,0.6)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
+          <p style={{fontSize:'17px',color:'rgba(28,43,50,0.6)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
           <div style={{display:'flex',gap:'28px',justifyContent:'center',flexWrap:'wrap'}}>
             {['$1,500 /week','4-week minimum','Weekly billing in advance'].map(t=>(
-              <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.5)',borderBottom:'1px solid rgba(216,228,225,0.15)',paddingBottom:'3px'}}>{t}</span>
+              <span key={t} style={{fontSize:'13px',color:'rgba(28,43,50,0.55)',borderBottom:'1px solid rgba(28,43,50,0.15)',paddingBottom:'3px'}}>{t}</span>
             ))}
           </div>
-          <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',lineHeight:1.75,maxWidth:'540px',margin:'24px auto 0',fontStyle:'italic'}}>
+          <p style={{fontSize:'14px',color:'rgba(28,43,50,0.55)',lineHeight:1.75,maxWidth:'540px',margin:'24px auto 0',fontStyle:'italic'}}>
             Our programs run at a single weekly rate across SP1, SP2 and SP3. What changes with each plan is the scope, depth and duration — not the price. The longer the program, the more ground we cover. Fixed pricing means no surprises, and weekly billing in advance helps you plan around it.
           </p>
           <div style={{display:'flex',justifyContent:'center',marginTop:'32px'}}>
@@ -65,8 +65,8 @@ export default function SteadyplanPage() {
         <div style={{display:'flex',gap:'8px',marginBottom:'40px',alignItems:'center'}}>
           {(['plans','discover','confirm'] as Step[]).map((s,i)=>(
             <div key={s} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <div style={{width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:600,background:step===s?'#D4522A':'rgba(255,255,255,0.06)',color:step===s?'white':'rgba(216,228,225,0.5)',border:step===s?'none':'1px solid rgba(255,255,255,0.12)'}}>{i+1}</div>
-              <span style={{fontSize:'12px',color:step===s?'rgba(216,228,225,0.85)':'rgba(216,228,225,0.35)',letterSpacing:'0.5px'}}>{s==='plans'?'Choose plan':s==='discover'?'About you':'Confirm'}</span>
+              <div style={{width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:600,background:step===s?'#D4522A':'rgba(28,43,50,0.1)',color:step===s?'white':'rgba(28,43,50,0.45)',border:step===s?'none':'1px solid rgba(28,43,50,0.15)'}}>{i+1}</div>
+              <span style={{fontSize:'12px',color:step===s?'#1C2B32':'rgba(28,43,50,0.4)',letterSpacing:'0.5px'}}>{s==='plans'?'Choose plan':s==='discover'?'About you':'Confirm'}</span>
               {i<2&&<div style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)'}}/>}
             </div>
           ))}
@@ -75,8 +75,8 @@ export default function SteadyplanPage() {
         {/* Step 1 */}
         {step==='discover'&&(
           <div>
-            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 8px'}}>Tell us about your business</h2>
-            <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',margin:'0 0 32px',lineHeight:1.6}}>A Steadyplan starts with understanding where you are now. This takes two minutes.</p>
+            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 8px',color:'#1C2B32'}}>Tell us about your business</h2>
+            <p style={{fontSize:'14px',color:'rgba(28,43,50,0.55)',margin:'0 0 32px',lineHeight:1.6}}>A Steadyplan starts with understanding where you are now. This takes two minutes.</p>
             <div style={{display:'grid',gap:'18px'}}>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px'}}>
                 <div><label style={lbl}>Your name</label><input style={inp} value={form.name} onChange={set('name')} placeholder="First name"/></div>
@@ -127,29 +127,29 @@ export default function SteadyplanPage() {
         {step==='plans'&&(
           <div>
             <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 8px'}}>Choose your Steadyplan</h2>
-            <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',margin:'0 0 28px',lineHeight:1.6}}>All plans at $1,500/week. The difference is duration, depth and what you're ready to build.</p>
+            <p style={{fontSize:'14px',color:'rgba(28,43,50,0.55)',margin:'0 0 28px',lineHeight:1.6}}>All plans at $1,500/week. The difference is duration, depth and what you're ready to build.</p>
             <div style={{display:'flex',flexDirection:'column' as const,gap:'14px',marginBottom:'24px'}}>
               {PLANS.map(p=>(
-                <div key={p.id} onClick={()=>setSelectedPlan(p.id)} style={{border:`1.5px solid ${selectedPlan===p.id?p.colour:'rgba(255,255,255,0.07)'}`,borderRadius:'14px',padding:'22px',cursor:'pointer',position:'relative' as const,background:selectedPlan===p.id?`${p.colour}0d`:'rgba(255,255,255,0.02)',transition:'all 0.2s'}}>
+                <div key={p.id} onClick={()=>setSelectedPlan(p.id)} style={{border:`1.5px solid ${selectedPlan===p.id?p.colour:'rgba(28,43,50,0.15)'}`,borderRadius:'14px',padding:'22px',cursor:'pointer',position:'relative' as const,background:selectedPlan===p.id?`${p.colour}12`:'rgba(255,255,255,0.45)',transition:'all 0.2s'}}>
                   {(p as any).popular&&<div style={{position:'absolute' as const,top:'-1px',right:'18px',background:p.colour,color:'white',fontSize:'10px',letterSpacing:'1px',padding:'3px 10px',borderRadius:'0 0 6px 6px',textTransform:'uppercase' as const}}>Most popular</div>}
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'10px',flexWrap:'wrap' as const,gap:'8px'}}>
                     <div>
                       <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'3px'}}>
                         <span style={{fontSize:'12px',fontWeight:600,color:p.colour,letterSpacing:'1px'}}>{p.code}</span>
-                        <span style={{fontSize:'15px'}}>{p.name}</span>
+                        <span style={{fontSize:'15px',color:'#1C2B32'}}>{p.name}</span>
                       </div>
-                      <p style={{fontSize:'11px',color:'rgba(216,228,225,0.45)',margin:0}}>{p.mindset} · {p.weeks} weeks</p>
+                      <p style={{fontSize:'11px',color:'rgba(28,43,50,0.45)',margin:0}}>{p.mindset} · {p.weeks} weeks</p>
                     </div>
                     <div style={{textAlign:'right' as const}}>
-                      <p style={{fontSize:'19px',margin:'0 0 1px'}}>$1,500<span style={{fontSize:'12px',color:'rgba(216,228,225,0.3)'}}>/week</span></p>
-                      <p style={{fontSize:'11px',color:'rgba(216,228,225,0.25)',margin:0}}>${(1500*p.weeks).toLocaleString()} total</p>
+                      <p style={{fontSize:'19px',margin:'0 0 1px'}}>$1,500<span style={{fontSize:'12px',color:'rgba(28,43,50,0.35)'}}>/week</span></p>
+                      <p style={{fontSize:'11px',color:'rgba(28,43,50,0.4)',margin:0}}>${(1500*p.weeks).toLocaleString()} total</p>
                     </div>
                   </div>
-                  <p style={{fontSize:'13px',color:'rgba(216,228,225,0.7)',lineHeight:1.65,margin:'0 0 12px'}}>{p.description}</p>
+                  <p style={{fontSize:'13px',color:'rgba(28,43,50,0.65)',lineHeight:1.65,margin:'0 0 12px'}}>{p.description}</p>
                   {p.outcomes.map(o=>(
                     <div key={o} style={{display:'flex',gap:'8px',marginBottom:'4px'}}>
                       <span style={{color:p.colour,fontSize:'12px',flexShrink:0}}>→</span>
-                      <span style={{fontSize:'12px',color:'rgba(216,228,225,0.65)'}}>{o}</span>
+                      <span style={{fontSize:'12px',color:'rgba(28,43,50,0.6)'}}>{o}</span>
                     </div>
                   ))}
                   {(p as any).addons&&selectedPlan===p.id&&(
@@ -169,42 +169,42 @@ export default function SteadyplanPage() {
                 </div>
               ))}
               {/* SP4 */}
-              <div style={{border:'1px solid rgba(255,255,255,0.05)',borderRadius:'14px',padding:'20px',background:'rgba(255,255,255,0.01)'}}>
+              <div style={{border:'1px solid rgba(28,43,50,0.12)',borderRadius:'14px',padding:'20px',background:'rgba(255,255,255,0.3)'}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap' as const,gap:'8px'}}>
                   <div>
                     <div style={{display:'flex',gap:'10px',alignItems:'center',marginBottom:'3px'}}>
                       <span style={{fontSize:'12px',fontWeight:600,color:'#7A9098',letterSpacing:'1px'}}>SP4</span>
-                      <span style={{fontSize:'15px',color:'rgba(216,228,225,0.6)'}}>Custom Digitalisation & E-Commerce</span>
+                      <span style={{fontSize:'15px',color:'#1C2B32'}}>Custom Digitalisation & E-Commerce</span>
                     </div>
-                    <p style={{fontSize:'11px',color:'rgba(216,228,225,0.25)',margin:0}}>Bespoke · Scoped individually</p>
+                    <p style={{fontSize:'11px',color:'rgba(28,43,50,0.4)',margin:0}}>Bespoke · Scoped individually</p>
                   </div>
-                  <span style={{fontSize:'13px',color:'rgba(216,228,225,0.25)',fontStyle:'italic'}}>Custom pricing</span>
+                  <span style={{fontSize:'13px',color:'rgba(28,43,50,0.35)',fontStyle:'italic'}}>Custom pricing</span>
                 </div>
-                <p style={{fontSize:'13px',color:'rgba(216,228,225,0.55)',lineHeight:1.65,margin:'10px 0 0'}}>Custom software, e-commerce, client portals or end-to-end digital transformation. Scoped after a discovery session.</p>
+                <p style={{fontSize:'13px',color:'rgba(28,43,50,0.55)',lineHeight:1.65,margin:'10px 0 0'}}>Custom software, e-commerce, client portals or end-to-end digital transformation. Scoped after a discovery session.</p>
               </div>
             </div>
 
             {/* Upfront discount */}
             {selectedPlan&&(
-              <div style={{border:'1.5px solid rgba(46,125,96,0.2)',borderRadius:'12px',padding:'16px 18px',marginBottom:'22px',background:'rgba(46,125,96,0.04)'}}>
+              <div style={{border:'1.5px solid rgba(46,125,96,0.3)',borderRadius:'12px',padding:'16px 18px',marginBottom:'22px',background:'rgba(46,125,96,0.08)'}}>
                 <label style={{display:'flex',gap:'12px',alignItems:'flex-start',cursor:'pointer'}}>
                   <input type="checkbox" checked={bulkPay} onChange={e=>setBulkPay(e.target.checked)} style={{marginTop:'3px',accentColor:'#2E7D60'}}/>
                   <div>
-                    <p style={{fontSize:'14px',margin:'0 0 3px',fontWeight:500}}>Pay 8 weeks upfront — save 10%</p>
-                    <p style={{fontSize:'12px',color:'rgba(216,228,225,0.4)',margin:0}}>$1,350/week · one invoice · ${(1350*8).toLocaleString()} total · simpler cashflow planning</p>
+                    <p style={{fontSize:'14px',margin:'0 0 3px',fontWeight:500,color:'#1C2B32'}}>Pay 8 weeks upfront — save 10%</p>
+                    <p style={{fontSize:'12px',color:'rgba(28,43,50,0.55)',margin:0}}>$1,350/week · one invoice · ${(1350*8).toLocaleString()} total · simpler cashflow planning</p>
                   </div>
                 </label>
               </div>
             )}
 
             {/* SP5 */}
-            <div style={{border:'1px solid rgba(255,255,255,0.05)',borderRadius:'10px',padding:'14px 16px',marginBottom:'24px'}}>
+            <div style={{border:'1px solid rgba(28,43,50,0.1)',borderRadius:'10px',padding:'14px 16px',marginBottom:'24px',background:'rgba(255,255,255,0.25)'}}>
               <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(216,228,225,0.2)',margin:'0 0 4px'}}>SP5 — Phase II (graduates only)</p>
-              <p style={{fontSize:'13px',color:'rgba(216,228,225,0.55)',margin:0,lineHeight:1.6}}>$750/month ongoing retainer for consolidation and strategic check-ins. Available after completing a Steadyplan.</p>
+              <p style={{fontSize:'13px',color:'rgba(28,43,50,0.55)',margin:0,lineHeight:1.6}}>$750/month ongoing retainer for consolidation and strategic check-ins. Available after completing a Steadyplan.</p>
             </div>
 
             <div style={{display:'flex',gap:'10px'}}>
-              {!viewOnly&&<button type="button" onClick={()=>setStep('plans')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(216,228,215,0.4)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>}
+              {!viewOnly&&<button type="button" onClick={()=>setStep('plans')} style={{background:'transparent',border:'1px solid rgba(28,43,50,0.15)',color:'rgba(28,43,50,0.5)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>}
               <button type="button" onClick={()=>{if(!selectedPlan)return;setStep('discover')}} disabled={!selectedPlan}
                 style={{flex:1,background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:selectedPlan?1:0.4}}>
                 {selectedPlan ? `Tell us about your business →` : 'Select a plan to continue'}
@@ -216,8 +216,8 @@ export default function SteadyplanPage() {
         {/* Step 3 */}
         {step==='confirm'&&plan&&!submitted&&(
           <div>
-            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 8px'}}>Confirm your enquiry</h2>
-            <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',margin:'0 0 28px',lineHeight:1.6}}>We'll be in touch within one business day to confirm your start date and set up billing.</p>
+            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 8px',color:'#1C2B32'}}>Confirm your enquiry</h2>
+            <p style={{fontSize:'14px',color:'rgba(28,43,50,0.55)',margin:'0 0 28px',lineHeight:1.6}}>We'll be in touch within one business day to confirm your start date and set up billing.</p>
             <div style={{border:`1.5px solid ${plan.colour}25`,borderRadius:'14px',padding:'22px',marginBottom:'20px',background:`${plan.colour}08`}}>
               <div style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap' as const,gap:'8px',marginBottom:'14px'}}>
                 <div>
@@ -225,15 +225,15 @@ export default function SteadyplanPage() {
                   <p style={{fontSize:'11px',color:'rgba(216,228,225,0.3)',margin:0}}>{plan.weeks} weeks · {plan.mindset}</p>
                 </div>
                 <div style={{textAlign:'right' as const}}>
-                  {bulkPay?<><p style={{fontSize:'17px',margin:'0 0 2px'}}>$1,350<span style={{fontSize:'12px',color:'rgba(216,228,225,0.3)'}}>/week</span></p><p style={{fontSize:'11px',color:'#2E7D60',margin:0}}>10% upfront discount</p></>
-                  :<p style={{fontSize:'17px',margin:0}}>$1,500<span style={{fontSize:'12px',color:'rgba(216,228,225,0.3)'}}>/week</span></p>}
+                  {bulkPay?<><p style={{fontSize:'17px',margin:'0 0 2px'}}>$1,350<span style={{fontSize:'12px',color:'rgba(28,43,50,0.35)'}}>/week</span></p><p style={{fontSize:'11px',color:'#2E7D60',margin:0}}>10% upfront discount</p></>
+                  :<p style={{fontSize:'17px',margin:0}}>$1,500<span style={{fontSize:'12px',color:'rgba(28,43,50,0.35)'}}>/week</span></p>}
                 </div>
               </div>
               <div style={{display:'flex',gap:'20px',flexWrap:'wrap' as const}}>
                 {[{label:'Billing',value:bulkPay?`8 weeks upfront · $${(1350*8).toLocaleString()}`:'Weekly in advance'},{label:'Minimum',value:'4 weeks'},{label:'Start',value:form.timeline||'TBC'}].map(item=>(
                   <div key={item.label}>
                     <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(216,228,225,0.25)',margin:'0 0 2px'}}>{item.label}</p>
-                    <p style={{fontSize:'13px',color:'rgba(216,228,225,0.65)',margin:0}}>{item.value}</p>
+                    <p style={{fontSize:'13px',color:'rgba(28,43,50,0.7)',margin:0}}>{item.value}</p>
                   </div>
                 ))}
               </div>
@@ -241,19 +241,19 @@ export default function SteadyplanPage() {
                 {selectedAddons.map(a=><p key={a} style={{fontSize:'13px',color:'rgba(216,228,225,0.55)',margin:'0 0 2px'}}>+ {a}</p>)}
               </div>}
             </div>
-            <div style={{border:'1px solid rgba(255,255,255,0.06)',borderRadius:'12px',padding:'16px 18px',marginBottom:'24px'}}>
+            <div style={{border:'1px solid rgba(28,43,50,0.12)',borderRadius:'12px',padding:'16px 18px',marginBottom:'24px',background:'rgba(255,255,255,0.3)'}}>
               <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(216,228,225,0.25)',margin:'0 0 8px'}}>Your details</p>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px'}}>
                 {[{label:'Name',value:form.name},{label:'Business',value:form.business},{label:'Email',value:form.email},{label:'Phone',value:form.phone||'—'},{label:'Trade',value:form.trade||'—'},{label:'Team',value:form.employees||'—'}].map(item=>(
                   <div key={item.label}>
-                    <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(216,228,225,0.2)',margin:'0 0 1px'}}>{item.label}</p>
+                    <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(28,43,50,0.35)',margin:'0 0 1px'}}>{item.label}</p>
                     <p style={{fontSize:'13px',color:'rgba(216,228,225,0.6)',margin:0}}>{item.value}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div style={{display:'flex',gap:'10px'}}>
-              <button type="button" onClick={()=>setStep('plans')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(216,228,225,0.4)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>
+              <button type="button" onClick={()=>setStep('plans')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(28,43,50,0.5)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>
               <button type="button" onClick={handleEnquire} disabled={submitting} style={{flex:1,background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:submitting?0.6:1}}>
                 {submitting?'Sending…':'Submit enquiry →'}
               </button>
@@ -265,20 +265,20 @@ export default function SteadyplanPage() {
         {submitted&&(
           <div style={{textAlign:'center' as const,padding:'48px 0'}}>
             <div style={{fontSize:'36px',marginBottom:'16px'}}>✓</div>
-            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 10px'}}>Enquiry received</h2>
-            <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',lineHeight:1.7,maxWidth:'400px',margin:'0 auto 28px'}}>
+            <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 10px',color:'#1C2B32'}}>Enquiry received</h2>
+            <p style={{fontSize:'14px',color:'rgba(28,43,50,0.55)',lineHeight:1.7,maxWidth:'400px',margin:'0 auto 28px'}}>
               We'll be in touch within one business day. Questions? <a href="mailto:info@steadyhanddigital.com" style={{color:'#D4522A',textDecoration:'none'}}>info@steadyhanddigital.com</a>
             </p>
-            <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'12px',padding:'18px',display:'inline-block',textAlign:'left' as const}}>
-              <p style={{fontSize:'14px',color:'rgba(216,228,225,0.75)',margin:'0 0 3px'}}>{plan?.code} — {plan?.name}</p>
-              <p style={{fontSize:'12px',color:'rgba(216,228,225,0.35)',margin:0}}>{bulkPay?'8-week upfront · $1,350/week':'$1,500/week · billed weekly'}</p>
+            <div style={{background:'rgba(255,255,255,0.4)',border:'1px solid rgba(28,43,50,0.1)',borderRadius:'12px',padding:'18px',display:'inline-block',textAlign:'left' as const}}>
+              <p style={{fontSize:'14px',color:'#1C2B32',margin:'0 0 3px'}}>{plan?.code} — {plan?.name}</p>
+              <p style={{fontSize:'12px',color:'rgba(28,43,50,0.5)',margin:0}}>{bulkPay?'8-week upfront · $1,350/week':'$1,500/week · billed weekly'}</p>
             </div>
           </div>
         )}
       </div>
 
-      <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',padding:'28px 24px',textAlign:'center' as const}}>
-        <p style={{fontSize:'12px',color:'rgba(216,228,225,0.18)',margin:0}}>Steadyhand Digital · Perth, WA · <a href="mailto:info@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>info@steadyhanddigital.com</a></p>
+      <div style={{borderTop:'1px solid rgba(28,43,50,0.12)',padding:'28px 24px',textAlign:'center' as const}}>
+        <p style={{fontSize:'12px',color:'rgba(28,43,50,0.35)',margin:0}}>Steadyhand Digital · Perth, WA · <a href="mailto:info@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>info@steadyhanddigital.com</a></p>
       </div>
     </div>
   )
