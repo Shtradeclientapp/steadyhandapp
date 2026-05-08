@@ -48,6 +48,11 @@ export default function SteadyplanPage() {
               <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.5)',borderBottom:'1px solid rgba(216,228,225,0.15)',paddingBottom:'3px'}}>{t}</span>
             ))}
           </div>
+          <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',lineHeight:1.75,maxWidth:'540px',margin:'24px auto 0',fontStyle:'italic'}}>
+            Our programs run at a single weekly rate across SP1, SP2 and SP3. What changes with each plan is the scope, depth and duration — not the price. The longer the program, the more ground we cover. Fixed pricing means no surprises, and weekly billing in advance helps you plan around it.
+          </p>
+          <div style={{display:'none'}}>
+          </div>
           <div style={{display:'flex',justifyContent:'center',marginTop:'32px'}}>
             <button type="button" onClick={()=>{setViewOnly(true);setStep('plans')}}
               style={{background:'#D4522A',color:'white',border:'none',padding:'13px 32px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',letterSpacing:'0.2px'}}>
