@@ -112,7 +112,7 @@ export default function SteadyplanPage() {
                   {['ASAP','Within 4 weeks','Next quarter','Just exploring'].map(t=><option key={t}>{t}</option>)}
                 </select>
               </div>
-              <button type="button" onClick={()=>{if(form.name&&form.business&&form.email&&form.challenge)setStep('plans')}}
+              <button type="button" onClick={()=>{if(form.name&&form.business&&form.email&&form.challenge)setStep('confirm')}}
                 style={{background:'#D4522A',color:'white',border:'none',padding:'14px 32px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:(form.name&&form.business&&form.email&&form.challenge)?1:0.4}}>
                 See your Steadyplan options →
               </button>
