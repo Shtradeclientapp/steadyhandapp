@@ -278,7 +278,7 @@ export default function SteadyplanPage() {
       </div>
 
       <div style={{borderTop:'1px solid rgba(28,43,50,0.12)',padding:'28px 24px',textAlign:'center' as const}}>
-        <p style={{fontSize:'12px',color:'rgba(28,43,50,0.35)',margin:0}}>Steadyhand Digital · Perth, WA · <a href="mailto:info@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>info@steadyhanddigital.com</a></p>
+        <p style={{fontSize:'12px',color:'rgba(28,43,50,0.35)',margin:0}}>Steadyhand Digital · Western Australia · <a href="mailto:info@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>info@steadyhanddigital.com</a></p>
       </div>
     </div>
   )
