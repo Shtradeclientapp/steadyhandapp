@@ -9,6 +9,15 @@ const supabase = createClient(
 )
 const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.steadyhandtrade.app'
+const TEST_REDIRECT = 'info@steadyhanddigital.com'
+
+// Redirect test tradie emails to a single inbox for easier testing
+function resolveRecipient(email: string, subject: string): { to: string; subject: string } {
+  if (email?.endsWith('@steadyhandtest.com')) {
+    return { to: TEST_REDIRECT, subject: `[To: ${email}] ${subject}` }
+  }
+  return { to: email, subject }
+}
 
 // ── Brand template ────────────────────────────────────────────────────────────
 function wrap(body: string, preheader = '') {
@@ -118,7 +127,7 @@ export async function POST(request: NextRequest) {
         btn(APP_URL + '/tradie/job?job_id=' + job_id, 'View this job request →', '#D4522A'),
         `${job.client.full_name} has selected you for a job`
       )
-      await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `${job.client.full_name} selected you for a job — ${job.title}`, html })
+      await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `${job.client.full_name} selected you for a job — ${job.title}`), html })
     }
 
     // ── Milestone submitted ───────────────────────────────────────────────────
@@ -138,7 +147,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/delivery', 'Review and approve milestone', '#2E7D60'),
           `Milestone ready for your approval — ${milestone.label}`
         )
-        await resend.emails.send({ from: FROM, to: milestone.job.client.email, subject: `Milestone ready for approval — ${milestone.job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(milestone.job.client.email, `Milestone ready for approval — ${milestone.job.title}`), html })
       }
     }
 
@@ -159,7 +168,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/tradie/dashboard', 'View warranty issue', '#D4522A'),
           `Warranty issue logged — ${issue.title}`
         )
-        await resend.emails.send({ from: FROM, to: issue.job.tradie.profile.email, subject: `Warranty issue raised — ${issue.job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(issue.job.tradie.profile.email, `Warranty issue raised — ${issue.job.title}`), html })
       }
     }
 
@@ -184,7 +193,7 @@ export async function POST(request: NextRequest) {
             btn(APP_URL + '/agreement', 'Review scope agreement', '#6B4FA8'),
             `Scope agreement updated — review required`
           )
-          await resend.emails.send({ from: FROM, to: recipientEmail, subject: `Scope agreement updated — ${job.title}`, html })
+          await resend.emails.send({ from: FROM, ...resolveRecipient(recipientEmail, `Scope agreement updated — ${job.title}`), html })
         }
       }
     }
@@ -205,7 +214,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/tradie/dashboard', 'Back to your dashboard', '#0A0A0A'),
           `Quote not accepted on ${job.title}`
         )
-        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Quote not accepted — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Quote not accepted — ${job.title}`), html })
       }
     }
 
@@ -226,7 +235,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/tradie/job?id=' + job_id, 'Review and update quote', '#C07830'),
           `Quote revision requested on ${job.title}`
         )
-        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Quote revision requested — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Quote revision requested — ${job.title}`), html })
       }
     }
 
@@ -251,7 +260,7 @@ export async function POST(request: NextRequest) {
             btn(APP_URL + '/consult', 'Review consult notes', '#9B6B9B'),
             `${sharerName} shared their consult notes`
           )
-          await resend.emails.send({ from: FROM, to: recipientEmail, subject: `Consult notes shared — ${job.title}`, html })
+          await resend.emails.send({ from: FROM, ...resolveRecipient(recipientEmail, `Consult notes shared — ${job.title}`), html })
         }
       }
     }
@@ -279,7 +288,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/consult', 'Track your job progress', '#0A0A0A'),
           `Quote requests sent to ${tradieNames.length} tradie${tradieNames.length !== 1 ? 's' : ''}`
         )
-        await resend.emails.send({ from: FROM, to: job.client.email, subject: `Quote requests sent — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `Quote requests sent — ${job.title}`), html })
       }
 
       for (const qr of (qrs || [])) {
@@ -305,7 +314,7 @@ export async function POST(request: NextRequest) {
             btn(APP_URL + '/tradie/dashboard', 'View job on Steadyhand', '#9B6B9B'),
             `New quote request from ${clientLabel}`
           )
-          await resend.emails.send({ from: FROM, to: tradieEmail, subject: isOrg ? `New quote request (Property manager) — ${job?.title}` : `New quote request — ${job?.title}`, html })
+          await resend.emails.send({ from: FROM, ...resolveRecipient(tradieEmail, isOrg ? `New quote request (Property manager) — ${job?.title}` : `New quote request — ${job?.title}`), html })
         }
       }
     }
@@ -332,7 +341,7 @@ export async function POST(request: NextRequest) {
         btn(APP_URL + '/consult', 'Share your consult notes', '#9B6B9B'),
         `Reminder: consult notes needed on ${job.title}`
       )
-      await resend.emails.send({ from: FROM, to: recipientEmail, subject: `Reminder: consult notes needed — ${job.title}`, html })
+      await resend.emails.send({ from: FROM, ...resolveRecipient(recipientEmail, `Reminder: consult notes needed — ${job.title}`), html })
     }
 
     // ── Contribution received ─────────────────────────────────────────────────
@@ -355,7 +364,7 @@ export async function POST(request: NextRequest) {
         btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#2E7D60'),
         `${job.client.full_name} added a contribution to your job`
       )
-      await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Contribution received — ${job.title}`, html })
+      await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Contribution received — ${job.title}`), html })
     }
 
     // ── Ready for sign-off ────────────────────────────────────────────────────
@@ -373,7 +382,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/signoff', 'Sign off and start warranty', '#2E7D60'),
           `All milestones approved — ready to sign off`
         )
-        await resend.emails.send({ from: FROM, to: job.client.email, subject: `Ready to sign off — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `Ready to sign off — ${job.title}`), html })
       }
     }
 
@@ -393,7 +402,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/tradie/dashboard', 'View your dashboard', '#0A0A0A'),
           `${job.client.full_name} has signed off on the job`
         )
-        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Job signed off — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Job signed off — ${job.title}`), html })
       }
     }
 
@@ -412,7 +421,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/quotes', 'Review the quote', '#C07830'),
           `${job.tradie?.business_name} has submitted a quote`
         )
-        await resend.emails.send({ from: FROM, to: job.client.email, subject: `New quote received — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `New quote received — ${job.title}`), html })
       }
     }
 
@@ -440,7 +449,7 @@ export async function POST(request: NextRequest) {
             btn(APP_URL + '/agreement', isFullySigned ? 'View signed agreement' : 'Review and sign', '#6B4FA8'),
             isFullySigned ? `Scope agreement fully signed` : `${signerName} has signed — your turn`
           )
-          await resend.emails.send({ from: FROM, to: notifyEmail, subject: isFullySigned ? `Scope fully signed — ${job.title}` : `${signerName} has signed — ${job.title}`, html })
+          await resend.emails.send({ from: FROM, ...resolveRecipient(notifyEmail, isFullySigned ? `Scope fully signed — ${job.title}` : `${signerName} has signed — ${job.title}`), html })
         }
       }
     }
@@ -484,7 +493,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/agreement?job_id=' + job_id, 'Draft scope agreement', '#6B4FA8'),
           `${job.client.full_name} accepted your quote — scope needed`
         )
-        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Scope agreement needed — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Scope agreement needed — ${job.title}`), html })
       }
     }
 
@@ -503,7 +512,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/tradie/dashboard', 'View job and arrange consult', '#9B6B9B'),
           `Quote request from ${job.client.full_name}`
         )
-        await resend.emails.send({ from: FROM, to: job.tradie.profile.email, subject: `Quote request — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Quote request — ${job.title}`), html })
       }
     }
 
@@ -527,7 +536,7 @@ export async function POST(request: NextRequest) {
           btn(APP_URL + '/consult', 'Share your consult notes', '#9B6B9B'),
           `Reminder: consult notes needed`
         )
-        await resend.emails.send({ from: FROM, to: recipientEmail, subject: `Reminder: consult notes needed — ${job.title}`, html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(recipientEmail, `Reminder: consult notes needed — ${job.title}`), html })
       }
     }
 
@@ -552,11 +561,7 @@ export async function POST(request: NextRequest) {
         btn(signupUrl, 'Create your Steadyhand account →', '#D4522A'),
         `${clientName} has invited you to quote on Steadyhand`
       )
-      await resend.emails.send({
-        from: FROM,
-        to: email,
-        subject: `${clientName} has invited you to quote — ${job.title}`,
-        html,
+      await resend.emails.send({ from: FROM, ...resolveRecipient(email, `${clientName} has invited you to quote — ${job.title}`), html,
       })
     }
 
@@ -570,7 +575,7 @@ export async function POST(request: NextRequest) {
       const htmlBody = wrap(para(String(msgBody).split(nl).join('<br/>')), String(subject))
       const results = await Promise.allSettled(
         (recipients as string[]).map((email: string) =>
-          resend.emails.send({ from: FROM, to: email, subject: String(subject), html: htmlBody })
+          resend.emails.send({ from: FROM, ...resolveRecipient(email, String(subject)), html: htmlBody })
         )
       )
       const sent = results.filter(r => r.status === 'fulfilled').length
