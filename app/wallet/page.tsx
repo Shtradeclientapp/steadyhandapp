@@ -98,7 +98,7 @@ export default function WalletPage() {
       <div style={{ maxWidth:'900px', margin:'0 auto', padding:'32px 24px' }}>
         {/* Tab bar */}
         <div style={{ display:'flex', borderBottom:'1px solid rgba(28,43,50,0.1)', marginBottom:'24px' }}>
-          {([['jobs','Jobs & Payments'],['calculator','Finance Calculator']] as const).map(([key,label]) => (
+          {([['jobs','Jobs & Payments'],['calculator','Transaction Calculator']] as const).map(([key,label]) => (
             <button key={key} type="button" onClick={() => setActiveTab(key)}
               style={{ padding:'14px 20px', border:'none', borderBottom: activeTab === key ? '2px solid #D4522A' : '2px solid transparent', background:'transparent', cursor:'pointer', fontSize:'13px', fontWeight: activeTab === key ? 600 : 400, color: activeTab === key ? '#0A0A0A' : '#7A9098' }}>
               {label}

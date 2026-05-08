@@ -67,7 +67,7 @@ export default function RequestPage() {
     const params = new URLSearchParams(window.location.search)
     const pid = params.get('property_id')
     if (pid) setPropertyId(pid)
-    // Pre-fill from Build Journal trade package
+    // Pre-fill from Property Journal trade package
     const diyProjectId = params.get('diy_project_id')
     if (diyProjectId) sessionStorage.setItem('diy_project_id', diyProjectId)
     const titleParam = params.get('title')
@@ -214,14 +214,14 @@ sessionStorage.removeItem('diy_project_id')
                     🏗 This type of job often needs more than one trade
                   </p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 8px' }}>
-                    Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade individually — or use the <strong>Build Journal</strong> to coordinate them as one project.
+                    Bathroom and kitchen renovations typically involve a tiler, plumber, and electrician. You can post separate jobs for each trade individually — or use the <strong>Property Journal</strong> to coordinate them as one project.
                   </p>
                   <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
-                    The Build Journal lets you invite multiple tradies, track each scope separately, manage milestones across trades, log expenses, store compliance documents and monitor progress — all in one place.
+                    The Property Journal lets you invite multiple tradies, track each scope separately, manage milestones across trades, log expenses, store compliance documents and monitor progress — all in one place.
                   </p>
                   <div style={{ display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' as const }}>
                     <a href="/diy" style={{ display:'inline-block', fontSize:'12px', fontWeight:500, color:'white', background:'#9B6B9B', padding:'8px 14px', borderRadius:'7px', textDecoration:'none' }}>
-                      Open Build Journal →
+                      Open Property Journal →
                     </a>
                     <span style={{ fontSize:'11px', color:'#9B6B9B', background:'rgba(155,107,155,0.1)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'100px', padding:'3px 10px' }}>
                       WA compliance checklist included

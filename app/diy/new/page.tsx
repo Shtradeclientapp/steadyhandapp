@@ -142,7 +142,7 @@ export default function NewDIYProjectPage() {
 
         <div style={{ marginBottom:'24px' }}>
           <div style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'100px', padding:'4px 12px', marginBottom:'12px' }}>
-            <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Build Journal</span>
+            <span style={{ fontSize:'11px', color:'#D4522A', fontWeight:500, letterSpacing:'0.5px', textTransform:'uppercase' as const }}>Property Journal</span>
           </div>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'26px', color:'#0A0A0A', letterSpacing:'1px', margin:'0 0 6px' }}>SET UP YOUR PROJECT</h1>
           <p style={{ fontSize:'13px', color:'#4A5E64', margin:0 }}>Steadyhand will build your compliance checklist, Gantt schedule and document vault automatically.</p>

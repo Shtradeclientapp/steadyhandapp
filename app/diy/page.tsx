@@ -292,7 +292,7 @@ export default function DIYPage() {
                 <div style={{ fontSize:'36px', marginBottom:'12px' }}>🏗</div>
                 <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'#0A0A0A', letterSpacing:'1px', marginBottom:'8px' }}>YOUR BUILD JOURNAL</h2>
                 <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', marginBottom:0 }}>
-                  The Build Journal is for homeowners and owner-builders managing complex projects with multiple trades. Create a project to track your permits, tasks, budget, compliance requirements and trade packages — all in one place.
+                  The Property Journal is for homeowners and owner-builders managing complex projects with multiple trades. Create a project to track your permits, tasks, budget, compliance requirements and trade packages — all in one place.
                 </p>
               </div>
               <div style={{ padding:'20px' }}>

@@ -37,7 +37,7 @@ const REMINDER_MESSAGES: Record<ReminderType, { subject: string; body: string }>
   },
   trade_on_site: {
     subject: 'Trade on site — is your next trade confirmed?',
-    body: 'Your trade is currently on site. Do you have the next trade\'s start date confirmed? Check your project sequence in the Build Journal to avoid gaps.',
+    body: 'Your trade is currently on site. Do you have the next trade\'s start date confirmed? Check your project sequence in the Property Journal to avoid gaps.',
   },
   permit_expiring: {
     subject: 'Owner-builder approval expiring soon',

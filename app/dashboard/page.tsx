@@ -222,7 +222,7 @@ export default function DashboardPage() {
                   { label:'Dashboard', href:'/dashboard' },
                   { label:'Steadyhand Home', href:'/home-plan' },
                   { label:'Document vault', href:'/vault' },
-                  { label:'Build Journal', href:'/diy' },
+                  { label:'Property Journal', href:'/diy' },
                   { label:'Messages', href:'/messages' },
                   { label:'Organisation dashboard', href:'/org/dashboard' },
                   { label:'Help & support', href:'/help' },
@@ -498,14 +498,14 @@ export default function DashboardPage() {
             <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'12px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
               <div>
                 <p style={{ fontSize:'13px', fontWeight:500, color:'#D4522A', margin:'0 0 2px' }}>Steadyhand Home features</p>
-                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Build Journal, Document Vault and Finance tools are included in the Steadyhand Home plan.</p>
+                <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>Property Journal, Document Vault and Transaction History are included in the Steadyhand Home plan.</p>
               </div>
               <a href="/home-plan" style={{ fontSize:'12px', color:'#D4522A', fontWeight:500, textDecoration:'none', flexShrink:0, border:'1px solid rgba(212,82,42,0.3)', borderRadius:'6px', padding:'6px 12px' }}>Upgrade →</a>
             </div>
           )}
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', opacity: isHomeMember ? 1 : 0.4, pointerEvents: isHomeMember ? 'auto' : 'none' as const }}>
 
-            {/* Build Journal */}
+            {/* Property Journal */}
             {/* Observatory widget */}
             <div style={{ marginBottom:'24px' }}>
               <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px' }}>
@@ -518,7 +518,7 @@ export default function DashboardPage() {
             <a href="/diy" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #D4522A', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Build Journal</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Property Journal</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Trades, permits, tasks, budget and WA compliance.</p>
                 </div>
                 <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
@@ -536,11 +536,11 @@ export default function DashboardPage() {
               </div>
             </a>
 
-            {/* Finance */}
+            {/* Transaction History */}
             <a href="/wallet" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #C07830', borderRadius:'11px', padding:'16px 20px', display:'flex', alignItems:'center', gap:'14px' }}>
                 <div style={{ flex:1 }}>
-                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Finance</p>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.3px', margin:'0 0 3px' }}>Transaction History</p>
                   <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Quotes, milestone payments and invoice history.</p>
                 </div>
                 <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
@@ -594,7 +594,7 @@ export default function DashboardPage() {
                   {
                     done: isHomeMember,
                     label: 'Explore Steadyhand Home',
-                    sub: 'Build Journal, Document Vault and extended warranty - $19/month',
+                    sub: 'Property Journal, Document Vault and extended warranty - $19/month',
                     href: '/home-plan',
                     cta: 'Learn more →'
                   },

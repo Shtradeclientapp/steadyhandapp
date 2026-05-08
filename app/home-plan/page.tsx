@@ -24,7 +24,7 @@ const FEATURES_HOME = [
   'Priority shortlisting — your jobs shown first',
   'Extended 180-day warranty period',
   'Home document vault — store warranties, certificates, receipts',
-  'Build Journal for owner-builder projects',
+  'Property Journal for owner-builder projects',
   'Annual home health check — maintenance reminders based on your job history',
   'Dedicated support during active jobs',
 ]
