@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { Aboreto } from 'next/font/google'
+const aboreto = Aboreto({ weight: '400', subsets: ['latin'] })
 
 const PLANS = [
   { id:'sp1', code:'SP1', name:'Conservative Upgrade', weeks:8, weeklyRate:1500, mindset:'Efficiency upgrade', description:'For trade businesses running on informal systems. We document your existing processes, identify the highest-friction points and introduce digital tools that replace manual steps without disrupting how you already work.', outcomes:['Consistent operations with less owner dependency','Documented processes and handover-ready systems','Digital tools matched to your workflow'], colour:'#2E6A8F' },
@@ -11,6 +13,7 @@ type Step = 'discover'|'plans'|'confirm'
 
 export default function SteadyplanPage() {
   const [step, setStep] = useState<Step>('discover')
+  const [viewOnly, setViewOnly] = useState(false)
   const [form, setForm] = useState({ name:'', business:'', trade:'', phone:'', email:'', employees:'', revenue:'', challenge:'', timeline:'' })
   const [selectedPlan, setSelectedPlan] = useState<string|null>(null)
   const [bulkPay, setBulkPay] = useState(false)
@@ -38,12 +41,22 @@ export default function SteadyplanPage() {
         <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 0%,rgba(212,82,42,0.12),transparent 65%)'}}/>
         <div style={{position:'relative',zIndex:1,maxWidth:'680px',margin:'0 auto'}}>
           <p style={{fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(216,228,225,0.3)',marginBottom:'16px'}}>Steadyhand Digital</p>
-          <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'-0.5px',lineHeight:1.15,margin:'0 0 20px'}}>Steadyplans</h1>
+          <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'2px',lineHeight:1.15,margin:'0 0 20px',fontFamily:aboreto.style.fontFamily}}>STEADYPLANS</h1>
           <p style={{fontSize:'17px',color:'rgba(216,228,225,0.45)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
           <div style={{display:'flex',gap:'28px',justifyContent:'center',flexWrap:'wrap'}}>
             {['$1,500 /week','4-week minimum','Weekly billing in advance'].map(t=>(
               <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.35)',borderBottom:'1px solid rgba(216,228,225,0.1)',paddingBottom:'3px'}}>{t}</span>
             ))}
+          </div>
+          <div style={{display:'flex',gap:'12px',justifyContent:'center',marginTop:'32px',flexWrap:'wrap' as const}}>
+            <button type="button" onClick={()=>{setViewOnly(false);setStep('discover')}}
+              style={{background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',letterSpacing:'0.2px'}}>
+              Get started →
+            </button>
+            <button type="button" onClick={()=>{setViewOnly(true);setStep('plans')}}
+              style={{background:'transparent',color:'rgba(216,228,225,0.6)',border:'1px solid rgba(255,255,255,0.15)',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer'}}>
+              View plans
+            </button>
           </div>
         </div>
       </div>
@@ -192,9 +205,10 @@ export default function SteadyplanPage() {
             </div>
 
             <div style={{display:'flex',gap:'10px'}}>
-              <button type="button" onClick={()=>setStep('discover')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(216,228,225,0.4)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>
-              <button type="button" onClick={()=>selectedPlan&&setStep('confirm')} disabled={!selectedPlan} style={{flex:1,background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:selectedPlan?1:0.4}}>
-                Continue with {selectedPlan?PLANS.find(p=>p.id===selectedPlan)?.code:'plan'} →
+              {!viewOnly&&<button type="button" onClick={()=>setStep('discover')} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',color:'rgba(216,228,215,0.4)',padding:'13px 22px',borderRadius:'9px',fontSize:'14px',fontFamily:'Georgia,serif',cursor:'pointer'}}>← Back</button>}
+              <button type="button" onClick={()=>{if(!selectedPlan)return;if(viewOnly){setViewOnly(false);setStep('discover')}else{setStep('confirm')}}} disabled={!selectedPlan}
+                style={{flex:1,background:'#D4522A',color:'white',border:'none',padding:'13px 28px',borderRadius:'9px',fontSize:'15px',fontFamily:'Georgia,serif',cursor:'pointer',opacity:selectedPlan?1:0.4}}>
+                {viewOnly?`Enquire about ${selectedPlan?PLANS.find(p=>p.id===selectedPlan)?.code:'plan'} →`:`Continue with ${selectedPlan?PLANS.find(p=>p.id===selectedPlan)?.code:'plan'} →`}
               </button>
             </div>
           </div>
@@ -254,7 +268,7 @@ export default function SteadyplanPage() {
             <div style={{fontSize:'36px',marginBottom:'16px'}}>✓</div>
             <h2 style={{fontSize:'22px',fontWeight:400,margin:'0 0 10px'}}>Enquiry received</h2>
             <p style={{fontSize:'14px',color:'rgba(216,228,225,0.4)',lineHeight:1.7,maxWidth:'400px',margin:'0 auto 28px'}}>
-              We'll be in touch within one business day. Questions? <a href="mailto:hello@steadyhanddigital.com" style={{color:'#D4522A',textDecoration:'none'}}>hello@steadyhanddigital.com</a>
+              We'll be in touch within one business day. Questions? <a href="mailto:info@steadyhanddigital.com" style={{color:'#D4522A',textDecoration:'none'}}>info@steadyhanddigital.com</a>
             </p>
             <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'12px',padding:'18px',display:'inline-block',textAlign:'left' as const}}>
               <p style={{fontSize:'14px',color:'rgba(216,228,225,0.75)',margin:'0 0 3px'}}>{plan?.code} — {plan?.name}</p>
@@ -265,7 +279,7 @@ export default function SteadyplanPage() {
       </div>
 
       <div style={{borderTop:'1px solid rgba(255,255,255,0.05)',padding:'28px 24px',textAlign:'center' as const}}>
-        <p style={{fontSize:'12px',color:'rgba(216,228,225,0.18)',margin:0}}>Steadyhand Digital · Perth, WA · <a href="mailto:hello@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>hello@steadyhanddigital.com</a></p>
+        <p style={{fontSize:'12px',color:'rgba(216,228,225,0.18)',margin:0}}>Steadyhand Digital · Perth, WA · <a href="mailto:info@steadyhanddigital.com" style={{color:'rgba(216,228,225,0.25)',textDecoration:'none'}}>info@steadyhanddigital.com</a></p>
       </div>
     </div>
   )
