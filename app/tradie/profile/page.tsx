@@ -717,7 +717,7 @@ export default function TradieProfilePage() {
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'14px' }}>
             <div>
               <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 3px' }}>Preferred Products & Materials</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Products you regularly use — these can be referenced in scope agreements and warranty certificates.</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Products and materials you regularly install. Clients see warranty details on your profile — knowing your products builds trust before the first conversation.</p>
             </div>
             <button type="button" onClick={addProduct}
               style={{ background:'#2E7D60', color:'white', border:'none', borderRadius:'7px', padding:'7px 14px', fontSize:'12px', fontWeight:500, cursor:'pointer', flexShrink:0, marginLeft:'12px' }}>
@@ -725,13 +725,14 @@ export default function TradieProfilePage() {
             </button>
           </div>
           {((form.preferred_products || []) as any[]).length === 0 && (
-            <p style={{ fontSize:'12px', color:'#9AA5AA', fontStyle:'italic', margin:0 }}>No products added yet. Add the brands and materials you most commonly install.</p>
+            <p style={{ fontSize:'12px', color:'#9AA5AA', fontStyle:'italic', margin:0 }}>No products added yet. Add the brands you install most — include warranty terms and why you choose them. This is one of the most trust-building sections of your profile.</p>
           )}
           {((form.preferred_products || []) as any[]).map((p: any, idx: number) => (
             <div key={idx} style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'14px', marginBottom:'10px' }}>
+              {/* Row 1: name + brand */}
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
                 <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Product / material name</p>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Product / material</p>
                   <input value={p.name || ''} onChange={e => updateProduct(idx, 'name', e.target.value)}
                     placeholder="e.g. Hot water system, Roof tiles"
                     style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
@@ -743,11 +744,12 @@ export default function TradieProfilePage() {
                     style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
                 </div>
               </div>
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:'10px' }}>
+              {/* Row 2: warranty years + warranty type */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'10px' }}>
                 <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Manufacturer warranty</p>
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Manufacturer warranty</p>
                   <select value={p.warranty_years || ''} onChange={e => updateProduct(idx, 'warranty_years', e.target.value)}
-                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(46,125,96,0.3)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
                     <option value="">Not specified</option>
                     <option value="1">1 year</option>
                     <option value="2">2 years</option>
@@ -758,14 +760,35 @@ export default function TradieProfilePage() {
                     <option value="15">15 years</option>
                     <option value="20">20 years</option>
                     <option value="25">25 years</option>
+                    <option value="lifetime">Lifetime</option>
                   </select>
                 </div>
                 <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Notes (optional)</p>
-                  <input value={p.notes || ''} onChange={e => updateProduct(idx, 'notes', e.target.value)}
-                    placeholder="e.g. Requires annual service to maintain warranty"
-                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+                  <p style={{ fontSize:'11px', fontWeight:600, color:'#2E7D60', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Installation warranty (your labour)</p>
+                  <select value={p.install_warranty || ''} onChange={e => updateProduct(idx, 'install_warranty', e.target.value)}
+                    style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(46,125,96,0.3)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                    <option value="">Not specified</option>
+                    <option value="6m">6 months</option>
+                    <option value="1">1 year</option>
+                    <option value="2">2 years</option>
+                    <option value="5">5 years</option>
+                    <option value="10">10 years</option>
+                  </select>
                 </div>
+              </div>
+              {/* Row 3: warranty conditions */}
+              <div style={{ marginBottom:'10px' }}>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Warranty conditions</p>
+                <input value={p.notes || ''} onChange={e => updateProduct(idx, 'notes', e.target.value)}
+                  placeholder="e.g. Manufacturer warranty requires annual service — we can arrange this"
+                  style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
+              </div>
+              {/* Row 4: why I use this */}
+              <div>
+                <p style={{ fontSize:'11px', fontWeight:600, color:'#6B4FA8', margin:'0 0 4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Why I use this product</p>
+                <input value={p.reason || ''} onChange={e => updateProduct(idx, 'reason', e.target.value)}
+                  placeholder="e.g. Best heat retention in WA climate, backed by local distributor, 20-year track record"
+                  style={{ width:'100%', padding:'8px 10px', border:'1.5px solid rgba(107,79,168,0.25)', borderRadius:'7px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' as const }} />
               </div>
               <button type="button" onClick={() => removeProduct(idx)}
                 style={{ marginTop:'10px', fontSize:'11px', color:'#9AA5AA', background:'none', border:'none', cursor:'pointer', padding:0 }}>
