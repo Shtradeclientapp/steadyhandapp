@@ -108,7 +108,7 @@ export default function TradieJobPage() {
               style={{ display:'block', background:'#D4522A', color:'white', padding:'13px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none', marginBottom:'10px' }}>
               Log in to respond →
             </a>
-            <a href={'/signup?role=tradie'}
+            <a href={'/signup?role=tradie&redirect=' + encodeURIComponent('/tradie/job?job_id=' + jobId)}
               style={{ display:'block', color:'rgba(216,228,225,0.4)', fontSize:'13px', textDecoration:'none' }}>
               New to Steadyhand? Create a tradie account
             </a>

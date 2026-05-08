@@ -12,7 +12,10 @@ export default function TradePendingPage() {
       const { data } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name, onboarding_step)').eq('id', session.user.id).single()
       setProfile(data)
       // If already verified, redirect to dashboard
-      if (data?.tradie?.onboarding_step === 'active') window.location.href = '/tradie/dashboard'
+      if (data?.tradie?.onboarding_step === 'active') {
+        const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null
+        window.location.href = redirectParam || '/tradie/dashboard'
+      }
     })
   }, [])
 

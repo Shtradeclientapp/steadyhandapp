@@ -56,7 +56,8 @@ export default function SignupPage() {
       await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, phone: form.phone, subscription_active: false, onboarding_step: 'pending_verification' })
     }
     // Wait for session to be established before redirecting
-    const dest = role === 'tradie' ? '/tradie/pending' : role === 'org' ? '/org/setup' : '/dashboard'
+    const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null
+    const dest = role === 'tradie' ? ('/tradie/pending' + (redirectParam ? '?redirect=' + encodeURIComponent(redirectParam) : '')) : role === 'org' ? '/org/setup' : '/dashboard'
     const supabase2 = createClient()
     let attempts = 0
     const waitForSession = setInterval(async () => {
