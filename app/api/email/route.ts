@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         btn(APP_URL + '/tradie/job?job_id=' + job_id, 'View this job request →', '#D4522A'),
         `${job.client.full_name} has selected you for a job`
       )
-      await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `${job.client.full_name} selected you for a job — ${job.title}`), html })
+      if (tradieEmail) await resend.emails.send({ from: FROM, ...resolveRecipient(tradieEmail, `${job.client.full_name} selected you for a job — ${job.title}`), html })
     }
 
     // ── Milestone submitted ───────────────────────────────────────────────────
