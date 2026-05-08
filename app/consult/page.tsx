@@ -1119,6 +1119,9 @@ export default function AssessPage() {
               <div style={{ background:'rgba(155,107,155,0.08)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'10px', padding:'14px 16px', marginBottom:'16px' }}>
                 <p style={{ fontSize:'13px', fontWeight:600, color:'#9B6B9B', margin:'0 0 4px' }}>While you wait — explore your Document Vault</p>
                 <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 12px', lineHeight:'1.5' }}>Every Steadyhand job automatically builds your property record. Your consult notes are already there. Scope agreements, milestone records and warranty certificates will follow as the job progresses.</p>
+                <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 10px', lineHeight:'1.6' }}>
+                  The consult record is filed to your Document Vault automatically once both parties have acknowledged each other&apos;s notes. You&apos;ll see it there after the tradie acknowledges yours.
+                </p>
                 <a href="/vault" style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>See my Document Vault →</a>
               </div>
               <button type="button" onClick={() => setShowWaitModal(false)}

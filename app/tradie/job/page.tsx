@@ -104,7 +104,7 @@ export default function TradieJobPage() {
             <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', margin:'0 0 20px', lineHeight:'1.6' }}>
               Sign in to your Steadyhand account to accept or decline this estimate request.
             </p>
-            <a href={'/login?redirect=/tradie/job?job_id=' + jobId}
+            <a href={'/login?redirect=' + encodeURIComponent('/tradie/job?job_id=' + jobId)}
               style={{ display:'block', background:'#D4522A', color:'white', padding:'13px 24px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none', marginBottom:'10px' }}>
               Log in to respond →
             </a>
