@@ -37,7 +37,7 @@ export default function AdminPage() {
       const { data: prof } = await supabase.from('profiles').select('id, email, full_name, role, is_admin').eq('id', session.user.id).single()
       if (!prof?.is_admin) { window.location.href = '/'; return }
       setAuthed(true)
-      await loadAll(supabase)
+      await loadAll(supabase, session.user.id)
       setLoading(false)
     })
   }, [])
