@@ -42,10 +42,10 @@ export default function SteadyplanPage() {
         <div style={{position:'relative',zIndex:1,maxWidth:'680px',margin:'0 auto'}}>
           <p style={{fontSize:'11px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(216,228,225,0.3)',marginBottom:'16px'}}>Steadyhand Digital</p>
           <h1 style={{fontSize:'clamp(32px,5vw,52px)',fontWeight:400,letterSpacing:'2px',lineHeight:1.15,margin:'0 0 20px',fontFamily:aboreto.style.fontFamily,color:'#D4522A'}}>STEADYPLANS</h1>
-          <p style={{fontSize:'17px',color:'rgba(216,228,225,0.45)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
+          <p style={{fontSize:'17px',color:'rgba(216,228,225,0.6)',lineHeight:1.7,maxWidth:'520px',margin:'0 auto 32px'}}>12-week programs that digitalise trade business operations — from informal systems to a business that runs without you in every conversation.</p>
           <div style={{display:'flex',gap:'28px',justifyContent:'center',flexWrap:'wrap'}}>
             {['$1,500 /week','4-week minimum','Weekly billing in advance'].map(t=>(
-              <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.35)',borderBottom:'1px solid rgba(216,228,225,0.1)',paddingBottom:'3px'}}>{t}</span>
+              <span key={t} style={{fontSize:'13px',color:'rgba(216,228,225,0.5)',borderBottom:'1px solid rgba(216,228,225,0.15)',paddingBottom:'3px'}}>{t}</span>
             ))}
           </div>
           <div style={{display:'flex',justifyContent:'center',marginTop:'32px'}}>
@@ -60,11 +60,11 @@ export default function SteadyplanPage() {
       <div style={{maxWidth:'700px',margin:'0 auto',padding:'0 24px 80px'}}>
         {/* Steps */}
         <div style={{display:'flex',gap:'8px',marginBottom:'40px',alignItems:'center'}}>
-          {(['discover','plans','confirm'] as Step[]).map((s,i)=>(
+          {(['plans','discover','confirm'] as Step[]).map((s,i)=>(
             <div key={s} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-              <div style={{width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:600,background:step===s?'#D4522A':'rgba(255,255,255,0.06)',color:step===s?'white':'rgba(216,228,225,0.3)',border:step===s?'none':'1px solid rgba(255,255,255,0.08)'}}>{i+1}</div>
-              <span style={{fontSize:'12px',color:step===s?'rgba(216,228,225,0.7)':'rgba(216,228,225,0.25)',letterSpacing:'0.5px'}}>{s==='discover'?'About you':s==='plans'?'Choose plan':'Confirm'}</span>
-              {i<2&&<div style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.07)'}}/>}
+              <div style={{width:'24px',height:'24px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:600,background:step===s?'#D4522A':'rgba(255,255,255,0.06)',color:step===s?'white':'rgba(216,228,225,0.5)',border:step===s?'none':'1px solid rgba(255,255,255,0.12)'}}>{i+1}</div>
+              <span style={{fontSize:'12px',color:step===s?'rgba(216,228,225,0.85)':'rgba(216,228,225,0.35)',letterSpacing:'0.5px'}}>{s==='plans'?'Choose plan':s==='discover'?'About you':'Confirm'}</span>
+              {i<2&&<div style={{width:'28px',height:'1px',background:'rgba(255,255,255,0.1)'}}/>}
             </div>
           ))}
         </div>
@@ -135,18 +135,18 @@ export default function SteadyplanPage() {
                         <span style={{fontSize:'12px',fontWeight:600,color:p.colour,letterSpacing:'1px'}}>{p.code}</span>
                         <span style={{fontSize:'15px'}}>{p.name}</span>
                       </div>
-                      <p style={{fontSize:'11px',color:'rgba(216,228,225,0.3)',margin:0}}>{p.mindset} · {p.weeks} weeks</p>
+                      <p style={{fontSize:'11px',color:'rgba(216,228,225,0.45)',margin:0}}>{p.mindset} · {p.weeks} weeks</p>
                     </div>
                     <div style={{textAlign:'right' as const}}>
                       <p style={{fontSize:'19px',margin:'0 0 1px'}}>$1,500<span style={{fontSize:'12px',color:'rgba(216,228,225,0.3)'}}>/week</span></p>
                       <p style={{fontSize:'11px',color:'rgba(216,228,225,0.25)',margin:0}}>${(1500*p.weeks).toLocaleString()} total</p>
                     </div>
                   </div>
-                  <p style={{fontSize:'13px',color:'rgba(216,228,225,0.5)',lineHeight:1.65,margin:'0 0 12px'}}>{p.description}</p>
+                  <p style={{fontSize:'13px',color:'rgba(216,228,225,0.7)',lineHeight:1.65,margin:'0 0 12px'}}>{p.description}</p>
                   {p.outcomes.map(o=>(
                     <div key={o} style={{display:'flex',gap:'8px',marginBottom:'4px'}}>
                       <span style={{color:p.colour,fontSize:'12px',flexShrink:0}}>→</span>
-                      <span style={{fontSize:'12px',color:'rgba(216,228,225,0.45)'}}>{o}</span>
+                      <span style={{fontSize:'12px',color:'rgba(216,228,225,0.65)'}}>{o}</span>
                     </div>
                   ))}
                   {(p as any).addons&&selectedPlan===p.id&&(
@@ -177,7 +177,7 @@ export default function SteadyplanPage() {
                   </div>
                   <span style={{fontSize:'13px',color:'rgba(216,228,225,0.25)',fontStyle:'italic'}}>Custom pricing</span>
                 </div>
-                <p style={{fontSize:'13px',color:'rgba(216,228,225,0.35)',lineHeight:1.65,margin:'10px 0 0'}}>Custom software, e-commerce, client portals or end-to-end digital transformation. Scoped after a discovery session.</p>
+                <p style={{fontSize:'13px',color:'rgba(216,228,225,0.55)',lineHeight:1.65,margin:'10px 0 0'}}>Custom software, e-commerce, client portals or end-to-end digital transformation. Scoped after a discovery session.</p>
               </div>
             </div>
 
@@ -197,7 +197,7 @@ export default function SteadyplanPage() {
             {/* SP5 */}
             <div style={{border:'1px solid rgba(255,255,255,0.05)',borderRadius:'10px',padding:'14px 16px',marginBottom:'24px'}}>
               <p style={{fontSize:'10px',letterSpacing:'1px',textTransform:'uppercase' as const,color:'rgba(216,228,225,0.2)',margin:'0 0 4px'}}>SP5 — Phase II (graduates only)</p>
-              <p style={{fontSize:'13px',color:'rgba(216,228,225,0.35)',margin:0,lineHeight:1.6}}>$750/month ongoing retainer for consolidation and strategic check-ins. Available after completing a Steadyplan.</p>
+              <p style={{fontSize:'13px',color:'rgba(216,228,225,0.55)',margin:0,lineHeight:1.6}}>$750/month ongoing retainer for consolidation and strategic check-ins. Available after completing a Steadyplan.</p>
             </div>
 
             <div style={{display:'flex',gap:'10px'}}>
