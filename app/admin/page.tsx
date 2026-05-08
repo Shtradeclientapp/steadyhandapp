@@ -42,12 +42,9 @@ export default function AdminPage() {
     })
   }, [])
 
-  const loadAll = async (supabase: any) => {
-    const [{ data: t }, { data: c }, { data: j }] = await Promise.all([
-      supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, is_admin, created_at)').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*, admin_notes').eq('role', 'client').order('created_at', { ascending: false }),
-      supabase.from('jobs').select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name, email)').order('created_at', { ascending: false }).limit(200),
-    ])
+  const loadAll = async (supabase: any, userId?: string) => {
+    const res = await fetch('/api/admin-data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: userId }) })
+    const { tradies: t, clients: c, jobs: j } = await res.json()
     setTradies(t || [])
     setClients(c || [])
     setJobs(j || [])
