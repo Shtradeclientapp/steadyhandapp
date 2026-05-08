@@ -111,13 +111,19 @@ export async function POST(request: NextRequest) {
 
     // ── Tradie selected ───────────────────────────────────────────────────────
     if (type === 'tradie_selected') {
+      const { tradie_id } = body
       const { data: job } = await supabase
         .from('jobs')
-        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name, email)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email)')
         .eq('id', job_id).single()
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
-
-      const tradieName = job.tradie?.profile?.full_name || 'there'
+      // Look up tradie directly from tradie_id passed in body
+      const { data: tradieProf } = tradie_id ? await supabase
+        .from('tradie_profiles')
+        .select('*, profile:profiles(email, full_name)')
+        .eq('id', tradie_id).single() : { data: null }
+      const tradieEmail = tradieProf?.profile?.email
+      const tradieName = tradieProf?.profile?.full_name || 'there'
       const html = wrap(
         greeting(tradieName) +
         para(`<strong>${job.client.full_name}</strong> has selected you for a job on Steadyhand.`) +
@@ -499,20 +505,26 @@ export async function POST(request: NextRequest) {
 
     // ── Consult ready (notify tradie of quote request) ────────────────────────
     if (type === 'consult_ready') {
+      const { tradie_id } = body
       const { data: job } = await supabase
         .from('jobs')
-        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name)')
         .eq('id', job_id).single()
-      if (job?.tradie?.profile?.email) {
-        const tradieName = job.tradie.profile.full_name || 'there'
+      const { data: tradieProf } = tradie_id ? await supabase
+        .from('tradie_profiles')
+        .select('*, profile:profiles(email, full_name)')
+        .eq('id', tradie_id).single() : { data: null }
+      const consultTradieEmail = tradieProf?.profile?.email || job?.tradie?.profile?.email
+      if (job && consultTradieEmail) {
+        const tradieName = tradieProf?.profile?.full_name || 'there'
         const html = wrap(
           greeting(tradieName) +
           para(`<strong>${job.client.full_name}</strong> has sent you a quote request. The next step is to arrange a site consult before submitting your quote.`) +
           jobCard(job.title, job.trade_category, job.suburb, '#9B6B9B') +
-          btn(APP_URL + '/tradie/dashboard', 'View job and arrange consult', '#9B6B9B'),
+          btn(APP_URL + '/tradie/job?job_id=' + job_id, 'View this job request →', '#9B6B9B'),
           `Quote request from ${job.client.full_name}`
         )
-        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Quote request — ${job.title}`), html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(consultTradieEmail, `Quote request — ${job.title}`), html })
       }
     }
 
