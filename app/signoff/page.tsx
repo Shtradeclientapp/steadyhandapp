@@ -683,7 +683,16 @@ export default function SignoffPage() {
         </a>
 
       </div>
-      <StageGuideModal
+            {/* PDF downloads */}
+      {job && (
+        <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, padding:'12px 16px', background:'#F4F8F7', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+          <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 4px 0 0', alignSelf:'center' }}>Documents:</p>
+          <a href={`/api/pdf/generate/scope?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:'#4A5E64', textDecoration:'none', padding:'4px 10px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px' }}>↓ Scope agreement</a>
+          <a href={`/api/pdf/generate/milestones?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:'#4A5E64', textDecoration:'none', padding:'4px 10px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px' }}>↓ Milestone record</a>
+          <a href={`/api/pdf/generate/audit?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:'#4A5E64', textDecoration:'none', padding:'4px 10px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px' }}>↓ Audit trail</a>
+        </div>
+      )}
+<StageGuideModal
         storageKey="seen_signoff_guide"
         stageNumber={7}
         stageColor="#D4522A"

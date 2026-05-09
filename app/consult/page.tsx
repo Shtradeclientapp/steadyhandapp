@@ -1084,7 +1084,15 @@ export default function AssessPage() {
         </div>
 
       </div>
-      <StageGuideModal
+            {/* PDF downloads */}
+      {job && (
+        <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' as const, padding:'12px 16px', background:'#F4F8F7', borderTop:'1px solid rgba(28,43,50,0.08)' }}>
+          <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 4px 0 0', alignSelf:'center' }}>Documents:</p>
+          <a href={`/api/pdf/generate/consult?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:'#4A5E64', textDecoration:'none', padding:'4px 10px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px' }}>↓ Consult record</a>
+          <a href={`/api/pdf/generate/request?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ fontSize:'11px', color:'#4A5E64', textDecoration:'none', padding:'4px 10px', background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'6px' }}>↓ Job request</a>
+        </div>
+      )}
+<StageGuideModal
         storageKey="seen_consult_guide"
         stageNumber={3}
         stageColor="#9B6B9B"
