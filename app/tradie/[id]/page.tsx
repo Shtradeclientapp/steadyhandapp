@@ -156,6 +156,38 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
           </div>
         )}
 
+        {/* Products & warranties */}
+        {tradie.preferred_products?.length > 0 && (
+          <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'24px', marginBottom:'16px', boxShadow:'0 1px 3px rgba(28,43,50,0.04)' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', letterSpacing:'1.5px', color:'#4A5E64', margin:'0 0 16px', textTransform:'uppercase' as const }}>Products & warranties</p>
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'14px' }}>
+              {(tradie.preferred_products as any[]).map((p: any, i: number) => (
+                <div key={i} style={{ borderBottom: i < tradie.preferred_products.length - 1 ? '1px solid rgba(28,43,50,0.07)' : 'none', paddingBottom: i < tradie.preferred_products.length - 1 ? '14px' : 0 }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap' as const, gap:'8px', marginBottom:'6px' }}>
+                    <div>
+                      <p style={{ fontSize:'14px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{p.name}{p.brand ? <span style={{ fontWeight:400, color:'#7A9098' }}> · {p.brand}</span> : null}</p>
+                    </div>
+                    <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const }}>
+                      {p.warranty_years && (
+                        <span style={{ fontSize:'11px', background:'rgba(46,125,96,0.08)', color:'#2E7D60', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'2px 8px', fontWeight:500 }}>
+                          {p.warranty_years === 'lifetime' ? 'Lifetime' : p.warranty_years + ' yr'} mfr warranty
+                        </span>
+                      )}
+                      {p.install_warranty && (
+                        <span style={{ fontSize:'11px', background:'rgba(46,106,143,0.08)', color:'#2E6A8F', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'2px 8px', fontWeight:500 }}>
+                          {p.install_warranty === '6m' ? '6 mo' : p.install_warranty + ' yr'} install warranty
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {p.notes && <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 4px', lineHeight:'1.55' }}>Conditions: {p.notes}</p>}
+                  {p.reason && <p style={{ fontSize:'13px', color:'#4A5E64', margin:0, lineHeight:'1.6', fontStyle:'italic' }}>"{p.reason}"</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'20px 24px' }}>
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'1px', margin:'0 0 6px' }}>STEADYHAND</p>
           <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', lineHeight:'1.6', margin:0 }}>
