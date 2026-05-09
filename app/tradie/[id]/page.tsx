@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function PublicTradieProfile({ params }: { params: { id: string } }) {
   const [tradie, setTradie] = useState<any>(null)
+  const [reviews, setReviews] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -13,6 +14,12 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
       .eq('id', params.id)
       .single()
       .then(({ data }) => { setTradie(data); setLoading(false) })
+    supabase.from('reviews')
+      .select('*, reviewer:profiles!reviews_reviewer_id_fkey(full_name), job:jobs(title, trade_category)')
+      .eq('reviewee_id', params.id)
+      .eq('is_public', true)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setReviews(data || []))
   }, [params.id])
 
   if (loading) return (
@@ -197,6 +204,36 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
           </p>
         </div>
       </div>
+
+        {/* Client reviews */}
+        {reviews.length > 0 && (
+          <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'24px', marginBottom:'16px', boxShadow:'0 1px 3px rgba(28,43,50,0.04)' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', letterSpacing:'1.5px', color:'#4A5E64', margin:0, textTransform:'uppercase' as const }}>Client reviews</p>
+              <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
+                <span style={{ fontSize:'20px', color:'#C07830' }}>{'★'.repeat(Math.round(reviews.reduce((s,r)=>s+r.rating,0)/reviews.length))}{'☆'.repeat(5-Math.round(reviews.reduce((s,r)=>s+r.rating,0)/reviews.length))}</span>
+                <span style={{ fontSize:'12px', color:'#7A9098' }}>{(reviews.reduce((s,r)=>s+r.rating,0)/reviews.length).toFixed(1)} · {reviews.length} review{reviews.length !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column' as const, gap:'16px' }}>
+              {reviews.map((r: any) => (
+                <div key={r.id} style={{ borderBottom:'1px solid rgba(28,43,50,0.07)', paddingBottom:'16px' }}>
+                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'8px', marginBottom:'6px' }}>
+                    <div>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 2px' }}>{r.reviewer?.full_name || 'Verified client'}</p>
+                      {r.job?.title && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{r.job.title}{r.job.trade_category ? ' · ' + r.job.trade_category : ''}</p>}
+                    </div>
+                    <div style={{ textAlign:'right' as const, flexShrink:0 }}>
+                      <span style={{ fontSize:'14px', color:'#C07830' }}>{'★'.repeat(r.rating)}{'☆'.repeat(5-r.rating)}</span>
+                      <p style={{ fontSize:'10px', color:'#9AA5AA', margin:'2px 0 0' }}>{new Date(r.created_at).toLocaleDateString('en-AU', { month:'short', year:'numeric' })}</p>
+                    </div>
+                  </div>
+                  {r.body && <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.65', margin:0 }}>{r.body}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
     </div>
   )
 }

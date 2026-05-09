@@ -22,6 +22,8 @@ export default function ComparePage() {
   const [quoteRequests, setQuoteRequests] = useState<any[]>([])
   const [reviseId, setReviseId] = useState<string|null>(null)
   const [reviseNote, setReviseNote] = useState('')
+  const [quoteHistory, setQuoteHistory] = useState<Record<string,any[]>>({})
+  const [showHistory, setShowHistory] = useState<Record<string,boolean>>({})
   const [sendingRevise, setSendingRevise] = useState(false)
   const [sortBy, setSortBy] = useState<'price'|'rating'|'completeness'>('price')
   const [tags, setTags] = useState<Record<string,string>>({})
@@ -67,6 +69,23 @@ export default function ComparePage() {
     setQuotes(data || [])
     const acc = (data || []).find((q: any) => q.status === 'accepted')
     if (acc) setAccepted(acc.id)
+    // Fetch revision history per tradie (older versions)
+    if (data && data.length > 0) {
+      const tradieIds = [...new Set(data.map((q: any) => q.tradie_id).filter(Boolean))]
+      const { data: allVersions } = await supabase
+        .from('quotes')
+        .select('*')
+        .eq('job_id', jobId)
+        .in('tradie_id', tradieIds)
+        .order('version', { ascending: true })
+      if (allVersions) {
+        const hist: Record<string,any[]> = {}
+        for (const q of data) {
+          hist[q.id] = allVersions.filter((v: any) => v.tradie_id === q.tradie_id && v.id !== q.id)
+        }
+        setQuoteHistory(hist)
+      }
+    }
   }
 
   const runAiAnalysis = async () => {
