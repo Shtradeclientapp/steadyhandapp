@@ -1,5 +1,6 @@
 'use client'
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
+import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -918,6 +919,15 @@ export default function AgreementPage() {
                     ))}
                   </div>
 
+                  {/* Pre-signing dialogue */}
+                  {!mySignedAt && job && user && (
+                    <DialogueGuide
+                      jobId={job.id}
+                      userRole={isTradie ? 'tradie' : 'client'}
+                      userId={user.id}
+                    />
+                  )}
+
                   {!mySignedAt && (
                     <>
                       {otherSignedAt && (
@@ -933,6 +943,14 @@ export default function AgreementPage() {
                         {signing ? 'Signing...' : 'Sign as ' + (isTradie ? job.tradie?.business_name : job.client?.full_name) + ' →'}
                       </button>
                     </>
+                  )}
+
+                  {/* PDF download */}
+                  {job && (
+                    <a href={`/api/pdf/generate/scope?job_id=${job.id}`} target="_blank" rel="noopener noreferrer"
+                      style={{ display:'block', textAlign:'center' as const, fontSize:'12px', color:'#7A9098', textDecoration:'none', padding:'8px', marginBottom:'8px' }}>
+                      ↓ Download scope agreement PDF
+                    </a>
                   )}
 
                   {draftError && <p style={{ fontSize:'12px', color:'#D4522A', margin:'0 0 8px' }}>⚠ {draftError}</p>}

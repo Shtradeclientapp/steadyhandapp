@@ -1123,6 +1123,7 @@ export default function AssessPage() {
                   The consult record is filed to your Document Vault automatically once both parties have acknowledged each other&apos;s notes. You&apos;ll see it there after the tradie acknowledges yours.
                 </p>
                 <a href="/vault" style={{ display:'inline-block', background:'#9B6B9B', color:'white', padding:'10px 18px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>See my Document Vault →</a>
+                {job && <a href={`/api/pdf/generate/consult?job_id=${job.id}`} target="_blank" rel="noopener noreferrer" style={{ display:'inline-block', marginTop:'8px', fontSize:'12px', color:'#7A9098', textDecoration:'none' }}>↓ Download consult record PDF</a>}
               </div>
               <button type="button" onClick={() => setShowWaitModal(false)}
                 style={{ display:'block', margin:'0 auto', background:'none', border:'none', fontSize:'12px', color:'#9AA5AA', cursor:'pointer', textDecoration:'underline' }}>
