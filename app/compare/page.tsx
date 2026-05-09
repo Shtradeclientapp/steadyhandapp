@@ -71,7 +71,7 @@ export default function ComparePage() {
     if (acc) setAccepted(acc.id)
     // Fetch revision history per tradie (older versions)
     if (data && data.length > 0) {
-      const tradieIds = [...new Set(data.map((q: any) => q.tradie_id).filter(Boolean))]
+      const tradieIds = Array.from(new Set<string>(data.map((q: any) => q.tradie_id).filter(Boolean)))
       const { data: allVersions } = await supabase
         .from('quotes')
         .select('*')
