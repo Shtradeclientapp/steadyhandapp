@@ -206,21 +206,25 @@ export async function POST(request: NextRequest) {
 
     // ── Quote declined ────────────────────────────────────────────────────────
     if (type === 'quote_declined') {
+      const { tradie_id } = body
       const { data: job } = await supabase
         .from('jobs')
-        .select('*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name)')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email)')
         .eq('id', job_id).single()
-      if (job?.tradie?.profile?.email) {
-        const tradieName = job.tradie.profile.full_name || 'there'
+      const { data: tradieProf } = tradie_id ? await supabase
+        .from('tradie_profiles').select('business_name, profile:profiles(full_name)')
+        .eq('id', tradie_id).single() : { data: null }
+      if (job?.client?.email) {
+        const tradieName = (tradieProf as any)?.business_name || 'A tradie'
         const html = wrap(
-          greeting(tradieName) +
-          para(`<strong>${job.client.full_name}</strong> has decided not to proceed with your quote for the following job:`) +
+          greeting(job.client.full_name || 'there') +
+          para(`<strong>${tradieName}</strong> is unable to take on your job at this time and has declined the request.`) +
           jobCard(job.title, job.trade_category, job.suburb, '#7A9098') +
-          para('This is part of the process — clients sometimes go in a different direction. Your Dialogue Rating reflects the quality of your communication throughout, regardless of the outcome.') +
-          btn(APP_URL + '/tradie/dashboard', 'Back to your dashboard', '#0A0A0A'),
-          `Quote not accepted on ${job.title}`
+          para('You can invite other tradies from your shortlist or search the directory for alternatives.') +
+          btn(APP_URL + '/shortlist?job_id=' + job_id, 'Back to shortlist', '#2E6A8F'),
+          `Tradie unavailable — ${job.title}`
         )
-        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Quote not accepted — ${job.title}`), html })
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `Tradie unavailable — ${job.title}`), html })
       }
     }
 
