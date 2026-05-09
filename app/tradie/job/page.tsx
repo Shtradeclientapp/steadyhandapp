@@ -60,6 +60,10 @@ export default function TradieJobPage() {
     if (action === 'accepted') {
       setTimeout(() => { window.location.href = '/tradie/dashboard' }, 1500)
     }
+    if (action === 'declined') {
+      await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'quote_declined', job_id: jobId, tradie_id: profile?.tradie?.id }) }).catch(console.error)
+    }
   }
 
   if (loading) return (

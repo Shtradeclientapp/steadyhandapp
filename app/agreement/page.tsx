@@ -262,6 +262,9 @@ export default function AgreementPage() {
     const fieldLabel: Record<string,string> = { inclusions:'inclusions', exclusions:'exclusions', milestones:'payment milestones' }
     const label = fieldLabel[Object.keys(updates)[0]] || Object.keys(updates)[0]
     await supabase.from('job_messages').insert({ job_id: job.id, sender_id: session?.user.id, body: 'Scope updated by ' + editorName + ' — ' + label + ' revised. Both parties will need to re-sign.' })
+    // Notify other party of scope update
+    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'scope_updated', job_id: job.id, updated_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)
     setSaving(false)
     setSavedAt(new Date().toLocaleTimeString('en-AU', { hour:'2-digit', minute:'2-digit' }))
   }
