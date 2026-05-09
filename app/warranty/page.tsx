@@ -100,7 +100,7 @@ export default function WarrantyPage() {
       // Notify tradie via message thread
       await supabase.from('job_messages').insert({
         job_id: job.id,
-        sender_id: session?.user.id,
+        sender_id: profile?.id,
         body: '⚠ Warranty issue logged: "' + form.title + '" — ' + form.severity + ' severity, ' + form.warranty_type + ' issue. Response required within 5 business days.',
       })
       await fetch('/api/email', {
