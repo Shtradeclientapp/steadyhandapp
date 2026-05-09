@@ -223,6 +223,7 @@ export default function DashboardPage() {
                   { label:'Steadyhand Home', href:'/home-plan' },
                   { label:'Document vault', href:'/vault' },
                   { label:'Property Journal', href:'/diy' },
+                  ...(profile?.is_admin ? [{ label:'Admin Panel', href:'/admin' }] : []),
                   { label:'Messages', href:'/messages' },
                   { label:'Organisation dashboard', href:'/org/dashboard' },
                   { label:'Help & support', href:'/help' },
