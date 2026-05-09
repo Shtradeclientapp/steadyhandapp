@@ -1,7 +1,8 @@
 'use client'
 
 import { usePathname, useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/hooks/useAuth'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import clsx from 'clsx'
 
 const STAGES = [
@@ -20,8 +21,22 @@ const STATUS_STAGE: Record<string, number> = {
 }
 
 export function Nav({ jobStatus }: { jobStatus?: string }) {
-  const { profile, signOut } = useAuth()
+  const [fullName, setFullName] = useState<string|null>(null)
   const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return
+      const { data } = await supabase.from('profiles').select('full_name').eq('id', session.user.id).single()
+      if (data) setFullName(data.full_name)
+    })
+  }, [])
+
+  const signOut = async () => {
+    await supabase.auth.signOut()
+    window.location.href = '/login'
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center justify-between px-9 bg-mist/95 backdrop-blur-md border-b border-ink/10">
@@ -32,8 +47,8 @@ export function Nav({ jobStatus }: { jobStatus?: string }) {
         STEADYHAND
       </button>
       <div className="flex items-center gap-2">
-        {profile && (
-          <span className="text-[13px] text-muted mr-1">{profile.full_name}</span>
+        {fullName && (
+          <span className="text-[13px] text-muted mr-1">{fullName}</span>
         )}
         <button
           onClick={() => router.push('/dashboard')}
