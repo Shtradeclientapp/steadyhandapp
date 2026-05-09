@@ -459,6 +459,36 @@ export default function ComparePage() {
                           <a href="/agreement"><button style={{ width:'100%', background:'#0A0A0A', color:'white', padding:'11px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Go to contract →</button></a>
                         </div>
                       )}
+                      {/* Revision history */}
+                      {showHistory[q.id] && (quoteHistory[q.id]||[]).length > 0 && (
+                        <div style={{ borderTop:'1px solid rgba(28,43,50,0.1)', background:'rgba(28,43,50,0.02)' }}>
+                          <p style={{ fontSize:'10px', fontWeight:600, color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase' as const, padding:'8px 20px 4px', margin:0 }}>Revision history</p>
+                          {(quoteHistory[q.id]||[]).map((prev: any) => {
+                            const diff = Number(q.total_price) - Number(prev.total_price)
+                            return (
+                              <div key={prev.id} style={{ padding:'8px 20px', borderTop:'1px solid rgba(28,43,50,0.06)', display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'8px' }}>
+                                <div>
+                                  <p style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>v{prev.version} — ${Number(prev.total_price).toLocaleString()}</p>
+                                  <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{new Date(prev.created_at).toLocaleDateString('en-AU')}</p>
+                                  {prev.breakdown?.length > 0 && (
+                                    <div style={{ marginTop:'4px' }}>
+                                      {prev.breakdown.map((b: any, bi: number) => (
+                                        <p key={bi} style={{ fontSize:'10px', color:'#9AA5AA', margin:'1px 0' }}>{b.label} — ${Number(b.amount).toLocaleString()}</p>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                                <div style={{ textAlign:'right' as const, flexShrink:0 }}>
+                                  <span style={{ fontSize:'11px', fontWeight:500, color: diff > 0 ? '#D4522A' : diff < 0 ? '#2E7D60' : '#7A9098' }}>
+                                    {diff > 0 ? '+' : ''}{diff !== 0 ? '$' + Math.abs(diff).toLocaleString() : 'No change'}
+                                  </span>
+                                  <p style={{ fontSize:'10px', color:'#9AA5AA', margin:'2px 0 0' }}>vs current</p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
                     </div>
                   )
                 })}
