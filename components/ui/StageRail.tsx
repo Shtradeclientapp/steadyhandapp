@@ -3,24 +3,24 @@ import { useEffect, useState } from 'react'
 
 const CLIENT_STAGES = [
   { n:1, l:'Request',   s:'You: describe',  p:'/request'  },
-  { n:2, l:'Match',     s:'You: choose',    p:'/shortlist' },
+  { n:2, l:'Shortlist', s:'You: choose',    p:'/shortlist' },
   { n:3, l:'Consult',   s:'You: explore',   p:'/consult'  },
-  { n:4, l:'Compare',   s:'You: decide',    p:'/compare'  },
-  { n:5, l:'Agreement', s:'You: intend',    p:'/agreement'},
-  { n:6, l:'Build',     s:'You: observe',   p:'/delivery' },
-  { n:7, l:'Sign off',  s:'You: confirm',   p:'/signoff'  },
-  { n:8, l:'Protected', s:'You: review',    p:'/warranty' },
+  { n:4, l:'Quote',     s:'You: decide',    p:'/compare'  },
+  { n:5, l:'Agreement', s:'You: confirm',   p:'/agreement'},
+  { n:6, l:'Delivery',  s:'You: observe',   p:'/delivery' },
+  { n:7, l:'Sign-off',  s:'You: sign off',  p:'/signoff'  },
+  { n:8, l:'Warranty',  s:'You: review',    p:'/warranty' },
 ]
 
 const TRADIE_STAGES = [
   { n:1, l:'Request',   s:'You: receive',   p:'/request'  },
-  { n:2, l:'Match',     s:'You: respond',   p:'/shortlist' },
+  { n:2, l:'Shortlist', s:'You: respond',   p:'/shortlist' },
   { n:3, l:'Consult',   s:'You: assess',    p:'/consult'  },
-  { n:4, l:'Estimate',  s:'You: price',     p:'/quote'    },
-  { n:5, l:'Agreement', s:'You: scope',     p:'/agreement'},
-  { n:6, l:'Build',     s:'You: deliver',   p:'/delivery' },
-  { n:7, l:'Sign off',  s:'You: complete',  p:'/signoff'  },
-  { n:8, l:'Protected', s:'You: warrant',   p:'/warranty' },
+  { n:4, l:'Quote',     s:'You: price',     p:'/quote'    },
+  { n:5, l:'Agreement', s:'You: confirm',   p:'/agreement'},
+  { n:6, l:'Delivery',  s:'You: deliver',   p:'/delivery' },
+  { n:7, l:'Sign-off',  s:'You: complete',  p:'/signoff'  },
+  { n:8, l:'Warranty',  s:'You: warrant',   p:'/warranty' },
 ]
 
 const STATUS_TO_STAGE: Record<string,number> = {
