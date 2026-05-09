@@ -578,6 +578,89 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Admin broadcast ─────────────────────────────────────────────
+    // ── Quote accepted (notify tradie) ──────────────────────────────────────
+    if (type === 'quote_accepted') {
+      const { tradie_id } = body
+      const { data: job } = await supabase.from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      const { data: tradieProf } = tradie_id ? await supabase.from('tradie_profiles')
+        .select('*, profile:profiles(email, full_name)').eq('id', tradie_id).single() : { data: null }
+      if (job && tradieProf?.profile?.email) {
+        const html = wrap(
+          greeting(tradieProf.profile.full_name || 'there') +
+          para(`<strong>${job.client?.full_name}</strong> has accepted your quote for <strong>${job.title}</strong>. The next step is to draft the scope agreement before work begins.`) +
+          jobCard(job.title, job.trade_category, job.suburb, '#2E7D60') +
+          btn(APP_URL + '/agreement?job_id=' + job_id, 'Draft scope agreement →', '#2E7D60'),
+          `Your quote was accepted — ${job.title}`
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(tradieProf.profile.email, `Quote accepted — ${job.title}`), html })
+      }
+    }
+
+    // ── Consult complete (notify both parties vault is filing) ────────────────
+    if (type === 'consult_complete') {
+      const { data: job } = await supabase.from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email), tradie:tradie_profiles(*, profile:profiles(email, full_name))')
+        .eq('id', job_id).single()
+      if (job?.client?.email) {
+        const clientHtml = wrap(
+          greeting(job.client.full_name || 'there') +
+          para(`Both you and ${job.tradie?.business_name || 'your tradie'} have acknowledged the consult notes for <strong>${job.title}</strong>. The record has been filed to your Document Vault.`) +
+          btn(APP_URL + '/vault', 'View Document Vault →', '#9B6B9B'),
+          `Consult record filed — ${job.title}`
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `Consult record filed — ${job.title}`), html: clientHtml })
+      }
+      if (job?.tradie?.profile?.email) {
+        const tradieHtml = wrap(
+          greeting(job.tradie.profile.full_name || 'there') +
+          para(`Both parties have acknowledged the consult notes for <strong>${job.title}</strong>. The record has been filed to the Document Vault. You can now submit your quote.`) +
+          btn(APP_URL + '/tradie/dashboard', 'Go to dashboard →', '#9B6B9B'),
+          `Consult record filed — ${job.title}`
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.tradie.profile.email, `Consult record filed — ${job.title}`), html: tradieHtml })
+      }
+    }
+
+    // ── Job cancelled (notify tradies with quote requests) ────────────────────
+    if (type === 'job_cancelled') {
+      const { data: job } = await supabase.from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      const { data: qrs } = await supabase.from('quote_requests')
+        .select('tradie:tradie_profiles(*, profile:profiles(email, full_name))')
+        .eq('job_id', job_id)
+      for (const qr of (qrs || [])) {
+        const email = (qr.tradie as any)?.profile?.email
+        const name = (qr.tradie as any)?.profile?.full_name || 'there'
+        if (email) {
+          const html = wrap(
+            greeting(name) +
+            para(`The job <strong>${job?.title}</strong> in ${job?.suburb} has been cancelled by the client. No further action is required.`),
+            `Job cancelled — ${job?.title}`
+          )
+          await resend.emails.send({ from: FROM, ...resolveRecipient(email, `Job cancelled — ${job?.title}`), html })
+        }
+      }
+    }
+
+    // ── OB final inspection (notify client all jobs at sign-off) ─────────────
+    if (type === 'ob_final_inspection') {
+      const { data: job } = await supabase.from('jobs')
+        .select('*, client:profiles!jobs_client_id_fkey(full_name, email), diy_project:diy_projects(title)')
+        .eq('id', job_id).single()
+      if (job?.client?.email) {
+        const html = wrap(
+          greeting(job.client.full_name || 'there') +
+          para(`All jobs in your project <strong>${job.diy_project?.title || 'your project'}</strong> have reached sign-off stage. You can now review and complete the final inspection.`) +
+          btn(APP_URL + '/diy', 'View project →', '#D4522A'),
+          `All jobs ready for final inspection`
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(job.client.email, `All jobs ready for final inspection — ${job.diy_project?.title || ''}`), html })
+      }
+    }
+
     if (type === 'admin_broadcast') {
       const { subject, body: msgBody, recipients } = body
       if (!subject || !msgBody || !recipients?.length) {

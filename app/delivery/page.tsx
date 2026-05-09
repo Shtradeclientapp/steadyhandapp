@@ -198,6 +198,9 @@ export default function DeliveryPage() {
               status: 'pending',
             }))
             await supabase.from('milestones').insert(rows)
+      // Notify client that milestone has been submitted
+      await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'milestone_submitted', job_id: job?.id }) }).catch(console.error)
             const { data: fresh } = await supabase.from('milestones').select('*').eq('job_id', deliveryJob.id).order('order_index', { ascending: true })
             setMilestones(fresh || [])
           }

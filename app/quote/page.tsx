@@ -182,6 +182,9 @@ export default function QuotePage() {
       body: (profile.tradie?.business_name || 'Your tradie') + ' has submitted an estimate of $' + fmt(totalRaw) + (gstIncluded ? ' inc. GST' : ' excl. GST') + '. You can review it and proceed to scope agreement and quote when ready.',
     })
 
+    // Notify client that estimate has been submitted
+    await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'quote_submitted', job_id: job.id }) }).catch(console.error)
     setSubmitted(true)
     setSubmitting(false)
   }
