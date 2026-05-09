@@ -1,5 +1,6 @@
 'use client'
 import { StageGuideModal } from '@/components/ui/StageGuideModal'
+import { Dropzone } from '@/components/forms/Dropzone'
 import React from 'react'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useCallback } from 'react'
@@ -612,8 +613,37 @@ export default function DeliveryPage() {
                     </div>
                   )}
                   {isActive && !isDone && isTradie && (
-                    <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px' }}>
-                      <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Waiting for client to approve this milestone and release payment.</p>
+                    <div>
+                      <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'8px', padding:'10px 14px', marginBottom:'12px' }}>
+                        <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Waiting for client to approve this milestone and release payment.</p>
+                      </div>
+                      <div style={{ marginBottom:'10px' }}>
+                        <p style={{ fontSize:'11px', fontWeight:600, color:'#4A5E64', margin:'0 0 6px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>
+                          {m.photos?.length > 0 ? `Evidence photos (${m.photos.length})` : 'Evidence photos — your record if this milestone is disputed'}
+                        </p>
+                        {m.photos?.length > 0 && (
+                          <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' as const, marginBottom:'8px' }}>
+                            {m.photos.map((url: string, pi: number) => (
+                              <a key={pi} href={url} target="_blank" rel="noopener noreferrer">
+                                <img src={url} alt={'Evidence ' + (pi + 1)}
+                                  style={{ width:'72px', height:'72px', objectFit:'cover' as const, borderRadius:'6px', border:'1px solid rgba(28,43,50,0.12)' }} />
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                        <Dropzone
+                          jobId={job?.id}
+                          stage="delivery"
+                          docType="milestone-evidence"
+                          label="Drop photos here or tap to add evidence"
+                          accept={{ 'image/*': ['.jpg', '.jpeg', '.png', '.webp'] }}
+                          onUploaded={async (url: string) => {
+                            const existingPhotos = m.photos || []
+                            await supabase.from('milestones').update({ photos: [...existingPhotos, url] }).eq('id', m.id)
+                            setMilestones(ms => ms.map(x => x.id === m.id ? { ...x, photos: [...(x.photos || []), url] } : x))
+                          }}
+                        />
+                      </div>
                     </div>
                   )}
                   {isActive && !isDone && payingMilestone === m.id && clientSecret && (
