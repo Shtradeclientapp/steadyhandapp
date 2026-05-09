@@ -79,20 +79,22 @@ export default function WarrantyPage() {
   const submitIssue = async () => {
     if (!job || !form.title || !form.description) return
     setSubmitting(true)
-    const { data: { session } } = await supabase.auth.getSession()
-    const responseDue = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
-    const { data: issue, error: issueInsertErr } = await supabase.from('warranty_issues').insert({
-      job_id: job.id,
-      raised_by: session?.user.id,
-      title: form.title,
-      description: form.description,
-      severity: form.severity,
-      warranty_type: form.warranty_type,
-      resolution_status: 'open',
-      product_involved: form.product_involved || null,
-      status: 'open',
-      response_due_at: responseDue,
-    }).select().single()
+    // Use API route to get correct business-day response deadline
+    const issueRes = await fetch('/api/warranty', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        job_id: job.id,
+        title: form.title,
+        description: form.description,
+        severity: form.severity,
+        warranty_type: form.warranty_type,
+        product_involved: form.product_involved || null,
+      }),
+    })
+    const issueData = await issueRes.json()
+    const issue = issueData.issue
+    const issueInsertErr = issueRes.ok ? null : { message: issueData.error }
     if (issue) {
       setIssues(prev => [issue, ...prev])
       // Notify tradie via message thread

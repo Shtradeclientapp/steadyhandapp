@@ -27,14 +27,25 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-  const { job_id, title, description, severity } = await request.json()
+  const { job_id, title, description, severity, warranty_type, product_involved } = await request.json()
 
-  // Response due in 5 business days
+  // Response due in 5 business days (not calendar days)
   const response_due_at = addBusinessDays(new Date(), 5).toISOString()
 
   const { data, error } = await supabase
     .from('warranty_issues')
-    .insert({ job_id, raised_by: user.id, title, description, severity, response_due_at })
+    .insert({
+      job_id,
+      raised_by: user.id,
+      title,
+      description,
+      severity: severity || 'moderate',
+      warranty_type: warranty_type || 'workmanship',
+      product_involved: product_involved || null,
+      resolution_status: 'open',
+      status: 'open',
+      response_due_at,
+    })
     .select()
     .single()
 

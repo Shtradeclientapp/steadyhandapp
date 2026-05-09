@@ -68,11 +68,17 @@ export default function VaultPage() {
     if (doc.file_url) {
       setLoadingUrl(true)
       // Try to get a signed URL if it looks like a storage path
-      if (doc.file_url.startsWith('http')) {
-        setViewerUrl(doc.file_url)
+      // Use server-side signed URL for all storage URLs (handles both full URLs and bare paths)
+      if (doc.file_url.includes('supabase') || !doc.file_url.startsWith('http')) {
+        const res = await fetch('/api/vault/signed-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file_url: doc.file_url }),
+        })
+        const { signed_url } = await res.json()
+        setViewerUrl(signed_url || doc.file_url)
       } else {
-        const { data } = await supabase.storage.from('Documents').createSignedUrl(doc.file_url, 3600)
-        setViewerUrl(data?.signedUrl || null)
+        setViewerUrl(doc.file_url)
       }
       setLoadingUrl(false)
     }
