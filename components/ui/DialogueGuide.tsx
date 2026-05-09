@@ -2,140 +2,160 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const QUESTIONS = [
+const DIMENSIONS = [
   {
-    num: 1,
-    dimension: 'Pricing Transparency',
-    color: '#2E7D60',
-    posed_to: 'tradie',
-    question: 'Please explain how you arrived at your quoted price, including any materials, labour and GST considerations.',
-    placeholder: 'e.g. Labour: $1,200 (2 days @ $600/day), Materials: $800 (itemised in quote breakdown), GST: $200. Total: $2,200 inc GST.',
-    client_prompt: 'Does this pricing explanation make sense to you? Do you have any questions about the breakdown?',
-    client_placeholder: 'e.g. Thanks — happy with the breakdown. Can you confirm the door hardware is included in the materials cost?',
+    num: 1, id: 'price', dimension: 'Price & payment', color: '#2E7D60', icon: '$',
+    tradie: {
+      prompt: 'How is your quoted price structured?',
+      options: [
+        'Itemised breakdown provided in the quote — labour, materials and GST listed separately',
+        'Fixed price inclusive of all labour and materials — variations will be quoted separately',
+        'Time and materials — rate and estimated hours included in the quote',
+      ],
+      note_label: 'Anything specific the client should know about the pricing?',
+      note_placeholder: 'e.g. Tile allowance based on standard range — upgrades at cost difference',
+    },
+    client: {
+      prompt: 'Are you comfortable with the pricing structure?',
+      options: [
+        "Yes — I've reviewed the breakdown and it makes sense",
+        "Yes — I understand it's a fixed price and variations will be quoted separately",
+        "Yes — I understand the rate and have reviewed the estimate",
+      ],
+      note_label: 'Any questions or conditions on price? (optional)',
+      note_placeholder: 'e.g. Please confirm the door hardware allowance is included',
+    },
+    why: 'Confirming price structure now prevents the most common dispute trigger — ambiguity about what was included. Your scope agreement and audit trail will reference this confirmation.',
   },
   {
-    num: 2,
-    dimension: 'Scope Clarity',
-    color: '#2E6A8F',
-    posed_to: 'both',
-    question: 'Are there any items you expected to be included or excluded that are not reflected in the current scope? Please confirm or raise them now.',
-    placeholder: 'e.g. I want to confirm that removal of the old door and disposal of waste is included, and that painting of the surrounding wall is excluded.',
-    client_prompt: 'From your side — are there any scope items you expected to see that are missing?',
-    client_placeholder: 'e.g. I expected the door frame to be included if it needs repair. Can we clarify that?',
+    num: 2, id: 'scope', dimension: 'Scope & inclusions', color: '#2E6A8F', icon: '✓',
+    tradie: {
+      prompt: 'What is explicitly included and excluded in this job?',
+      options: [
+        'Inclusions and exclusions are fully listed in the scope agreement — nothing additional is implied',
+        'Scope covers the work described in the job request — any additions will require a variation',
+        'I have reviewed the job description and my quote covers all items listed',
+      ],
+      note_label: 'Any scope items the client needs to be aware of?',
+      note_placeholder: 'e.g. Wall patching after tile removal is excluded — can be quoted separately',
+    },
+    client: {
+      prompt: 'Does the scope match what you were expecting?',
+      options: [
+        'Yes — the inclusions and exclusions in the scope agreement match my expectations',
+        'Yes — I understand that items not listed will require a variation',
+        "Yes — I've reviewed the scope and it covers what was discussed",
+      ],
+      note_label: 'Any scope items you want confirmed? (optional)',
+      note_placeholder: 'e.g. Please confirm removal and disposal of old tiles is included',
+    },
+    why: 'A confirmed scope record protects both parties from scope creep. It becomes part of your signed agreement and is referenced in any variation or dispute.',
   },
   {
-    num: 3,
-    dimension: 'Compliance & Standards',
-    color: '#6B4FA8',
-    posed_to: 'tradie',
-    question: 'What permits, licences or Australian Standards apply to this job, and how will you ensure compliance?',
-    placeholder: 'e.g. This job requires a licensed carpenter (Lic #12345). No building permit required for a like-for-like door replacement. Work will comply with AS 1905.1 for fire-rated doors if applicable.',
-    client_prompt: 'Are you satisfied with the compliance information provided?',
-    client_placeholder: 'e.g. Yes, happy with that. Please bring your licence documentation on the day.',
+    num: 3, id: 'compliance', dimension: 'Licence & compliance', color: '#6B4FA8', icon: '⚡',
+    tradie: {
+      prompt: 'What licence, compliance or permit requirements apply to this job?',
+      options: [
+        'Licensed trade work — my licence number is on my Steadyhand profile and will be on the scope agreement',
+        'No permit required for this scope — like-for-like replacement or below permit threshold',
+        'Permit required — I will obtain or confirm permit before work commences',
+      ],
+      note_label: 'Any compliance conditions the client should know about?',
+      note_placeholder: 'e.g. Electrical compliance certificate will be issued on completion',
+    },
+    client: {
+      prompt: 'Are you satisfied with the compliance information provided?',
+      options: [
+        "Yes — I've confirmed the tradie is licensed and the work is compliant",
+        'Yes — I understand no permit is required for this scope',
+        'Yes — I understand a permit is required and the tradie will manage this',
+      ],
+      note_label: 'Any compliance questions? (optional)',
+      note_placeholder: 'e.g. Please provide the compliance certificate once work is complete',
+    },
+    why: 'Confirming licence and compliance now protects your warranty coverage. Some manufacturer warranties require licensed installation. This record is included in your warranty certificate.',
   },
   {
-    num: 4,
-    dimension: 'Risk & Difficulty',
-    color: '#C07830',
-    posed_to: 'tradie',
-    question: 'Are there any site conditions, access issues or material uncertainties that could affect the timeline or price?',
-    placeholder: 'e.g. I will need to inspect the door frame on arrival. If structural damage is found beyond what was described, I will issue a variation before proceeding. Access via side gate — please ensure it is unlocked.',
-    client_prompt: 'Are you aware of any site conditions we should flag before work begins?',
-    client_placeholder: 'e.g. The side gate will be open. There is a step down to the door area — about 20cm. Let me know if that affects anything.',
-  },
-  {
-    num: 5,
-    dimension: 'Timeline & Expectations',
-    color: '#D4522A',
-    posed_to: 'both',
-    question: 'Confirm your expected start date and duration. What factors might cause a delay, and how would you communicate this?',
-    placeholder: 'e.g. I plan to start on 15 April and expect to complete in one day. If materials are delayed I will notify you at least 48 hours in advance via the Steadyhand message thread.',
-    client_prompt: 'Does that timeline work for you? Are there any dates that do not work?',
-    client_placeholder: 'e.g. 15 April works. I will be home all day. Please let me know if you are running more than 30 minutes late.',
-  },
-  {
-    num: 6,
-    dimension: 'Post-job & Warranty',
-    color: '#1A6B5A',
-    posed_to: 'tradie',
-    question: 'If a defect is identified after completion, what is your process for rectification within the warranty period?',
-    placeholder: 'e.g. I offer a 90-day warranty on all workmanship. If you identify a defect, log it via Steadyhand and I will respond within 5 business days to arrange a return visit at no charge. Material defects are subject to manufacturer warranty.',
-    client_prompt: 'Are you satisfied with the warranty and rectification process described?',
-    client_placeholder: 'e.g. Yes, that sounds fair. I will log any issues through the app as discussed.',
+    num: 4, id: 'warranty', dimension: 'Warranty & defects', color: '#C07830', icon: '🛡',
+    tradie: {
+      prompt: 'What is your process if a defect is identified after completion?',
+      options: [
+        '90-day Steadyhand workmanship warranty — defects logged via the platform, responded to within 5 business days',
+        'I stand behind my work — any defect within the warranty period will be rectified at no charge',
+        'Workmanship warranty applies to all labour — product defects are subject to manufacturer warranty',
+      ],
+      note_label: 'Any warranty conditions the client should know?',
+      note_placeholder: 'e.g. Hot water system warranty requires annual anode inspection — I can arrange this',
+    },
+    client: {
+      prompt: 'Are you satisfied with the warranty and rectification process?',
+      options: [
+        'Yes — I understand the 90-day warranty and will log any issues via Steadyhand',
+        "Yes — I'm comfortable with the warranty terms as described",
+        'Yes — I understand the difference between workmanship and product warranty',
+      ],
+      note_label: 'Any warranty conditions you want on record? (optional)',
+      note_placeholder: "e.g. I'll need the manufacturer warranty cards for the products installed",
+    },
+    why: 'Confirming warranty terms now creates a clear record of what was agreed. This feeds directly into your warranty certificate and post-warranty log.',
   },
 ]
 
-export function DialogueGuide({
-  jobId,
-  userRole,
-  userId,
-  onComplete,
-}: {
-  jobId: string
-  userRole: string
-  userId: string
-  onComplete: () => void
-}) {
-  const [responses, setResponses] = useState<any[]>([])
-  const [currentQ, setCurrentQ] = useState(0)
-  const [tradieText, setTradieText] = useState('')
-  const [clientText, setClientText] = useState('')
-  const [saving, setSaving] = useState(false)
+interface Props { jobId: string; userRole: 'tradie' | 'client'; userId: string; onComplete?: () => void }
+
+export function DialogueGuide({ jobId, userRole, userId, onComplete }: Props) {
+  const [responses, setResponses] = useState<Record<number, any>>({})
+  const [saving, setSaving] = useState<number | null>(null)
   const [expanded, setExpanded] = useState(true)
   const [loading, setLoading] = useState(true)
+  const isTradie = userRole === 'tradie'
 
   useEffect(() => {
-    const supabase = createClient()
-    supabase.from('dialogue_responses').select('*').eq('job_id', jobId).order('question_num', { ascending: true }).then(({ data }) => {
-      setResponses(data || [])
-      const firstIncomplete = (data || []).findIndex(r => !r.completed)
-      if (firstIncomplete >= 0) setCurrentQ(firstIncomplete)
-      else if ((data || []).length < QUESTIONS.length) setCurrentQ((data || []).length)
+    createClient().from('dialogue_responses').select('*').eq('job_id', jobId).then(({ data }) => {
+      const map: Record<number, any> = {}
+      ;(data || []).forEach((r: any) => { map[r.question_num] = r })
+      setResponses(map)
       setLoading(false)
     })
   }, [jobId])
 
-  const getResponse = (num: number) => responses.find(r => r.question_num === num)
-  const completedCount = responses.filter(r => r.completed).length
-  const allComplete = completedCount === QUESTIONS.length
+  const completedCount = DIMENSIONS.filter(d => {
+    const r = responses[d.num] || {}
+    return isTradie ? r.tradie_selection : r.client_selection
+  }).length
+  const allComplete = completedCount === DIMENSIONS.length
 
-  const saveResponse = async (qNum: number, field: 'tradie_response' | 'client_response') => {
-    if (!tradieText && field === 'tradie_response') return
-    if (!clientText && field === 'client_response') return
-    setSaving(true)
+  const saveSelection = async (num: number, selection: string, note: string) => {
+    setSaving(num)
     const supabase = createClient()
-    const q = QUESTIONS[qNum]
-    const existing = getResponse(q.num)
-    const updates: any = {
-      job_id: jobId,
-      question_num: q.num,
-      question: q.question,
-      posed_to: q.posed_to,
-      updated_at: new Date().toISOString(),
+    const existing = responses[num] || {}
+    const updates: any = { job_id: jobId, question_num: num, updated_at: new Date().toISOString() }
+    if (isTradie) {
+      updates.tradie_selection = selection
+      updates.tradie_note = note || null
+      updates.tradie_response = selection + (note ? '\n\n' + note : '')
+    } else {
+      updates.client_selection = selection
+      updates.client_note = note || null
+      updates.client_response = selection + (note ? '\n\n' + note : '')
     }
-    if (field === 'tradie_response') updates.tradie_response = tradieText
-    if (field === 'client_response') updates.client_response = clientText
-    const tradieResp = field === 'tradie_response' ? tradieText : existing?.tradie_response
-    const clientResp = field === 'client_response' ? clientText : existing?.client_response
-    updates.completed = !!(tradieResp && clientResp)
-    const { data } = await supabase.from('dialogue_responses').upsert(updates, { onConflict: 'job_id,question_num' }).select().single()
+    updates.completed = !!(
+      (isTradie ? selection : existing.tradie_selection) &&
+      (isTradie ? existing.client_selection : selection)
+    )
+    const { data } = await supabase.from('dialogue_responses')
+      .upsert(updates, { onConflict: 'job_id,question_num' }).select().single()
     if (data) {
-      setResponses(prev => {
-        const idx = prev.findIndex(r => r.question_num === q.num)
-        if (idx >= 0) { const updated = [...prev]; updated[idx] = data; return updated }
-        return [...prev, data]
+      const updated = { ...responses, [num]: { ...existing, ...data } }
+      setResponses(updated)
+      const nowComplete = DIMENSIONS.every(d => {
+        const r = updated[d.num] || {}
+        return isTradie ? r.tradie_selection : r.client_selection
       })
-      if (updates.completed && qNum < QUESTIONS.length - 1) {
-        setCurrentQ(qNum + 1)
-        setTradieText('')
-        setClientText('')
-      }
-      if (updates.completed && qNum === QUESTIONS.length - 1) onComplete()
+      if (nowComplete && onComplete) onComplete()
     }
-    setSaving(false)
+    setSaving(null)
   }
-
-  const isTradie = userRole === 'tradie'
 
   if (loading) return null
 
@@ -143,142 +163,141 @@ export function DialogueGuide({
     <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', overflow:'hidden', marginBottom:'20px' }}>
       <div onClick={() => setExpanded(!expanded)} style={{ padding:'16px 20px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom: expanded ? '1px solid rgba(28,43,50,0.08)' : 'none' }}>
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <span style={{ fontSize:'16px' }}>🤝</span>
+          <div style={{ width:'36px', height:'36px', borderRadius:'8px', background: allComplete ? '#2E7D60' : '#0A0A0A', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'16px', flexShrink:0 }}>
+            {allComplete ? '✓' : '🤝'}
+          </div>
           <div>
-            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'2px' }}>PRE-SIGNING DIALOGUE</p>
-            <p style={{ fontSize:'12px', color:'#7A9098' }}>{completedCount}/{QUESTIONS.length} questions completed</p>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>PRE-SIGNING DIALOGUE</p>
+            <p style={{ fontSize:'12px', color: allComplete ? '#2E7D60' : '#7A9098', margin:0 }}>
+              {allComplete ? '✓ Complete — documentation and warranty coverage confirmed' : `${completedCount} of 4 dimensions confirmed`}
+            </p>
           </div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-          {allComplete && <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>✓ Complete</span>}
-          {!allComplete && <span style={{ fontSize:'12px', color:'#C07830', fontWeight:500 }}>In progress</span>}
-          <span style={{ fontSize:'12px', color:'#7A9098' }}>{expanded ? '▲' : '▼'}</span>
+          <div style={{ display:'flex', gap:'4px' }}>
+            {DIMENSIONS.map(d => {
+              const r = responses[d.num] || {}
+              const done = isTradie ? !!r.tradie_selection : !!r.client_selection
+              return <div key={d.num} style={{ width:'8px', height:'8px', borderRadius:'50%', background: done ? d.color : 'rgba(28,43,50,0.15)' }} />
+            })}
+          </div>
+          <span style={{ fontSize:'11px', color:'#7A9098' }}>{expanded ? '▲' : '▼'}</span>
         </div>
       </div>
 
       {expanded && (
-        <div style={{ padding:'16px 20px' }}>
-          <div style={{ display:'flex', gap:'4px', marginBottom:'20px' }}>
-            {QUESTIONS.map((q, i) => {
-              const resp = getResponse(q.num)
-              const isActive = i === currentQ
-              const isDone = resp?.completed
-              return (
-                <div key={q.num} onClick={() => setCurrentQ(i)} style={{ flex:1, height:'4px', borderRadius:'2px', background: isDone ? q.color : isActive ? q.color + '60' : 'rgba(28,43,50,0.1)', cursor:'pointer', transition:'all 0.2s' }} />
-              )
-            })}
+        <div style={{ padding:'20px' }}>
+          <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.9)', lineHeight:'1.65', margin:0 }}>
+              {isTradie
+                ? '✦ Completing these four confirmations strengthens your scope documentation, locks in your warranty terms, and puts your expertise on record before signing. It takes two minutes and protects you from the most common post-job disputes.'
+                : '✦ Completing these four confirmations ensures the tradie has explicitly committed to price, scope, compliance and warranty before a dollar changes hands. Your answers are locked and become part of your signed agreement and warranty certificate.'}
+            </p>
           </div>
 
-          {QUESTIONS.map((q, i) => {
-            if (i !== currentQ) return null
-            const resp = getResponse(q.num)
-            const isDone = resp?.completed
-            const canAnswerTradie = !isTradie === false || isTradie
-            const canAnswerClient = isTradie === false
-
+          {DIMENSIONS.map(dim => {
+            const r = responses[dim.num] || {}
+            const mySelection = isTradie ? r.tradie_selection : r.client_selection
+            const myNote = isTradie ? r.tradie_note : r.client_note
+            const otherSelection = isTradie ? r.client_selection : r.tradie_selection
+            const dimConfig = isTradie ? dim.tradie : dim.client
             return (
-              <div key={q.num}>
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'12px' }}>
-                  <div style={{ width:'24px', height:'24px', borderRadius:'50%', background: q.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'11px', fontWeight:700, color:'white', flexShrink:0 }}>{q.num}</div>
-                  <div>
-                    <span style={{ fontSize:'11px', fontWeight:600, color: q.color, textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>{q.dimension}</span>
-                    {q.posed_to === 'tradie' && <span style={{ fontSize:'10px', color:'#7A9098', marginLeft:'8px' }}>· Tradie to answer</span>}
-                    {q.posed_to === 'both' && <span style={{ fontSize:'10px', color:'#7A9098', marginLeft:'8px' }}>· Both parties</span>}
-                  </div>
-                </div>
-
-                <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'10px', padding:'14px', marginBottom:'14px' }}>
-                  <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.6', margin:0 }}>{q.question}</p>
-                </div>
-
-                {resp?.tradie_response && (
-                  <div style={{ marginBottom:'10px' }}>
-                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>Tradie response</p>
-                    <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'12px 14px', borderBottomLeftRadius:'3px' }}>
-                      <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.85)', lineHeight:'1.55', margin:0 }}>{resp.tradie_response}</p>
-                    </div>
-                  </div>
-                )}
-
-                {!resp?.tradie_response && isTradie && (
-                  <div style={{ marginBottom:'12px' }}>
-                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>Your response</p>
-                    <textarea
-                      value={tradieText}
-                      onChange={e => setTradieText(e.target.value)}
-                      placeholder={q.placeholder}
-                      rows={4}
-                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
-                    />
-                    <button type="button" onClick={() => saveResponse(i, 'tradie_response')} disabled={saving || !tradieText.trim()}
-                      style={{ marginTop:'8px', background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !tradieText.trim() ? 0.5 : 1 }}>
-                      {saving ? 'Saving...' : 'Submit response →'}
-                    </button>
-                  </div>
-                )}
-
-                {!resp?.tradie_response && !isTradie && (
-                  <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'12px 14px', marginBottom:'12px' }}>
-                    <p style={{ fontSize:'13px', color:'#C07830', margin:0 }}>⏳ Waiting for the tradie to respond to this question.</p>
-                  </div>
-                )}
-
-                {resp?.tradie_response && resp?.client_response && (
-                  <div style={{ marginBottom:'10px' }}>
-                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>Client response</p>
-                    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'12px 14px', borderBottomRightRadius:'3px' }}>
-                      <p style={{ fontSize:'13px', color:'#0A0A0A', lineHeight:'1.55', margin:0 }}>{resp.client_response}</p>
-                    </div>
-                  </div>
-                )}
-
-                {resp?.tradie_response && !resp?.client_response && !isTradie && (
-                  <div style={{ marginBottom:'12px' }}>
-                    <p style={{ fontSize:'11px', color:'#7A9098', marginBottom:'5px', fontWeight:500 }}>{q.client_prompt}</p>
-                    <textarea
-                      value={clientText}
-                      onChange={e => setClientText(e.target.value)}
-                      placeholder={q.client_placeholder}
-                      rows={3}
-                      style={{ width:'100%', padding:'10px 13px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'10px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', resize:'vertical' as const, fontFamily:'sans-serif', lineHeight:'1.5' }}
-                    />
-                    <button type="button" onClick={() => saveResponse(i, 'client_response')} disabled={saving || !clientText.trim()}
-                      style={{ marginTop:'8px', background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer', opacity: saving || !clientText.trim() ? 0.5 : 1 }}>
-                      {saving ? 'Saving...' : 'Submit response →'}
-                    </button>
-                  </div>
-                )}
-
-                {resp?.tradie_response && !resp?.client_response && isTradie && (
-                  <div style={{ background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'12px 14px', marginBottom:'12px' }}>
-                    <p style={{ fontSize:'13px', color:'#2E7D60', margin:0 }}>✓ Your response submitted. Waiting for the client to acknowledge.</p>
-                  </div>
-                )}
-
-                {isDone && (
-                  <div style={{ display:'flex', alignItems:'center', gap:'8px', padding:'10px 14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', marginBottom:'12px' }}>
-                    <span style={{ fontSize:'13px', color:'#2E7D60' }}>✓ This question is complete</span>
-                  </div>
-                )}
-
-                <div style={{ display:'flex', gap:'8px', justifyContent:'space-between' }}>
-                  <button type="button" onClick={() => setCurrentQ(Math.max(0, i - 1))} disabled={i === 0}
-                    style={{ background:'transparent', color:'#7A9098', padding:'8px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor: i === 0 ? 'not-allowed' : 'pointer', opacity: i === 0 ? 0.4 : 1 }}>
-                    ← Previous
-                  </button>
-                  <button type="button" onClick={() => setCurrentQ(Math.min(QUESTIONS.length - 1, i + 1))} disabled={i === QUESTIONS.length - 1}
-                    style={{ background:'transparent', color:'#7A9098', padding:'8px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(28,43,50,0.2)', cursor: i === QUESTIONS.length - 1 ? 'not-allowed' : 'pointer', opacity: i === QUESTIONS.length - 1 ? 0.4 : 1 }}>
-                    Next →
-                  </button>
-                </div>
-              </div>
+              <DimCard key={dim.num} dim={dim} dimConfig={dimConfig}
+                mySelection={mySelection || ''} myNote={myNote || ''}
+                otherSelection={otherSelection || ''} isTradie={isTradie}
+                isSaving={saving === dim.num}
+                onSave={(sel, note) => saveSelection(dim.num, sel, note)} />
             )
           })}
 
           {allComplete && (
-            <div style={{ marginTop:'16px', padding:'14px', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', textAlign:'center' as const }}>
-              <p style={{ fontSize:'14px', color:'#2E7D60', fontWeight:500, marginBottom:'4px' }}>All questions complete</p>
-              <p style={{ fontSize:'12px', color:'#4A5E64' }}>Both parties have addressed all trust dimensions. You can now score the dialogue and proceed to signing.</p>
+            <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'10px', padding:'14px 16px', textAlign:'center' as const, marginTop:'8px' }}>
+              <p style={{ fontSize:'14px', color:'#2E7D60', fontWeight:600, margin:'0 0 4px' }}>✓ All four dimensions confirmed</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0 }}>This dialogue record is now part of your scope agreement, warranty certificate and audit trail.</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DimCard({ dim, dimConfig, mySelection, myNote, otherSelection, isTradie, isSaving, onSave }: {
+  dim: typeof DIMENSIONS[0]; dimConfig: typeof DIMENSIONS[0]['tradie']
+  mySelection: string; myNote: string; otherSelection: string
+  isTradie: boolean; isSaving: boolean; onSave: (s: string, n: string) => void
+}) {
+  const [sel, setSel] = useState(mySelection)
+  const [note, setNote] = useState(myNote)
+  const [open, setOpen] = useState(!mySelection)
+  const done = !!mySelection
+
+  const inp: React.CSSProperties = { width:'100%', padding:'9px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'13px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box' }
+
+  return (
+    <div style={{ marginBottom:'10px', border:`1.5px solid ${done ? dim.color + '40' : 'rgba(28,43,50,0.1)'}`, borderRadius:'12px', overflow:'hidden', background: done ? dim.color + '06' : 'white' }}>
+      <div onClick={() => setOpen(!open)} style={{ padding:'12px 16px', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+          <div style={{ width:'28px', height:'28px', borderRadius:'6px', background: done ? dim.color : 'rgba(28,43,50,0.06)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', color: done ? 'white' : '#0A0A0A', flexShrink:0 }}>
+            {done ? '✓' : dim.icon}
+          </div>
+          <div>
+            <p style={{ fontSize:'13px', fontWeight:600, color: done ? dim.color : '#0A0A0A', margin:0 }}>{dim.dimension}</p>
+            {done && <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{mySelection.substring(0, 55)}…</p>}
+          </div>
+        </div>
+        <span style={{ fontSize:'11px', color:'#9AA5AA', flexShrink:0 }}>{open ? '▲' : '▼'}</span>
+      </div>
+
+      {open && (
+        <div style={{ padding:'0 16px 16px' }}>
+          <div style={{ background:'rgba(28,43,50,0.04)', borderRadius:'8px', padding:'10px 12px', marginBottom:'14px' }}>
+            <p style={{ fontSize:'11px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>
+              <span style={{ fontWeight:600, color: dim.color }}>Why this matters: </span>{dim.why}
+            </p>
+          </div>
+
+          {otherSelection && (
+            <div style={{ marginBottom:'14px' }}>
+              <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 6px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>{isTradie ? 'Client confirmed' : 'Tradie confirmed'}</p>
+              <div style={{ background:'rgba(28,43,50,0.04)', borderRadius:'8px', padding:'10px 12px' }}>
+                <p style={{ fontSize:'12px', color:'#0A0A0A', lineHeight:'1.55', margin:0 }}>{otherSelection}</p>
+              </div>
+            </div>
+          )}
+
+          {done ? (
+            <div>
+              <p style={{ fontSize:'11px', fontWeight:600, color:'#7A9098', margin:'0 0 6px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Your confirmation</p>
+              <div style={{ background: dim.color + '10', border:`1px solid ${dim.color}30`, borderRadius:'8px', padding:'10px 12px', marginBottom:'8px' }}>
+                <p style={{ fontSize:'12px', color:'#0A0A0A', lineHeight:'1.55', margin:0 }}>{mySelection}</p>
+                {myNote && <p style={{ fontSize:'11px', color:'#4A5E64', margin:'6px 0 0', fontStyle:'italic' }}>{myNote}</p>}
+              </div>
+              <button type="button" onClick={() => { setSel(mySelection); setNote(myNote) }}
+                style={{ fontSize:'11px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:0 }}>Edit response</button>
+            </div>
+          ) : (
+            <div>
+              <p style={{ fontSize:'12px', fontWeight:600, color:'#0A0A0A', margin:'0 0 10px' }}>{dimConfig.prompt}</p>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'12px' }}>
+                {dimConfig.options.map((opt, i) => (
+                  <label key={i} onClick={() => setSel(opt)} style={{ display:'flex', gap:'10px', alignItems:'flex-start', padding:'10px 12px', border:`1.5px solid ${sel === opt ? dim.color : 'rgba(28,43,50,0.12)'}`, borderRadius:'8px', cursor:'pointer', background: sel === opt ? dim.color + '08' : 'white', transition:'all 0.15s' }}>
+                    <div style={{ width:'16px', height:'16px', borderRadius:'50%', border:`2px solid ${sel === opt ? dim.color : 'rgba(28,43,50,0.2)'}`, background: sel === opt ? dim.color : 'white', flexShrink:0, marginTop:'1px', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      {sel === opt && <div style={{ width:'6px', height:'6px', borderRadius:'50%', background:'white' }} />}
+                    </div>
+                    <span style={{ fontSize:'12px', color:'#0A0A0A', lineHeight:'1.55' }}>{opt}</span>
+                  </label>
+                ))}
+              </div>
+              <div style={{ marginBottom:'12px' }}>
+                <p style={{ fontSize:'11px', color:'#7A9098', margin:'0 0 5px' }}>{dimConfig.note_label}</p>
+                <textarea value={note} onChange={e => setNote(e.target.value)} placeholder={dimConfig.note_placeholder} rows={2}
+                  style={{ ...inp, resize:'vertical' as const, minHeight:'52px' }} />
+              </div>
+              <button type="button" onClick={() => { if (sel) { onSave(sel, note); setOpen(false) } }} disabled={!sel || isSaving}
+                style={{ background: sel ? dim.color : 'rgba(28,43,50,0.15)', color:'white', border:'none', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', cursor: sel ? 'pointer' : 'not-allowed', opacity: isSaving ? 0.7 : 1 }}>
+                {isSaving ? 'Saving...' : `Confirm ${dim.dimension} →`}
+              </button>
             </div>
           )}
         </div>
