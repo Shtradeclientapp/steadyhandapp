@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const { type, job_id } = body
 
     // Forward to email route
-    const base = process.env.NEXT_PUBLIC_APP_URL || 'https://steadyhandapp.vercel.app'
+    const base = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://steadyhandtrade.app'
     await fetch(base + '/api/email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

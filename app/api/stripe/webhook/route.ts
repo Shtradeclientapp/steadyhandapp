@@ -45,10 +45,10 @@ export async function POST(request: NextRequest) {
               body: '💳 Payment received and held in Steadyhand. Funds will be released to the tradie on approval.',
             })
           }
-          console.log('Payment succeeded for milestone:', milestoneId)
+          // 'Payment succeeded for milestone:', milestoneId
         } else if (jobId) {
           await supabase.from('jobs').update({ status: 'delivery' }).eq('id', jobId).eq('status', 'agreement')
-          console.log('Payment succeeded for job:', jobId)
+          // 'Payment succeeded for job:', jobId
         }
         break
       }
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
             sender_id: clientId,
             body: 'Payment failed — please update your payment method to continue.',
           })
-          console.log('Payment failed for job:', jobId)
+          // 'Payment failed for job:', jobId
         }
         break
       }
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
             stripe_transfer_id: transfer.id,
             paid_at: new Date().toISOString(),
           }).eq('id', milestoneId)
-          console.log('Transfer created for milestone:', milestoneId)
+          // 'Transfer created for milestone:', milestoneId
         }
         break
       }
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
           await supabase.from('tradie_profiles').update({
             subscription_active: account.charges_enabled,
           }).eq('id', profile.id)
-          console.log('Account updated:', account.id, 'charges_enabled:', account.charges_enabled)
+          // 'Account updated:', account.id, 'charges_enabled:', account.charges_enabled
         }
         break
       }
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
             subscription_active: true,
             subscription_since: new Date().toISOString(),
           }).eq('id', tradieId)
-          console.log('Subscription activated for tradie:', tradieId, 'tier:', tier)
+          // 'Subscription activated for tradie:', tradieId, 'tier:', tier
         }
 
         // Org / property manager subscription
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
               subscription_plan: tier,
               subscription_active: true,
             }).eq('id', clientId)
-            console.log('Org subscription activated:', prof.org_id, 'tier:', tier)
+            // 'Org subscription activated:', prof.org_id, 'tier:', tier
           }
         }
 
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
             subscription_active: true,
             subscription_since: new Date().toISOString(),
           }).eq('id', clientId)
-          console.log('Home plan activated for client:', clientId)
+          // 'Home plan activated for client:', clientId
         }
         break
       }
@@ -163,13 +163,13 @@ export async function POST(request: NextRequest) {
           if (profile.org_id) {
             await supabase.from('organisations').update({ subscription_active: false, subscription_tier: null }).eq('id', profile.org_id)
           }
-          console.log('Subscription cancelled for profile:', profile.id)
+          // 'Subscription cancelled for profile:', profile.id
         }
         break
       }
 
       default:
-        console.log('Unhandled event type:', event.type)
+        // 'Unhandled event type:', event.type
     }
 
     return NextResponse.json({ received: true })
