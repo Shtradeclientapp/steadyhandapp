@@ -4,6 +4,7 @@ import { DialogueGuide } from '@/components/ui/DialogueGuide'
 import { NavHeader } from '@/components/ui/NavHeader'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { getAcceptedTradie } from '@/lib/supabase/helpers'
 import { StageRail } from '@/components/ui'
 import { JobSelector } from '@/components/ui/JobSelector'
 import { MilestoneEditor } from '@/components/ui/MilestoneEditor'
@@ -317,8 +318,8 @@ export default function AgreementPage() {
             notes: scopeNotes,
           }
           if (job.client_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: job.client_id })
-          const { data: acceptedQr } = await supabase.from('quote_requests').select('tradie_id').eq('job_id', job.id).eq('qr_status','accepted').maybeSingle()
-          if (acceptedQr?.tradie_id) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: acceptedQr.tradie_id })
+          const acceptedTradieId = await getAcceptedTradie(supabase, job.id)
+          if (acceptedTradieId) await supabase.from('vault_documents').insert({ ...scopeDoc, user_id: acceptedTradieId })
         } catch { /* non-critical */ }
         setTimeout(() => { window.location.href = isTradie ? '/tradie/jobs/' + job.id : '/delivery?job_id=' + job.id }, 1000)
       }

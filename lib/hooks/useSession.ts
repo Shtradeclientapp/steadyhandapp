@@ -10,6 +10,10 @@ interface SessionState {
 
 /**
  * Shared session + profile loader.
+ * ADOPTION STATUS: Ready for use on new pages.
+ * Use this instead of duplicating supabase.auth.getSession() + profiles fetch inline.
+ * Pages already using inline pattern: agreement, delivery, signoff, warranty, consult, compare, shortlist.
+ * New pages should import and use this hook instead.
  * Handles auth check, redirect to /login, and profile fetch in one place.
  * onLoad is called once session and profile are available.
  */
