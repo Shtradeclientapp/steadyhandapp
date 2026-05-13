@@ -236,14 +236,13 @@ export default function WarrantyPage() {
         )}
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#0A0A0A', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
+          {/* Statutory rights */}
+          <div style={{ background:'#E8F4F0', border:'1.5px solid #2E7D60', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'10px', fontWeight:700, color:'#2E7D60', margin:'0 0 5px', textTransform:'uppercase' as const, letterSpacing:'1px' }}>Your statutory warranty rights</p>
+            <p style={{ fontSize:'11px', color:'#1C2B32', lineHeight:'1.65', margin:'0 0 6px' }}>The workmanship warranty above is provided by the contractor. In addition, you hold statutory rights under the Home Building Contracts Act 1991 (WA): 6 years for structural defects and 1 year for other defects from practical completion. These rights cannot be contracted away.</p>
+            <p style={{ fontSize:'11px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>To enforce a claim: log the issue below to create a timestamped record, then notify the contractor in writing. If unresolved, contact Building and Energy WA (building.wa.gov.au) or lodge with the State Administrative Tribunal.</p>
+          </div>
           {!isTradie && <button type="button" onClick={() => setShowForm(true)}
-
-                      {/* Statutory rights */}
-                      <div style={{ background:'#E8F4F0', border:'1.5px solid #2E7D60', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
-                        <p style={{ fontSize:'11px', fontWeight:700, color:'#2E7D60', margin:'0 0 5px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Your statutory warranty rights</p>
-                        <p style={{ fontSize:'11px', color:'#1C2B32', lineHeight:'1.65', margin:'0 0 6px' }}>The workmanship warranty above is provided by the contractor. In addition, you hold statutory rights under the <em>Home Building Contracts Act 1991</em> (WA): <strong>6 years</strong> for structural defects and <strong>1 year</strong> for other defects from practical completion. These cannot be contracted away.</p>
-                        <p style={{ fontSize:'11px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>To enforce a claim: log the issue below to create a timestamped record, then notify the contractor in writing. If unresolved, contact <strong>Building and Energy WA</strong> (building.wa.gov.au) or lodge with the <strong>State Administrative Tribunal</strong>.</p>
-                      </div>
             style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
             + Log new issue
           </button>}
