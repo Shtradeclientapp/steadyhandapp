@@ -10,7 +10,7 @@ export default function TradieJobPage() {
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [acting, setActing] = useState(false)
-  const [done, setDone] = useState<'accepted'|'declined'|null>(null)
+  const [done, setDone] = useState<'accepted'|'declined'|'withdrawn'|null>(null)
   const [jobId, setJobId] = useState<string|null>(null)
   const supabase = createClient()
 
