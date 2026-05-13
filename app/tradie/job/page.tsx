@@ -169,14 +169,15 @@ export default function TradieJobPage() {
         )}
       </div>
     
+      {/* Job Protection */}
+      <button type="button" onClick={() => setShowProtection(true)}
+        style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'8px', padding:'8px 14px', fontSize:'12px', fontWeight:600, color:'#2E7D60', cursor:'pointer' }}>
+        🛡 Share Job Protection
+      </button>
+
       {showProtection && jobId && (
         <JobProtectionModal
           jobId={jobId}
-          {/* Job Protection */}
-          <button type="button" onClick={() => setShowProtection(true)}
-            style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'8px', padding:'8px 14px', fontSize:'12px', fontWeight:600, color:'#2E7D60', cursor:'pointer' }}>
-            🛡 Share Job Protection
-          </button>
           jobTitle={job?.title}
           onClose={() => setShowProtection(false)}
         />
