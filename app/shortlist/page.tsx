@@ -270,6 +270,24 @@ export default function ShortlistPage() {
             </div>
           )}
 
+          {/* All tradies declined nudge */}
+          {selectedJob && quoteRequests.length > 0 && quoteRequests.every((qr: any) => qr.qr_status === 'declined') && (
+            <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'16px' }}>
+              <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', letterSpacing:'1px', color:'#C07830', margin:'0 0 6px', textTransform:'uppercase' }}>All tradies have declined</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
+                The tradies you invited are not available for this job. You can invite more tradies from the list below, or post the job publicly to reach a wider pool.
+              </p>
+              <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                <button type="button" onClick={() => window.scrollTo({ top: 999999, behavior: 'smooth' })}
+                  style={{ background:'#C07830', color:'white', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', fontWeight:500, border:'none', cursor:'pointer' }}>
+                  Invite more tradies ↓
+                </button>
+                <a href={'/request?edit=' + selectedJob.id} style={{ background:'transparent', color:'#2E6A8F', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', border:'1px solid rgba(46,106,143,0.3)', textDecoration:'none', display:'inline-flex', alignItems:'center' }}>
+                  Edit job details
+                </a>
+              </div>
+            </div>
+          )}
           {selectedJob && (
             <div style={{ background:'#1C2B32', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 80% 50%, rgba(46,125,96,0.15) 0%, transparent 70%)', pointerEvents:'none' }} />

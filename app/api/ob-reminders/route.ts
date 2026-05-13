@@ -100,7 +100,7 @@ async function sendReminder(userId: string, projectId: string, type: ReminderTyp
         subject: msg.subject,
         body: msg.body,
         project_id: projectId,
-        cta_url: appUrl + '/diy',
+        cta_url: appUrl + '/diy?project_id=' + projectId,
       }),
     }).catch(() => {})
   }
@@ -232,6 +232,91 @@ export async function GET(request: NextRequest) {
           remindersFired++
         }
       }
+    }
+
+    // ── Warranty expiry — 7 day warning ─────────────────────────────────────────
+    const sevenDays = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const oneDayAhead = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    const { data: expiringJobs } = await supabase
+      .from('jobs')
+      .select('id, title, client_id, warranty_ends_at')
+      .eq('status', 'warranty')
+      .gte('warranty_ends_at', oneDayAhead)
+      .lte('warranty_ends_at', sevenDays)
+
+    for (const job of (expiringJobs || [])) {
+      const daysLeft = Math.ceil((new Date(job.warranty_ends_at).getTime() - Date.now()) / 86400000)
+      const { data: client } = await supabase
+        .from('profiles').select('email, full_name').eq('id', job.client_id).single()
+      if (client?.email) {
+        await fetch(appUrl + '/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'warranty_expiring',
+            to: client.email,
+            job_title: job.title,
+            days_left: daysLeft,
+            cta_url: appUrl + '/warranty?job_id=' + job.id,
+          }),
+        }).catch(() => {})
+        remindersFired++
+      }
+    }
+
+    // ── Warranty escalation — overdue response_due_at ──────────────────────────
+    const { data: overdueIssues } = await supabase
+      .from('warranty_issues')
+      .select('*, job:jobs(id, client_id, tradie_id, title)')
+      .eq('status', 'open')
+      .lt('response_due_at', new Date().toISOString())
+
+    for (const issue of (overdueIssues || [])) {
+      const job = Array.isArray(issue.job) ? issue.job[0] : issue.job
+      if (!job) continue
+
+      // Notify tradie they are overdue
+      const { data: tradie } = await supabase
+        .from('profiles').select('email, full_name').eq('id', job.tradie_id).single()
+      if (tradie?.email) {
+        await fetch(appUrl + '/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'warranty_overdue',
+            to: tradie.email,
+            subject: 'Warranty response overdue — action required',
+            job_title: job.title,
+            issue_title: issue.title,
+            response_due_at: issue.response_due_at,
+          }),
+        }).catch(() => {})
+      }
+
+      // Notify client their issue is overdue
+      const { data: client } = await supabase
+        .from('profiles').select('email, full_name').eq('id', job.client_id).single()
+      if (client?.email) {
+        await fetch(appUrl + '/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'warranty_overdue_client',
+            to: client.email,
+            subject: 'Your warranty issue has not received a response',
+            job_title: job.title,
+            issue_title: issue.title,
+            cta_url: appUrl + '/warranty?job_id=' + job.id,
+          }),
+        }).catch(() => {})
+      }
+
+      // Update issue status to escalated so we don't fire every day
+      await supabase.from('warranty_issues')
+        .update({ status: 'escalated' })
+        .eq('id', issue.id)
+
+      remindersFired++
     }
 
     return NextResponse.json({ ok: true, processed: projects.length, remindersFired })

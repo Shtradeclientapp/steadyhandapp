@@ -158,7 +158,57 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Warranty issue ────────────────────────────────────────────────────────
-    if (type === 'warranty_issue') {
+    if (type === 'warranty_expiring') {
+      const { to, job_title, days_left, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, to: resolveRecipient(to),
+        subject: 'Your workmanship warranty expires in ' + days_left + ' day' + (days_left === 1 ? '' : 's'),
+        html: wrap(
+          para('Your Steadyhand workmanship warranty for <strong>' + job_title + '</strong> expires in <strong>' + days_left + ' day' + (days_left === 1 ? '' : 's') + '</strong>.') +
+          para('If you have noticed any defects in the work, log them now to create a timestamped record before your warranty period closes. Remember — your statutory rights under the Home Building Contracts Act 1991 (WA) continue for 6 years for structural defects regardless of this contractual warranty period.') +
+          btn(cta_url || APP_URL + '/warranty', 'Check your warranty record →', '#2E7D60')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'warranty_overdue') {
+      const { to, subject, job_title, issue_title, response_due_at } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, to: resolveRecipient(to),
+        subject: subject || 'Warranty response overdue',
+        html: wrap(
+          para('A warranty issue requires your immediate response. The response deadline has passed.') +
+          jobCard(job_title, 'Warranty issue', '', '#D4522A') +
+          para('<strong>Issue:</strong> ' + issue_title) +
+          para('<strong>Response was due:</strong> ' + new Date(response_due_at).toLocaleDateString('en-AU')) +
+          para('Failure to respond may result in a complaint to Building and Energy WA or the State Administrative Tribunal.') +
+          btn(APP_URL + '/warranty', 'Respond now →', '#D4522A')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    if (type === 'warranty_overdue_client') {
+      const { to, subject, job_title, issue_title, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, to: resolveRecipient(to),
+        subject: subject || 'Your warranty issue has not received a response',
+        html: wrap(
+          para('The tradie has not responded to your warranty issue within the required timeframe.') +
+          jobCard(job_title, 'Warranty issue', '', '#C07830') +
+          para('<strong>Issue:</strong> ' + issue_title) +
+          para('You may escalate this matter to Building and Energy WA (building.wa.gov.au) or the State Administrative Tribunal. Your Steadyhand compliance record is your evidence.') +
+          btn(cta_url || APP_URL + '/warranty', 'View your warranty record →', '#2E7D60')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'warranty_issue') {
       const { data: issue } = await supabase
         .from('warranty_issues')
         .select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(email, full_name)), client:profiles!jobs_client_id_fkey(full_name))')

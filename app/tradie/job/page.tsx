@@ -131,7 +131,14 @@ export default function TradieJobPage() {
         )}
 
         {/* Done state */}
-        {done === 'accepted' && (
+        {done === 'withdrawn' && (
+        <div style={{ textAlign:'center', padding:'40px 24px' }}>
+          <p style={{ fontSize:'16px', fontWeight:500, color:'#C07830', marginBottom:'8px' }}>You have withdrawn from this job</p>
+          <p style={{ fontSize:'13px', color:'#7A9098', marginBottom:'20px', lineHeight:'1.6' }}>The client has been notified and can invite another tradie.</p>
+          <a href="/tradie/dashboard" style={{ display:'inline-block', background:'#0A0A0A', color:'white', padding:'11px 24px', borderRadius:'8px', fontSize:'13px', fontWeight:500, textDecoration:'none' }}>Back to dashboard</a>
+        </div>
+      )}
+      {done === 'accepted' && (
           <div style={{ background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'24px', textAlign:'center' as const }}>
             <p style={{ fontSize:'20px', margin:'0 0 8px' }}>✓</p>
             <p style={{ fontSize:'15px', color:'#5AC99A', fontWeight:500, margin:'0 0 6px' }}>Request accepted</p>

@@ -10,7 +10,7 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
 
   useEffect(() => {
     supabase.from('tradie_profiles')
-      .select('id, business_name, bio, trade_categories, service_areas, logo_url, hero_url, licence_number, licence_type, licence_verified, years_experience, website, abn, phone, availability_status, preferred_products')
+      .select('id, business_name, bio, trade_categories, service_areas, logo_url, hero_url, licence_number, licence_type, licence_verified, years_experience, website, abn, phone, availability_status, preferred_products, dialogue_score_avg, completed_jobs_count')
       .eq('id', params.id)
       .single()
       .then(({ data }) => { setTradie(data); setLoading(false) })

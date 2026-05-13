@@ -184,12 +184,28 @@ export default function DashboardPage() {
     </div>
   )
 
-  const cancelableStatuses = ['matching', 'shortlisted', 'compare', 'draft']
+  const cancelableStatuses = ['matching', 'shortlisted', 'compare', 'draft', 'consult', 'quote']
 
   const cancelJob = async (jobId: string, jobTitle: string) => {
     if (cancelConfirmId !== jobId) { setCancelConfirmId(jobId); return }
     setCancelConfirmId(null)
     const { data: { session } } = await supabase.auth.getSession()
+    // Check if scope has been signed — warn client
+    const { data: scope } = await supabase
+      .from('scope_agreements')
+      .select('tradie_signed_at, client_signed_at')
+      .eq('job_id', jobId)
+      .single()
+    const scopeSigned = scope?.tradie_signed_at && scope?.client_signed_at
+    if (scopeSigned) {
+      const ok = window.confirm(
+        'Warning: both parties have signed a scope agreement for this job. ' +
+        'Cancelling at this stage may have legal and financial implications. ' +
+        'The signed scope agreement will remain in your compliance archive as evidence. ' +
+        'Are you sure you want to cancel?'
+      )
+      if (!ok) { setCancelConfirmId(null); return }
+    }
     await supabase.from('jobs').update({ status: 'cancelled' }).eq('id', jobId)
     await supabase.from('job_messages').insert({
       job_id: jobId,
