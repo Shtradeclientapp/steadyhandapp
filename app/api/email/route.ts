@@ -267,10 +267,11 @@ export async function POST(request: NextRequest) {
         .neq('tradie_id', body.accepted_tradie_id)
       for (const qr of (declinedQRs || [])) {
         const t = Array.isArray(qr.tradie) ? qr.tradie[0] : qr.tradie
-        const email = t?.profile?.email
+        const prof = Array.isArray(t?.profile) ? t.profile[0] : t?.profile
+        const email = prof?.email
         if (!email) continue
         const html = wrap(
-          greeting(t?.business_name || 'there') +
+          greeting(t?.business_name || prof?.full_name || 'there') +
           para(`Thank you for submitting a quote for <strong>${job?.title || 'this job'}</strong>. ${clientName} has decided to proceed with another tradie.`) +
           para('This is no match for your skills — every job is different. Your Steadyhand profile and Dialogue Rating carry forward to your next opportunity.') +
           btn(APP_URL + '/tradie/dashboard', 'View your dashboard →', '#1C2B32'),
