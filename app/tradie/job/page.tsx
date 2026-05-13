@@ -1,8 +1,10 @@
 'use client'
+import { JobProtectionModal } from '@/components/ui/JobProtectionModal'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function TradieJobPage() {
+  const [showProtection, setShowProtection] = useState(false)
   const [job, setJob] = useState<any>(null)
   const [qr, setQr] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
@@ -166,6 +168,19 @@ export default function TradieJobPage() {
           </div>
         )}
       </div>
-    </div>
+    
+      {showProtection && jobId && (
+        <JobProtectionModal
+          jobId={jobId}
+          {/* Job Protection */}
+          <button type="button" onClick={() => setShowProtection(true)}
+            style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'8px', padding:'8px 14px', fontSize:'12px', fontWeight:600, color:'#2E7D60', cursor:'pointer' }}>
+            🛡 Share Job Protection
+          </button>
+          jobTitle={job?.title}
+          onClose={() => setShowProtection(false)}
+        />
+      )}
+</div>
   )
 }
