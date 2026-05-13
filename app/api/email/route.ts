@@ -162,8 +162,7 @@ export async function POST(request: NextRequest) {
       const { to, job_title, days_left, cta_url } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({
-        from: FROM, to: resolveRecipient(to),
-        subject: 'Your workmanship warranty expires in ' + days_left + ' day' + (days_left === 1 ? '' : 's'),
+        from: FROM, ...resolveRecipient(to, 'Your workmanship warranty expires in ' + days_left + ' day' + (days_left === 1 ? '' : 's')),
         html: wrap(
           para('Your Steadyhand workmanship warranty for <strong>' + job_title + '</strong> expires in <strong>' + days_left + ' day' + (days_left === 1 ? '' : 's') + '</strong>.') +
           para('If you have noticed any defects in the work, log them now to create a timestamped record before your warranty period closes. Remember — your statutory rights under the Home Building Contracts Act 1991 (WA) continue for 6 years for structural defects regardless of this contractual warranty period.') +
@@ -173,12 +172,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ sent: true })
     }
 
-        if (type === 'warranty_overdue') {
+    if (type === 'warranty_overdue') {
       const { to, subject, job_title, issue_title, response_due_at } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({
-        from: FROM, to: resolveRecipient(to),
-        subject: subject || 'Warranty response overdue',
+        from: FROM, ...resolveRecipient(to, subject || 'Warranty response overdue'),
         html: wrap(
           para('A warranty issue requires your immediate response. The response deadline has passed.') +
           jobCard(job_title, 'Warranty issue', '', '#D4522A') +
@@ -195,8 +193,7 @@ export async function POST(request: NextRequest) {
       const { to, subject, job_title, issue_title, cta_url } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({
-        from: FROM, to: resolveRecipient(to),
-        subject: subject || 'Your warranty issue has not received a response',
+        from: FROM, ...resolveRecipient(to, subject || 'Your warranty issue has not received a response'),
         html: wrap(
           para('The tradie has not responded to your warranty issue within the required timeframe.') +
           jobCard(job_title, 'Warranty issue', '', '#C07830') +

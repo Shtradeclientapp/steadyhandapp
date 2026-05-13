@@ -57,6 +57,8 @@ const REMINDER_MESSAGES: Record<ReminderType, { subject: string; body: string }>
   },
 }
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://steadyhandtrade.app'
+
 async function sendReminder(userId: string, projectId: string, type: ReminderType, jobId?: string) {
   // Check if this reminder was already sent recently (within 7 days)
   const { data: existing } = await supabase
@@ -249,7 +251,7 @@ export async function GET(request: NextRequest) {
       const { data: client } = await supabase
         .from('profiles').select('email, full_name').eq('id', job.client_id).single()
       if (client?.email) {
-        await fetch(appUrl + '/api/email', {
+        await fetch(siteUrl + '/api/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -257,7 +259,7 @@ export async function GET(request: NextRequest) {
             to: client.email,
             job_title: job.title,
             days_left: daysLeft,
-            cta_url: appUrl + '/warranty?job_id=' + job.id,
+            cta_url: siteUrl + '/warranty?job_id=' + job.id,
           }),
         }).catch(() => {})
         remindersFired++
@@ -279,7 +281,7 @@ export async function GET(request: NextRequest) {
       const { data: tradie } = await supabase
         .from('profiles').select('email, full_name').eq('id', job.tradie_id).single()
       if (tradie?.email) {
-        await fetch(appUrl + '/api/email', {
+        await fetch(siteUrl + '/api/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -297,7 +299,7 @@ export async function GET(request: NextRequest) {
       const { data: client } = await supabase
         .from('profiles').select('email, full_name').eq('id', job.client_id).single()
       if (client?.email) {
-        await fetch(appUrl + '/api/email', {
+        await fetch(siteUrl + '/api/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -306,7 +308,7 @@ export async function GET(request: NextRequest) {
             subject: 'Your warranty issue has not received a response',
             job_title: job.title,
             issue_title: issue.title,
-            cta_url: appUrl + '/warranty?job_id=' + job.id,
+            cta_url: siteUrl + '/warranty?job_id=' + job.id,
           }),
         }).catch(() => {})
       }
