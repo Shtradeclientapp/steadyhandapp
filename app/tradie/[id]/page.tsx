@@ -195,6 +195,28 @@ export default function PublicTradieProfile({ params }: { params: { id: string }
           </div>
         )}
 
+        {tradie.dialogue_score_avg && (
+          <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'14px', padding:'20px 24px', marginBottom:'16px', boxShadow:'0 1px 3px rgba(28,43,50,0.04)' }}>
+            <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'11px', letterSpacing:'1.5px', color:'#4A5E64', margin:'0 0 12px', textTransform:'uppercase' as const }}>Dialogue rating</p>
+            <div style={{ display:'flex', alignItems:'center', gap:'16px' }}>
+              <div style={{ textAlign:'center' as const }}>
+                <p style={{ fontSize:'36px', fontWeight:700, color:'#6B4FA8', margin:'0 0 2px', lineHeight:1 }}>{Number(tradie.dialogue_score_avg).toFixed(0)}</p>
+                <p style={{ fontSize:'10px', color:'#9AA5AA', margin:0, letterSpacing:'0.5px' }}>out of 100</p>
+              </div>
+              <div style={{ flex:1 }}>
+                <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 4px' }}>
+                  Steadyhand's Dialogue Rating measures how well this tradie communicates, documents and follows through across every stage of the job — from consult to warranty.
+                </p>
+                {tradie.completed_jobs_count > 0 && (
+                  <p style={{ fontSize:'11px', color:'#9AA5AA', margin:0 }}>
+                    Based on {tradie.completed_jobs_count} completed job{tradie.completed_jobs_count !== 1 ? 's' : ''} on Steadyhand
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div style={{ background:'#0A0A0A', borderRadius:'14px', padding:'20px 24px' }}>
           <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'12px', color:'rgba(216,228,225,0.5)', letterSpacing:'1px', margin:'0 0 6px' }}>STEADYHAND</p>
           <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.5)', lineHeight:'1.6', margin:0 }}>

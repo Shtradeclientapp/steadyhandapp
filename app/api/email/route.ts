@@ -252,7 +252,36 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Quote declined ────────────────────────────────────────────────────────
-    if (type === 'quote_declined') {
+    if (type === 'quote_declined_others') {
+      // Notify all tradies who submitted quotes but were not selected
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('title, trade_category, suburb, client:profiles!jobs_client_id_fkey(full_name)')
+        .eq('id', job_id).single()
+      const clientName = (Array.isArray(job?.client) ? job.client[0] : job?.client)?.full_name || 'The homeowner'
+      const { data: declinedQRs } = await supabase
+        .from('quote_requests')
+        .select('tradie:tradie_profiles(profile:profiles(email, full_name), business_name)')
+        .eq('job_id', job_id)
+        .eq('qr_status', 'declined')
+        .neq('tradie_id', body.accepted_tradie_id)
+      for (const qr of (declinedQRs || [])) {
+        const t = Array.isArray(qr.tradie) ? qr.tradie[0] : qr.tradie
+        const email = t?.profile?.email
+        if (!email) continue
+        const html = wrap(
+          greeting(t?.business_name || 'there') +
+          para(`Thank you for submitting a quote for <strong>${job?.title || 'this job'}</strong>. ${clientName} has decided to proceed with another tradie.`) +
+          para('This is no match for your skills — every job is different. Your Steadyhand profile and Dialogue Rating carry forward to your next opportunity.') +
+          btn(APP_URL + '/tradie/dashboard', 'View your dashboard →', '#1C2B32'),
+          'Quote outcome — ' + (job?.title || 'job update')
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(email, `Quote outcome — ${job?.title || 'your quote'}`), html })
+      }
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'quote_declined') {
       const { tradie_id } = body
       const { data: job } = await supabase
         .from('jobs')

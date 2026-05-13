@@ -279,6 +279,22 @@ export default function AgreementPage() {
       const { data: { session } } = await supabase.auth.getSession()
       const { data: prof } = await supabase.from('profiles').select('stripe_account_id').eq('id', session?.user.id).single()
       if (!prof?.stripe_account_id) { setStripeRequired(true); return }
+      // Check tradie has Stripe Connect set up before client signs
+      if (!isTradie) {
+        const { data: tradieProf } = await supabase
+          .from('tradie_profiles')
+          .select('stripe_account_id, charges_enabled')
+          .eq('id', job?.tradie_id)
+          .single()
+        if (!tradieProf?.charges_enabled) {
+          const ok = window.confirm(
+            'The tradie has not yet connected their bank account to receive payment. ' +
+            'You can sign the scope now, but payment cannot be processed until they do. ' +
+            'Consider asking them to connect their bank account first. Continue anyway?'
+          )
+          if (!ok) { setSigning(false); return }
+        }
+      }
     }
     setSigning(true)
     setSaveError(null)
@@ -295,6 +311,17 @@ export default function AgreementPage() {
       setScope(updated)
       const supabase = createClient()
       const signerName = isTradie ? (job.tradie?.business_name || 'Tradie') : (job.client?.full_name || 'Client')
+      // Snapshot party details at signing time for legal record integrity
+      const snapshotFields: Record<string,string|null> = {}
+      if (isTradie) {
+        snapshotFields.tradie_business_name_snapshot = job.tradie?.business_name || null
+        snapshotFields.tradie_licence_number_snapshot = job.tradie?.licence_number || null
+      } else {
+        snapshotFields.client_full_name_snapshot = job.client?.full_name || null
+      }
+      if (Object.keys(snapshotFields).length > 0) {
+        supabase.from('scope_agreements').update(snapshotFields).eq('id', scope.id).then(() => {})
+      }
       await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
       await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)
       if (updated.client_signed_at && updated.tradie_signed_at) {

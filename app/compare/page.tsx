@@ -119,6 +119,12 @@ export default function ComparePage() {
         body: JSON.stringify({ type:'quote_updated', job_id: selectedJob.id, accepted_tradie_id: quote.tradie_id }) }).catch(console.error)
       const { error: e2 } = await supabase.from('quote_requests').update({ qr_status: 'accepted' }).eq('job_id', selectedJob.id).eq('tradie_id', quote.tradie_id)
       await supabase.from('quote_requests').update({ qr_status: 'declined' }).eq('job_id', selectedJob.id).neq('tradie_id', quote.tradie_id)
+      // Notify declined tradies by email
+      await fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'quote_declined_others', job_id: selectedJob.id, accepted_tradie_id: quote.tradie_id }),
+      }).catch(console.error)
       await supabase.from('jobs').update({ status: 'agreement' }).eq('id', selectedJob.id)
       if (e2) throw new Error(e2.message)
       // Mark the accepted quote_request as accepted, decline the rest
