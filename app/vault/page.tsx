@@ -360,11 +360,37 @@ export default function VaultPage() {
                     <p style={{ fontSize:'12px', color:'#7A9098', lineHeight:'1.6', marginBottom:'16px' }}>
                       This document was auto-filed from your job. No separate file is attached — the record exists in your job history.
                     </p>
-                    {selectedDoc.job_id && (selectedDoc.document_type === 'scope' || selectedDoc.document_type === 'warranty') && (
-                      <a href={'/api/pdf/' + selectedDoc.document_type + '?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
-                        style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 16px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
-                        ↓ Download PDF
-                      </a>
+                    {selectedDoc.job_id && (
+                      <div style={{ display:'flex', flexDirection:'column', gap:'8px', alignItems:'center' }}>
+                        {(selectedDoc.document_type === 'scope') && (
+                          <a href={'/api/pdf/generate/scope?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                            style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 20px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
+                            ↓ Download scope agreement
+                          </a>
+                        )}
+                        {(selectedDoc.document_type === 'warranty') && (
+                          <a href={'/api/pdf/generate/warranty?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                            style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 20px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
+                            ↓ Download warranty certificate
+                          </a>
+                        )}
+                        {(selectedDoc.document_type === 'milestone') && (
+                          <a href={'/api/pdf/generate/milestones?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                            style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 20px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
+                            ↓ Download milestone record
+                          </a>
+                        )}
+                        {(selectedDoc.document_type === 'consult') && (
+                          <a href={'/api/pdf/generate/consult?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                            style={{ fontSize:'13px', color:'white', background:'#1C2B32', padding:'8px 20px', borderRadius:'8px', textDecoration:'none', fontWeight:500 }}>
+                            ↓ Download consult record
+                          </a>
+                        )}
+                        <a href={'/api/pdf/generate/audit?job_id=' + selectedDoc.job_id} target="_blank" rel="noreferrer"
+                          style={{ fontSize:'12px', color:'#2E6A8F', background:'rgba(46,106,143,0.06)', border:'1px solid rgba(46,106,143,0.2)', padding:'6px 16px', borderRadius:'8px', textDecoration:'none' }}>
+                          ↓ Full audit trail PDF
+                        </a>
+                      </div>
                     )}
                   </div>
                 )}

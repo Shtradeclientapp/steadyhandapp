@@ -573,7 +573,19 @@ export default function DeliveryPage() {
                           </button>
                         )}
                         <button type="button"
-                          onClick={() => window.location.href = '/messages' + (job?.id ? '?job=' + job.id : '')}
+                          onClick={() => {
+                            const note = window.prompt('Describe the issue — this will be sent to the tradie as a message:')
+                            if (!note?.trim()) return
+                            fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+                              body: JSON.stringify({ type:'milestone_flagged', job_id: job?.id, note }) }).catch(()=>{})
+                            import('@/lib/supabase/client').then(({ createClient }) => {
+                              const sb = createClient()
+                              sb.auth.getSession().then(({ data: { session } }) => {
+                                if (session) sb.from('job_messages').insert({ job_id: job?.id, sender_id: session.user.id, body: '⚠ Issue flagged: ' + note })
+                              })
+                            })
+                            window.alert('Issue logged and sent to tradie. You can continue the conversation in Messages.')
+                          }}
                           style={{ background:'transparent', color:'#D4522A', padding:'10px 16px', borderRadius:'8px', fontSize:'13px', border:'1px solid rgba(212,82,42,0.3)', cursor:'pointer' }}>
                           Flag an issue
                         </button>

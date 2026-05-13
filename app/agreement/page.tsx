@@ -602,6 +602,11 @@ export default function AgreementPage() {
                       {scope?.client_signed_at && scope?.tradie_signed_at ? 'FULLY EXECUTED' : scope?.client_signed_at || scope?.tradie_signed_at ? 'PARTIALLY SIGNED' : 'DRAFT'}
                     </span>
                   </div>
+                  {scope?.client_signed_at && scope?.tradie_signed_at && !isPastAgreement && (
+                    <a href="/delivery" style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'#2E7D60', color:'white', padding:'6px 14px', borderRadius:'8px', fontSize:'12px', fontWeight:600, textDecoration:'none', marginLeft:'10px' }}>
+                      Proceed to delivery →
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
