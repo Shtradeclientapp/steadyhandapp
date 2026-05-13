@@ -813,7 +813,7 @@ export default function TradieDashboard() {
             const milestonesTotal = job.milestones?.length ?? 0
 
             return (
-              <a key={job.id} href={(STATUS_TO_STAGE[job.status] || '/tradie/jobs/' + job.id) + '?job_id=' + job.id} style={{ textDecoration:'none' }}>
+              <a key={job.id} href={(STATUS_TO_STAGE[job.status] || '/tradie/job/' + job.id) + '?job_id=' + job.id} style={{ textDecoration:'none' }}>
                 <div style={{
                   background: '#E8F0EE',
                   border: '1px solid rgba(28,43,50,0.1)',
@@ -924,7 +924,7 @@ export default function TradieDashboard() {
                   </div>
                 ))}
               </div>
-              <a href="/tradie/jobs" style={{ display:'inline-block', marginTop:'12px', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>View job analytics →</a>
+              <a href="/tradie/job" style={{ display:'inline-block', marginTop:'12px', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>View job analytics →</a>
             </div>
           )
         })()}

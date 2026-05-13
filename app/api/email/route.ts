@@ -490,14 +490,14 @@ export async function POST(request: NextRequest) {
       if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
       const clientData = Array.isArray(job.client) ? job.client[0] : job.client
       const clientName = clientData?.full_name || 'A homeowner'
-      const signupUrl = APP_URL + '/signup?role=tradie'
+      const signupUrl = APP_URL + '/join?role=tradie&job_id=' + job_id + '&ref=tradie_invite'
       const html = wrap(
         greeting(business_name || 'there') +
         para(`<strong>${clientName}</strong> would like to invite you to submit an estimate for a job on Steadyhand.`) +
         jobCard(job.title, job.trade_category, job.suburb, '#2E6A8F') +
         (personal_message ? para(`<em>"${personal_message}"</em>`) : '') +
         para('Steadyhand is a trade services platform that manages the full job pipeline — from estimate through to sign-off and warranty. To respond to this invitation, create your free tradie account below.') +
-        btn(signupUrl, 'Create your Steadyhand account →', '#D4522A'),
+        btn(signupUrl, 'View job and create your account →', '#D4522A'),
         `${clientName} has invited you to quote on Steadyhand`
       )
       await resend.emails.send({ from: FROM, ...resolveRecipient(email, `${clientName} has invited you to quote — ${job.title}`), html,

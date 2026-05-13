@@ -119,8 +119,14 @@ export default function DashboardPage() {
       setJobs(data || [])
       setBuilds(buildsData || [])
       setUnreadCount(unreadTotal || 0)
-      if (!prof?.full_name || !prof?.suburb) setShowClientWizard(true)
-      else if (typeof window !== 'undefined') localStorage.setItem('seen_client_onboarding', '1')
+      if (!prof?.full_name || !prof?.suburb) {
+        // Only show setup wizard if they haven't explicitly completed or dismissed onboarding
+        if (!prof?.onboarding_complete && typeof window !== 'undefined' && !localStorage.getItem('dismissed_client_setup')) {
+          setShowClientWizard(true)
+        }
+      } else if (typeof window !== 'undefined') {
+        localStorage.setItem('seen_client_onboarding', '1')
+      }
 
       // Assessments depend on job IDs so run after
       const jobIds = (data || []).map((j: any) => j.id)
@@ -577,9 +583,11 @@ export default function DashboardPage() {
       {showClientWizard && (
         <ClientSetupModal
           userId={user?.id || ''}
-          onComplete={async (fullName: string, suburb: string) => {
+          onDismiss={() => { if (typeof window !== "undefined") localStorage.setItem("dismissed_client_setup", "1"); setShowClientWizard(false) }}
+            onComplete={async (fullName: string, suburb: string) => {
             const supabase = createClient()
             await supabase.from('profiles').update({ full_name: fullName, suburb, onboarding_complete: true }).eq('id', user?.id)
+            if (typeof window !== 'undefined') localStorage.setItem('seen_client_onboarding', '1')
             setShowClientWizard(false)
             window.location.reload()
           }}

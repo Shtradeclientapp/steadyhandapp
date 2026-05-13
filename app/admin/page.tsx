@@ -69,10 +69,17 @@ export default function AdminPage() {
     setMsg(null)
     const supabase = createClient()
     const { error } = await supabase.from(table).update(updates).eq('id', id)
-    if (error) setMsg('Error: ' + error.message)
-    else { setMsg('Saved'); setTimeout(() => setMsg(null), 2000) }
+    if (error) {
+      setMsg('Error: ' + error.message)
+    } else {
+      setMsg('Saved')
+      setTimeout(() => setMsg(null), 2000)
+      // Update selected state locally so panel stays open with correct values
+      setSelected((prev: any) => prev && prev.id === id ? { ...prev, ...updates } : prev)
+      // Refresh the list in background without clearing selected
+      loadAll(supabase)
+    }
     setSaving(false)
-    await loadAll(supabase)
   }
 
   const verifyTradie = async (tradie_id: string, email: string) => {
