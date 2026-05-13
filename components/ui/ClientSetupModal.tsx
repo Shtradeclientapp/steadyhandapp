@@ -10,9 +10,10 @@ const SUBURBS = [
 interface ClientSetupModalProps {
   userId: string
   onComplete: (fullName: string, suburb: string) => Promise<void>
+  onDismiss?: () => void
 }
 
-export function ClientSetupModal({ userId, onComplete }: ClientSetupModalProps) {
+export function ClientSetupModal({ userId, onComplete, onDismiss }: ClientSetupModalProps) {
   const [step, setStep] = useState(0)
   const [fullName, setFullName] = useState('')
   const [suburb, setSuburb] = useState('')
