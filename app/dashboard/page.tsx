@@ -146,6 +146,24 @@ export default function DashboardPage() {
     })
   }, [])
 
+  useEffect(() => {
+    const sb = supabase
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return
+      const channel = sb
+        .channel('dash_unread_' + session.user.id)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'job_messages' }, () => {
+          sb.from('job_messages')
+            .select('id', { count: 'exact', head: true })
+            .neq('sender_id', session.user.id)
+            .not('read_by', 'cs', JSON.stringify([session.user.id]))
+            .then(({ count }) => setUnreadCount(count || 0))
+        })
+        .subscribe()
+    })
+  }, [])
+
+
   const signOut = async () => {
     await supabase.auth.signOut()
     window.location.href = '/login'
