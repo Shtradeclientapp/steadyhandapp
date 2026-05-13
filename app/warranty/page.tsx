@@ -49,7 +49,7 @@ export default function WarrantyPage() {
         setJob(warrantyJob)
         const { data: iss } = await supabase.from('warranty_issues').select('*').eq('job_id', warrantyJob.id).order('created_at', { ascending: false })
         setIssues(iss || [])
-      // Auto-complete if warranty period has expired
+      // Auto-complete if workmanship warranty has expired
       const jobData = warrantyJob
       if (jobData?.warranty_ends_at && new Date(jobData.warranty_ends_at) < new Date() && jobData.status === 'warranty') {
         await supabase.from('jobs').update({ status: 'complete' }).eq('id', jobData.id)
@@ -208,7 +208,7 @@ export default function WarrantyPage() {
         <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'28px', color:'#0A0A0A', letterSpacing:'1.5px', marginBottom:'6px' }}>WARRANTY PERIOD</h1>
         <p style={{ fontSize:'15px', color:'#4A5E64', fontWeight:'300', marginBottom:'28px', lineHeight:'1.6' }}>
           {isTradie
-            ? 'The warranty period is active. Respond to any issues logged by the client within 5 business days.'
+            ? 'The workmanship warranty is active. Respond to any issues logged by the client within 5 business days.'
             : 'Your warranty is active. Log any defects — the tradie must respond within 5 business days.'}
         </p>
 
@@ -237,6 +237,13 @@ export default function WarrantyPage() {
         <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'16px', flexWrap:'wrap', gap:'10px' }}>
           <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'17px', color:'#0A0A0A', letterSpacing:'0.5px' }}>LOGGED ISSUES ({issues.length})</div>
           {!isTradie && <button type="button" onClick={() => setShowForm(true)}
+
+                      {/* Statutory rights */}
+                      <div style={{ background:'#E8F4F0', border:'1.5px solid #2E7D60', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+                        <p style={{ fontSize:'11px', fontWeight:700, color:'#2E7D60', margin:'0 0 5px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Your statutory warranty rights</p>
+                        <p style={{ fontSize:'11px', color:'#1C2B32', lineHeight:'1.65', margin:'0 0 6px' }}>The workmanship warranty above is provided by the contractor. In addition, you hold statutory rights under the <em>Home Building Contracts Act 1991</em> (WA): <strong>6 years</strong> for structural defects and <strong>1 year</strong> for other defects from practical completion. These cannot be contracted away.</p>
+                        <p style={{ fontSize:'11px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>To enforce a claim: log the issue below to create a timestamped record, then notify the contractor in writing. If unresolved, contact <strong>Building and Energy WA</strong> (building.wa.gov.au) or lodge with the <strong>State Administrative Tribunal</strong>.</p>
+                      </div>
             style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:'500', border:'none', cursor:'pointer' }}>
             + Log new issue
           </button>}
@@ -317,7 +324,7 @@ export default function WarrantyPage() {
             <div style={{ fontSize:'36px', marginBottom:'12px' }}>🛡</div>
             <p style={{ fontSize:'15px', color:'#2E7D60', marginBottom:'6px', fontWeight:600 }}>Warranty active — no issues logged</p>
             <p style={{ fontSize:'13px', color:'#4A5E64', marginBottom:'16px', lineHeight:'1.6', maxWidth:'380px', margin:'0 auto 16px' }}>
-              Your warranty period is running. If you notice any defects or incomplete work, log it here — the tradie is obligated to respond within 5 business days.
+              Your workmanship warranty is running. If you notice any defects or incomplete work, log it here — the tradie is obligated to respond within 5 business days.
             </p>
             <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px', marginBottom:'4px', textAlign:'left' as const, maxWidth:'340px', margin:'0 auto' }}>
               {[
@@ -443,7 +450,7 @@ export default function WarrantyPage() {
       {!isTradie && <div style={{ maxWidth:'860px', margin:'0 auto', padding:'0 24px 24px' }}>
         <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.08)', borderRadius:'12px', padding:'20px 24px' }}>
           <p style={{ fontSize:'13px', fontWeight:600, color:'#1C2B32', margin:'0 0 4px' }}>Close-out checklist</p>
-          <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 16px' }}>Complete this before your warranty period ends to confirm the job is fully resolved.</p>
+          <p style={{ fontSize:'12px', color:'#7A9098', margin:'0 0 16px' }}>Complete this before your workmanship warranty ends to confirm the job is fully resolved.</p>
           <div style={{ display:'flex', flexDirection:'column' as const, gap:'10px', marginBottom:'16px' }}>
             {[
               'All agreed work has been completed to the standard described in the scope',
@@ -488,7 +495,7 @@ export default function WarrantyPage() {
         stageColor="#2E7D60"
         stageLabel="Protected"
         headline="You are protected — here is how to use it"
-        intro="Your warranty period is active. If something goes wrong with the completed work, log it here. Steadyhand tracks the response and enforces the SLA."
+        intro="Your workmanship warranty is active. If something goes wrong with the completed work, log it here. Steadyhand tracks the response and enforces the SLA."
         checklist={[
           { text: 'Log issues as soon as you notice them — do not wait until the warranty expires', emphasis: true },
           { text: 'The tradie has 5 business days to respond — overdue responses are flagged automatically', emphasis: false },
