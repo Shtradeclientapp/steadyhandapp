@@ -476,6 +476,32 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ── First job nudge — client signed up 48+ hours ago with no jobs ───────────
+    const fortyEightHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
+    const { data: newClients } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, created_at')
+      .eq('role', 'client')
+      .lt('created_at', fortyEightHoursAgo)
+      .not('email', 'is', null)
+
+    for (const client of (newClients || [])) {
+      // Check if they have any jobs at all
+      const { data: clientJobs } = await supabase
+        .from('jobs')
+        .select('id')
+        .eq('client_id', client.id)
+        .limit(1)
+      if (!clientJobs || clientJobs.length === 0) {
+        await fetch(siteUrl + '/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'first_job_nudge', to: client.email, full_name: client.full_name }),
+        }).catch(() => {})
+        remindersFired++
+      }
+    }
+
     // ── Re-engagement — no activity for 14 days ──────────────────────────────
     const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
     const { data: inactiveUsers } = await supabase
