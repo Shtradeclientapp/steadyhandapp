@@ -158,7 +158,31 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Warranty issue ────────────────────────────────────────────────────────
-    if (type === 'licence_expiring') {
+    if (type === 'variation_approved' || type === 'variation_rejected') {
+      const { variation_title, variation_cost, client_response } = body
+      const approved = type === 'variation_approved'
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('title, trade_category, suburb, tradie:tradie_profiles(profile:profiles(email, full_name))')
+        .eq('id', job_id).single()
+      const tradie = Array.isArray(job?.tradie) ? job.tradie[0] : job?.tradie
+      const prof = Array.isArray(tradie?.profile) ? tradie.profile[0] : tradie?.profile
+      if (prof?.email) {
+        const html = wrap(
+          greeting(prof.full_name || 'there') +
+          para(`The client has <strong>${approved ? 'approved' : 'rejected'}</strong> your variation request for <strong>${job?.title || 'your job'}</strong>.`) +
+          para('<strong>Variation:</strong> ' + variation_title + (variation_cost ? ' · +$' + Number(variation_cost).toLocaleString() : '')) +
+          (client_response ? para('<strong>Client note:</strong> ' + client_response) : '') +
+          (approved ? para('This amount has been added to the final payment total.') : para('You may discuss alternatives with the client via the job thread.')) +
+          btn(APP_URL + '/tradie/dashboard', 'View job →', approved ? '#2E7D60' : '#C07830'),
+          `Variation ${approved ? 'approved' : 'rejected'} — ${job?.title || 'your job'}`
+        )
+        await resend.emails.send({ from: FROM, ...resolveRecipient(prof.email, `Variation ${approved ? 'approved' : 'rejected'} — ${job?.title || 'your job'}`), html })
+      }
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'licence_expiring') {
       const { to, business_name, licence_number, days_left, cta_url } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({

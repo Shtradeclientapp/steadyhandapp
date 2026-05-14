@@ -21,6 +21,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+  // Idempotency check — skip if we've already processed this event
+  const eventId = event.id
+  const { data: existing } = await supabase
+    .from('processed_stripe_events')
+    .select('id')
+    .eq('event_id', eventId)
+    .single()
+  if (existing) {
+    return NextResponse.json({ received: true, skipped: true })
+  }
+  // Record this event before processing
+  await supabase.from('processed_stripe_events').insert({ event_id: eventId, event_type: event.type, created_at: new Date().toISOString() })
+
   try {
     switch (event.type) {
 

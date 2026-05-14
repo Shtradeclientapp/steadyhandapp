@@ -281,11 +281,25 @@ export default function DeliveryPage() {
       responded_at: new Date().toISOString(),
     }).eq('id', variationId)
     setVariations(prev => prev.map(v => v.id === variationId ? { ...v, status: approved ? 'approved' : 'rejected', client_response: response } : v))
+    const variation = variations.find(v => v.id === variationId)
     await supabase.from('job_messages').insert({
       job_id: job.id,
       sender_id: session?.user.id,
-      body: (approved ? '✅ Variation approved' : '❌ Variation rejected') + ': ' + variations.find(v => v.id === variationId)?.title,
+      body: (approved ? '✅ Variation approved' : '❌ Variation rejected') + ': ' + variation?.title +
+        (approved && variation?.cost_impact ? ' · +$' + Number(variation.cost_impact).toLocaleString() + ' added to final payment' : ''),
     })
+    // Email tradie the outcome
+    await fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: approved ? 'variation_approved' : 'variation_rejected',
+        job_id: job.id,
+        variation_title: variation?.title,
+        variation_cost: variation?.cost_impact,
+        client_response: response,
+      }),
+    }).catch(() => {})
   }
 
   const initiatePayment = async (id: string, amount: number) => {

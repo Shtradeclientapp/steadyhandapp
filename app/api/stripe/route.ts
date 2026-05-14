@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         if (!milestone?.amount) return NextResponse.json({ error: 'Milestone amount not set' }, { status: 400 })
         amountCents = Math.round(Number(milestone.amount) * 100)
       } else {
-        const { data: quote } = await supabase.from('quotes').select('total_price').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
+        const { data: quote } = await supabase.from('quotes').select('total_price, gst_included').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
         if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
         // Include approved variation amounts in the payment total
         const { data: approvedVariations } = await supabase
@@ -62,7 +62,10 @@ export async function POST(request: NextRequest) {
           .eq('job_id', job_id)
           .eq('status', 'approved')
         const variationTotal = (approvedVariations || []).reduce((sum: number, v: any) => sum + Number(v.cost_impact || 0), 0)
-        amountCents = Math.round((Number(quote.total_price) + variationTotal) * 100)
+        const baseTotal = Number(quote.total_price) + variationTotal
+        // Apply GST if not already included in the quoted price
+        const gstMultiplier = quote.gst_included === false ? 1.1 : 1
+        amountCents = Math.round(baseTotal * gstMultiplier * 100)
       }
       const isFoundingMember = !!job.tradie?.founding_member
       const standardFeeRate = 0.035
