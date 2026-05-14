@@ -421,7 +421,7 @@ export default function OrgDashboardPage() {
                 <div style={{ textAlign:'center' as const }}>
                   {canEdit && <a href="/org/properties/new" style={{ display:'inline-block', background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
                     Add your first property →
-                  </a>
+                  </a>}
                 </div>
               </div>
             ) : (
