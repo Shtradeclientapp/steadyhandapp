@@ -613,6 +613,17 @@ export default function DashboardPage() {
               </div>
             </a>
 
+            {/* Legal record */}
+            <a href="/how-it-works" style={{ textDecoration:'none' }}>
+              <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #534AB7', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
+                <div style={{ flex:1 }}>
+                  <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'14px', color:'#0A0A0A', letterSpacing:'0.5px', margin:'0 0 2px' }}>HOW IT WORKS</p>
+                  <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>What gets created at each stage</p>
+                </div>
+                <span style={{ fontSize:'13px', color:'#7A9098' }}>→</span>
+              </div>
+            </a>
+
             {/* Job History */}
             <a href="/job/history" style={{ textDecoration:'none' }}>
               <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderLeft:'3px solid #6B4FA8', borderRadius:'10px', padding:'14px 16px', display:'flex', alignItems:'center', gap:'12px' }}>
