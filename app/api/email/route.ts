@@ -719,7 +719,7 @@ export async function POST(request: NextRequest) {
     if (type === 'scope_reminder') {
       const { to, name, job_title, role, cta_url } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
-      const action = role === 'tradie' ? 'You drafted the scope agreement — the client is waiting for you to sign it.' : 'The tradie has drafted a scope agreement for this job. Once you've both signed, work can begin.'
+      const action = role === 'tradie' ? 'You drafted the scope agreement — the client is waiting for you to sign it.' : "The tradie has drafted a scope agreement for this job. Once you've both signed, work can begin."
       await resend.emails.send({
         from: FROM, ...resolveRecipient(to, 'Scope agreement waiting — ' + job_title),
         html: wrap(
