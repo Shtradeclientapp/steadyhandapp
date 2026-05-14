@@ -786,6 +786,7 @@ export default function OrgDashboardPage() {
                   {portfolioAnalytics.length > 0 && (
                     <p style={{ fontSize:'11px', color:'#7A9098', margin:'6px 0 0' }}>
                       {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page.</p>
+                  )}
                   {canEdit && (
                     <div style={{ marginTop:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'16px' }}>
                       <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', margin:'0 0 6px' }}>Centralised billing</p>
