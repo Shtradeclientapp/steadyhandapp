@@ -816,9 +816,7 @@ export default function OrgDashboardPage() {
                       )}
                     </div>
                   )}
-                  <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'8px' }}>Org-level GST reporting coming in a future release — contact hello@steadyhandtrade.app to discuss early access.
-                    </p>
-                  )}
+                  <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'8px' }}>Org-level GST reporting coming in a future release — contact hello@steadyhandtrade.app to discuss early access.</p>
                 </div>
             </div>
           </div>
