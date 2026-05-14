@@ -678,7 +678,7 @@ export async function POST(request: NextRequest) {
       const { to, business_name } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({
-        from: FROM, ...resolveRecipient(to, 'You're verified — Steadyhand'),
+        from: FROM, ...resolveRecipient(to, "You're verified — Steadyhand"),
         html: wrap(
           greeting(business_name || 'there') +
           para("Your trade licence has been verified. You're now live on Steadyhand and will appear in client searches for your trade category.") +
@@ -701,7 +701,7 @@ export async function POST(request: NextRequest) {
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       const name = full_name ? full_name.split(' ')[0] : 'there'
       await resend.emails.send({
-        from: FROM, ...resolveRecipient(to, 'Ready when you are'),
+        from: FROM, ...resolveRecipient(to, "Ready when you are"),
         html: wrap(
           greeting(name) +
           para("You signed up to Steadyhand a couple of days ago but haven't posted a job yet. No pressure — but when you're ready, here's what happens next.") +
@@ -758,7 +758,7 @@ export async function POST(request: NextRequest) {
       const name = full_name ? full_name.split(' ')[0] : 'there'
       const isTradie = role === 'tradie'
       await resend.emails.send({
-        from: FROM, ...resolveRecipient(to, 'Still thinking about it?'),
+        from: FROM, ...resolveRecipient(to, "Still thinking about it?"),
         html: wrap(
           greeting(name) +
           (isTradie
