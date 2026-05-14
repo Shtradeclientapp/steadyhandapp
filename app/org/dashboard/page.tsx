@@ -34,6 +34,7 @@ export default function OrgDashboardPage() {
   const [portfolioAnalytics, setPortfolioAnalytics] = useState<any[]>([])
   const [removeMemberConfirmId, setRemoveMemberConfirmId] = useState<string|null>(null)
   const [myRole, setMyRole] = useState<string>('member')
+  const canEdit = myRole === 'admin'
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
@@ -272,7 +273,7 @@ export default function OrgDashboardPage() {
       <nav style={{ height:'64px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 24px', background:'rgba(200,213,210,0.95)', borderBottom:'1px solid rgba(28,43,50,0.1)', position:'sticky', top:0, zIndex:100 }}>
         <span style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'#D4522A', letterSpacing:'2px' }}>STEADYHAND</span>
         <div style={{ display:'flex', gap:'10px', alignItems:'center' }}>
-          <a href="/org/properties/new" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#D4522A', borderRadius:'6px' }}>+ Add property</a>
+          {canEdit && <a href="/org/properties/new" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#D4522A', borderRadius:'6px' }}>+ Add property</a>}
           <a href="/org/request" style={{ fontSize:'13px', color:'white', textDecoration:'none', padding:'7px 14px', background:'#2E7D60', borderRadius:'6px' }}>+ New job request</a>
           <a href="/dashboard" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Personal dashboard</a>
         </div>
@@ -391,7 +392,7 @@ export default function OrgDashboardPage() {
                     {atLimit ? (
                       <a href="/org/subscribe"><button type="button" style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Upgrade plan →</button></a>
                     ) : (
-                      <a href="/org/properties/new"><button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
+                      {canEdit && <a href="/org/properties/new"><button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>}
                     )}
                   </div>
                 </div>
@@ -418,7 +419,7 @@ export default function OrgDashboardPage() {
                   ))}
                 </div>
                 <div style={{ textAlign:'center' as const }}>
-                  <a href="/org/properties/new" style={{ display:'inline-block', background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
+                  {canEdit && <a href="/org/properties/new" style={{ display:'inline-block', background:'#D4522A', color:'white', padding:'12px 28px', borderRadius:'8px', fontSize:'14px', fontWeight:500, textDecoration:'none' }}>
                     Add your first property →
                   </a>
                 </div>
@@ -781,7 +782,7 @@ export default function OrgDashboardPage() {
                   </button>
                   {portfolioAnalytics.length > 0 && (
                     <p style={{ fontSize:'11px', color:'#7A9098', margin:'6px 0 0' }}>
-                      {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page
+                      {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page. Org-level payment consolidation and GST reporting coming in a future release — contact hello@steadyhandtrade.app to discuss early access.
                     </p>
                   )}
                 </div>

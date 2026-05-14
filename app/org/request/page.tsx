@@ -15,6 +15,7 @@ export default function OrgRequestPage() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string|null>(null)
   const [loading, setLoading] = useState(true)
+const [preferredTradies, setPreferredTradies] = useState<any[]>([])
 
   useEffect(() => {
     const supabase = createClient()
@@ -233,6 +234,25 @@ export default function OrgRequestPage() {
                 You are about to post <strong>{selectedProperties.length} separate job request{selectedProperties.length !== 1 ? 's' : ''}</strong> — one per property.
                 Each job is independently managed through the full Steadyhand flow.
                 Please ensure tradies you invite have capacity to service each property before committing.
+              {preferredTradies.filter(p => {
+                const cats = (p.tradie?.trade_categories || []).map((c: string) => c.toLowerCase())
+                return cats.some((cat: string) => cat.includes((form.trade_category || '').toLowerCase()) || (form.trade_category || '').toLowerCase().includes(cat))
+              }).length > 0 && (
+                <div style={{ marginTop:'12px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', padding:'12px 14px' }}>
+                  <p style={{ fontSize:'11px', fontWeight:700, color:'#2E7D60', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 8px' }}>Your preferred tradies for this trade</p>
+                  {preferredTradies.filter(p => {
+                    const cats = (p.tradie?.trade_categories || []).map((c: string) => c.toLowerCase())
+                    return cats.some((cat: string) => cat.includes((form.trade_category || '').toLowerCase()) || (form.trade_category || '').toLowerCase().includes(cat))
+                  }).map((p: any) => (
+                    <div key={p.id} style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px' }}>
+                      <span style={{ fontSize:'11px', color:'#2E7D60' }}>✓</span>
+                      <span style={{ fontSize:'12px', color:'#1C2B32', fontWeight:500 }}>{p.tradie?.business_name}</span>
+                      {p.notes && <span style={{ fontSize:'11px', color:'#7A9098' }}>— {p.notes}</span>}
+                    </div>
+                  ))}
+                  <p style={{ fontSize:'11px', color:'#7A9098', margin:'8px 0 0' }}>These tradies will be prioritised in your shortlist for this job.</p>
+                </div>
+              )}
               </p>
             </div>
             <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'20px', marginBottom:'20px' }}>
