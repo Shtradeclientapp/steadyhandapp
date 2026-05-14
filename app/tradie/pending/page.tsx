@@ -28,11 +28,19 @@ export default function TradePendingPage() {
         </div>
         <div style={{ padding:'32px 28px' }}>
           <div style={{ width:'48px', height:'48px', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.3)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'22px', marginBottom:'20px' }}>✓</div>
+          {suspendedReason && (
+            <div style={{ background:'rgba(212,82,42,0.08)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'10px', padding:'14px 16px', marginBottom:'20px' }}>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#D4522A', margin:'0 0 4px' }}>Account suspended</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:0, lineHeight:'1.6' }}>Your account has been suspended by Steadyhand. Please contact <a href="mailto:hello@steadyhandtrade.app" style={{ color:'#D4522A' }}>hello@steadyhandtrade.app</a> to discuss reinstatement.</p>
+            </div>
+          )}
           <h2 style={{ fontSize:'20px', fontWeight:600, color:'#0A0A0A', margin:'0 0 12px', fontFamily:'sans-serif' }}>
-            Thanks{profile?.tradie?.business_name ? `, ${profile.tradie.business_name}` : ''}.
+            {suspendedReason ? 'Account suspended' : \`Thanks\${profile?.tradie?.business_name ? \`, \${profile.tradie.business_name}\` : ''}\`}.
           </h2>
           <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
-            Your application is being reviewed by the Steadyhand team. We verify every tradie before they appear in client searches — this usually takes one business day.
+            {suspendedReason
+              ? 'Your account has been temporarily suspended. You cannot accept new jobs or access the tradie dashboard until your account is reinstated by the Steadyhand team.'
+              : 'Your application is being reviewed by the Steadyhand team. We verify every tradie before they appear in client searches — this usually takes one business day.'            }
           </p>
           <div style={{ background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 18px', marginBottom:'24px' }}>
             <p style={{ fontSize:'13px', fontWeight:600, color:'#0A0A0A', margin:'0 0 10px' }}>What happens next</p>

@@ -485,7 +485,12 @@ export default function ShortlistPage() {
                           {t.business_name?.charAt(0) || '?'}
                         </div>
                         <div>
-                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>{t.business_name}</p>
+                          <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:0 }}>
+                            {t.business_name}
+                            {priorTradieIds.has(t.id) && (
+                              <span style={{ marginLeft:'6px', fontSize:'9px', fontWeight:700, color:'#2E7D60', background:'rgba(46,125,96,0.1)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'100px', padding:'1px 6px', verticalAlign:'middle' as const }}>✓ worked together</span>
+                            )}
+                          </p>
                           <p style={{ fontSize:'11px', color:'#7A9098', margin:0 }}>{(t.trade_categories?.[0] || t.trade_category || '')} {t.service_areas?.[0] ? '· ' + t.service_areas[0] : ''}</p>
                         </div>
                       </div>
