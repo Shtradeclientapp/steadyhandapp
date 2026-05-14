@@ -163,6 +163,14 @@ export default function DialogueHistory() {
             )
           })}
         </div>
+
+        <div style={{ marginTop:'24px', padding:'16px 20px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px' }}>
+          <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.4)', lineHeight:'1.6', margin:'0 0 8px' }}>
+            Your Dialogue Rating is calculated automatically from your behaviour across each stage — never from self-assessment. It builds as you complete more jobs.
+          </p>
+          <a href="/how-it-works" style={{ fontSize:'12px', color:'#2E7D60', textDecoration:'none' }}>See what gets added to the legal record at each stage →</a>
+        </div>
+
       </div>
     </div>
   )
