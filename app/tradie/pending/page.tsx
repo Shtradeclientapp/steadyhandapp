@@ -5,6 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 export default function TradePendingPage() {
   const [profile, setProfile] = useState<any>(null)
   const supabase = createClient()
+  const suspendedReason = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('reason') === 'suspended'
+    : false
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
