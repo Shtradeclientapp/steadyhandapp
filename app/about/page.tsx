@@ -95,6 +95,7 @@ export default function AboutPage() {
           <p style={{ fontSize: '13px', color: 'rgba(216,228,225,0.45)', margin: '0 0 16px' }}>Perth, Western Australia</p>
           <a href="/signup" style={{ display: 'inline-block', background: '#D4522A', color: 'white', padding: '10px 22px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', marginRight: '10px' }}>Get started →</a>
           <a href="/login" style={{ display: 'inline-block', color: 'rgba(216,228,225,0.5)', fontSize: '13px', textDecoration: 'none' }}>Log in</a>
+          <a href="/how-it-works" style={{ display: 'inline-block', color: 'rgba(216,228,225,0.4)', fontSize: '13px', textDecoration: 'none', marginLeft: '10px' }}>The legal record →</a>
         </div>
 
       </div>

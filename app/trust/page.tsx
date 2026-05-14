@@ -222,9 +222,10 @@ export default function TrustPage() {
         </div>
 
         <div style={{ marginTop:'24px', background:'rgba(28,43,50,0.04)', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'10px', padding:'16px 20px' }}>
-          <p style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.6', margin:0 }}>
+          <p style={{ fontSize:'13px', color:'#7A9098', lineHeight:'1.6', margin:'0 0 10px' }}>
             Your Dialogue Rating is calculated automatically from your behaviour across each stage. It is never based on self-assessment. Scores improve over multiple completed jobs as Steadyhand builds a richer picture of how you engage in trade relationships.
           </p>
+          <a href="/how-it-works" style={{ fontSize:'13px', color:'#2E7D60', textDecoration:'none' }}>See what gets added to the legal record at each stage →</a>
         </div>
 
       </div>
