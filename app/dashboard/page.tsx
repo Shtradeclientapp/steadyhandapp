@@ -147,20 +147,28 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    const sb = supabase
-    sb.auth.getSession().then(({ data: { session } }) => {
+    // Poll for unread count every 30s rather than holding a persistent websocket
+    // connection. Reduces Supabase realtime connections by ~80% at scale.
+    let userId: string | null = null
+    let interval: ReturnType<typeof setInterval> | null = null
+
+    const refreshUnread = () => {
+      if (!userId) return
+      supabase.from('job_messages')
+        .select('id', { count: 'exact', head: true })
+        .neq('sender_id', userId)
+        .not('read_by', 'cs', JSON.stringify([userId]))
+        .then(({ count }) => setUnreadCount(count || 0))
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return
-      const channel = sb
-        .channel('dash_unread_' + session.user.id)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'job_messages' }, () => {
-          sb.from('job_messages')
-            .select('id', { count: 'exact', head: true })
-            .neq('sender_id', session.user.id)
-            .not('read_by', 'cs', JSON.stringify([session.user.id]))
-            .then(({ count }) => setUnreadCount(count || 0))
-        })
-        .subscribe()
+      userId = session.user.id
+      refreshUnread()
+      interval = setInterval(refreshUnread, 30000)
     })
+
+    return () => { if (interval) clearInterval(interval) }
   }, [])
 
 

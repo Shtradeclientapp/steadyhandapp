@@ -126,6 +126,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
   }
 
+  // ── Cron deduplication lock ──────────────────────────────────────────────────
+  // Prevents double-fire if Vercel cold-starts two instances simultaneously
+  const lockKey = 'ob_reminders_running'
+  const lockExpiry = new Date(Date.now() - 5 * 60 * 1000).toISOString() // 5 min ago
+
+  const { data: existingLock } = await supabase
+    .from('cron_locks')
+    .select('locked_at')
+    .eq('key', lockKey)
+    .single()
+
+  if (existingLock && existingLock.locked_at > lockExpiry) {
+    return NextResponse.json({ ok: true, skipped: true, reason: 'already_running' })
+  }
+
+  await supabase.from('cron_locks').upsert({ key: lockKey, locked_at: new Date().toISOString() })
+
   try {
     // Fetch all active OB projects
     const { data: projects } = await supabase
@@ -409,6 +426,9 @@ export async function GET(request: NextRequest) {
       }
       remindersFired++
     }
+
+    // Release the cron lock
+    await supabase.from('cron_locks').delete().eq('key', lockKey)
 
     return NextResponse.json({ ok: true, processed: projects.length, remindersFired })
   } catch (e: any) {
