@@ -762,7 +762,7 @@ export async function POST(request: NextRequest) {
         html: wrap(
           greeting(name) +
           (isTradie
-            ? para('It's been a while since you've been active on Steadyhand. Your profile is still live and you're still appearing in client searches — but your Dialogue Rating builds from completed jobs, so the sooner you get started the stronger your position becomes.')
+            ? para("It's been a while since you've been active on Steadyhand. Your profile is still live and you're still appearing in client searches — but your Dialogue Rating builds from completed jobs, so the sooner you get started the stronger your position becomes.")
             : para("It's been a while since you logged into Steadyhand. If you have a trade job coming up, this is a good time to get a quote request in — most jobs get responses within 48 hours.")
           ) +
           btn(APP_URL + (isTradie ? '/tradie/dashboard' : '/dashboard'), 'Go to your dashboard →', '#1C2B32'),
