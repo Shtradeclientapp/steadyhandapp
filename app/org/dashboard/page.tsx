@@ -773,7 +773,18 @@ export default function OrgDashboardPage() {
               </div>
             </div>
             <div style={{ background:'rgba(192,120,48,0.06)', border:'1px solid rgba(192,120,48,0.2)', borderRadius:'10px', padding:'14px 16px' }}>
-              <p style={{ fontSize:'12px', color:'#C07830', margin:0 }}>PDF reports and GST-ready payment summaries coming soon for Steadyhand Business accounts.</p>
+              <div style={{ display:'flex', flexDirection:'column' as const, gap:'8px' }}>
+                  <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px' }}>Download compliance records for all properties.</p>
+                  <button type="button" onClick={exportJobsCSV}
+                    style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'#1C2B32', color:'white', border:'none', borderRadius:'8px', padding:'10px 16px', fontSize:'12px', fontWeight:500, cursor:'pointer', width:'fit-content' }}>
+                    ↓ Export all jobs (CSV)
+                  </button>
+                  {portfolioAnalytics.length > 0 && (
+                    <p style={{ fontSize:'11px', color:'#7A9098', margin:'6px 0 0' }}>
+                      {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page
+                    </p>
+                  )}
+                </div>
             </div>
           </div>
         )}

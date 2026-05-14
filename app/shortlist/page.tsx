@@ -16,6 +16,7 @@ const TRADE_CATEGORIES = [
 export default function ShortlistPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [selectedJob, setSelectedJob] = useState<any>(null)
+  const [priorTradieIds, setPriorTradieIds] = useState<Set<string>>(new Set())
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'matches'|'browse'|'invite'|'requested'>('matches')
@@ -56,6 +57,14 @@ export default function ShortlistPage() {
       const { data: prof } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       setProfile(prof)
       const urlJobId = new URLSearchParams(window.location.search).get('job_id')
+      // Also fetch completed jobs to detect repeat tradies
+      const { data: completedJobs } = await supabase
+        .from('jobs')
+        .select('tradie_id')
+        .eq('client_id', session.user.id)
+        .eq('status', 'complete')
+      const priorTradieIds = new Set((completedJobs || []).map((j: any) => j.tradie_id).filter(Boolean))
+
       let q = supabase.from('jobs').select('*').eq('client_id', session.user.id)
         .in('status', ['draft','matching','shortlisted','consult','assess','compare','quote','agreement','delivery','signoff','warranty','complete'])
         .order('created_at', { ascending: false })
@@ -94,6 +103,7 @@ export default function ShortlistPage() {
       const tradies = data || []
       setMatches(tradies)
       // Generate match reasoning for each tradie
+      setPriorTradieIds(priorTradieIds)
       if (tradies.length > 0 && jobs.length > 0) {
         const jobDesc = jobs[0].description || ''
         const jobTrade = jobs[0].trade_category || ''

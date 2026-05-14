@@ -318,6 +318,11 @@ export default function TradieDashboard() {
       setUnreadCount(unreadTotal || 0)
 
       // Setup wizard + onboarding checks
+      // Check suspension
+      if (prof.tradie?.suspended_at) {
+        window.location.href = '/tradie/pending?reason=suspended'
+        return
+      }
       const step = prof.tradie?.onboarding_step || 'profile'
       if (step !== 'active' && step !== 'complete') setShowSetupWizard(true)
       // onboarding steps: profile → active (invite_client step retired)

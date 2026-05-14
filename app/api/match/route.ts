@@ -27,6 +27,10 @@ export async function POST(request: NextRequest) {
       .from('tradie_profiles')
       .select('*, profile:profiles(*)')
       .not('business_name', 'is', null)
+      .not('availability_status', 'eq', 'unavailable')
+      .not('suspended_at', 'is', 'not null')
+      .eq('onboarding_step', 'active')
+      .eq('licence_verified', true)
     // Filter tradies - exact match OR partial match on trade category
     const jobCat = (job.trade_category || '').toLowerCase()
     const filteredTradies = (tradies || []).filter((t: any) => {
