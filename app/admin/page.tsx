@@ -95,6 +95,14 @@ export default function AdminPage() {
     const data = await res.json()
     if (!res.ok) { setMsg('Error: ' + data.error); setSaving(false); return }
     setSelected((prev: any) => prev ? { ...prev, onboarding_step: 'active', licence_verified: true } : prev)
+        // Fire tradie approved email
+        if (selected?.tradie?.profile?.email || selected?.email) {
+          fetch('/api/email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'tradie_approved', to: selected?.tradie?.profile?.email || selected?.email, business_name: selected?.tradie?.business_name || selected?.full_name }),
+          }).catch(() => {})
+        }
     setMsg('\u2713 Verified & activated \u2014 activation email sent to ' + email)
     setTimeout(() => setMsg(null), 5000)
     setSaving(false)

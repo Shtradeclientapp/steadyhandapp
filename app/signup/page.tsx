@@ -49,6 +49,18 @@ export default function SignupPage() {
   const handleSignup = async () => {
     setLoading(true); setError('')
     const { data, error: authErr } = await supabase.auth.signUp({ email: form.email, password: form.password })
+      // Fire welcome email after signup
+      if (!authErr && data?.user) {
+        const isTradie = (form as any).role === 'tradie' || window.location.search.includes('role=tradie')
+        fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(isTradie
+            ? { type: 'welcome_tradie', to: form.email, business_name: (form as any).business_name || '' }
+            : { type: 'welcome_client', to: form.email, full_name: (form as any).full_name || '' }
+          ),
+        }).catch(() => {})
+      }
     if (authErr || !data.user) { setError(authErr?.message ?? 'Signup failed'); setLoading(false); return }
     const uid = data.user.id
     await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })

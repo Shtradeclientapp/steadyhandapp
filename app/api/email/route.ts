@@ -625,7 +625,154 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Direct tradie invite (external — not on platform) ───────────────────────
-    if (type === 'tradie_invite') {
+    // ── Welcome — client ─────────────────────────────────────────────────────
+    if (type === 'welcome_client') {
+      const { to, full_name } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      const name = full_name ? full_name.split(' ')[0] : 'there'
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Welcome to Steadyhand'),
+        html: wrap(
+          greeting(name) +
+          para('You've just joined a platform built around one idea: that every trade job should have a clear record — one that protects you if anything goes wrong.') +
+          para('Here's how Steadyhand works in three steps:') +
+          `<div style="margin:0 0 16px;padding:16px 20px;background:white;border-radius:10px;border:1px solid rgba(28,43,50,0.1);">
+            <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#2E7D60;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div><div><strong style="font-size:13px;color:#0A0A0A">Post a job</strong><p style="font-size:12px;color:#4A5E64;margin:3px 0 0;line-height:1.5">Describe the work. Steadyhand matches you with verified local tradies and sends them your request.</p></div></div>
+            <div style="display:flex;gap:12px;margin-bottom:12px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#6B4FA8;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div><div><strong style="font-size:13px;color:#0A0A0A">Agree in writing</strong><p style="font-size:12px;color:#4A5E64;margin:3px 0 0;line-height:1.5">Review quotes, negotiate scope, and sign a legally-binding agreement — all in the platform. No verbal arrangements.</p></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start"><div style="width:22px;height:22px;border-radius:50%;background:#C07830;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div><div><strong style="font-size:13px;color:#0A0A0A">Pay with confidence</strong><p style="font-size:12px;color:#4A5E64;margin:3px 0 0;line-height:1.5">Milestone payments held securely. Released when you approve each stage. Warranty period tracked automatically.</p></div></div>
+          </div>` +
+          para('When you're ready, post your first job. It takes about two minutes.') +
+          btn(APP_URL + '/request', 'Post your first job →', '#2E7D60'),
+          'Welcome to Steadyhand'
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── Welcome — tradie ─────────────────────────────────────────────────────
+    if (type === 'welcome_tradie') {
+      const { to, business_name } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      const name = business_name || 'there'
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Welcome to Steadyhand — your application is in'),
+        html: wrap(
+          greeting(name) +
+          para('Your Steadyhand application has been received. Our team will verify your licence details — this usually takes one business day.') +
+          para('While you wait, you can get your profile ready:') +
+          `<div style="margin:0 0 16px;padding:16px 20px;background:white;border-radius:10px;border:1px solid rgba(28,43,50,0.1);">
+            <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start"><span style="color:#2E7D60;font-size:14px;flex-shrink:0">✓</span><p style="font-size:12px;color:#4A5E64;margin:0;line-height:1.5"><strong style="color:#0A0A0A">Add a bio</strong> — tell clients what sets your work apart. Two or three sentences is enough.</p></div>
+            <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start"><span style="color:#2E7D60;font-size:14px;flex-shrink:0">✓</span><p style="font-size:12px;color:#4A5E64;margin:0;line-height:1.5"><strong style="color:#0A0A0A">Set your service areas</strong> — the suburbs you work in. This is what drives your match results.</p></div>
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#2E7D60;font-size:14px;flex-shrink:0">✓</span><p style="font-size:12px;color:#4A5E64;margin:0;line-height:1.5"><strong style="color:#0A0A0A">Add your licence expiry date</strong> — we'll remind you 30 days before it's due. No more surprise lapses.</p></div>
+          </div>` +
+          para('Once verified, you'll start appearing in client searches for your trade category. Your Dialogue Rating builds with every job — the higher it is, the stronger your shortlist position.') +
+          btn(APP_URL + '/tradie/profile', 'Complete your profile →', '#1C2B32'),
+          'Welcome to Steadyhand'
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── Tradie approved ───────────────────────────────────────────────────────
+    if (type === 'tradie_approved') {
+      const { to, business_name } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'You're verified — Steadyhand'),
+        html: wrap(
+          greeting(business_name || 'there') +
+          para('Your trade licence has been verified. You're now live on Steadyhand and will appear in client searches for your trade category.') +
+          `<div style="margin:0 0 16px;padding:16px 20px;background:rgba(46,125,96,0.06);border-radius:10px;border:1px solid rgba(46,125,96,0.2);">
+            <p style="font-size:13px;font-weight:600;color:#2E7D60;margin:0 0 10px">Two things to do before your first quote request arrives:</p>
+            <div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start"><span style="color:#2E7D60;font-size:14px;flex-shrink:0">1</span><p style="font-size:12px;color:#4A5E64;margin:0;line-height:1.5"><strong style="color:#0A0A0A">Connect your bank account</strong> — so you can receive payments at job signoff. Takes two minutes via Stripe.</p></div>
+            <div style="display:flex;gap:10px;align-items:flex-start"><span style="color:#2E7D60;font-size:14px;flex-shrink:0">2</span><p style="font-size:12px;color:#4A5E64;margin:0;line-height:1.5"><strong style="color:#0A0A0A">Set your availability</strong> — if you're currently booked out, mark yourself unavailable so you're not matched to jobs you can't take.</p></div>
+          </div>` +
+          para('When a client selects you for a job, you'll receive an email with the job details. You can accept or decline — no obligation.') +
+          btn(APP_URL + '/tradie/dashboard', 'Go to your dashboard →', '#2E7D60'),
+          'Your Steadyhand account is verified'
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── First job nudge — client hasn't posted a job after 48 hours ───────────
+    if (type === 'first_job_nudge') {
+      const { to, full_name } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      const name = full_name ? full_name.split(' ')[0] : 'there'
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Ready when you are'),
+        html: wrap(
+          greeting(name) +
+          para('You signed up to Steadyhand a couple of days ago but haven't posted a job yet. No pressure — but when you're ready, here's what happens next.') +
+          para('Most homeowners tell us the part they dread most is getting three quotes, not knowing if the tradies are legit, and ending up with a verbal agreement that means nothing when something goes wrong.') +
+          para('Steadyhand handles all of that. Post your job, and we'll match you with verified tradies in your area. Every quote comes with a scope agreement you both sign. Every payment is held until you approve the work.') +
+          para('The whole thing takes about two minutes to get started.') +
+          btn(APP_URL + '/request', 'Post your first job →', '#2E7D60'),
+          'Ready when you are — Steadyhand'
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── Scope reminder — scope exists but neither party has signed after 3 days ─
+    if (type === 'scope_reminder') {
+      const { to, name, job_title, role, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      const action = role === 'tradie' ? 'You drafted the scope agreement — the client is waiting for you to sign it.' : 'The tradie has drafted a scope agreement for this job. Once you've both signed, work can begin.'
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Scope agreement waiting — ' + job_title),
+        html: wrap(
+          greeting(name || 'there') +
+          para('A scope agreement for <strong>' + job_title + '</strong> has been sitting unsigned for a few days.') +
+          para(action) +
+          para('The scope agreement is a legal record of what was agreed — it protects both parties. Don't start work (or let work start) without it.') +
+          btn(cta_url || APP_URL + '/agreement', 'Review and sign →', '#6B4FA8'),
+          'Scope agreement waiting — ' + job_title
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── Sign-off reminder — delivery complete but client hasn't signed off ─────
+    if (type === 'signoff_reminder') {
+      const { to, name, job_title, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Job ready for sign-off — ' + job_title),
+        html: wrap(
+          greeting(name || 'there') +
+          para('The tradie has marked all milestones complete for <strong>' + job_title + '</strong>. The job is ready for your sign-off.') +
+          para('Sign off to release payment to the tradie and start your warranty period. If you have any concerns about the work, log them before signing — your warranty record begins the moment you sign off.') +
+          btn(cta_url || APP_URL + '/signoff', 'Review and sign off →', '#C07830'),
+          'Job ready for sign-off — ' + job_title
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    // ── Re-engagement — no activity for 14 days ───────────────────────────────
+    if (type === 'reengagement') {
+      const { to, full_name, role } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      const name = full_name ? full_name.split(' ')[0] : 'there'
+      const isTradie = role === 'tradie'
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Still thinking about it?'),
+        html: wrap(
+          greeting(name) +
+          (isTradie
+            ? para('It's been a while since you've been active on Steadyhand. Your profile is still live and you're still appearing in client searches — but your Dialogue Rating builds from completed jobs, so the sooner you get started the stronger your position becomes.')
+            : para('It's been a while since you logged into Steadyhand. If you have a trade job coming up, this is a good time to get a quote request in — most jobs get responses within 48 hours.')
+          ) +
+          btn(APP_URL + (isTradie ? '/tradie/dashboard' : '/dashboard'), 'Go to your dashboard →', '#1C2B32'),
+          'Still thinking about it? — Steadyhand'
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'tradie_invite') {
       const { email, business_name, personal_message } = body
       if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
       const { data: job } = await supabase

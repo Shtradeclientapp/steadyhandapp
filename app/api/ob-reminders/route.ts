@@ -427,6 +427,70 @@ export async function GET(request: NextRequest) {
       remindersFired++
     }
 
+    // ── Scope reminder — unsigned after 3 days ─────────────────────────────
+    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+    const { data: unsignedScopes } = await supabase
+      .from('scope_agreements')
+      .select('*, job:jobs(id, title, client_id, tradie_id, client:profiles!jobs_client_id_fkey(email, full_name), tradie:tradie_profiles(business_name, profile:profiles(email, full_name)))')
+      .is('client_signed_at', null)
+      .is('tradie_signed_at', null)
+      .lt('created_at', threeDaysAgo)
+
+    for (const scope of (unsignedScopes || [])) {
+      const job = Array.isArray(scope.job) ? scope.job[0] : scope.job
+      if (!job) continue
+      const tradie = Array.isArray(job.tradie) ? job.tradie[0] : job.tradie
+      const tradieProf = Array.isArray(tradie?.profile) ? tradie.profile[0] : tradie?.profile
+      const client = Array.isArray(job.client) ? job.client[0] : job.client
+      const jobUrl = siteUrl + '/agreement?job_id=' + job.id
+      // Email tradie
+      if (tradieProf?.email) {
+        await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ type:'scope_reminder', to: tradieProf.email, name: tradie?.business_name, job_title: job.title, role:'tradie', cta_url: jobUrl }) }).catch(() => {})
+        remindersFired++
+      }
+      // Email client
+      if (client?.email) {
+        await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ type:'scope_reminder', to: client.email, name: client.full_name, job_title: job.title, role:'client', cta_url: jobUrl }) }).catch(() => {})
+        remindersFired++
+      }
+    }
+
+    // ── Sign-off reminder — all milestones approved but no signoff after 3 days ─
+    const { data: readyJobs } = await supabase
+      .from('jobs')
+      .select('id, title, client_id, client:profiles!jobs_client_id_fkey(email, full_name)')
+      .eq('status', 'delivery')
+      .lt('updated_at', threeDaysAgo)
+
+    for (const rj of (readyJobs || [])) {
+      const { data: pendingMs } = await supabase.from('milestones').select('id').eq('job_id', rj.id).neq('status', 'approved')
+      if (pendingMs && pendingMs.length === 0) {
+        const client = Array.isArray(rj.client) ? rj.client[0] : rj.client
+        if (client?.email) {
+          await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ type:'signoff_reminder', to: client.email, name: client.full_name, job_title: rj.title, cta_url: siteUrl + '/signoff?job_id=' + rj.id }) }).catch(() => {})
+          remindersFired++
+        }
+      }
+    }
+
+    // ── Re-engagement — no activity for 14 days ──────────────────────────────
+    const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
+    const { data: inactiveUsers } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, role, last_sign_in_at')
+      .lt('last_sign_in_at', fourteenDaysAgo)
+      .in('role', ['client', 'tradie'])
+      .not('email', 'is', null)
+
+    for (const u of (inactiveUsers || [])) {
+      await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ type:'reengagement', to: u.email, full_name: u.full_name, role: u.role }) }).catch(() => {})
+      remindersFired++
+    }
+
     // Release the cron lock
     await supabase.from('cron_locks').delete().eq('key', lockKey)
 
