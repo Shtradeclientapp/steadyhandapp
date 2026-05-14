@@ -175,7 +175,9 @@ export default function SignoffPage() {
     setSubmitting(true)
     try {
       const { data: scope } = await supabase.from('scope_agreements').select('total_price').eq('job_id', job.id).order('created_at', { ascending: false }).limit(1).single()
-      const total = scope?.total_price
+      const { data: approvedVars } = await supabase.from('variations').select('cost_impact').eq('job_id', job.id).eq('status', 'approved')
+      const variationSum = (approvedVars || []).reduce((s: number, v: any) => s + Number(v.cost_impact || 0), 0)
+      const total = scope?.total_price ? Number(scope.total_price) + variationSum : null
       if (!total || Number(total) <= 0) { await submitSignoff(); return }
       const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch('/api/stripe', {

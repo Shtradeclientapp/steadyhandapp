@@ -171,6 +171,8 @@ export default function TradieProfilePage() {
       abn: form.abn,
       licence_number: form.licence_number,
       licence_type: form.licence_type,
+      licence_expiry_date: form.licence_expiry_date || null,
+      insurance_expiry_date: form.insurance_expiry_date || null,
       years_experience: form.years_experience ? Number(form.years_experience) : null,
       website: form.website,
       phone: form.phone,
@@ -623,6 +625,16 @@ export default function TradieProfilePage() {
                 <div>
                   {lbl('Licence number')}
                   <input type="text" value={form.licence_number || ''} onChange={e => setF('licence_number', e.target.value)} style={inp} placeholder="e.g. EC-12345" />
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', marginTop:'8px' }}>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase', display:'block', marginBottom:'4px' }}>Licence expiry</label>
+                      <input type="date" value={form.licence_expiry_date || ''} onChange={e => setF('licence_expiry_date', e.target.value)} style={inp} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize:'11px', color:'#7A9098', letterSpacing:'0.5px', textTransform:'uppercase', display:'block', marginBottom:'4px' }}>Insurance expiry</label>
+                      <input type="date" value={form.insurance_expiry_date || ''} onChange={e => setF('insurance_expiry_date', e.target.value)} style={inp} />
+                    </div>
+                  </div>
                 </div>
                 <div>
                   {lbl('Licence type')}

@@ -321,6 +321,95 @@ export async function GET(request: NextRequest) {
       remindersFired++
     }
 
+    // ── Licence expiry — 30 day warning ─────────────────────────────────────────
+    const thirtyDays = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    const { data: expiringLicences } = await supabase
+      .from('tradie_profiles')
+      .select('id, business_name, licence_number, licence_expiry_date, insurance_expiry_date, profile:profiles(email, full_name)')
+      .gte('licence_expiry_date', tomorrow)
+      .lte('licence_expiry_date', thirtyDays)
+
+    for (const tp of (expiringLicences || [])) {
+      const prof = Array.isArray(tp.profile) ? tp.profile[0] : tp.profile
+      if (!prof?.email) continue
+      const daysLeft = Math.ceil((new Date(tp.licence_expiry_date).getTime() - Date.now()) / 86400000)
+      await fetch(siteUrl + '/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'licence_expiring',
+          to: prof.email,
+          business_name: tp.business_name,
+          licence_number: tp.licence_number,
+          days_left: daysLeft,
+          cta_url: siteUrl + '/tradie/profile',
+        }),
+      }).catch(() => {})
+      remindersFired++
+    }
+
+    // Also check insurance expiry
+    const { data: expiringInsurance } = await supabase
+      .from('tradie_profiles')
+      .select('id, business_name, insurance_expiry_date, profile:profiles(email, full_name)')
+      .gte('insurance_expiry_date', tomorrow)
+      .lte('insurance_expiry_date', thirtyDays)
+
+    for (const tp of (expiringInsurance || [])) {
+      const prof = Array.isArray(tp.profile) ? tp.profile[0] : tp.profile
+      if (!prof?.email) continue
+      const daysLeft = Math.ceil((new Date(tp.insurance_expiry_date).getTime() - Date.now()) / 86400000)
+      await fetch(siteUrl + '/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'insurance_expiring',
+          to: prof.email,
+          business_name: tp.business_name,
+          days_left: daysLeft,
+          cta_url: siteUrl + '/tradie/profile',
+        }),
+      }).catch(() => {})
+      remindersFired++
+    }
+
+    // ── Warranty auto-close — resolved issues not acknowledged after 7 days ───────
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    const { data: autoCloseIssues } = await supabase
+      .from('warranty_issues')
+      .select('id, job_id, title, job:jobs(client_id, tradie_id, title)')
+      .eq('status', 'in_progress')
+      .lt('resolved_at', sevenDaysAgo)
+      .is('client_accepted_at', null)
+
+    for (const issue of (autoCloseIssues || [])) {
+      const job = Array.isArray(issue.job) ? issue.job[0] : issue.job
+      if (!job) continue
+
+      // Auto-close the issue
+      await supabase.from('warranty_issues')
+        .update({ status: 'resolved', client_accepted_at: new Date().toISOString(), auto_closed: true })
+        .eq('id', issue.id)
+
+      // Notify client it was auto-closed
+      const { data: client } = await supabase.from('profiles').select('email, full_name').eq('id', job.client_id).single()
+      if (client?.email) {
+        await fetch(siteUrl + '/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'warranty_auto_closed',
+            to: client.email,
+            job_title: job.title,
+            issue_title: issue.title,
+            cta_url: siteUrl + '/warranty?job_id=' + issue.job_id,
+          }),
+        }).catch(() => {})
+      }
+      remindersFired++
+    }
+
     return NextResponse.json({ ok: true, processed: projects.length, remindersFired })
   } catch (e: any) {
     console.error('OB reminders error:', e)

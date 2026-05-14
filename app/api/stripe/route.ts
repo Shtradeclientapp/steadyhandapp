@@ -55,7 +55,14 @@ export async function POST(request: NextRequest) {
       } else {
         const { data: quote } = await supabase.from('quotes').select('total_price').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
         if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
-        amountCents = Math.round(Number(quote.total_price) * 100)
+        // Include approved variation amounts in the payment total
+        const { data: approvedVariations } = await supabase
+          .from('variations')
+          .select('cost_impact')
+          .eq('job_id', job_id)
+          .eq('status', 'approved')
+        const variationTotal = (approvedVariations || []).reduce((sum: number, v: any) => sum + Number(v.cost_impact || 0), 0)
+        amountCents = Math.round((Number(quote.total_price) + variationTotal) * 100)
       }
       const isFoundingMember = !!job.tradie?.founding_member
       const standardFeeRate = 0.035

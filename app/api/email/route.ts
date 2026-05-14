@@ -158,7 +158,51 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Warranty issue ────────────────────────────────────────────────────────
-    if (type === 'warranty_expiring') {
+    if (type === 'licence_expiring') {
+      const { to, business_name, licence_number, days_left, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Your trade licence expires in ' + days_left + ' days'),
+        html: wrap(
+          para('Your trade licence for <strong>' + business_name + '</strong> expires in <strong>' + days_left + ' day' + (days_left === 1 ? '' : 's') + '</strong>.') +
+          para('Licence number: <strong>' + licence_number + '</strong>') +
+          para('An expired licence means you cannot legally perform licensed work. Update your licence details in your Steadyhand profile once renewed.') +
+          btn(cta_url || APP_URL + '/tradie/profile', 'Update profile →', '#D4522A')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+    if (type === 'insurance_expiring') {
+      const { to, business_name, days_left, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Your insurance expires in ' + days_left + ' days'),
+        html: wrap(
+          para('Your public liability insurance for <strong>' + business_name + '</strong> expires in <strong>' + days_left + ' day' + (days_left === 1 ? '' : 's') + '</strong>.') +
+          para('Operating without current insurance puts you and your clients at risk. Update your insurance details in your Steadyhand profile once renewed.') +
+          btn(cta_url || APP_URL + '/tradie/profile', 'Update profile →', '#D4522A')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'warranty_auto_closed') {
+      const { to, job_title, issue_title, cta_url } = body
+      if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
+      await resend.emails.send({
+        from: FROM, ...resolveRecipient(to, 'Warranty issue auto-closed — ' + job_title),
+        html: wrap(
+          para('A warranty issue for <strong>' + job_title + '</strong> has been automatically closed after 7 days with no response from you.') +
+          para('<strong>Issue:</strong> ' + issue_title) +
+          para('If you still have a concern, you can log a new issue at any time within your statutory warranty period. Remember — your statutory rights under the <em>Home Building Contracts Act 1991</em> (WA) run for 6 years for structural defects, regardless of the contractual warranty period.') +
+          btn(cta_url || APP_URL + '/warranty', 'View warranty record →', '#2E7D60')
+        ),
+      })
+      return NextResponse.json({ sent: true })
+    }
+
+        if (type === 'warranty_expiring') {
       const { to, job_title, days_left, cta_url } = body
       if (!to) return NextResponse.json({ error: 'to required' }, { status: 400 })
       await resend.emails.send({
