@@ -69,7 +69,15 @@ export default function SignupPage() {
     }
     // Wait for session to be established before redirecting
     const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null
-    const dest = role === 'tradie' ? ('/tradie/pending' + (redirectParam ? '?redirect=' + encodeURIComponent(redirectParam) : '')) : role === 'org' ? '/org/setup' : '/dashboard'
+    // Seed demo data for client signups that chose "explore first"
+    if (role === 'client' && (form as any).demo === true) {
+      fetch('/api/seed-demo-data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_id: uid }),
+      }).catch(() => {})
+    }
+    const dest = role === 'tradie' ? ('/tradie/pending' + (redirectParam ? '?redirect=' + encodeURIComponent(redirectParam) : '')) : role === 'org' ? '/org/setup' : (form as any).demo ? '/dashboard?demo=1' : '/dashboard'
     const supabase2 = createClient()
     let attempts = 0
     const waitForSession = setInterval(async () => {
@@ -176,6 +184,18 @@ export default function SignupPage() {
           </blockquote>
         </div>
       </div>
+      {role === 'client' && (
+        <div style={{ display:'flex', alignItems:'flex-start', gap:'10px', margin:'0 0 16px', padding:'12px 14px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'8px', cursor:'pointer' }}
+          onClick={() => setForm(f => ({ ...f, demo: !(f as any).demo }))}>
+          <div style={{ width:'18px', height:'18px', borderRadius:'4px', border:'1.5px solid ' + ((form as any).demo ? '#2E7D60' : 'rgba(28,43,50,0.25)'), background:(form as any).demo ? '#2E7D60' : 'transparent', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'1px' }}>
+            {(form as any).demo && <span style={{ color:'white', fontSize:'11px', fontWeight:700 }}>✓</span>}
+          </div>
+          <div>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Start with demo jobs</p>
+            <p style={{ fontSize:'11px', color:'#4A5E64', margin:0, lineHeight:'1.5' }}>See three sample jobs at different stages — delivery, agreement, and warranty — so you can explore the platform before posting your first real job.</p>
+          </div>
+        </div>
+      )}
       <p style={{ textAlign:'center', fontSize:'11px', color:'#9AA5AA', marginTop:'24px' }}>
         By creating an account you agree to our{' '}
         <a href="/terms" style={{ color:'#7A9098', textDecoration:'underline' }}>Terms of Service</a>

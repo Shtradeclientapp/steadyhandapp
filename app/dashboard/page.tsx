@@ -393,7 +393,21 @@ export default function DashboardPage() {
           </div>
         </Link>
 
-        {jobs.length > 0 && (
+        {/* Demo mode banner */}
+      {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === '1' && (
+        <div style={{ background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.25)', borderRadius:'12px', padding:'16px 20px', marginBottom:'20px', display:'flex', alignItems:'flex-start', gap:'12px' }}>
+          <div style={{ fontSize:'20px', flexShrink:0 }}>👋</div>
+          <div style={{ flex:1 }}>
+            <p style={{ fontSize:'14px', fontWeight:500, color:'#1C2B32', margin:'0 0 4px' }}>You&apos;re exploring with demo data</p>
+            <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 10px' }}>
+              Three sample jobs have been added to your account — one in delivery, one waiting for scope signing, and one under warranty with an open issue. Click through each stage to see how the platform works. Delete them anytime from each job page.
+            </p>
+            <a href="/request" style={{ fontSize:'13px', color:'#2E7D60', fontWeight:500, textDecoration:'none' }}>Post your first real job →</a>
+          </div>
+        </div>
+      )}
+
+      {jobs.length > 0 && (
         <div style={{ background:'#2E7D60', borderRadius:'14px', padding:'24px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', flexWrap:'wrap', marginBottom:'20px' }}>
           <div>
             <h2 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'18px', color:'white', letterSpacing:'1px', marginBottom:'4px' }}>START A NEW REQUEST</h2>
