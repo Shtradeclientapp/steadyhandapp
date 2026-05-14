@@ -256,6 +256,12 @@ export default function WorkersPage() {
               <div style={{ padding:'8px' }}>
                 {assignments.map((a:any) => (
                   <div key={a.id} style={{ padding:'10px 12px', borderBottom:'1px solid rgba(28,43,50,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'10px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                      <a href={'/worker/job?job_id=' + a.job_id + '&worker_id=' + a.worker_id}
+                        style={{ fontSize:'11px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'3px 8px', textDecoration:'none', flexShrink:0 }}>
+                        Messages →
+                      </a>
+                    </div>
                     <div>
                       <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{a.worker?.name}</p>
                       <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>{a.job?.title} · {new Date(a.assigned_date).toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' })}</p>

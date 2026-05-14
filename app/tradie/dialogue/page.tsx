@@ -58,7 +58,21 @@ export default function DialogueHistory() {
               {avg >= 80 ? 'Excellent communicator' : avg >= 60 ? 'Good communicator' : avg >= 40 ? 'Room to improve' : 'Getting started'}
             </p>
             <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:'0 0 8px' }}>Based on {history.length} scored stage{history.length !== 1 ? 's' : ''} across your jobs</p>
-            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', margin:0, lineHeight:1.5 }}>Your Dialogue Rating reflects how clearly and transparently you communicate with clients — on pricing, risk, timeline and scope. It improves with every job.</p>
+            <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.35)', margin:'0 0 16px', lineHeight:1.5 }}>Your Dialogue Rating reflects how clearly and transparently you communicate with clients — on pricing, risk, timeline and scope. It improves with every job.</p>
+            <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'10px', padding:'14px 16px' }}>
+              <p style={{ fontSize:'11px', fontWeight:700, color:'rgba(216,228,225,0.5)', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 10px' }}>How to improve your score</p>
+              {[
+                { stage: 'Consult', tip: 'Write detailed site assessment notes and share them with the client before submitting your quote. Cover access constraints, risk items, and any scope clarifications.' },
+                { stage: 'Agreement', tip: 'Complete all four DialogueGuide dimensions before signing. Be specific about inclusions, exclusions, and assumptions. Clients who feel heard give higher scores.' },
+                { stage: 'Delivery', tip: 'Upload photo evidence at each milestone before marking it complete. Add a brief note describing what was done. Proactive communication prevents disputes.' },
+                { stage: 'Warranty', tip: 'Respond to warranty issues within 2 business days — before the 5-day deadline. A fast, clear response dramatically improves your protect stage score.' },
+              ].map(({ stage, tip }) => (
+                <div key={stage} style={{ display:'flex', gap:'10px', marginBottom:'8px', alignItems:'flex-start' }}>
+                  <span style={{ fontSize:'10px', fontWeight:700, color:'rgba(216,228,225,0.5)', background:'rgba(255,255,255,0.06)', borderRadius:'4px', padding:'2px 6px', flexShrink:0, marginTop:'1px', textTransform:'uppercase' as const }}>{stage}</span>
+                  <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.4)', lineHeight:'1.55', margin:0 }}>{tip}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

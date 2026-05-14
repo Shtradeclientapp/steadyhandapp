@@ -45,6 +45,13 @@ export default function Page() {
           </div>
         </div>
       </div>
+      <div style={{ background:'rgba(46,107,143,0.1)', borderBottom:'1px solid rgba(46,107,143,0.2)', padding:'10px 24px' }}>
+        <div style={{ maxWidth:'1100px', margin:'0 auto', display:'flex', alignItems:'center', gap:'8px' }}>
+          <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)' }}>Already on Steadyhand?</span>
+          <a href="/compare" style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, textDecoration:'none' }}>Use the in-app quote comparison tool →</a>
+          <span style={{ fontSize:'11px', color:'rgba(216,228,225,0.3)', marginLeft:'8px' }}>Includes AI analysis, revision history and side-by-side line items</span>
+        </div>
+      </div>
       <ObservatoryPage />
     </>
   )
