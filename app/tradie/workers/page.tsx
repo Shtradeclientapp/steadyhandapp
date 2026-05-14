@@ -13,7 +13,7 @@ export default function WorkersPage() {
   const [inviting, setInviting] = useState(false)
   const [invited, setInvited] = useState(false)
   const [error, setError] = useState<string|null>(null)
-  const [assignForm, setAssignForm] = useState({ workerId:'', jobId:'', date: new Date().toISOString().split('T')[0], notes:'' })
+  const [assignForm, setAssignForm] = useState({ workerId:'', jobId:'', date: new Date().toISOString().split('T')[0], notes:'', agreed_rate:'', payment_notes:'' })
   const [assigning, setAssigning] = useState(false)
   const [assigned, setAssigned] = useState(false)
   const [assignments, setAssignments] = useState<any[]>([])
@@ -237,6 +237,28 @@ export default function WorkersPage() {
                 <div>
                   <label style={{ fontSize:'12px', fontWeight:500, color:'#0A0A0A', display:'block', marginBottom:'4px' }}>Notes (optional)</label>
                   <textarea value={assignForm.notes} onChange={e => setAssignForm(f => ({ ...f, notes: e.target.value }))} placeholder="Any special instructions for this assignment" rows={2} style={{ ...inp, resize:'none' as const }} />
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginTop:'8px' }}>
+            <div>
+              <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Agreed rate (optional)</label>
+              <div style={{ display:'flex', alignItems:'center', background:'#F4F8F7', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', overflow:'hidden' }}>
+                <span style={{ padding:'8px 10px', fontSize:'13px', color:'#7A9098', borderRight:'1px solid rgba(28,43,50,0.1)' }}>$</span>
+                <input type="number" value={assignForm.agreed_rate} onChange={e => setAssignForm(f => ({ ...f, agreed_rate: e.target.value }))}
+                  placeholder="e.g. 850" style={{ flex:1, padding:'8px 10px', border:'none', background:'transparent', fontSize:'13px', color:'#0A0A0A', outline:'none' }} />
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize:'11px', color:'#7A9098', display:'block', marginBottom:'4px', textTransform:'uppercase' as const, letterSpacing:'0.5px' }}>Payment basis</label>
+              <select value={assignForm.payment_notes} onChange={e => setAssignForm(f => ({ ...f, payment_notes: e.target.value }))}
+                style={{ ...inp, width:'100%' }}>
+                <option value="">Select...</option>
+                <option value="fixed_price">Fixed price</option>
+                <option value="day_rate">Day rate</option>
+                <option value="hourly">Hourly</option>
+                <option value="labour_only">Labour only</option>
+                <option value="subcontract">Subcontract</option>
+              </select>
+            </div>
+          </div>
                 </div>
                 {assigned && <p style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500, margin:0 }}>✓ Assigned</p>}
                 <button type="button" onClick={assignWorker} disabled={assigning || !assignForm.workerId || !assignForm.jobId}
@@ -256,11 +278,16 @@ export default function WorkersPage() {
               <div style={{ padding:'8px' }}>
                 {assignments.map((a:any) => (
                   <div key={a.id} style={{ padding:'10px 12px', borderBottom:'1px solid rgba(28,43,50,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'10px' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'8px', flexWrap:'wrap' as const }}>
                       <a href={'/worker/job?job_id=' + a.job_id + '&worker_id=' + a.worker_id}
                         style={{ fontSize:'11px', color:'#2E6A8F', background:'rgba(46,106,143,0.08)', border:'1px solid rgba(46,106,143,0.2)', borderRadius:'6px', padding:'3px 8px', textDecoration:'none', flexShrink:0 }}>
                         Messages →
                       </a>
+                      {a.agreed_rate && (
+                        <span style={{ fontSize:'11px', color:'#2E7D60', background:'rgba(46,125,96,0.08)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'6px', padding:'3px 8px' }}>
+                          ${Number(a.agreed_rate).toLocaleString()} {a.payment_notes ? '· ' + a.payment_notes.replace('_',' ') : ''}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <p style={{ fontSize:'13px', fontWeight:500, color:'#0A0A0A', margin:'0 0 2px' }}>{a.worker?.name}</p>

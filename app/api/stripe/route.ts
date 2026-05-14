@@ -195,6 +195,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ client_secret: session.client_secret })
     }
 
+    // ── Create or retrieve org Stripe customer ───────────────────
+    if (action === 'create_org_customer') {
+      const { org_id, org_name, email } = body
+      if (!org_id) return NextResponse.json({ error: 'org_id required' }, { status: 400 })
+      const { data: org } = await supabase.from('organisations').select('stripe_customer_id, name').eq('id', org_id).single()
+      let customerId = org?.stripe_customer_id
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email,
+          name: org_name || org?.name || 'Organisation',
+          metadata: { org_id },
+        })
+        customerId = customer.id
+        await supabase.from('organisations').update({ stripe_customer_id: customerId }).eq('id', org_id)
+      }
+      return NextResponse.json({ customer_id: customerId })
+    }
+
+    // ── Create org subscription checkout ─────────────────────────
+    if (action === 'create_org_checkout') {
+      const { org_id, price_id, return_url } = body
+      if (!org_id || !price_id) return NextResponse.json({ error: 'org_id and price_id required' }, { status: 400 })
+      const { data: org } = await supabase.from('organisations').select('stripe_customer_id, name').eq('id', org_id).single()
+      let customerId = org?.stripe_customer_id
+      if (!customerId) {
+        const customer = await stripe.customers.create({ name: org?.name || 'Organisation', metadata: { org_id } })
+        customerId = customer.id
+        await supabase.from('organisations').update({ stripe_customer_id: customerId }).eq('id', org_id)
+      }
+      const session = await (stripe.checkout.sessions.create as any)({
+        ui_mode: 'embedded_page',
+        mode: 'subscription',
+        customer: customerId,
+        line_items: [{ price: price_id, quantity: 1 }],
+        automatic_tax: { enabled: true },
+        customer_update: { address: 'auto' },
+        billing_address_collection: 'required',
+        return_url: return_url || process.env.NEXT_PUBLIC_APP_URL + '/org/dashboard?billing=connected',
+        metadata: { org_id },
+      })
+      return NextResponse.json({ client_secret: session.client_secret })
+    }
+
     // ── Get checkout session status (for return page) ────────────
     if (action === 'get_session_status') {
       const { session_id } = body

@@ -43,6 +43,9 @@ export default function OrgDashboardPage() {
   const [filterStatus, setFilterStatus] = useState('')
   const [filterProperty, setFilterProperty] = useState('')
   const [xeroConnected, setXeroConnected] = useState(false)
+  const [orgStripeCustomerId, setOrgStripeCustomerId] = useState<string|null>(null)
+  const [orgBillingSetup, setOrgBillingSetup] = useState(false)
+  const [settingUpBilling, setSettingUpBilling] = useState(false)
   const [xeroTenant, setXeroTenant] = useState<string|null>(null)
   const [xeroDisconnecting, setXeroDisconnecting] = useState(false)
   const [showContractorImport, setShowContractorImport] = useState(false)
@@ -782,7 +785,38 @@ export default function OrgDashboardPage() {
                   </button>
                   {portfolioAnalytics.length > 0 && (
                     <p style={{ fontSize:'11px', color:'#7A9098', margin:'6px 0 0' }}>
-                      {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page. Org-level payment consolidation and GST reporting coming in a future release — contact hello@steadyhandtrade.app to discuss early access.
+                      {portfolioAnalytics.length} jobs tracked · {portfolioAnalytics.filter(a => a.signoff_completed_at).length} completed · individual job PDFs available from each job page.</p>
+                  {canEdit && (
+                    <div style={{ marginTop:'16px', background:'rgba(46,125,96,0.06)', border:'1px solid rgba(46,125,96,0.2)', borderRadius:'10px', padding:'16px' }}>
+                      <p style={{ fontSize:'13px', fontWeight:600, color:'#2E7D60', margin:'0 0 6px' }}>Centralised billing</p>
+                      <p style={{ fontSize:'12px', color:'#4A5E64', lineHeight:'1.6', margin:'0 0 12px' }}>
+                        Connect a Stripe billing account so your organisation can pay for jobs centrally — instead of each property manager paying individually. Required for org-level payment authorisation.
+                      </p>
+                      {orgBillingSetup ? (
+                        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                          <span style={{ fontSize:'12px', color:'#2E7D60', fontWeight:500 }}>✓ Billing connected</span>
+                          <span style={{ fontSize:'11px', color:'#7A9098' }}>Customer ID: {orgStripeCustomerId?.slice(0,14)}...</span>
+                        </div>
+                      ) : (
+                        <button type="button" disabled={settingUpBilling} onClick={async () => {
+                          setSettingUpBilling(true)
+                          const supabase = createClient()
+                          const { data: { session } } = await supabase.auth.getSession()
+                          await fetch('/api/stripe', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'create_org_customer', org_id: org?.id, org_name: org?.name, email: session?.user.email }),
+                          }).then(r => r.json()).then(d => {
+                            if (d.customer_id) { setOrgStripeCustomerId(d.customer_id); setOrgBillingSetup(true) }
+                          }).catch(() => {})
+                          setSettingUpBilling(false)
+                        }} style={{ background:'#2E7D60', color:'white', border:'none', borderRadius:'8px', padding:'10px 18px', fontSize:'13px', fontWeight:500, cursor:'pointer' }}>
+                          {settingUpBilling ? 'Setting up...' : 'Connect billing account →'}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                  <p style={{ fontSize:'11px', color:'#9AA5AA', marginTop:'8px' }}>Org-level GST reporting coming in a future release — contact hello@steadyhandtrade.app to discuss early access.
                     </p>
                   )}
                 </div>
