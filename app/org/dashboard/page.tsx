@@ -391,9 +391,9 @@ export default function OrgDashboardPage() {
                   <div style={{ display:'flex', gap:'8px' }}>
                     {atLimit ? (
                       <a href="/org/subscribe"><button type="button" style={{ background:'#D4522A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Upgrade plan →</button></a>
-                    ) : (
-                      {canEdit && <a href="/org/properties/new"><button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>}
-                    )}
+                    ) : canEdit ? (
+                      <a href="/org/properties/new"><button type="button" style={{ background:'#0A0A0A', color:'white', padding:'10px 20px', borderRadius:'8px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>+ Add property</button></a>
+                    ) : null}
                   </div>
                 </div>
               )
