@@ -35,7 +35,7 @@ export default function TradePendingPage() {
             </div>
           )}
           <h2 style={{ fontSize:'20px', fontWeight:600, color:'#0A0A0A', margin:'0 0 12px', fontFamily:'sans-serif' }}>
-            {suspendedReason ? 'Account suspended' : \`Thanks\${profile?.tradie?.business_name ? \`, \${profile.tradie.business_name}\` : ''}\`}.
+            {suspendedReason ? 'Account suspended' : `Thanks${profile?.tradie?.business_name ? `, ${profile.tradie.business_name}` : ''}`}.
           </h2>
           <p style={{ fontSize:'14px', color:'#4A5E64', lineHeight:'1.7', margin:'0 0 20px' }}>
             {suspendedReason
