@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Barlow, Barlow_Condensed, Aboreto } from 'next/font/google'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { DemoSwitcher } from '@/components/ui/DemoSwitcher'
 import './globals.css'
 
 const barlow = Barlow({
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${barlow.variable} ${barlowCondensed.variable} ${aboreto.variable}`}>
       <body>
+        {process.env.NEXT_PUBLIC_DEMO_MODE === 'true' && <DemoSwitcher />}
         <ErrorBoundary>{children}</ErrorBoundary>
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
         <script dangerouslySetInnerHTML={{ __html: oneSignalScript }} />
