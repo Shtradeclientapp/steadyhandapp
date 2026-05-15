@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div style={{ background: '#0A0A0A', padding: '28px 24px' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '22px', color: '#D4522A', letterSpacing: '2px', margin: '0 0 4px' }}>STEADYHAND</p>
-          <p style={{ fontSize: '13px', color: 'rgba(216,228,225,0.4)', margin: 0 }}>Trade services — Perth, WA</p>
+          <p style={{ fontSize: '13px', color: 'rgba(216,228,225,0.4)', margin: 0 }}>Trade services — Australia</p>
         </div>
       </div>
 
@@ -16,7 +16,7 @@ export default function AboutPage() {
           <p style={{ fontSize: '11px', letterSpacing: '1.5px', textTransform: 'uppercase' as const, color: '#7A9098', marginBottom: '12px' }}>About</p>
           <h1 style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '28px', color: '#0A0A0A', letterSpacing: '1px', margin: '0 0 20px', lineHeight: '1.3' }}>Built for the trust that already exists in trade.</h1>
           <p style={{ fontSize: '15px', color: '#4A5E64', lineHeight: '1.8', margin: 0 }}>
-            Steadyhand is a platform for residential trade services in Western Australia. It connects homeowners with verified local tradies and guides both parties through the job — from the first conversation to the final sign-off.
+            Steadyhand is a platform for residential trade services across Australia. It connects homeowners with verified local tradies and guides both parties through the job — from the first conversation to the final sign-off.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function AboutPage() {
 
         <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '28px 32px' }}>
           <p style={{ fontFamily: 'var(--font-aboreto), sans-serif', fontSize: '14px', color: 'rgba(216,228,225,0.9)', letterSpacing: '1px', margin: '0 0 8px' }}>STEADYHAND</p>
-          <p style={{ fontSize: '13px', color: 'rgba(216,228,225,0.45)', margin: '0 0 16px' }}>Perth, Western Australia</p>
+          <p style={{ fontSize: '13px', color: 'rgba(216,228,225,0.45)', margin: '0 0 16px' }}>Australia</p>
           <a href="/signup" style={{ display: 'inline-block', background: '#D4522A', color: 'white', padding: '10px 22px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, textDecoration: 'none', marginRight: '10px' }}>Get started →</a>
           <a href="/login" style={{ display: 'inline-block', color: 'rgba(216,228,225,0.5)', fontSize: '13px', textDecoration: 'none' }}>Log in</a>
           <a href="/how-it-works" style={{ display: 'inline-block', color: 'rgba(216,228,225,0.4)', fontSize: '13px', textDecoration: 'none', marginLeft: '10px' }}>The legal record →</a>
