@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const {
-      title, description, trade_category, suburb,
+      title, description, trade_category, suburb, state,
       property_type, urgency, budget_range,
       warranty_period, preferred_start,
       org_id, property_id, diy_project_id
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
         description,
         trade_category,
         suburb,
+        state: state || 'WA',
         property_type,
         urgency,
         budget_range,
