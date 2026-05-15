@@ -92,6 +92,11 @@ export default function DashboardPage() {
       setUser(session.user)
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', session.user.id).single()
       if (prof?.org_id) { window.location.href = '/org/dashboard'; return }
+      // Skip onboarding modal for demo accounts
+      if (prof?.is_demo) {
+        localStorage.setItem('dismissed_client_setup', '1')
+        await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', session.user.id)
+      }
       // Redirect tradie immediately before loading any job data
       if (prof && prof.role === 'tradie') {
         window.location.href = '/tradie/dashboard'
