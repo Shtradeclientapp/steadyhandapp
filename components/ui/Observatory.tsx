@@ -3,17 +3,20 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const CATEGORIES = [
-  { id: 'legislation',  label: 'Legislation',      icon: '⚖️',  color: '#2E6A8F', prompt: 'WA building trades construction legislation updates 2024 2025 Building Services Registration Act Home Building Contracts Act' },
-  { id: 'fairwork',     label: 'Fair Work',         icon: '🤝',  color: '#2E7D60', prompt: 'Fair Work Australia contractor employee misclassification trade workers WA 2024 2025 rulings decisions' },
-  { id: 'dmirs',        label: 'DMIRS',             icon: '🏛️',  color: '#6B4FA8', prompt: 'DMIRS WA Department Mines Industry Regulation Safety building contractor licence registration changes 2024 2025' },
-  { id: 'awards',       label: 'Awards & EBAs',     icon: '💰',  color: '#C07830', prompt: 'WA construction building trades award rates EBA enterprise bargaining 2024 2025 wage increases' },
-  { id: 'precedents',   label: 'Legal Precedents',  icon: '🔍',  color: '#9B6B9B', prompt: 'WA court tribunal notable decisions building contractor disputes payment defects 2024 2025' },
-  { id: 'digital',      label: 'Digital Work Law',  icon: '💻',  color: '#D4522A', prompt: 'digital platform work gig economy Australia WA legislation regulation 2024 2025 contractor rights app-based work' },
+  { id: 'legislation',  label: 'Legislation',        icon: '⚖️',  color: '#2E6A8F', prompt: 'Australia building trades construction legislation updates 2024 2025 Home Building Contracts Act NSW Home Building Act VIC Domestic Building Contracts Act QLD QBCC Act SA Building Work Contractors Act' },
+  { id: 'warranty',     label: 'Warranty & Defects', icon: '🛡️',  color: '#2E7D60', prompt: 'Australia building defects warranty disputes tribunal SAT NCAT VCAT QCAT homeowner tradie contractor 2024 2025 structural defects workmanship claims' },
+  { id: 'materials',    label: 'Building Materials', icon: '🧱',  color: '#C07830', prompt: 'Australia building materials product liability defects recalls cladding waterproofing roofing tiles concrete 2024 2025 ACCC standards compliance' },
+  { id: 'fairwork',     label: 'Fair Work',           icon: '🤝',  color: '#6B4FA8', prompt: 'Fair Work Australia contractor employee misclassification trade workers 2024 2025 rulings decisions High Court gig economy' },
+  { id: 'precedents',   label: 'Legal Precedents',   icon: '🔍',  color: '#9B6B9B', prompt: 'Australia court tribunal notable decisions building contractor disputes payment defects warranty SAT NCAT VCAT 2024 2025' },
+  { id: 'licensing',    label: 'Licensing & Compliance', icon: '📋', color: '#D4522A', prompt: 'Australia trade contractor licence registration requirements changes 2024 2025 electrician plumber builder tiler painter state regulators DMIRS NSW Fair Trading VBA QBCC' },
 ]
 
 const PINNED_ITEMS: any[] = [
-  { id: 'pin-1', category: 'legislation', title: 'Building Services (Registration) Amendment Act 2024', summary: 'Amendments expanding contractor registration requirements for residential builders and plumbers operating in WA. New categories effective 1 July 2024.', date: '2024-07-01', source: 'WA Government', url: 'https://www.commerce.wa.gov.au', pinned: true },
-  { id: 'pin-2', category: 'fairwork', title: 'Employee vs Contractor: High Court clarification', summary: 'CFMEU v Personnel Contracting [2022] HCA 1 continues to reshape how trade businesses structure subcontractor arrangements. Key test: written terms of the contract govern.', date: '2022-02-09', source: 'High Court of Australia', url: 'https://www.hcourt.gov.au', pinned: true },
+  { id: 'pin-1', category: 'legislation', title: 'Home Building Contracts Act 1991 (WA) — written contract threshold', summary: 'Contracts for residential building work over $7,500 in WA must be in writing. Failure to comply gives the homeowner rights to withhold payment. The scope agreement on Steadyhand satisfies this requirement.', date: '2024-01-01', source: 'WA Government', url: 'https://www.commerce.wa.gov.au', pinned: true },
+  { id: 'pin-2', category: 'warranty', title: 'Statutory warranty periods by state — what tradies and homeowners need to know', summary: 'Structural defect liability runs 6 years (WA, NSW, QLD), 10 years (VIC, TAS, ACT), or 5 years (SA) from completion — regardless of what the contract says. These rights cannot be reduced by agreement.', date: '2024-06-01', source: 'State building commissions', url: 'https://www.abcb.gov.au', pinned: true },
+  { id: 'pin-3', category: 'fairwork', title: 'Employee vs Contractor: High Court clarification', summary: 'CFMEU v Personnel Contracting [2022] HCA 1 continues to reshape how trade businesses structure subcontractor arrangements. Key test: written terms of the contract govern the relationship.', date: '2022-02-09', source: 'High Court of Australia', url: 'https://www.hcourt.gov.au', pinned: true },
+  { id: 'pin-4', category: 'materials', title: 'ACCC building product safety alerts — cladding and waterproofing', summary: 'Ongoing ACCC monitoring of non-conforming building products including composite cladding, waterproofing membranes, and structural fixings. Tradies who install non-conforming products may face liability even if supplied by the client.', date: '2024-09-01', source: 'ACCC', url: 'https://www.accc.gov.au', pinned: true },
+  { id: 'pin-5', category: 'precedents', title: 'Written scope agreements as primary evidence in tribunal disputes', summary: 'SAT, NCAT, and VCAT consistently treat signed written agreements as the primary evidence of what was agreed. Verbal arrangements, even corroborated by witnesses, rarely prevail against a signed document.', date: '2024-03-01', source: 'State tribunals', url: 'https://www.sat.justice.wa.gov.au', pinned: true },
 ]
 
 const CACHE_TTL = 24 * 60 * 60 * 1000 // 24 hours
@@ -41,7 +44,7 @@ async function fetchIntelligence(category: any) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        prompt: `Find 4 important recent developments for WA trade professionals related to: ${category.prompt}`,
+        prompt: `Find 4 important recent developments for Australian trade professionals, homeowners, and building industry participants related to: ${category.prompt}. Include developments from any Australian state or territory. Focus on practical implications.`,
       }),
     })
     const data = await response.json()
@@ -231,8 +234,8 @@ export function ObservatoryPage() {
           <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Stay up-to-date</p>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', flexWrap:'wrap' as const, gap:'12px' }}>
             <div>
-              <h1 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'3px', margin:'0 0 8px' }}>STEADYHAND WA DATA OBSERVATORY</h1>
-              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0, maxWidth:'500px', lineHeight:1.6 }}>Live intelligence on legislation, Fair Work decisions, DMIRS updates, award rates and legal precedents affecting WA trade professionals.</p>
+              <h1 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'28px', color:'rgba(216,228,225,0.9)', letterSpacing:'3px', margin:'0 0 8px' }}>STEADYHAND TRADE OBSERVATORY</h1>
+              <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0, maxWidth:'500px', lineHeight:1.6 }}>Live intelligence on legislation, warranty rulings, building material alerts, Fair Work decisions, and legal precedents affecting Australian trade professionals and homeowners.</p>
             </div>
             <button type="button" onClick={() => setRefreshKey(k => k+1)} style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.12)', color:'rgba(216,228,225,0.7)', padding:'8px 16px', borderRadius:'7px', fontSize:'12px', cursor:'pointer' }}>↻ Refresh</button>
           </div>
@@ -259,13 +262,13 @@ export function ObservatoryPage() {
           <div>
             <div style={{ background:'#0A0A0A', borderRadius:'10px', padding:'18px', marginBottom:'16px' }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.4)', margin:'0 0 12px' }}>About</p>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The SH tracker aims to provide a comprehensive overview of policies, legislation, collective bargaining agreements, and judicial decisions related to trade labour in WA. It serves as a practical resource for governments, employers' and workers' organizations, policymakers, researchers, and anyone interested in understanding the policy developments in this area.</p>
-              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The tracker will be regularly updated as new regulations, agreements, and decisions emerge. Please refer to the links provided for detailed information and source materials.</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The Steadyhand Trade Observatory tracks legislation, tribunal decisions, warranty rulings, building material alerts, and legal precedents across all Australian states. It serves as a practical resource for homeowners, trade businesses, property managers, and anyone navigating the residential building and trade services landscape.</p>
+              <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.6)', lineHeight:1.7, margin:'0 0 12px' }}>The tracker is updated regularly as new legislation, decisions, and alerts emerge. Content is sourced from state building commissions, the Fair Work Commission, ACCC, and Australian courts and tribunals. Always refer to the linked source materials for authoritative information.</p>
               <a href="mailto:info@steadyhanddigital.com" style={{ fontSize:'12px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>info@steadyhanddigital.com →</a>
             </div>
             <div style={{ background:'white', borderRadius:'10px', padding:'18px', border:'1px solid rgba(28,43,50,0.08)' }}>
               <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'#9AA5AA', margin:'0 0 14px' }}>Key sources</p>
-              {[{ name:'DMIRS WA', url:'https://www.dmirs.wa.gov.au' },{ name:'Fair Work Commission', url:'https://www.fwc.gov.au' },{ name:'Building Commission WA', url:'https://www.buildingcommission.wa.gov.au' },{ name:'WA State Law Publisher', url:'https://www.legislation.wa.gov.au' },{ name:'SafeWork Australia', url:'https://www.safeworkaustralia.gov.au' }].map(s => (
+              {[{ name:'Fair Work Commission', url:'https://www.fwc.gov.au' },{ name:'ACCC', url:'https://www.accc.gov.au' },{ name:'DMIRS WA', url:'https://www.dmirs.wa.gov.au' },{ name:'NSW Fair Trading', url:'https://www.fairtrading.nsw.gov.au' },{ name:'VBA Victoria', url:'https://www.vba.vic.gov.au' },{ name:'QBCC Queensland', url:'https://www.qbcc.qld.gov.au' },{ name:'SAT WA', url:'https://www.sat.justice.wa.gov.au' },{ name:'NCAT NSW', url:'https://www.ncat.nsw.gov.au' },{ name:'VCAT Victoria', url:'https://www.vcat.vic.gov.au' },{ name:'ABCB', url:'https://www.abcb.gov.au' },{ name:'SafeWork Australia', url:'https://www.safeworkaustralia.gov.au' }].map(s => (
                 <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" style={{ display:'block', fontSize:'12px', color:'#2E6A8F', textDecoration:'none', marginBottom:'8px', fontWeight:500 }}>{s.name} ↗</a>
               ))}
             </div>
@@ -296,7 +299,7 @@ export function ObservatoryWidget() {
   return (
     <div style={{ background:'white', borderRadius:'10px', border:'1px solid rgba(28,43,50,0.08)', overflow:'hidden' }}>
       <div style={{ background:'#0A0A0A', padding:'10px 14px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <span style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.5)', fontWeight:500 }}>{active.categoryIcon} Steadyhand WA Data Tracker</span>
+        <span style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.5)', fontWeight:500 }}>{active.categoryIcon} Steadyhand AU Trade Intelligence</span>
         <a href="/observatory" style={{ fontSize:'11px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>View all →</a>
       </div>
       <div style={{ padding:'14px', borderBottom:'1px solid rgba(28,43,50,0.06)' }}>
@@ -404,8 +407,8 @@ export function ObservatoryCarousel() {
         {/* Header */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'32px', flexWrap:'wrap' as const, gap:'12px' }}>
           <div>
-            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Steadyhand WA Data Tracker</p>
-            <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>STEADYHAND WA DATA OBSERVATORY</h2>
+            <p style={{ fontSize:'11px', letterSpacing:'2px', textTransform:'uppercase' as const, color:'rgba(216,228,225,0.3)', marginBottom:'8px' }}>Steadyhand AU Trade Intelligence</p>
+            <h2 style={{ fontFamily:'var(--font-aboreto, Georgia, serif)', fontSize:'clamp(20px,2.5vw,26px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', margin:0 }}>STEADYHAND TRADE OBSERVATORY</h2>
           </div>
           <a href="/observatory" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500, border:'1px solid rgba(212,82,42,0.3)', padding:'8px 16px', borderRadius:'7px' }}>
             View full observatory →
