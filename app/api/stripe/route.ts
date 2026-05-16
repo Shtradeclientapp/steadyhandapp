@@ -110,10 +110,13 @@ export async function POST(request: NextRequest) {
 
     // ── Release milestone — transfer funds to tradie ────────────
     if (action === 'release_milestone') {
-      const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)))').eq('id', milestone_id).single()
+      const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)), quotes(*))').eq('id', milestone_id).single()
       if (!milestone) return NextResponse.json({ error: 'Milestone not found' }, { status: 404 })
       const tradieAccountId = milestone.job?.tradie?.profile?.stripe_account_id
-      const amountCents = Math.round(Number(milestone.amount) * 100)
+      const quotes = milestone.job?.quotes || []
+      const latestQuote = quotes.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+      const gstMultiplier = latestQuote?.gst_included === false ? 1.1 : 1
+      const amountCents = Math.round(Number(milestone.amount) * gstMultiplier * 100)
       const feeRate = milestone.job?.tradie?.founding_member ? 0.03 : 0.035
       const platformFeeCents = Math.round(amountCents * feeRate)
       const transferAmount = amountCents - platformFeeCents

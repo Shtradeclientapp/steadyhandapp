@@ -9,11 +9,13 @@ export async function GET(req: NextRequest) {
   if (query.length < 2) return NextResponse.json({ suggestions: [] })
 
   if (type === 'suburb') {
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query + ' Western Australia')}&types=(regions)&components=country:au&key=${key}`
+    try {
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&types=(regions)&components=country:au&key=${key}`
     const r = await fetch(url)
     const d = await r.json()
     const suggestions = (d.predictions || []).map((p: any) => p.structured_formatting?.main_text || p.description).slice(0, 6)
     return NextResponse.json({ suggestions })
+    } catch { return NextResponse.json({ suggestions: [] }) }
   }
 
   return NextResponse.json({ suggestions: [] })

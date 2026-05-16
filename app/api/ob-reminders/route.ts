@@ -487,18 +487,21 @@ export async function GET(request: NextRequest) {
 
     for (const client of (newClients || [])) {
       // Check if they have any jobs at all
-      const { data: clientJobs } = await supabase
-        .from('jobs')
-        .select('id')
-        .eq('client_id', client.id)
-        .limit(1)
+      const { data: clientJobs } = await supabase.from('jobs').select('id').eq('client_id', client.id).limit(1)
       if (!clientJobs || clientJobs.length === 0) {
-        await fetch(siteUrl + '/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'first_job_nudge', to: client.email, full_name: client.full_name }),
-        }).catch(() => {})
-        remindersFired++
+        // Check not already sent in last 7 days
+        const { data: alreadySent } = await supabase.from('ob_reminders_sent')
+          .select('id').eq('user_id', client.id).eq('reminder_type', 'first_job_nudge')
+          .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+        if (!alreadySent?.length) {
+          await fetch(siteUrl + '/api/email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'first_job_nudge', to: client.email, full_name: client.full_name }),
+          }).catch(() => {})
+          await supabase.from('ob_reminders_sent').insert({ user_id: client.id, reminder_type: 'first_job_nudge', job_id: null, sent_at: new Date().toISOString() }).catch(() => {})
+          remindersFired++
+        }
       }
     }
 
@@ -512,9 +515,16 @@ export async function GET(request: NextRequest) {
       .not('email', 'is', null)
 
     for (const u of (inactiveUsers || [])) {
-      await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ type:'reengagement', to: u.email, full_name: u.full_name, role: u.role }) }).catch(() => {})
-      remindersFired++
+      // Check not already sent in last 14 days
+      const { data: alreadySentRe } = await supabase.from('ob_reminders_sent')
+        .select('id').eq('user_id', u.id).eq('reminder_type', 'reengagement')
+        .gt('sent_at', new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+      if (!alreadySentRe?.length) {
+        await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ type:'reengagement', to: u.email, full_name: u.full_name, role: u.role }) }).catch(() => {})
+        await supabase.from('ob_reminders_sent').insert({ user_id: u.id, reminder_type: 'reengagement', job_id: null, sent_at: new Date().toISOString() }).catch(() => {})
+        remindersFired++
+      }
     }
 
     // Release the cron lock

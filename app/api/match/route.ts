@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       .not('suspended_at', 'is', 'not null')
       .eq('onboarding_step', 'active')
       .eq('licence_verified', true)
+      .not('profile.is_demo', 'is', true)
     // Filter tradies - exact match OR partial match on trade category
     const jobCat = (job.trade_category || '').toLowerCase()
     const filteredTradies = (tradies || []).filter((t: any) => {

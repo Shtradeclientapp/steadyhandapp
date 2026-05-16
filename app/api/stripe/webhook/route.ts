@@ -31,9 +31,6 @@ export async function POST(request: NextRequest) {
   if (existing) {
     return NextResponse.json({ received: true, skipped: true })
   }
-  // Record this event before processing
-  await supabase.from('processed_stripe_events').insert({ event_id: eventId, event_type: event.type, created_at: new Date().toISOString() })
-
   try {
     switch (event.type) {
 
@@ -185,6 +182,8 @@ export async function POST(request: NextRequest) {
         // 'Unhandled event type:', event.type
     }
 
+    // Only record after successful processing — if we get here, the switch completed
+    await supabase.from('processed_stripe_events').insert({ event_id: eventId, event_type: event.type, created_at: new Date().toISOString() })
     return NextResponse.json({ received: true })
 
   } catch (err: any) {
