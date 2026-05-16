@@ -9,18 +9,28 @@ export function DemoSwitcher() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) return
-      const { data } = await supabase
-        .from('profiles')
-        .select('*, tradie:tradie_profiles(business_name)')
-        .eq('id', session.user.id)
-        .single()
+    const checkProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        // Retry once after 1s in case session is still hydrating
+        setTimeout(async () => {
+          const { data: { session: s2 } } = await supabase.auth.getSession()
+          if (!s2) return
+          const { data } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', s2.user.id).single()
+          if (data?.is_demo) {
+            setProfile(data)
+            setRole(data.role === 'tradie' ? 'tradie' : data.org_id ? 'org' : 'client')
+          }
+        }, 1000)
+        return
+      }
+      const { data } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
       if (data?.is_demo) {
         setProfile(data)
         setRole(data.role === 'tradie' ? 'tradie' : data.org_id ? 'org' : 'client')
       }
-    })
+    }
+    checkProfile()
   }, [])
 
   const switchTo = async (targetRole: 'client' | 'tradie' | 'org') => {
