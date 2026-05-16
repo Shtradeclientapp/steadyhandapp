@@ -51,13 +51,13 @@ export default function SignupPage() {
     const { data, error: authErr } = await supabase.auth.signUp({ email: form.email, password: form.password })
       // Fire welcome email after signup
       if (!authErr && data?.user) {
-        const isTradie = (form as any).role === 'tradie' || window.location.search.includes('role=tradie')
+        // Use the role state variable directly — form has no role field
         fetch('/api/email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(isTradie
-            ? { type: 'welcome_tradie', to: form.email, business_name: (form as any).business_name || '' }
-            : { type: 'welcome_client', to: form.email, full_name: (form as any).full_name || '' }
+          body: JSON.stringify(role === 'tradie'
+            ? { type: 'welcome_tradie', to: form.email, business_name: form.businessName || '' }
+            : { type: 'welcome_client', to: form.email, full_name: form.fullName || '' }
           ),
         }).catch(() => {})
       }

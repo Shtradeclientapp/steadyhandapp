@@ -632,7 +632,7 @@ export default function AssessPage() {
                     {[job?.address, job?.suburb, job?.state].filter(Boolean).join(', ') || job?.suburb || 'See job details'}
                   </p>
                   {(job?.suburb || job?.address) && (
-                    <a href={'https://maps.google.com/?q=' + encodeURIComponent([job?.address, job?.suburb, 'WA', 'Australia'].filter(Boolean).join(' '))}
+                    <a href={'https://maps.google.com/?q=' + encodeURIComponent([job?.address, job?.suburb, job?.state || '', 'Australia'].filter(Boolean).join(' '))}
                       target="_blank" rel="noreferrer"
                       style={{ fontSize:'12px', color:'#4A9EE8', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'4px' }}>
                       📍 Open in Google Maps →

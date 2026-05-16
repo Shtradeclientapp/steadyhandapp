@@ -9,28 +9,33 @@ export function DemoSwitcher() {
 
   useEffect(() => {
     const supabase = createClient()
-    const checkProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        // Retry once after 1s in case session is still hydrating
-        setTimeout(async () => {
-          const { data: { session: s2 } } = await supabase.auth.getSession()
-          if (!s2) return
-          const { data } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', s2.user.id).single()
-          if (data?.is_demo) {
-            setProfile(data)
-            setRole(data.role === 'tradie' ? 'tradie' : data.org_id ? 'org' : 'client')
-          }
-        }, 1000)
-        return
-      }
-      const { data } = await supabase.from('profiles').select('*, tradie:tradie_profiles(business_name)').eq('id', session.user.id).single()
+
+    const loadProfile = async (userId: string) => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*, tradie:tradie_profiles(business_name)')
+        .eq('id', userId)
+        .single()
       if (data?.is_demo) {
         setProfile(data)
         setRole(data.role === 'tradie' ? 'tradie' : data.org_id ? 'org' : 'client')
+      } else {
+        setProfile(null)
       }
     }
-    checkProfile()
+
+    // Check immediately
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) loadProfile(session.user.id)
+    })
+
+    // Also listen for auth state changes — fires when session hydrates
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) loadProfile(session.user.id)
+      else setProfile(null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   const switchTo = async (targetRole: 'client' | 'tradie' | 'org') => {
