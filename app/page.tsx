@@ -97,11 +97,26 @@ export default function Home() {
           <p style={{ fontSize:'clamp(15px, 2vw, 18px)', fontWeight:300, color:'rgba(216,228,225,0.55)', lineHeight:'1.7', maxWidth:'520px', margin:'0 auto 40px' }}>
             Most platforms find you a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — so you always know what to do next.
           </p>
+          {/* Demo CTA — prominent */}
+          <div style={{ marginBottom:'24px' }}>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ textDecoration:'none', display:'block' }}>
+              <div style={{ background:'linear-gradient(135deg, rgba(212,82,42,0.15) 0%, rgba(192,120,48,0.15) 100%)', border:'1.5px solid rgba(212,82,42,0.5)', borderRadius:'12px', padding:'18px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', cursor:'pointer', transition:'all 0.2s' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
+                  <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'rgba(212,82,42,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', flexShrink:0 }}>🔍</div>
+                  <div>
+                    <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.95)', margin:'0 0 3px', letterSpacing:'0.2px' }}>See a live demo — no sign-up needed</p>
+                    <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.55)', margin:0, lineHeight:1.5 }}>Three real jobs in progress. Switch between homeowner, tradie and property manager views.</p>
+                  </div>
+                </div>
+                <span style={{ fontSize:'20px', color:'#D4522A', flexShrink:0 }}>→</span>
+              </div>
+            </Link>
+          </div>
+
           <div className="cta-buttons" style={{ justifyContent:'center' }}>
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', width:'100%' }}>I&apos;m a homeowner →</button></Link>
             <Link href="/signup?role=tradie"><button style={{ background:'#2E7D60', color:'white', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer', width:'100%' }}>I&apos;m a trade business →</button></Link>
             <Link href="/signup?role=org"><button style={{ background:'rgba(107,79,168,0.3)', color:'rgba(216,228,225,0.9)', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', border:'1px solid rgba(107,79,168,0.4)', cursor:'pointer', width:'100%' }}>I manage properties →</button></Link>
-            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ display:'block', textAlign:'center', marginTop:'8px', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none' }}>Not sure? See a live demo first →</Link>
           </div>
         </div>
       </div>
