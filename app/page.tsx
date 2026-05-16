@@ -58,10 +58,10 @@ export default function Home() {
             <a href="/org/setup" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>For property managers</a>
             <a href="#guides" style={{ fontSize:'13px', color:'#4A5E64', textDecoration:'none' }}>Guides</a>
             <a href="/observatory" style={{ fontSize:'13px', color:'#2E6A8F', textDecoration:'none', fontWeight:500 }}>Trade Legislation Tracker</a>
+            <a href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Live demo</a>
           </div>
           <div className="nav-buttons">
             <Link href="/login"><button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#4A5E64', padding:'7px 16px', borderRadius:'7px', fontSize:'13px', cursor:'pointer' }}>Log in</button></Link>
-            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Live demo</Link>
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'7px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Get started</button></Link>
           </div>
           <button className="hamburger" onClick={() => {
