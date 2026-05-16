@@ -61,6 +61,7 @@ export default function Home() {
           </div>
           <div className="nav-buttons">
             <Link href="/login"><button style={{ background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#4A5E64', padding:'7px 16px', borderRadius:'7px', fontSize:'13px', cursor:'pointer' }}>Log in</button></Link>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'#D4522A', textDecoration:'none', fontWeight:500 }}>Live demo</Link>
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'7px 16px', borderRadius:'7px', fontSize:'13px', fontWeight:500, border:'none', cursor:'pointer' }}>Get started</button></Link>
           </div>
           <button className="hamburger" onClick={() => {
@@ -97,18 +98,12 @@ export default function Home() {
           <p style={{ fontSize:'clamp(15px, 2vw, 18px)', fontWeight:300, color:'rgba(216,228,225,0.55)', lineHeight:'1.7', maxWidth:'520px', margin:'0 auto 40px' }}>
             Most platforms find you a tradie and leave you to manage the rest alone. Steadyhand stays with you through every stage — so you always know what to do next.
           </p>
-          {/* Demo CTA — prominent */}
-          <div style={{ marginBottom:'24px' }}>
-            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ textDecoration:'none', display:'block' }}>
-              <div style={{ background:'linear-gradient(135deg, rgba(212,82,42,0.15) 0%, rgba(192,120,48,0.15) 100%)', border:'1.5px solid rgba(212,82,42,0.5)', borderRadius:'12px', padding:'18px 28px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'16px', cursor:'pointer', transition:'all 0.2s' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'14px' }}>
-                  <div style={{ width:'40px', height:'40px', borderRadius:'10px', background:'rgba(212,82,42,0.2)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', flexShrink:0 }}>🔍</div>
-                  <div>
-                    <p style={{ fontSize:'15px', fontWeight:600, color:'rgba(216,228,225,0.95)', margin:'0 0 3px', letterSpacing:'0.2px' }}>See a live demo — no sign-up needed</p>
-                    <p style={{ fontSize:'12px', color:'rgba(216,228,225,0.55)', margin:0, lineHeight:1.5 }}>Three real jobs in progress. Switch between homeowner, tradie and property manager views.</p>
-                  </div>
-                </div>
-                <span style={{ fontSize:'20px', color:'#D4522A', flexShrink:0 }}>→</span>
+          {/* Demo CTA */}
+          <div style={{ marginBottom:'28px' }}>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ textDecoration:'none', display:'inline-block' }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', background:'#D4522A', borderRadius:'8px', padding:'13px 22px', cursor:'pointer' }}>
+                <span style={{ fontSize:'14px', fontWeight:600, color:'white', letterSpacing:'0.2px' }}>See a live demo →</span>
+                <span style={{ fontSize:'11px', color:'rgba(255,255,255,0.65)', borderLeft:'1px solid rgba(255,255,255,0.3)', paddingLeft:'10px' }}>No sign-up needed</span>
               </div>
             </Link>
           </div>
@@ -337,7 +332,10 @@ export default function Home() {
               <a key={l} href={href} style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', textDecoration:'none' }}>{l}</a>
             ))}
           </div>
-          <div style={{ fontSize:'12px', color:'rgba(216,228,225,0.3)' }}>© 2026 Steadyhand Digital. Australia.</div>
+          <div style={{ display:'flex', alignItems:'center', gap:'20px' }}>
+            <a href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'12px', color:'rgba(216,228,225,0.5)', textDecoration:'none', fontWeight:500 }}>Live demo</a>
+            <span style={{ fontSize:'12px', color:'rgba(216,228,225,0.2)' }}>© 2026 Steadyhand Digital. Australia.</span>
+          </div>
         </div>
       </div>
 
