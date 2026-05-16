@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       max_tokens: 600,
       messages: [{
         role: 'user',
-        content: `You are helping a Western Australian owner-builder write a project plan summary for their Building Commission permit application.
+        content: `You are helping a Australian owner-builder write a project plan summary for their Building Commission permit application.
 
 Project name: ${title || 'Residential project'}
 Site address: ${address || 'WA residential property'}

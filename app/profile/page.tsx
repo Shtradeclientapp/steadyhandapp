@@ -128,7 +128,7 @@ export default function ProfilePage() {
             </div>
             <div>
               {lbl('Suburb')}
-              <input type="text" value={form.suburb || ''} onChange={e => setF('suburb', e.target.value)} style={inp} placeholder="Perth CBD" />
+              <input type="text" value={form.suburb || ''} onChange={e => setF('suburb', e.target.value)} style={inp} placeholder="e.g. Subiaco" />
             </div>
             <div>
               {lbl('State')}

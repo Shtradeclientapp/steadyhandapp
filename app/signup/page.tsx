@@ -126,7 +126,7 @@ export default function SignupPage() {
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Full name</label><input style={inp} placeholder="Sarah Mitchell" value={form.fullName} onChange={set('fullName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Email</label><input style={inp} type="email" placeholder="you@example.com" value={form.email} onChange={set('email')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Password</label><input style={inp} type="password" placeholder="At least 8 characters" value={form.password} onChange={set('password')} /></div>
-              <div style={{ marginBottom:'20px' }}><label style={lbl}>Suburb</label><select style={inp} value={form.suburb} onChange={set('suburb')}><option value="">Select...</option>{SUBURBS.map(s => <option key={s}>{s}</option>)}</select></div>
+              <div style={{ marginBottom:'20px' }}><label style={lbl}>Suburb</label><input type="text" style={inp} value={form.suburb} onChange={set('suburb')} placeholder="e.g. Subiaco" /></div>
               {role === 'tradie' ? (
                 <button type="button" onClick={() => setStep(2)} disabled={!form.fullName||!form.email||!form.password} style={{ width:'100%', background:'#D4522A', color:'white', padding:'13px', borderRadius:'8px', fontSize:'14px', border:'none', cursor:'pointer', opacity: !form.fullName||!form.email||!form.password ? 0.5 : 1 }}>Continue — trade details →</button>
               ) : role === 'org' ? (
@@ -142,7 +142,7 @@ export default function SignupPage() {
               <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>Your business and credentials</p>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Business name</label><input style={inp} placeholder="Walsh Plumbing & Gas" value={form.businessName} onChange={set('businessName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Trade category</label><select style={inp} value={form.tradeCategory} onChange={set('tradeCategory')}><option value="">Select...</option>{TRADES.map(t => <option key={t}>{t}</option>)}</select></div>
-              <div style={{ marginBottom:'14px' }}><label style={lbl}>Service area</label><select style={inp} value={form.serviceArea} onChange={set('serviceArea')}><option value="">Select...</option>{SUBURBS.map(s => <option key={s}>{s}</option>)}</select></div>
+              <div style={{ marginBottom:'14px' }}><label style={lbl}>Service area</label><input type="text" style={inp} value={form.serviceArea} onChange={set('serviceArea')} placeholder="e.g. Subiaco, Nedlands" /></div>
               {/* Licence number with checkbox gate */}
               <div style={{ marginBottom:'16px' }}>
                 <label style={{ display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom:'8px' }}>

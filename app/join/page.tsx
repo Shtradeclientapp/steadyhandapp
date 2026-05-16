@@ -56,7 +56,7 @@ export default function JoinPage() {
     } catch (_) {}
     // Always update role to tradie — trigger may have created a client profile
     await supabase.from('profiles').upsert({ id: uid, role: 'tradie', full_name: form.fullName || invitation.business_name, email: invitation.email, suburb: invitation.job?.suburb || '' }, { onConflict: 'id' })
-    await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category || 'General'], service_areas: [invitation.job?.suburb || 'Perth Metro'], subscription_active: false }, { onConflict: 'id' })
+    await supabase.from('tradie_profiles').upsert({ id: uid, business_name: invitation.business_name, trade_categories: [invitation.trade_category || invitation.job?.trade_category || 'General'], service_areas: [invitation.job?.suburb || 'My area'], subscription_active: false }, { onConflict: 'id' })
     // Wait for session to be established before writing
     let sessionReady = false
     for (let i = 0; i < 10; i++) {
@@ -142,7 +142,7 @@ export default function JoinPage() {
             </p>
             <div style={{ background:'#C8D5D2', borderRadius:'10px', padding:'14px', marginBottom:'20px' }}>
               <p style={{ fontSize:'13px', color:'#0A0A0A', fontWeight:500, marginBottom:'8px' }}>What is Steadyhand?</p>
-              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>Steadyhand is a request-to-warranty platform for Western Australian trades. It helps you manage scopes, milestone payments and warranties digitally — protecting both you and your client throughout the job.</p>
+              <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.6', margin:0 }}>Steadyhand is a request-to-warranty platform for Australian trades. It helps you manage scopes, milestone payments and warranties digitally — protecting both you and your client throughout the job.</p>
             </div>
             <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginBottom:'20px' }}>
               {[

@@ -617,7 +617,7 @@ export default function AgreementPage() {
                 <div>
                   <div style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'rgba(216,228,225,0.4)', letterSpacing:'2px', marginBottom:'6px' }}>STEADYHAND</div>
                   <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'22px', color:'rgba(216,228,225,0.9)', letterSpacing:'1px', marginBottom:'4px' }}>SCOPE AGREEMENT</h1>
-                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Request to warranty · Western Australia</p>
+                  <p style={{ fontSize:'13px', color:'rgba(216,228,225,0.45)', margin:0 }}>Request to warranty · Australia</p>
                 </div>
                 <div style={{ textAlign:'right' as const }}>
                   <p style={{ fontSize:'11px', color:'rgba(216,228,225,0.35)', letterSpacing:'0.5px', marginBottom:'3px' }}>DOCUMENT REF</p>

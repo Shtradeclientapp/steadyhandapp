@@ -188,7 +188,7 @@ export default function NewDIYProjectPage() {
               </div>
               <div>
                 <label style={{ fontSize:'12px', color:'#7A9098', display:'block', marginBottom:'4px' }}>Site address</label>
-                <input placeholder="e.g. 14 Smith St, Perth WA 6000" value={form.address} onChange={(e: React.ChangeEvent<HTMLInputElement>) => set('address', e.target.value)} style={inp} />
+                <input placeholder="e.g. 14 Smith St, e.g. 123 Main St" value={form.address} onChange={(e: React.ChangeEvent<HTMLInputElement>) => set('address', e.target.value)} style={inp} />
               </div>
             </div>
             <div style={{ display:'flex', gap:'8px' }}>

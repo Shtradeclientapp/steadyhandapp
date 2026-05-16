@@ -162,7 +162,7 @@ export default function WalletPage() {
             {/* WA trade cost guide */}
             <div style={{ background:'white', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'24px' }}>
               <p style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'13px', color:'#0A0A0A', letterSpacing:'0.5px', marginBottom:'4px' }}>WA TRADE COST GUIDE</p>
-              <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'20px' }}>Indicative ranges for common residential jobs in Western Australia. Always get at least 2 quotes.</p>
+              <p style={{ fontSize:'12px', color:'#7A9098', marginBottom:'20px' }}>Indicative ranges for common residential jobs. Always get at least 2 quotes.</p>
               <div style={{ display:'flex', flexDirection:'column' as const, gap:'4px' }}>
                 {[
                   { trade:'Electrical', job:'Switchboard upgrade', low:1200, high:3500 },

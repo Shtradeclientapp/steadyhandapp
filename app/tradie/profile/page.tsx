@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 const ALL_CATEGORIES = ['Electrical', 'Plumbing & Gas', 'Carpentry & Joinery', 'Painting', 'Tiling', 'Landscaping', 'Building', 'HVAC', 'Air Conditioning', 'Roofing', 'Concreting', 'Fencing', 'Plastering', 'Waterproofing', 'Solar', 'Security', 'Pest Control', 'Cleaning', 'Other']
-const ALL_AREAS = ['Perth CBD', 'Fremantle', 'Subiaco', 'Nedlands', 'Cottesloe', 'Joondalup', 'Rockingham', 'Mandurah', 'Bunbury', 'Busselton', 'Margaret River', 'Augusta', 'Dunsborough', 'Harvey', 'Collie']
+const ALL_AREAS: string[] = [] // Free-text service areas — no longer restricted to WA suburbs
 const AVAILABILITY = [
   { value: 'available', label: 'Available now', color: '#2E7D60' },
   { value: 'enquiries', label: 'Taking enquiries', color: '#C07830' },
