@@ -127,7 +127,10 @@ export default function DashboardPage() {
       if (!prof?.full_name || !prof?.suburb) {
         // Only show setup wizard if they haven't explicitly completed or dismissed onboarding
         if (!prof?.onboarding_complete && typeof window !== 'undefined' && !localStorage.getItem('dismissed_client_setup')) {
+          // Mark dismissed immediately to prevent loop on re-render
+          await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', session.user.id)
           setShowClientWizard(true)
+          if (typeof window !== 'undefined') localStorage.setItem('dismissed_client_setup', '1')
         }
       } else if (typeof window !== 'undefined') {
         localStorage.setItem('seen_client_onboarding', '1')
