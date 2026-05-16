@@ -128,9 +128,15 @@ export default function DashboardPage() {
         // Only show setup wizard if they haven't explicitly completed or dismissed onboarding
         if (!prof?.onboarding_complete && typeof window !== 'undefined' && !localStorage.getItem('dismissed_client_setup')) {
           // Mark dismissed immediately to prevent loop on re-render
-          await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', session.user.id)
-          setShowClientWizard(true)
+          // Set localStorage first as the most reliable guard
           if (typeof window !== 'undefined') localStorage.setItem('dismissed_client_setup', '1')
+          // Then attempt DB write — silent failure is okay since localStorage guards same device
+          try {
+            await supabase.from('profiles').update({ onboarding_complete: true }).eq('id', session.user.id)
+          } catch (e) {
+            console.warn('onboarding_complete update failed:', e)
+          }
+          setShowClientWizard(true)
         }
       } else if (typeof window !== 'undefined') {
         localStorage.setItem('seen_client_onboarding', '1')

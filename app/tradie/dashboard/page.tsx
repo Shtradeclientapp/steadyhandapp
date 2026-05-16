@@ -266,6 +266,7 @@ export default function TradieDashboard() {
   const [xeroTenant, setXeroTenant] = useState<string|null>(null)
   const [xeroDisconnecting, setXeroDisconnecting] = useState(false)
   const [showSetupWizard, setShowSetupWizard] = useState(false)
+  const [showProfileNudge, setShowProfileNudge] = useState(false)
   const [showSpotlight, setShowSpotlight] = useState(false)
 
   useEffect(() => {
@@ -287,7 +288,9 @@ export default function TradieDashboard() {
       // Auto-launch profile wizard if key fields still missing after activation
       const tp = prof.tradie
       const needsProfile = tp?.onboarding_step === 'active' && (!tp?.bio || !(tp?.trade_categories?.length) || !tp?.business_name)
-      if (needsProfile) { window.location.href = '/tradie/profile?required=true'; return }
+      // Don't hard redirect — show nudge banner instead to avoid trapping tradies in a loop
+      // if (needsProfile) { window.location.href = '/tradie/profile?required=true'; return }
+      if (needsProfile) setShowProfileNudge(true)
 
 
       setUser(session.user)
@@ -460,6 +463,19 @@ export default function TradieDashboard() {
       )}
 
       {/* ── Setup wizard ── */}
+      {showProfileNudge && (
+        <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'12px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
+          <div>
+            <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Your profile is incomplete</p>
+            <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Add your bio, trade categories and business name to appear in client searches.</p>
+          </div>
+          <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
+            <a href="/tradie/profile" style={{ fontSize:'12px', fontWeight:500, color:'#C07830', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'6px', background:'white' }}>Complete profile →</a>
+            <button type="button" onClick={() => setShowProfileNudge(false)} style={{ fontSize:'12px', color:'#9AA5AA', background:'transparent', border:'none', cursor:'pointer', padding:'6px' }}>✕</button>
+          </div>
+        </div>
+      )}
+
       {showSetupWizard && (
         <div style={{ position:'fixed', inset:0, zIndex:9998, background:'rgba(28,43,50,0.85)', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center', padding:'24px' }}>
           <div style={{ background:'#E8F0EE', borderRadius:'20px', maxWidth:'520px', width:'100%', overflow:'hidden', boxShadow:'0 24px 80px rgba(28,43,50,0.3)' }}>
