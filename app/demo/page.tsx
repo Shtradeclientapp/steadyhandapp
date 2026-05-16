@@ -22,7 +22,7 @@ export default function DemoPage() {
       const seedRes = await fetch('/api/seed-demo-data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ client_id: uid }) })
       if (!seedRes.ok) throw new Error('Could not seed demo data')
       setStep('done')
-      setTimeout(() => { window.location.href = '/dashboard?demo=1' }, 1500)
+      setTimeout(() => { window.location.href = '/dashboard' }, 1500)
     } catch (err: any) {
       setError(err.message || 'Something went wrong')
       setStep('error')

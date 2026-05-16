@@ -1,30 +1,82 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const DEMO_ACCOUNTS = {
-  client: { email: 'demo-client@steadyhand-demo.app', password: 'demo-client-2024', label: 'Homeowner', sub: 'Sarah Mitchell', icon: '🏠', color: '#2E7D60', dash: '/dashboard' },
-  tradie: { email: 'demo-tradie@steadyhand-demo.app', password: 'demo-tradie-2024', label: 'Tradie', sub: 'Marcus Webb', icon: '🔧', color: '#C07830', dash: '/tradie/dashboard' },
-  org: { email: 'demo-org@steadyhand-demo.app', password: 'demo-org-2024', label: 'Property Manager', sub: 'James Corrigan', icon: '🏢', color: '#185FA5', dash: '/org/dashboard' },
-}
+export function DemoSwitcher() {
+  const [profile, setProfile] = useState<any>(null)
+  const [role, setRole] = useState<string | null>(null)
+  const [switching, setSwitching] = useState(false)
 
-export function DemoSwitcher({ currentRole }: { currentRole?: string }) {
-  const [switching, setSwitching] = useState<string | null>(null)
-
-  const switchTo = async (role: keyof typeof DEMO_ACCOUNTS) => {
-    if (switching) return
-    setSwitching(role)
-    const account = DEMO_ACCOUNTS[role]
+  useEffect(() => {
     const supabase = createClient()
-    await supabase.auth.signOut()
-    const { error } = await supabase.auth.signInWithPassword({ email: account.email, password: account.password })
-    if (!error) {
-      window.location.href = account.dash
-    } else {
-      setSwitching(null)
-      alert('Could not switch — ' + error.message)
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return
+      const { data } = await supabase
+        .from('profiles')
+        .select('*, tradie:tradie_profiles(business_name)')
+        .eq('id', session.user.id)
+        .single()
+      if (data?.is_demo) {
+        setProfile(data)
+        setRole(data.role === 'tradie' ? 'tradie' : data.org_id ? 'org' : 'client')
+      }
+    })
+  }, [])
+
+  const switchTo = async (targetRole: 'client' | 'tradie' | 'org') => {
+    if (switching || targetRole === role) return
+    setSwitching(true)
+    const supabase = createClient()
+
+    // Find the demo account for the target role
+    const roleEmail = targetRole === 'client'
+      ? 'demo-client@steadyhandtrade.app'
+      : targetRole === 'tradie'
+      ? 'demo-tradie@steadyhandtrade.app'
+      : 'demo-org@steadyhandtrade.app'
+
+    // Check if a demo account exists for this role in production
+    const { data: targetProfile } = await supabase
+      .from('profiles')
+      .select('id, email, role')
+      .eq('email', roleEmail)
+      .eq('is_demo', true)
+      .single()
+
+    if (!targetProfile) {
+      // No pre-seeded demo account for this role — show message
+      alert('Switch to ' + targetRole + ' view: set up demo accounts in your profile settings.')
+      setSwitching(false)
+      return
     }
+
+    // Sign in as the demo account
+    const { error } = await supabase.auth.signInWithPassword({
+      email: roleEmail,
+      password: targetRole === 'client' ? 'demo-client-2024'
+        : targetRole === 'tradie' ? 'demo-tradie-2024'
+        : 'demo-org-2024',
+    })
+
+    if (error) {
+      setSwitching(false)
+      alert('Could not switch view: ' + error.message)
+      return
+    }
+
+    const dash = targetRole === 'tradie' ? '/tradie/dashboard'
+      : targetRole === 'org' ? '/org/dashboard'
+      : '/dashboard'
+    window.location.href = dash
   }
+
+  if (!profile) return null
+
+  const ROLES = [
+    { key: 'client', label: 'Homeowner', icon: '🏠', color: '#2E7D60' },
+    { key: 'tradie', label: 'Tradie', icon: '🔧', color: '#C07830' },
+    { key: 'org',    label: 'Property Manager', icon: '🏢', color: '#185FA5' },
+  ] as const
 
   return (
     <div style={{ background: '#0A0A0A', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '0 20px', display: 'flex', alignItems: 'center', gap: '0', height: '40px', position: 'sticky', top: 0, zIndex: 200 }}>
@@ -33,20 +85,23 @@ export function DemoSwitcher({ currentRole }: { currentRole?: string }) {
       </span>
       <span style={{ fontSize: '11px', color: 'rgba(216,228,225,0.25)', marginRight: '12px', flexShrink: 0 }}>View as:</span>
       <div style={{ display: 'flex', gap: '4px', flex: 1 }}>
-        {(Object.entries(DEMO_ACCOUNTS) as [keyof typeof DEMO_ACCOUNTS, typeof DEMO_ACCOUNTS[keyof typeof DEMO_ACCOUNTS]][]).map(([role, account]) => {
-          const isActive = currentRole === role
-          const isLoading = switching === role
+        {ROLES.map(r => {
+          const isActive = role === r.key
+          const isLoading = switching && !isActive
           return (
-            <button key={role} type="button" onClick={() => !isActive && switchTo(role)} disabled={!!switching}
-              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '4px', border: `1px solid ${isActive ? account.color + '60' : 'rgba(255,255,255,0.08)'}`, background: isActive ? account.color + '18' : 'transparent', color: isActive ? account.color : 'rgba(216,228,225,0.45)', fontSize: '11px', fontWeight: isActive ? 600 : 400, cursor: isActive ? 'default' : 'pointer', opacity: switching && !isLoading ? 0.5 : 1 }}>
-              <span>{isLoading ? '⏳' : account.icon}</span>
-              <span>{account.label}</span>
-              {isActive && <span style={{ fontSize: '9px', opacity: 0.7 }}>— {account.sub}</span>}
+            <button key={r.key} type="button"
+              onClick={() => switchTo(r.key)}
+              disabled={switching}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', borderRadius: '4px', border: `1px solid ${isActive ? r.color + '60' : 'rgba(255,255,255,0.08)'}`, background: isActive ? r.color + '18' : 'transparent', color: isActive ? r.color : 'rgba(216,228,225,0.45)', fontSize: '11px', fontWeight: isActive ? 600 : 400, cursor: isActive ? 'default' : 'pointer', opacity: switching && !isActive ? 0.5 : 1 }}>
+              <span>{isLoading ? '⏳' : r.icon}</span>
+              <span>{r.label}</span>
             </button>
           )
         })}
       </div>
-      <a href="/demo-login" style={{ fontSize: '10px', color: 'rgba(216,228,225,0.2)', textDecoration: 'none', marginLeft: '12px', flexShrink: 0 }}>Switch account →</a>
+      <a href="/dashboard" style={{ fontSize: '10px', color: 'rgba(216,228,225,0.2)', textDecoration: 'none', marginLeft: '12px', flexShrink: 0 }}>
+        Post a real job →
+      </a>
     </div>
   )
 }
