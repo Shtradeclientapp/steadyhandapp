@@ -304,7 +304,7 @@ export default function DashboardPage() {
         <div style={{ maxWidth:'900px', margin:'0 auto', padding:'0 24px', position:'relative', zIndex:1 }}>
           <p style={{ fontSize:'11px', letterSpacing:'1.5px', textTransform:'uppercase', color:'rgba(216,228,225,0.4)', marginBottom:'6px' }}>Client dashboard</p>
           <h1 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'clamp(24px, 5vw, 36px)', color:'rgba(216,228,225,0.9)', letterSpacing:'2px', marginBottom:'4px' }}>STEADYHAND</h1>
-          <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:300 }}>Request-to-warranty · Western Australia</p>
+          <p style={{ fontSize:'13px', color:'#D4522A', fontWeight:300 }}>Request-to-warranty</p>
         </div>
       </div>
 
