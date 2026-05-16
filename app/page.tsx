@@ -316,7 +316,7 @@ export default function Home() {
           <div className="cta-buttons">
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer' }}>Start a job request</button></Link>
             <Link href="/signup?role=tradie"><button style={{ background:'#0A0A0A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer' }}>Get started as a tradie</button></Link>
-            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', textDecoration:'none', display:'block', textAlign:'center', marginTop:'8px' }}>See a live demo →</Link>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'white', textDecoration:'none', display:'inline-block', marginTop:'12px', background:'rgba(255,255,255,0.12)', border:'1px solid rgba(255,255,255,0.25)', padding:'8px 18px', borderRadius:'7px', fontWeight:500 }}>Live demo →</Link>
           </div>
         </div>
       </div>
