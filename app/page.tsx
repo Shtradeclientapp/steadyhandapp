@@ -78,6 +78,7 @@ export default function Home() {
           <div style={{ display:'flex', gap:'10px', paddingTop:'8px' }}>
             <Link href="/login" style={{ flex:1 }}><button style={{ width:'100%', background:'transparent', border:'1px solid rgba(28,43,50,0.2)', color:'#4A5E64', padding:'10px', borderRadius:'8px', fontSize:'14px', cursor:'pointer' }}>Log in</button></Link>
             <Link href="/signup" style={{ flex:1 }}><button style={{ width:'100%', background:'#D4522A', color:'white', padding:'10px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'none', cursor:'pointer' }}>Get started</button></Link>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ flex:1 }}><button style={{ width:'100%', background:'transparent', color:'rgba(216,228,225,0.8)', padding:'10px', borderRadius:'8px', fontSize:'14px', fontWeight:500, border:'1px solid rgba(255,255,255,0.2)', cursor:'pointer' }}>See a live demo →</button></Link>
           </div>
         </div>
       </nav>
@@ -100,6 +101,7 @@ export default function Home() {
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer', width:'100%' }}>I&apos;m a homeowner →</button></Link>
             <Link href="/signup?role=tradie"><button style={{ background:'#2E7D60', color:'white', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer', width:'100%' }}>I&apos;m a trade business →</button></Link>
             <Link href="/signup?role=org"><button style={{ background:'rgba(107,79,168,0.3)', color:'rgba(216,228,225,0.9)', padding:'14px 28px', borderRadius:'8px', fontSize:'15px', border:'1px solid rgba(107,79,168,0.4)', cursor:'pointer', width:'100%' }}>I manage properties →</button></Link>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ display:'block', textAlign:'center', marginTop:'8px', fontSize:'13px', color:'rgba(216,228,225,0.45)', textDecoration:'none' }}>Not sure? See a live demo first →</Link>
           </div>
         </div>
       </div>
@@ -304,6 +306,7 @@ export default function Home() {
           <div className="cta-buttons">
             <Link href="/signup"><button style={{ background:'#D4522A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', fontWeight:500, border:'none', cursor:'pointer' }}>Start a job request</button></Link>
             <Link href="/signup?role=tradie"><button style={{ background:'#0A0A0A', color:'white', padding:'14px 32px', borderRadius:'8px', fontSize:'15px', border:'none', cursor:'pointer' }}>Get started as a tradie</button></Link>
+            <Link href="https://demo.steadyhandtrade.app/demo-login" style={{ fontSize:'13px', color:'rgba(216,228,225,0.4)', textDecoration:'none', display:'block', textAlign:'center', marginTop:'8px' }}>See a live demo →</Link>
           </div>
         </div>
       </div>
