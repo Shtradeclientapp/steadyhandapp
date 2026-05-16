@@ -27,7 +27,7 @@ const aboreto = Aboreto({
 
 export const metadata: Metadata = {
   title: 'Steadyhand',
-  description: 'Request to warranty platform for Western Australia',
+  description: 'Request to warranty platform for Australian homeowners and trade businesses',
 }
 
 const oneSignalScript = [

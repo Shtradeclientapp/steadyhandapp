@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           (message ? '<div style="background:#F4F8F7;border-left:3px solid #2E6A8F;padding:14px 16px;margin:16px 0;border-radius:6px;"><p style="color:#4A5E64;font-style:italic;margin:0;">“' + message + '”</p><p style="color:#9AA5AA;font-size:12px;margin:6px 0 0;">— ' + tradie_name + '</p></div>' : '') +
           '<p style="color:#4A5E64;font-size:14px;line-height:1.6;">Steadyhand keeps your scope, milestones, payments and warranty in one place — and gives you a clear record of everything agreed before work begins.</p>' +
           '<a href="' + signupUrl + '" style="display:inline-block;background:#D4522A;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:8px;font-weight:500;font-size:15px;">Post your job on Steadyhand →</a>' +
-          '<p style="color:#7A9098;font-size:12px;margin-top:32px;">Invited by ' + tradie_name + ' · Steadyhand · Western Australia</p>' +
+          '<p style="color:#7A9098;font-size:12px;margin-top:32px;">Invited by ' + tradie_name + ' · Steadyhand · Australia</p>' +
           '</div>',
       })
 
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         '<p style="color:#4A5E64;">Steadyhand is a request-to-warranty platform that helps you manage scopes, milestone payments and warranties digitally — at no cost to get started.</p>' +
         '<p style="color:#4A5E64;">Your job is ready and waiting. Create your free account to respond:</p>' +
         '<a href="' + inviteUrl + '" style="display:inline-block;background:#D4522A;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;margin-top:8px;font-weight:500;">View job and create account →</a>' +
-        '<p style="color:#7A9098;font-size:12px;margin-top:32px;">This invitation was sent on behalf of ' + job.client.full_name + '. Steadyhand · Western Australia</p>' +
+        '<p style="color:#7A9098;font-size:12px;margin-top:32px;">This invitation was sent on behalf of ' + job.client.full_name + '. Steadyhand · Australia</p>' +
         '</div>'
     })
 

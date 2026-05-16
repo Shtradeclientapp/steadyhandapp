@@ -56,7 +56,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;">${prehead
 
       <!-- Footer -->
       <tr><td style="background:#0A0A0A;padding:20px 36px;border-radius:0 0 12px 12px;">
-        <p style="margin:0 0 4px;font-size:11px;color:rgba(216,228,225,0.4);font-family:Georgia,serif;">Steadyhand · Western Australia</p>
+        <p style="margin:0 0 4px;font-size:11px;color:rgba(216,228,225,0.4);font-family:Georgia,serif;">Steadyhand · Australia</p>
         <p style="margin:0;font-size:11px;color:rgba(216,228,225,0.25);font-family:Georgia,serif;">You are receiving this because you have an active job on Steadyhand.</p>
       </td></tr>
 

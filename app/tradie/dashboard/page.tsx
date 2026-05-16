@@ -520,9 +520,12 @@ export default function TradieDashboard() {
                       item.href
                         ? <a href={item.href} style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, textDecoration:'none', flexShrink:0 }}>{item.cta}</a>
                         : <button type="button" onClick={async () => {
-                            const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
-                            const data = await res.json()
-                            if (data.url) window.location.href = data.url
+                            try {
+                              const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
+                              const data = await res.json()
+                              if (data.url) window.location.href = data.url
+                              else alert('Could not connect bank account — please try again')
+                            } catch { alert('Network error — please try again') }
                           }} style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, background:'none', border:'none', cursor:'pointer', padding:0, flexShrink:0 }}>{item.cta}</button>
                     )}
                   </div>
@@ -726,9 +729,12 @@ export default function TradieDashboard() {
                   href: null,
                   cta: null,
                   onClick: !stripeConnected ? async () => {
-                    const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
-                    const data = await res.json()
-                    if (data.url) window.location.href = data.url
+                    try {
+                      const res = await fetch('/api/stripe', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'create_connect_account', tradie_id: profile?.id, email: profile?.email }) })
+                      const data = await res.json()
+                      if (data.url) window.location.href = data.url
+                      else alert('Could not connect bank account — please try again')
+                    } catch { alert('Network error — please try again') }
                   } : null,
                 },
                 {

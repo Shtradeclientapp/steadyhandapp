@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
           <a href="${dashUrl}" style="display:inline-block;background:#D4522A;color:white;padding:13px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">Go to my dashboard →</a>
         </div>
         <div style="padding:20px 32px;background:#E8F0EE;">
-          <p style="font-size:12px;color:#9AA5AA;margin:0;">Steadyhand · Perth, WA · <a href="https://steadyhandtrade.app" style="color:#9AA5AA;">steadyhandtrade.app</a></p>
+          <p style="font-size:12px;color:#9AA5AA;margin:0;">Steadyhand · Australia · <a href="https://steadyhandtrade.app" style="color:#9AA5AA;">steadyhandtrade.app</a></p>
         </div>
       </div>`
     })

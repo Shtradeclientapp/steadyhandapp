@@ -44,9 +44,14 @@ const [preferredTradies, setPreferredTradies] = useState<any[]>([])
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) { setSubmitError('Not logged in'); setSubmitting(false); return }
     let created = 0
+    const errors: string[] = []
     for (const propId of selectedProperties) {
       const prop = properties.find(p => p.id === propId)
-      const { data: newJob, error } = await supabase.from('jobs').insert({
+      if (!prop?.suburb) {
+        errors.push(`${prop?.address || propId}: no suburb set`)
+        continue
+      }
+      const { error } = await supabase.from('jobs').insert({
         client_id: session.user.id,
         org_id: org.id,
         property_id: propId,
@@ -55,15 +60,18 @@ const [preferredTradies, setPreferredTradies] = useState<any[]>([])
         trade_category: form.trade_category,
         urgency: form.urgency,
         property_type: prop?.property_type || 'Residential house',
-        suburb: prop?.suburb || '',
+        suburb: prop.suburb,
         warranty_period: Number(form.warranty_period),
         status: 'matching',
       })
       if (!error) created++
+      else errors.push(`${prop?.address || propId}: ${error.message}`)
     }
     setSubmitting(false)
-    if (created > 0) { window.location.href = '/shortlist' }
-    else setSubmitError('Failed to create jobs — please try again')
+    if (created > 0) {
+      if (errors.length > 0) setSubmitError(`${created} job(s) created. ${errors.length} failed: ${errors.join('; ')}`)
+      else window.location.href = '/shortlist'
+    } else setSubmitError('Failed to create jobs — ' + (errors.join('; ') || 'please try again'))
   }
 
   const inp: React.CSSProperties = { width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', boxSizing:'border-box', fontFamily:'sans-serif' }
