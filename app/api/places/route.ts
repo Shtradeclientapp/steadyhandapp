@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
   const query = req.nextUrl.searchParams.get('query') || ''
   const type  = req.nextUrl.searchParams.get('type') || 'suburb'
   const key   = process.env.GOOGLE_PLACES_API_KEY

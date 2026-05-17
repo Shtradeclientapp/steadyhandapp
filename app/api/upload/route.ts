@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,10 +9,14 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const job_id = formData.get('job_id') as string
-    const user_id = formData.get('user_id') as string
+    const user_id = user.id  // always use verified JWT, never body
 
     if (!file || !job_id) return NextResponse.json({ error: 'Missing file or job_id' }, { status: 400 })
 

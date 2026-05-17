@@ -52,8 +52,6 @@ export default function TradieLead() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       // Load guest invite count from localStorage
       // Try DB-backed count first (authenticated users), fall back to localStorage
-      const supabase = (await import('@/lib/supabase/client')).createClient()
-      const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         const { data: tp } = await supabase.from('tradie_profiles').select('guest_invite_count').eq('id', session.user.id).single()
         const dbCount = tp?.guest_invite_count ?? 0

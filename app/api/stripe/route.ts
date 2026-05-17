@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' })
 const supabase = createClient(
@@ -10,11 +12,17 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
     const body = await request.json()
     const { action, job_id, milestone_id, tradie_id, client_id, amount, email, price_id, tier, return_url: customReturnUrl } = body
 
     // ── Stripe Connect onboarding ────────────────────────────────
     if (action === 'create_connect_account') {
+      // Only the tradie themselves can connect their own Stripe account
+      if (tradie_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       const { data: profile } = await supabase.from('profiles').select('stripe_account_id, full_name').eq('id', tradie_id).single()
       if (profile?.stripe_account_id) {
         const link = await stripe.accountLinks.create({
@@ -114,6 +122,8 @@ export async function POST(request: NextRequest) {
     if (action === 'release_milestone') {
       const { data: milestone } = await supabase.from('milestones').select('*, job:jobs(*, tradie:tradie_profiles(*, profile:profiles(stripe_account_id)), quotes(*))').eq('id', milestone_id).single()
       if (!milestone) return NextResponse.json({ error: 'Milestone not found' }, { status: 404 })
+      // Only the client on this job can release milestone funds
+      if (milestone.job?.client_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       const tradieAccountId = milestone.job?.tradie?.profile?.stripe_account_id
       const quotes = milestone.job?.quotes || []
       const latestQuote = quotes.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
@@ -302,7 +312,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
 
   } catch (err: any) {
-    console.error('Stripe API error:', err.message, err.stack)
+    logger.error('api/stripe', 'unhandled', err)
     return NextResponse.json({ error: err.message, type: err.type, code: err.code }, { status: 500 })
   }
 }
