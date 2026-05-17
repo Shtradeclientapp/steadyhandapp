@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -127,6 +128,7 @@ export async function POST(request: NextRequest) {
     // Save Xero invoice ID to job
     await supabase.from('jobs').update({ xero_invoice_id: invoice.InvoiceID }).eq('id', job_id)
 
+    logger.log('api/xero/sync', 'invoice_created', { job_id, user_id, invoice_id: invoice.InvoiceID, invoice_number: invoice.InvoiceNumber })
     return NextResponse.json({
       success: true,
       invoice_id: invoice.InvoiceID,
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (err: any) {
-    console.error('Xero sync error:', err)
+    logger.error('api/xero/sync', 'unhandled', err, { job_id: undefined, user_id: undefined })
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

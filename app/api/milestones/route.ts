@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
 
 export async function PATCH(request: NextRequest) {
   const supabase = createClient()
@@ -31,6 +32,7 @@ export async function PATCH(request: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  logger.log('api/milestones', action, { milestone_id: id, job_id: milestone.job_id, user_id: user.id })
 
   // If approved, check if all milestones are done → advance job to signoff
   if (action === 'approve') {

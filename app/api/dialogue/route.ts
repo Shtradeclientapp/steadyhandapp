@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
+import * as logger from '@/lib/logger'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,10 +15,14 @@ export async function POST(request: NextRequest) {
   try {
     const authHeader = request.headers.get('Authorization') || ''
     const isInternal = process.env.CRON_SECRET && authHeader === 'Bearer ' + process.env.CRON_SECRET
+    let userId: string | null = null
     if (!isInternal) {
       const serverClient = createServerClient()
       const { data: { user } } = await serverClient.auth.getUser()
       if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+      userId = user.id
+      const rl = await checkRateLimit(userId, '/api/dialogue')
+      if (rl.limited) return rateLimitResponse(rl.resetAt)
     }
 
     const { action, job_id, stage } = await request.json()
@@ -116,9 +122,10 @@ Respond ONLY with JSON:
       dialogue_score_history: newHistory,
     }).eq('id', job.tradie_id)
 
+    logger.log('api/dialogue', 'scored', { job_id, stage, score: scored.score, avg, tradie_id: job.tradie_id })
     return NextResponse.json({ ok: true, score: scored.score, avg })
   } catch (e: any) {
-    console.error('Dialogue scoring error:', e)
+    logger.error('api/dialogue', 'unhandled', e)
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

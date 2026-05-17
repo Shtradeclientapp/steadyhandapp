@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
@@ -9,6 +11,9 @@ export async function POST(request: NextRequest) {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    const rl = await checkRateLimit(user.id, '/api/ob-summary')
+    if (rl.limited) return rateLimitResponse(rl.resetAt)
 
     const { description, address, title } = await request.json()
 
@@ -36,8 +41,10 @@ Write in plain, professional English. First person ("I propose to..."). Do not i
     })
 
     const summary = res.content[0].type === 'text' ? res.content[0].text : ''
+    logger.log('api/ob-summary', 'generated', { user_id: user.id, title })
     return NextResponse.json({ summary })
   } catch (e: any) {
+    logger.error('api/ob-summary', 'unhandled', e)
     return NextResponse.json({ error: e.message }, { status: 500 })
   }
 }

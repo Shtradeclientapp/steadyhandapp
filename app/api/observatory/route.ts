@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,6 +16,9 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
     const { data: prof } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
     if (!prof?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const rl = await checkRateLimit(user.id, '/api/observatory')
+    if (rl.limited) return rateLimitResponse(rl.resetAt)
 
     const { prompt } = await request.json()
     if (!prompt) return NextResponse.json({ error: 'Missing prompt' }, { status: 400 })
@@ -36,8 +41,10 @@ export async function POST(request: NextRequest) {
     const data = await response.json()
     const text = data.content?.[0]?.text || '[]'
     const items = JSON.parse(text.replace(/```json|```/g, '').trim())
+    logger.log('api/observatory', 'generated', { user_id: user.id, item_count: items.length })
     return NextResponse.json({ items })
   } catch (err: any) {
+    logger.error('api/observatory', 'unhandled', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

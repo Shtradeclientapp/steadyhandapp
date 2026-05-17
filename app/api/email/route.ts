@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { createClient } from '@supabase/supabase-js'
+import * as logger from '@/lib/logger'
 
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const supabase = createClient(
@@ -108,6 +109,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { type, job_id, milestone_id, issue_id } = body
+    logger.log('api/email', 'sending', { type, job_id, milestone_id, issue_id })
 
     // ── Tradie selected ───────────────────────────────────────────────────────
     if (type === 'tradie_selected') {
@@ -899,6 +901,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ sent: true })
 
   } catch (err: any) {
+    logger.error('api/email', 'unhandled', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

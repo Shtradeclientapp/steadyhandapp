@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
+import { checkRateLimit, rateLimitResponse } from '@/lib/ratelimit'
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
+    const rl = await checkRateLimit(user.id, '/api/scope')
+    if (rl.limited) return rateLimitResponse(rl.resetAt)
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -52,7 +62,7 @@ export async function POST(request: NextRequest) {
         '\nBuilder registration: ' + (obProject.builder_registration || 'N/A') +
         '\n\nIMPORTANT: This is an owner-builder project. Reference the building permit number and site address in the scope. Include a clause that the tradie has sighted the owner-builder approval before commencing work.'
       : ''
-    const promptText = 'You are a trades contract specialist for Steadyhand in Western Australia.\n\nDraft a scope of work for:\nTitle: ' + job.title + '\nTrade: ' + job.trade_category + '\nSuburb: ' + job.suburb + '\nDescription: ' + job.description + '\nProperty: ' + (job.property_type || 'residential') + '\nBudget: ' + (job.budget_range || 'to be agreed') + '\nWarranty: ' + job.warranty_period + ' days\n\nReturn ONLY valid JSON, no markdown:\n{"inclusions":["item1","item2"],"exclusions":["item1"],"milestones":[{"label":"label","percent":25,"amount":0,"description":"desc"}],"warranty_days":' + job.warranty_period + ',"total_price_estimate":0,"notes":"brief note"}\'\nRules: 3-4 milestones summing to 100%, realistic exclusions for this trade type. Where consult notes are provided, use them to inform inclusions, exclusions and milestone structure.' + consultContext + obContext + (suggestion ? '\n\nIMPORTANT: Incorporate this change request into the scope: ' + suggestion : '')
+    const promptText = 'You are a trades contract specialist for Steadyhand, an Australian trades platform.\n\nDraft a scope of work for:\nTitle: ' + job.title + '\nTrade: ' + job.trade_category + '\nSuburb: ' + job.suburb + '\nDescription: ' + job.description + '\nProperty: ' + (job.property_type || 'residential') + '\nBudget: ' + (job.budget_range || 'to be agreed') + '\nWarranty: ' + job.warranty_period + ' days\n\nReturn ONLY valid JSON, no markdown:\n{"inclusions":["item1","item2"],"exclusions":["item1"],"milestones":[{"label":"label","percent":25,"amount":0,"description":"desc"}],"warranty_days":' + job.warranty_period + ',"total_price_estimate":0,"notes":"brief note"}\'\nRules: 3-4 milestones summing to 100%, realistic exclusions for this trade type. Where consult notes are provided, use them to inform inclusions, exclusions and milestone structure.' + consultContext + obContext + (suggestion ? '\n\nIMPORTANT: Incorporate this change request into the scope: ' + suggestion : '')
 
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
@@ -83,9 +93,11 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    logger.log('api/scope', 'generated', { job_id, user_id: user.id })
     return NextResponse.json({ scope: saved, notes: scope.notes })
 
   } catch (err: any) {
+    logger.error('api/scope', 'unhandled', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

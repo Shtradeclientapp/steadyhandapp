@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { addBusinessDays } from 'date-fns'
+import * as logger from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   const supabase = createClient()
@@ -50,6 +51,7 @@ export async function POST(request: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  logger.log('api/warranty', 'raised', { issue_id: data.id, job_id, severity, user_id: user.id })
   return NextResponse.json({ issue: data }, { status: 201 })
 }
 
@@ -70,5 +72,6 @@ export async function PATCH(request: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  logger.log('api/warranty', 'updated', { issue_id: id, status, user_id: user.id })
   return NextResponse.json({ issue: data })
 }

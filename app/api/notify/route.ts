@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import * as logger from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,6 +20,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const { type, job_id } = body
+    logger.log('api/notify', 'dispatching', { type, job_id })
 
     // Forward to email route
     const base = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://steadyhandtrade.app'
@@ -71,6 +73,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true })
   } catch (e) {
+    logger.error('api/notify', 'unhandled', e)
     return NextResponse.json({ error: 'Notify failed' }, { status: 500 })
   }
 }
