@@ -63,9 +63,11 @@ export default function SignupPage() {
       }
     if (authErr || !data.user) { setError(authErr?.message ?? 'Signup failed'); setLoading(false); return }
     const uid = data.user.id
-    await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })
+    const { error: profileErr } = await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })
+    if (profileErr) { setError('Account created but profile setup failed — please contact support'); setLoading(false); return }
     if (role === 'tradie') {
-      await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, phone: form.phone, subscription_active: false, onboarding_step: 'pending_verification' })
+      const { error: tradieErr } = await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, phone: form.phone, subscription_active: false, onboarding_step: 'pending_verification' })
+      if (tradieErr) { setError('Account created but tradie profile setup failed — please contact support'); setLoading(false); return }
     }
     // Wait for session to be established before redirecting
     const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null

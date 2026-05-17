@@ -65,11 +65,7 @@ export function ClientSetupModal({ userId, onComplete, onDismiss }: ClientSetupM
 
             <div style={{ marginBottom:'8px' }}>
               <label style={{ display:'block', fontSize:'12px', fontWeight:600, color:'#4A5E64', marginBottom:'6px' }}>Your suburb or region</label>
-              <select value={suburb} onChange={e => setSuburb(e.target.value)}
-                style={{ width:'100%', padding:'12px 14px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'10px', fontSize:'14px', color: suburb ? '#0A0A0A' : '#9AA5AA', background:'white', outline:'none', boxSizing:'border-box' as const }}>
-                <option value="">Select your area...</option>
-                {SUBURBS.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
+              <input type="text" style={inp} value={suburb} onChange={e => setSuburb(e.target.value)} placeholder="e.g. Subiaco" />
             </div>
           </div>
         )}
