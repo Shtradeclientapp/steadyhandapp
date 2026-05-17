@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { OnboardingModal } from '@/components/ui/OnboardingModal'
-import { SetupModal } from '@/components/ui/SetupModal'
 import { ObservatoryWidget } from '@/components/ui/Observatory'
 
 // ── Next-action prompt per pipeline stage ────────────────────────────────────

@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: 'You are a WA trade industry intelligence analyst. Return ONLY a JSON array of 4 recent intelligence items. Each item must have: id (string), title (string max 80 chars), summary (string max 200 chars), date (YYYY-MM-DD), source (string), url (string), significance ("high"|"medium"|"low"). Return ONLY the JSON array, no markdown.',
+        system: 'You are an Australian trade industry intelligence analyst. Return ONLY a JSON array of 4 recent intelligence items. Each item must have: id (string), title (string max 80 chars), summary (string max 200 chars), date (YYYY-MM-DD), source (string), url (string), significance ("high"|"medium"|"low"). Return ONLY the JSON array, no markdown.',
         messages: [{ role: 'user', content: prompt }],
       }),
     })

@@ -22,8 +22,17 @@ export async function GET(request: NextRequest) {
   const auditLog: any[] = scope.audit_log || []
   const shortId = jobId.slice(0, 8).toUpperCase()
 
+  const STATE_TZ: Record<string, string> = {
+    WA: 'Australia/Perth', NSW: 'Australia/Sydney', VIC: 'Australia/Melbourne',
+    QLD: 'Australia/Brisbane', SA: 'Australia/Adelaide', TAS: 'Australia/Hobart',
+    ACT: 'Australia/Sydney', NT: 'Australia/Darwin',
+  }
+  const tz = STATE_TZ[job.state || ''] || 'Australia/Sydney'
+  const tzAbbr = new Intl.DateTimeFormat('en-AU', { timeZone: tz, timeZoneName: 'short' })
+    .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value || ''
+
   const fmt = (d: string | null) => d
-    ? new Date(d).toLocaleString('en-AU', { timeZone: 'Australia/Perth', dateStyle: 'long', timeStyle: 'short' })
+    ? new Date(d).toLocaleString('en-AU', { timeZone: tz, dateStyle: 'long', timeStyle: 'short' })
     : 'Not signed'
 
   const html = `<!DOCTYPE html>
@@ -70,7 +79,7 @@ export async function GET(request: NextRequest) {
 
 <div class="section">
   <div style="font-size:20px;font-weight:700;color:#0a0a0a;margin-bottom:6px">${job.title || 'Scope Agreement'}</div>
-  <div style="font-size:12px;color:#7a9098">Record ID: SH-${shortId} &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-AU', { timeZone: 'Australia/Perth' })}</div>
+  <div style="font-size:12px;color:#7a9098">Record ID: SH-${shortId} &nbsp;|&nbsp; ${new Date().toLocaleDateString('en-AU', { timeZone: tz })}</div>
 </div>
 
 <div class="section">
@@ -93,7 +102,7 @@ export async function GET(request: NextRequest) {
 <div class="section">
   <div class="section-title">Job Details</div>
   <div class="grid">
-    <div><div class="label">Location</div><div class="value">${job.suburb || 'Not specified'}, WA</div></div>
+    <div><div class="label">Location</div><div class="value">${[job.suburb, job.state].filter(Boolean).join(', ') || 'Not specified'}</div></div>
     <div><div class="label">Agreed Total</div><div class="value">${scope.quote_total ? '$' + Number(scope.quote_total).toLocaleString('en-AU') : 'As per quote'}</div></div>
     <div><div class="label">Warranty Period</div><div class="value">${job.warranty_period || 90} days from signoff</div></div>
     <div><div class="label">Start Date</div><div class="value">${scope.start_date ? new Date(scope.start_date).toLocaleDateString('en-AU') : 'To be confirmed'}</div></div>
@@ -110,14 +119,14 @@ ${scope.exclusions ? `<div class="section"><div class="section-title">Exclusions
     <div class="sig-name">${job.client?.full_name || 'Client'}</div>
     <div class="sig-detail">Role: Client / Principal &nbsp;|&nbsp; Email: ${job.client?.email || 'Not recorded'}</div>
     ${scope.client_signed_at
-      ? `<div class="sig-detail signed">✓ Signed: ${fmt(scope.client_signed_at)} AWST</div>${scope.client_ip ? `<div class="sig-detail">IP: ${scope.client_ip}</div>` : ''}`
+      ? `<div class="sig-detail signed">✓ Signed: ${fmt(scope.client_signed_at)} ${tzAbbr}</div>${scope.client_ip ? `<div class="sig-detail">IP: ${scope.client_ip}</div>` : ''}`
       : '<div class="sig-detail unsigned">⚠ Not yet signed</div>'}
   </div>
   <div class="sig">
     <div class="sig-name">${job.tradie?.business_name || 'Trade Business'}</div>
     <div class="sig-detail">Role: Contractor &nbsp;|&nbsp; Email: ${(job.tradie as any)?.profile?.email || 'Not recorded'}</div>
     ${scope.tradie_signed_at
-      ? `<div class="sig-detail signed">✓ Signed: ${fmt(scope.tradie_signed_at)} AWST</div>${scope.tradie_ip ? `<div class="sig-detail">IP: ${scope.tradie_ip}</div>` : ''}`
+      ? `<div class="sig-detail signed">✓ Signed: ${fmt(scope.tradie_signed_at)} ${tzAbbr}</div>${scope.tradie_ip ? `<div class="sig-detail">IP: ${scope.tradie_ip}</div>` : ''}`
       : '<div class="sig-detail unsigned">⚠ Not yet signed</div>'}
   </div>
 </div>
@@ -129,7 +138,7 @@ ${auditLog.length ? `
   <div class="audit-entry">
     <div class="audit-event">${e.event === 'client_signed' ? '✓ Client signed' : '✓ Contractor signed'}</div>
     <div class="audit-detail">User: ${e.email || e.user_id}</div>
-    <div class="audit-detail">Time: ${fmt(e.timestamp)} AWST</div>
+    <div class="audit-detail">Time: ${fmt(e.timestamp)} ${tzAbbr}</div>
     <div class="audit-detail">IP address: ${e.ip}</div>
     <div class="audit-detail">Device: ${(e.user_agent || '').substring(0, 80)}</div>
     <div class="audit-detail">Compliance: ${e.act_compliance || 'Electronic Transactions Act 1999 (Cth)'}</div>
@@ -139,9 +148,9 @@ ${auditLog.length ? `
 <div class="eta">
   <div class="eta-title">Electronic Transactions Act Compliance</div>
   <div class="eta-text">
-    This document has been executed electronically in accordance with the <em>Electronic Transactions Act 1999</em> (Cth) and the <em>Electronic Transactions Act 2011</em> (WA). Each electronic signature was applied using a method that identified the signatory and indicated their intention to be bound by this agreement. The method used was reliable and appropriate given the circumstances, including the nature of the transaction and the parties involved. Both parties consented to transact electronically by using the Steadyhand platform. The signatures are attached to and logically associated with this document.<br><br>
+    This document has been executed electronically in accordance with the <em>Electronic Transactions Act 1999</em> (Cth) and the applicable state electronic transactions legislation. Each electronic signature was applied using a method that identified the signatory and indicated their intention to be bound by this agreement. The method used was reliable and appropriate given the circumstances, including the nature of the transaction and the parties involved. Both parties consented to transact electronically by using the Steadyhand platform. The signatures are attached to and logically associated with this document.<br><br>
     Steadyhand Digital Pty Ltd operates as a documentation and job management platform and is not a party to this agreement. This document and its audit trail constitute the primary evidentiary record of the parties' agreement. Steadyhand does not adjudicate disputes arising from this agreement.<br><br>
-    Generated: ${new Date().toLocaleString('en-AU', { timeZone: 'Australia/Perth', dateStyle: 'long', timeStyle: 'long' })} AWST
+    Generated: ${new Date().toLocaleString('en-AU', { timeZone: tz, dateStyle: 'long', timeStyle: 'long' })} ${tzAbbr}
   </div>
 </div>
 

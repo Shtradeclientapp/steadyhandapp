@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (!transcript || transcript.length < 50) return NextResponse.json({ ok: true, skipped: 'no transcript' })
 
     // Score with Claude
-    const prompt = `You are scoring a trade dialogue for Steadyhand, a WA trades platform.
+    const prompt = `You are scoring a trade dialogue for Steadyhand, an Australian trades platform.
 
 Job: ${job.title || 'Unknown'}
 Stage: ${stage}

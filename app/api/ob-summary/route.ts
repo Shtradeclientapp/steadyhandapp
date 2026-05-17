@@ -12,13 +12,13 @@ export async function POST(request: NextRequest) {
       max_tokens: 600,
       messages: [{
         role: 'user',
-        content: `You are helping a Australian owner-builder write a project plan summary for their Building Commission permit application.
+        content: `You are helping an Australian owner-builder write a project plan summary for a Building Commission permit application.
 
 Project name: ${title || 'Residential project'}
-Site address: ${address || 'WA residential property'}
+Site address: ${address || 'Residential property'}
 Owner's description: ${description}
 
-Write a clear, professional project plan summary (3-4 paragraphs, approx 200-250 words) suitable for submission to the WA Building Commission as part of an owner-builder permit application.
+Write a clear, professional project plan summary (3-4 paragraphs, approx 200-250 words) suitable for submission to the relevant state Building Commission as part of an owner-builder permit application.
 
 The summary should cover:
 1. Nature and scope of the proposed works

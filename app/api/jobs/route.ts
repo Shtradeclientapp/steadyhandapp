@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         description,
         trade_category,
         suburb,
-        state: state || 'WA',
+        state: state || null,
         property_type,
         urgency,
         budget_range,

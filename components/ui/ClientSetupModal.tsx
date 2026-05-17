@@ -1,12 +1,6 @@
 'use client'
 import { useState } from 'react'
 
-const SUBURBS = [
-  'Perth Metro','Fremantle','Joondalup','Rockingham','Armadale','Swan',
-  'Margaret River','Busselton','Bunbury','Mandurah','Geraldton','Albany',
-  'Kalgoorlie','Broome','Port Hedland','Karratha','Esperance','Other WA'
-]
-
 interface ClientSetupModalProps {
   userId: string
   onComplete: (fullName: string, suburb: string) => Promise<void>

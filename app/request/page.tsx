@@ -57,7 +57,7 @@ export default function RequestPage() {
   const [propertyId, setPropertyId] = useState<string | null>(null)
   const [form, setForm] = useState({
     trade_category: '', title: '', description: '',
-    suburb: '', state: 'WA', property_type: 'Residential house',
+    suburb: '', state: '', property_type: 'Residential house',
     urgency: 'Within 2 weeks', budget_range: '',
     warranty_period: '90', preferred_start: ''
   })
@@ -224,7 +224,7 @@ sessionStorage.removeItem('diy_project_id')
                       Open Property Journal →
                     </a>
                     <span style={{ fontSize:'11px', color:'#9B6B9B', background:'rgba(155,107,155,0.1)', border:'1px solid rgba(155,107,155,0.2)', borderRadius:'100px', padding:'3px 10px' }}>
-                      WA compliance checklist included
+                      Compliance checklist included
                     </span>
                   </div>
                   <button type="button" onClick={() => {}} style={{ marginTop:'8px', display:'block', fontSize:'12px', color:'#7A9098', background:'none', border:'none', cursor:'pointer', padding:'4px 0' }}>
@@ -278,8 +278,9 @@ sessionStorage.removeItem('diy_project_id')
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Type your suburb — if it is not in the list, type it in manually.</span>
               <div style={{ marginTop:'12px' }}>
                 <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>State</label>
-                <select value={(form as any).state || 'WA'} onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
+                <select value={(form as any).state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
                   style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
+                  <option value="">Select state</option>
                   <option value="WA">Western Australia</option>
                   <option value="NSW">New South Wales</option>
                   <option value="VIC">Victoria</option>
