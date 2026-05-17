@@ -51,8 +51,18 @@ export default function TradieLead() {
     const supabase = createClient()
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       // Load guest invite count from localStorage
-      const guestCount = parseInt(localStorage.getItem('sh_guest_invites') || '0', 10)
-      setGuestInviteCount(guestCount)
+      // Try DB-backed count first (authenticated users), fall back to localStorage
+      const supabase = (await import('@/lib/supabase/client')).createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        const { data: tp } = await supabase.from('tradie_profiles').select('guest_invite_count').eq('id', session.user.id).single()
+        const dbCount = tp?.guest_invite_count ?? 0
+        setGuestInviteCount(dbCount)
+        localStorage.setItem('sh_guest_invites', String(dbCount))
+      } else {
+        const guestCount = parseInt(localStorage.getItem('sh_guest_invites') || '0', 10)
+        setGuestInviteCount(guestCount)
+      }
 
       if (!session) {
         setProfileLoaded(true)
@@ -115,6 +125,14 @@ export default function TradieLead() {
       }
       const newCount = guestInviteCount + 1
       localStorage.setItem('sh_guest_invites', String(newCount))
+      // Also persist to DB for authenticated tradies
+      try {
+        const supabase = (await import('@/lib/supabase/client')).createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          await supabase.from('tradie_profiles').update({ guest_invite_count: newCount }).eq('id', session.user.id)
+        }
+      } catch {}
       setGuestInviteCount(newCount)
       setSent(true)
       setSending(false)
