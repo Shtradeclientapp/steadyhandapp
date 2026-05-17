@@ -1,20 +1,20 @@
 import { type Page } from '@playwright/test'
 
 export const DEMO_CLIENT = {
-  email: 'demo-client@steadyhandtrade.app',
-  password: 'demo1234',
+  email: process.env.E2E_DEMO_CLIENT_EMAIL ?? 'demo-client@steadyhandtrade.app',
+  password: process.env.E2E_DEMO_CLIENT_PASSWORD ?? 'demo1234',
   dashboard: '/dashboard',
 }
 
 export const DEMO_TRADIE = {
-  email: 'demo-tradie@steadyhandtrade.app',
-  password: 'demo1234',
+  email: process.env.E2E_DEMO_TRADIE_EMAIL ?? 'demo-tradie@steadyhandtrade.app',
+  password: process.env.E2E_DEMO_TRADIE_PASSWORD ?? 'demo1234',
   dashboard: '/tradie/dashboard',
 }
 
 export const DEMO_ORG = {
-  email: 'demo-org@steadyhandtrade.app',
-  password: 'demo1234',
+  email: process.env.E2E_DEMO_ORG_EMAIL ?? 'demo-org@steadyhandtrade.app',
+  password: process.env.E2E_DEMO_ORG_PASSWORD ?? 'demo1234',
   dashboard: '/org/dashboard',
 }
 

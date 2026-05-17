@@ -25,8 +25,9 @@ test.describe('Authentication', () => {
 
   test('signup page renders all three role options', async ({ page }) => {
     await page.goto('/signup')
-    await expect(page.locator('text=HOMEOWNER')).toBeVisible({ timeout: 10000 })
-    await expect(page.locator('text=TRADE BUSINESS')).toBeVisible()
-    await expect(page.locator('text=ORGANISATION')).toBeVisible()
+    // Use button-scoped locators to avoid strict mode collision with testimonial text
+    await expect(page.locator('button').filter({ hasText: 'HOMEOWNER' })).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('button').filter({ hasText: 'TRADE BUSINESS' })).toBeVisible()
+    await expect(page.locator('button').filter({ hasText: 'ORGANISATION' })).toBeVisible()
   })
 })
