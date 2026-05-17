@@ -333,6 +333,8 @@ export default function ShortlistPage() {
               <div style={{ padding:'20px' }}>
                 {matchLoading ? (
                   <div style={{ textAlign:'center' as const, padding:'40px', color:'#7A9098' }}>
+                    <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+                    <div style={{ width:'32px', height:'32px', border:'3px solid rgba(46,125,96,0.2)', borderTopColor:'#2E7D60', borderRadius:'50%', animation:'spin 0.8s linear infinite', margin:'0 auto 16px' }} />
                     <p style={{ fontSize:'14px', marginBottom:'8px' }}>Finding the best tradies for your job...</p>
                     <p style={{ fontSize:'12px' }}>This usually takes a few seconds</p>
                   </div>

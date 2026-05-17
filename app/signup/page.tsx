@@ -123,7 +123,7 @@ export default function SignupPage() {
               <p style={{ fontSize:'14px', color:'#4A5E64', marginBottom:'24px' }}>Your business and credentials</p>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Business name</label><input style={inp} placeholder="Walsh Plumbing & Gas" value={form.businessName} onChange={set('businessName')} /></div>
               <div style={{ marginBottom:'14px' }}><label style={lbl}>Trade category</label><select style={inp} value={form.tradeCategory} onChange={set('tradeCategory')}><option value="">Select...</option>{TRADES.map(t => <option key={t}>{t}</option>)}</select></div>
-              <div style={{ marginBottom:'14px' }}><label style={lbl}>Service area</label><input type="text" style={inp} value={form.serviceArea} onChange={set('serviceArea')} placeholder="e.g. Subiaco, Nedlands" /></div>
+              <div style={{ marginBottom:'14px' }}><label style={lbl}>Service area <span style={{ fontSize:'11px', color:'#7A9098', fontWeight:400 }}>(optional)</span></label><input type="text" style={inp} value={form.serviceArea} onChange={set('serviceArea')} placeholder="e.g. Subiaco, Nedlands" /></div>
               {/* Licence number with checkbox gate */}
               <div style={{ marginBottom:'16px' }}>
                 <label style={{ display:'flex', alignItems:'center', gap:'10px', cursor:'pointer', marginBottom:'8px' }}>

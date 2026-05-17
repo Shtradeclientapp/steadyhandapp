@@ -356,6 +356,17 @@ export default function WarrantyPage() {
               </div>
               <h3 style={{ fontFamily:'var(--font-aboreto), sans-serif', fontSize:'15px', color:'#0A0A0A', letterSpacing:'0.3px', marginBottom:'6px' }}>{issue.title}</h3>
               <p style={{ fontSize:'13px', color:'#4A5E64', lineHeight:'1.55', marginBottom:'8px' }}>{issue.description}</p>
+              {/* descriptive status line */}
+              {issue.status === 'open' && !issue.tradie_response && (
+                <p style={{ fontSize:'12px', color:'#C07830', fontWeight:500, margin:'0 0 6px', display:'flex', alignItems:'center', gap:'6px' }}>
+                  <span>⏳</span> Awaiting tradie response
+                </p>
+              )}
+              {issue.status === 'in_progress' && issue.tradie_response && !isTradie && (
+                <p style={{ fontSize:'12px', color:'#2E6A8F', fontWeight:500, margin:'0 0 6px', display:'flex', alignItems:'center', gap:'6px' }}>
+                  <span>✉️</span> Tradie responded — pending resolution
+                </p>
+              )}
               {/* response due indicator rendered below */}
               {issue.response_due_at && issue.status === 'open' && !issue.tradie_response && (() => {
                 const due = new Date(issue.response_due_at)

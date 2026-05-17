@@ -465,6 +465,9 @@ export default function DashboardPage() {
                             </div>
                             <div style={{ display:'flex', alignItems:'center', gap:'8px', flexShrink:0 }}>
                               {next.urgent && <span style={{ fontSize:'11px', color:'#D4522A', background:'rgba(212,82,42,0.15)', border:'1px solid rgba(212,82,42,0.3)', borderRadius:'100px', padding:'3px 10px', whiteSpace:'nowrap' as const }}>Action needed</span>}
+                              {job.status === 'agreement' && !next.urgent && (Date.now() - new Date(job.updated_at).getTime()) > 48 * 3600 * 1000 && (
+                                <span style={{ fontSize:'11px', color:'#C07830', background:'rgba(192,120,48,0.1)', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'100px', padding:'3px 10px', whiteSpace:'nowrap' as const }}>Stalled 48h+</span>
+                              )}
                               <span style={{ fontSize:'14px', color: next.urgent ? 'rgba(216,228,225,0.7)' : '#7A9098' }}>→</span>
                               {cancelableStatuses.includes(job.status) && (
                                 <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); cancelJob(job.id, job.title) }}

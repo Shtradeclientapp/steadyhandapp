@@ -144,7 +144,7 @@ sessionStorage.removeItem('diy_project_id')
   )
 
   const card = (children: React.ReactNode) => (
-    <div style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'32px', marginBottom:'20px' }}>
+    <div className="request-card" style={{ background:'#E8F0EE', border:'1px solid rgba(28,43,50,0.1)', borderRadius:'14px', padding:'32px', marginBottom:'20px' }}>
       {children}
     </div>
   )
@@ -162,6 +162,14 @@ sessionStorage.removeItem('diy_project_id')
 
   return (
     <>
+      <style>{`
+        @media (max-width: 600px) {
+          .form-2col { grid-template-columns: 1fr !important; }
+          .request-card { padding: 20px !important; }
+          .request-card input, .request-card select, .request-card textarea { font-size: 16px !important; min-height: 44px; }
+          .request-card button { min-height: 44px; }
+        }
+      `}</style>
       {nav}
       <div style={{ minHeight:'calc(100vh - 64px)', background:'#C8D5D2', padding:'40px 24px' }}>
         <div style={{ maxWidth:'600px', margin:'0 auto' }}>
@@ -277,10 +285,10 @@ sessionStorage.removeItem('diy_project_id')
                 <datalist id="suburbs-list">{SUBURBS.map(s => <option key={s} value={s} />)}</datalist>
                 <span style={{ fontSize:'11px', color:'#7A9098', marginTop:'4px', display:'block' }}>Type your suburb — if it is not in the list, type it in manually.</span>
               <div style={{ marginTop:'12px' }}>
-                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>State</label>
+                <label style={{ display:'block', fontSize:'12px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px' }}>State *</label>
                 <select value={(form as any).state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
                   style={{ width:'100%', padding:'10px 12px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none' }}>
-                  <option value="">Select state</option>
+                  <option value="">Select your state *</option>
                   <option value="WA">Western Australia</option>
                   <option value="NSW">New South Wales</option>
                   <option value="VIC">Victoria</option>

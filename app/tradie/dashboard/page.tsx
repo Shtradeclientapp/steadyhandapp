@@ -466,10 +466,10 @@ export default function TradieDashboard() {
         <div style={{ background:'rgba(192,120,48,0.08)', border:'1px solid rgba(192,120,48,0.25)', borderRadius:'12px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'center', justifyContent:'space-between', gap:'12px' }}>
           <div>
             <p style={{ fontSize:'13px', fontWeight:500, color:'#1C2B32', margin:'0 0 2px' }}>Your profile is incomplete</p>
-            <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Add your bio, trade categories and business name to appear in client searches.</p>
+            <p style={{ fontSize:'12px', color:'#7A9098', margin:0 }}>Without a complete profile you won&apos;t appear in client searches.</p>
           </div>
           <div style={{ display:'flex', gap:'8px', flexShrink:0 }}>
-            <a href="/tradie/profile" style={{ fontSize:'12px', fontWeight:500, color:'#C07830', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'6px', background:'white' }}>Complete profile →</a>
+            <a href="/tradie/profile" style={{ fontSize:'12px', fontWeight:500, color:'#C07830', textDecoration:'none', padding:'6px 12px', border:'1px solid rgba(192,120,48,0.3)', borderRadius:'6px', background:'white' }}>Complete your profile to appear in searches →</a>
             <button type="button" onClick={() => setShowProfileNudge(false)} style={{ fontSize:'12px', color:'#9AA5AA', background:'transparent', border:'none', cursor:'pointer', padding:'6px' }}>✕</button>
           </div>
         </div>
@@ -688,7 +688,16 @@ export default function TradieDashboard() {
         )}
 
         {/* ── Stripe banners ── */}
-
+        {!stripeConnected && activeJobs.some(j => ['delivery', 'agreement', 'signoff'].includes(j.status)) && (
+          <div style={{ background:'rgba(212,82,42,0.06)', border:'1px solid rgba(212,82,42,0.25)', borderRadius:'12px', padding:'14px 18px', marginBottom:'16px', display:'flex', alignItems:'flex-start', gap:'12px' }}>
+            <span style={{ fontSize:'20px', flexShrink:0 }}>⚠️</span>
+            <div style={{ flex:1 }}>
+              <p style={{ fontSize:'13px', fontWeight:600, color:'#D4522A', margin:'0 0 2px' }}>Payment account not connected</p>
+              <p style={{ fontSize:'12px', color:'#4A5E64', margin:'0 0 10px', lineHeight:'1.6' }}>You have active jobs but haven&apos;t connected your Stripe account yet. You won&apos;t be able to receive payments until this is set up.</p>
+              <a href="/tradie/payments" style={{ fontSize:'12px', fontWeight:500, color:'white', background:'#D4522A', padding:'7px 14px', borderRadius:'6px', textDecoration:'none', display:'inline-block' }}>Connect payment account →</a>
+            </div>
+          </div>
+        )}
 
         {/* ── Registration status block ── */}
         {profile?.tradie?.founding_member && (
