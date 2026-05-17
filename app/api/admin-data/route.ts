@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,11 +9,12 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { user_id } = await request.json()
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
 
-    // Verify requester is admin
-    const { data: prof } = await supabase.from('profiles').select('is_admin').eq('id', user_id).single()
-    if (!prof?.is_admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    const { data: prof } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
+    if (!prof?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const [{ data: tradies }, { data: clients }, { data: jobs }] = await Promise.all([
       supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, is_admin, is_demo, created_at)').order('created_at', { ascending: false }),

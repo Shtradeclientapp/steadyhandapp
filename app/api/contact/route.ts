@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const html = `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;">
         <h2 style="color:#0A0A0A;margin:0 0 4px;">Steadyhand Support Request</h2>
-        <p style="color:#7A9098;font-size:13px;margin:0 0 24px;">${new Date().toLocaleString('en-AU', { timeZone:'Australia/Perth' })} AWST</p>
+        <p style="color:#7A9098;font-size:13px;margin:0 0 24px;">${new Date().toISOString()}</p>
         <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
           <tr><td style="padding:8px 12px;background:#F4F8F7;font-size:12px;color:#7A9098;width:120px;">Type</td><td style="padding:8px 12px;background:#F4F8F7;font-size:13px;color:#0A0A0A;font-weight:600;">${priorityLabel}</td></tr>
           <tr><td style="padding:8px 12px;font-size:12px;color:#7A9098;">From</td><td style="padding:8px 12px;font-size:13px;color:#0A0A0A;">${name} &lt;${email}&gt;</td></tr>
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
           <p style="font-size:12px;color:#7A9098;margin:0;">${priorityLabel}</p>
         </div>
         <p style="font-size:13px;color:#4A5E64;line-height:1.7;">If your matter is urgent, you can also reply directly to this email.</p>
-        <p style="color:#7A9098;font-size:12px;margin-top:32px;">Steadyhand · Western Australia</p>
+        <p style="color:#7A9098;font-size:12px;margin-top:32px;">Steadyhand · Australia</p>
       </div>
     `
 

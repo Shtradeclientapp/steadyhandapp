@@ -68,7 +68,7 @@ const DOCS = [
     fields: [
       { label: 'Email', value: 'Signer email address' },
       { label: 'IP address', value: 'At time of signing' },
-      { label: 'Timestamp', value: 'AWST, ISO format' },
+      { label: 'Timestamp', value: 'ISO 8601 UTC' },
       { label: 'User agent', value: 'Browser / device string' },
       { label: 'Event type', value: 'Client signed / tradie signed' },
     ],

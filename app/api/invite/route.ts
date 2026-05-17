@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 import crypto from 'crypto'
 
@@ -13,6 +14,10 @@ const FROM = 'Steadyhand <noreply@steadyhandtrade.app>'
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
     const body = await request.json()
 
     // ── Tradie-to-client direct invite ──────────────────────────────────────
@@ -31,7 +36,7 @@ export async function POST(request: NextRequest) {
         html: '<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px;">' +
           '<h1 style="font-size:24px;color:#0A0A0A;letter-spacing:2px;font-family:Georgia,serif;">STEADYHAND</h1>' +
           '<p style="color:#4A5E64;font-size:15px;">Hi ' + (client_name || 'there') + ',</p>' +
-          '<p style="color:#4A5E64;font-size:15px;line-height:1.6;"><strong>' + tradie_name + '</strong> has invited you to manage your upcoming job through Steadyhand — a request-to-warranty platform built for WA property owners and trade businesses.</p>' +
+          '<p style="color:#4A5E64;font-size:15px;line-height:1.6;"><strong>' + tradie_name + '</strong> has invited you to manage your upcoming job through Steadyhand — a request-to-warranty platform built for Australian property owners and trade businesses.</p>' +
           (job_title ? '<div style="background:#F4F8F7;border-left:3px solid #D4522A;padding:16px;margin:20px 0;border-radius:6px;"><p style="color:#0A0A0A;font-weight:600;margin:0 0 4px;">' + job_title + '</p><p style="color:#7A9098;font-size:13px;margin:0;">Job posted by ' + (client_name || 'you') + '</p></div>' : '') +
           (message ? '<div style="background:#F4F8F7;border-left:3px solid #2E6A8F;padding:14px 16px;margin:16px 0;border-radius:6px;"><p style="color:#4A5E64;font-style:italic;margin:0;">“' + message + '”</p><p style="color:#9AA5AA;font-size:12px;margin:6px 0 0;">— ' + tradie_name + '</p></div>' : '') +
           '<p style="color:#4A5E64;font-size:14px;line-height:1.6;">Steadyhand keeps your scope, milestones, payments and warranty in one place — and gives you a clear record of everything agreed before work begins.</p>' +
