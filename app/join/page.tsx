@@ -20,6 +20,7 @@ export default function JoinPage() {
         else setInvitation(data.invitation)
         setLoading(false)
       })
+      .catch(() => { setError('Failed to load invitation — please check your connection.'); setLoading(false) })
   }, [])
 
   const handleSignup = async () => {

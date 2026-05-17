@@ -65,7 +65,8 @@ export function ClientSetupModal({ userId, onComplete, onDismiss }: ClientSetupM
 
             <div style={{ marginBottom:'8px' }}>
               <label style={{ display:'block', fontSize:'12px', fontWeight:600, color:'#4A5E64', marginBottom:'6px' }}>Your suburb or region</label>
-              <input type="text" style={inp} value={suburb} onChange={e => setSuburb(e.target.value)} placeholder="e.g. Subiaco" />
+              <input type="text" value={suburb} onChange={e => setSuburb(e.target.value)} placeholder="e.g. Subiaco"
+                style={{ width:'100%', padding:'12px 14px', border:'1.5px solid rgba(28,43,50,0.15)', borderRadius:'10px', fontSize:'14px', color:'#0A0A0A', background:'white', outline:'none', boxSizing:'border-box' as const }} />
             </div>
           </div>
         )}

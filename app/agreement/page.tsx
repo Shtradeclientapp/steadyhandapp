@@ -320,7 +320,8 @@ export default function AgreementPage() {
         snapshotFields.client_full_name_snapshot = job.client?.full_name || null
       }
       if (Object.keys(snapshotFields).length > 0) {
-        supabase.from('scope_agreements').update(snapshotFields).eq('id', scope.id).then(() => {}).catch((e: any) => console.error('Snapshot write failed:', e))
+        const { error: snapshotErr } = await supabase.from('scope_agreements').update(snapshotFields).eq('id', scope.id)
+        if (snapshotErr) console.error('Snapshot write failed:', snapshotErr.message)
       }
       await supabase.from('job_messages').insert({ job_id: job.id, sender_id: user?.id, body: signerName + ' has signed the scope agreement.' })
       await fetch('/api/email', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'scope_signed', job_id: job.id, signed_by: isTradie ? 'tradie' : 'client' }) }).catch(console.error)

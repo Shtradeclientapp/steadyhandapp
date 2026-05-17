@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
     if (!prof?.is_admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
 
     const [{ data: tradies }, { data: clients }, { data: jobs }] = await Promise.all([
-      supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, is_admin, created_at)').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('*, admin_notes').eq('role', 'client').order('created_at', { ascending: false }),
-      supabase.from('jobs').select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name, email)').order('created_at', { ascending: false }).limit(200),
+      supabase.from('tradie_profiles').select('*, profile:profiles(id, full_name, email, is_admin, is_demo, created_at)').order('created_at', { ascending: false }),
+      supabase.from('profiles').select('*, admin_notes').eq('role', 'client').eq('is_demo', false).order('created_at', { ascending: false }),
+      supabase.from('jobs').select('*, tradie:tradie_profiles(business_name), client:profiles!jobs_client_id_fkey(full_name, email)').eq('is_demo', false).order('created_at', { ascending: false }).limit(200),
     ])
 
     return NextResponse.json({ tradies, clients, jobs })

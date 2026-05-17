@@ -264,6 +264,10 @@ export async function GET(request: NextRequest) {
       .lte('warranty_ends_at', sevenDays)
 
     for (const job of (expiringJobs || [])) {
+      const { data: alreadySentWarranty } = await supabase.from('ob_reminders_sent')
+        .select('id').eq('user_id', job.client_id).eq('job_id', job.id).eq('reminder_type', 'warranty_expiring')
+        .gt('sent_at', new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+      if (alreadySentWarranty?.length) continue
       const daysLeft = Math.ceil((new Date(job.warranty_ends_at).getTime() - Date.now()) / 86400000)
       const { data: client } = await supabase
         .from('profiles').select('email, full_name').eq('id', job.client_id).single()
@@ -279,6 +283,7 @@ export async function GET(request: NextRequest) {
             cta_url: siteUrl + '/warranty?job_id=' + job.id,
           }),
         }).catch(() => {})
+        void supabase.from('ob_reminders_sent').insert({ user_id: job.client_id, job_id: job.id, reminder_type: 'warranty_expiring', sent_at: new Date().toISOString() })
         remindersFired++
       }
     }
@@ -350,6 +355,10 @@ export async function GET(request: NextRequest) {
     for (const tp of (expiringLicences || [])) {
       const prof = Array.isArray(tp.profile) ? tp.profile[0] : tp.profile
       if (!prof?.email) continue
+      const { data: alreadySentLicence } = await supabase.from('ob_reminders_sent')
+        .select('id').eq('user_id', tp.id).eq('reminder_type', 'licence_expiring')
+        .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+      if (alreadySentLicence?.length) continue
       const daysLeft = Math.ceil((new Date(tp.licence_expiry_date).getTime() - Date.now()) / 86400000)
       await fetch(siteUrl + '/api/email', {
         method: 'POST',
@@ -363,6 +372,7 @@ export async function GET(request: NextRequest) {
           cta_url: siteUrl + '/tradie/profile',
         }),
       }).catch(() => {})
+      void supabase.from('ob_reminders_sent').insert({ user_id: tp.id, reminder_type: 'licence_expiring', sent_at: new Date().toISOString() })
       remindersFired++
     }
 
@@ -376,6 +386,10 @@ export async function GET(request: NextRequest) {
     for (const tp of (expiringInsurance || [])) {
       const prof = Array.isArray(tp.profile) ? tp.profile[0] : tp.profile
       if (!prof?.email) continue
+      const { data: alreadySentInsurance } = await supabase.from('ob_reminders_sent')
+        .select('id').eq('user_id', tp.id).eq('reminder_type', 'insurance_expiring')
+        .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+      if (alreadySentInsurance?.length) continue
       const daysLeft = Math.ceil((new Date(tp.insurance_expiry_date).getTime() - Date.now()) / 86400000)
       await fetch(siteUrl + '/api/email', {
         method: 'POST',
@@ -388,6 +402,7 @@ export async function GET(request: NextRequest) {
           cta_url: siteUrl + '/tradie/profile',
         }),
       }).catch(() => {})
+      void supabase.from('ob_reminders_sent').insert({ user_id: tp.id, reminder_type: 'insurance_expiring', sent_at: new Date().toISOString() })
       remindersFired++
     }
 
@@ -443,17 +458,29 @@ export async function GET(request: NextRequest) {
       const tradieProf = Array.isArray(tradie?.profile) ? tradie.profile[0] : tradie?.profile
       const client = Array.isArray(job.client) ? job.client[0] : job.client
       const jobUrl = siteUrl + '/agreement?job_id=' + job.id
-      // Email tradie
+      // Email tradie — deduped per job per week
       if (tradieProf?.email) {
-        await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ type:'scope_reminder', to: tradieProf.email, name: tradie?.business_name, job_title: job.title, role:'tradie', cta_url: jobUrl }) }).catch(() => {})
-        remindersFired++
+        const { data: alreadySentScopeTradie } = await supabase.from('ob_reminders_sent')
+          .select('id').eq('user_id', job.tradie_id).eq('job_id', job.id).eq('reminder_type', 'scope_reminder')
+          .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+        if (!alreadySentScopeTradie?.length) {
+          await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ type:'scope_reminder', to: tradieProf.email, name: tradie?.business_name, job_title: job.title, role:'tradie', cta_url: jobUrl }) }).catch(() => {})
+          void supabase.from('ob_reminders_sent').insert({ user_id: job.tradie_id, job_id: job.id, reminder_type: 'scope_reminder', sent_at: new Date().toISOString() })
+          remindersFired++
+        }
       }
-      // Email client
+      // Email client — deduped per job per week
       if (client?.email) {
-        await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ type:'scope_reminder', to: client.email, name: client.full_name, job_title: job.title, role:'client', cta_url: jobUrl }) }).catch(() => {})
-        remindersFired++
+        const { data: alreadySentScopeClient } = await supabase.from('ob_reminders_sent')
+          .select('id').eq('user_id', job.client_id).eq('job_id', job.id).eq('reminder_type', 'scope_reminder')
+          .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+        if (!alreadySentScopeClient?.length) {
+          await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ type:'scope_reminder', to: client.email, name: client.full_name, job_title: job.title, role:'client', cta_url: jobUrl }) }).catch(() => {})
+          void supabase.from('ob_reminders_sent').insert({ user_id: job.client_id, job_id: job.id, reminder_type: 'scope_reminder', sent_at: new Date().toISOString() })
+          remindersFired++
+        }
       }
     }
 
@@ -469,9 +496,15 @@ export async function GET(request: NextRequest) {
       if (pendingMs && pendingMs.length === 0) {
         const client = Array.isArray(rj.client) ? rj.client[0] : rj.client
         if (client?.email) {
-          await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({ type:'signoff_reminder', to: client.email, name: client.full_name, job_title: rj.title, cta_url: siteUrl + '/signoff?job_id=' + rj.id }) }).catch(() => {})
-          remindersFired++
+          const { data: alreadySentSignoff } = await supabase.from('ob_reminders_sent')
+            .select('id').eq('user_id', rj.client_id).eq('job_id', rj.id).eq('reminder_type', 'signoff_reminder')
+            .gt('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()).limit(1)
+          if (!alreadySentSignoff?.length) {
+            await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ type:'signoff_reminder', to: client.email, name: client.full_name, job_title: rj.title, cta_url: siteUrl + '/signoff?job_id=' + rj.id }) }).catch(() => {})
+            void supabase.from('ob_reminders_sent').insert({ user_id: rj.client_id, job_id: rj.id, reminder_type: 'signoff_reminder', sent_at: new Date().toISOString() })
+            remindersFired++
+          }
         }
       }
     }
@@ -499,7 +532,7 @@ export async function GET(request: NextRequest) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ type: 'first_job_nudge', to: client.email, full_name: client.full_name }),
           }).catch(() => {})
-          await supabase.from('ob_reminders_sent').insert({ user_id: client.id, reminder_type: 'first_job_nudge', job_id: null, sent_at: new Date().toISOString() }).catch(() => {})
+          void supabase.from('ob_reminders_sent').insert({ user_id: client.id, reminder_type: 'first_job_nudge', job_id: null, sent_at: new Date().toISOString() })
           remindersFired++
         }
       }
@@ -522,7 +555,7 @@ export async function GET(request: NextRequest) {
       if (!alreadySentRe?.length) {
         await fetch(siteUrl + '/api/email', { method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ type:'reengagement', to: u.email, full_name: u.full_name, role: u.role }) }).catch(() => {})
-        await supabase.from('ob_reminders_sent').insert({ user_id: u.id, reminder_type: 'reengagement', job_id: null, sent_at: new Date().toISOString() }).catch(() => {})
+        void supabase.from('ob_reminders_sent').insert({ user_id: u.id, reminder_type: 'reengagement', job_id: null, sent_at: new Date().toISOString() })
         remindersFired++
       }
     }

@@ -86,7 +86,7 @@ export default function WorkerJobsPage() {
   if (loading) return <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', background:'#C8D5D2' }}><p style={{ color:'#4A5E64' }}>Loading your jobs...</p></div>
 
   const assessment = selectedJob?.job?.site_assessments?.[0]
-  const mapsUrl = selectedJob ? 'https://maps.google.com/?q=' + encodeURIComponent([selectedJob.job.address, selectedJob.job.suburb, 'WA', 'Australia'].filter(Boolean).join(' ')) : ''
+  const mapsUrl = selectedJob ? 'https://maps.google.com/?q=' + encodeURIComponent([selectedJob.job.address, selectedJob.job.suburb, selectedJob.job.state, 'Australia'].filter(Boolean).join(' ')) : ''
 
   return (
     <div style={{ minHeight:'100vh', background:'#C8D5D2', fontFamily:'sans-serif', paddingBottom:'32px' }}>

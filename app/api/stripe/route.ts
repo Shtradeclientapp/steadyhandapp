@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
       if (milestone_id) {
         const { data: milestone } = await supabase.from('milestones').select('amount').eq('id', milestone_id).single()
         if (!milestone?.amount) return NextResponse.json({ error: 'Milestone amount not set' }, { status: 400 })
-        amountCents = Math.round(Number(milestone.amount) * 100)
+        const { data: milestoneQuote } = await supabase.from('quotes').select('gst_included').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
+        const milestoneGst = milestoneQuote?.gst_included === false ? 1.1 : 1
+        amountCents = Math.round(Number(milestone.amount) * milestoneGst * 100)
       } else {
         const { data: quote } = await supabase.from('quotes').select('total_price, gst_included').eq('job_id', job_id).order('created_at', { ascending: false }).limit(1).single()
         if (!quote) return NextResponse.json({ error: 'No quote found' }, { status: 404 })
