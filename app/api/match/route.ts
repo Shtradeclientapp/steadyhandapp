@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import * as logger from '@/lib/logger'
 
 export const maxDuration = 30
 
@@ -31,14 +32,17 @@ export async function POST(request: NextRequest) {
       .not('suspended_at', 'is', 'not null')
       .eq('onboarding_step', 'active')
       .eq('licence_verified', true)
-      .not('profile.is_demo', 'is', true)
+      .eq('is_demo', false)
     // Filter tradies - exact match OR partial match on trade category
     const jobCat = (job.trade_category || '').toLowerCase()
     const filteredTradies = (tradies || []).filter((t: any) => {
       const cats = (t.trade_categories || []).map((c: string) => c.toLowerCase())
       return cats.some((c: string) => c === jobCat || c.includes(jobCat) || jobCat.includes(c))
     })
-    if (filteredTradies.length === 0) return NextResponse.json({ error: 'No tradies found for: ' + job.trade_category }, { status: 404 })
+    if (filteredTradies.length === 0) {
+      logger.warn('api/match', 'no_tradies', { job_id, trade_category: job.trade_category, suburb: job.suburb })
+      return NextResponse.json({ error: 'No tradies found for: ' + job.trade_category }, { status: 404 })
+    }
     const tradies_matched = filteredTradies
 
     const candidates = tradies_matched
@@ -63,10 +67,12 @@ export async function POST(request: NextRequest) {
     const rows = parsed.results.map((r: any) => ({ job_id, tradie_id: r.tradie_id, ai_score: r.score, ai_reasoning: r.reasoning, rank: r.rank, status: 'pending' }))
     await supabase.from('shortlist').upsert(rows, { onConflict: 'job_id,tradie_id' })
     await supabase.from('jobs').update({ status: 'shortlisted' }).eq('id', job_id)
+    logger.log('api/match', 'shortlisted', { job_id, count: parsed.results.length })
     const enriched = parsed.results.map((r: any) => ({ ...r, tradie: candidates.find((t: any) => t.id === r.tradie_id) }))
     return NextResponse.json({ shortlist: enriched })
 
   } catch (err: any) {
+    logger.error('api/match', 'unhandled', err)
     return NextResponse.json({ error: err.message || 'Matching failed' }, { status: 500 })
   }
 }

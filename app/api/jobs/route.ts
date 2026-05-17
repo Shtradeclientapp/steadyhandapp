@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import * as logger from '@/lib/logger'
 
 const serviceClient = createServiceClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -76,8 +77,11 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
+      logger.error('api/jobs', 'insert_failed', error, { client_id: user.id, trade_category, suburb })
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    logger.log('api/jobs', 'job_created', { job_id: job.id, client_id: user.id, trade_category, suburb, state })
 
     // Score request completeness
     if (process.env.NEXT_PUBLIC_APP_URL) await fetch(process.env.NEXT_PUBLIC_APP_URL + '/api/dialogue', {
@@ -89,6 +93,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ job }, { status: 201 })
 
   } catch (err: any) {
+    logger.error('api/jobs', 'unhandled', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

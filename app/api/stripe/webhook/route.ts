@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import * as logger from '@/lib/logger'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' })
 const supabase = createClient(
@@ -184,10 +185,11 @@ export async function POST(request: NextRequest) {
 
     // Only record after successful processing — if we get here, the switch completed
     await supabase.from('processed_stripe_events').insert({ event_id: eventId, event_type: event.type, created_at: new Date().toISOString() })
+    logger.log('api/stripe/webhook', 'event_processed', { event_id: eventId, event_type: event.type })
     return NextResponse.json({ received: true })
 
   } catch (err: any) {
-    console.error('Webhook handler error:', err.message)
+    logger.error('api/stripe/webhook', 'handler_error', err, { event_id: eventId, event_type: event.type })
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

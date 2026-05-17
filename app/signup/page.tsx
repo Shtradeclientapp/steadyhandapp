@@ -3,24 +3,6 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 const TRADES = ['Plumbing & Gas','Electrical','Carpentry & Joinery','Tiling','Painting & Decorating','Roofing','Landscaping','Air Conditioning','General Handyman']
-const SUBURBS = [
-  'Albany', 'Applecross', 'Armadale', 'Augusta', 'Baldivis',
-  'Balga', 'Bassendean', 'Bayswater', 'Bentley', 'Booragoon',
-  'Boulder', 'Bridgetown', 'Broome', 'Bunbury', 'Busselton',
-  'Canning Vale', 'Carnarvon', 'Claremont', 'Collie', 'Como',
-  'Cottesloe', 'Crawley', 'Denmark', 'Derby', 'Donnybrook',
-  'Duncraig', 'Dunsborough', 'Esperance', 'Exmouth', 'Fremantle',
-  'Geraldton', 'Gosnells', 'Guildford', 'Harvey', 'Hillarys',
-  'Innaloo', 'Joondalup', 'Kalgoorlie', 'Karratha', 'Karrinyup',
-  'Katanning', 'Kenwick', 'Kingsley', 'Kununurra', 'Leederville',
-  'Maddington', 'Mandurah', 'Manjimup', 'Margaret River', 'Maylands',
-  'Melville', 'Merredin', 'Midland', 'Mirrabooka', 'Morley',
-  'Mount Barker', 'Mount Lawley', 'Mundijong', 'Murray', 'Narrogin',
-  'Nedlands', 'Northam', 'Northbridge', 'Perth CBD', 'Pinjarra',
-  'Port Hedland', 'Rockingham', 'Scarborough', 'Secret Harbour', 'Serpentine',
-  'South Perth', 'Stirling', 'Subiaco', 'Victoria Park', 'Wagin',
-  'Wanneroo', 'Willetton', 'York'
-]
 const inp: React.CSSProperties = { width:'100%', padding:'11px 14px', border:'1.5px solid rgba(28,43,50,0.18)', borderRadius:'8px', fontSize:'14px', background:'#F4F8F7', color:'#0A0A0A', outline:'none', fontFamily:'sans-serif', display:'block' }
 const lbl: React.CSSProperties = { display:'block', fontSize:'13px', fontWeight:500, color:'#0A0A0A', marginBottom:'6px', fontFamily:'sans-serif' }
 export default function SignupPage() {
@@ -49,18 +31,6 @@ export default function SignupPage() {
   const handleSignup = async () => {
     setLoading(true); setError('')
     const { data, error: authErr } = await supabase.auth.signUp({ email: form.email, password: form.password })
-      // Fire welcome email after signup
-      if (!authErr && data?.user) {
-        // Use the role state variable directly — form has no role field
-        fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(role === 'tradie'
-            ? { type: 'welcome_tradie', to: form.email, business_name: form.businessName || '' }
-            : { type: 'welcome_client', to: form.email, full_name: form.fullName || '' }
-          ),
-        }).catch(() => {})
-      }
     if (authErr || !data.user) { setError(authErr?.message ?? 'Signup failed'); setLoading(false); return }
     const uid = data.user.id
     const { error: profileErr } = await supabase.from('profiles').upsert({ id: uid, role, full_name: form.fullName, email: form.email, suburb: form.suburb }, { onConflict: 'id' })
@@ -69,6 +39,15 @@ export default function SignupPage() {
       const { error: tradieErr } = await supabase.from('tradie_profiles').insert({ id: uid, business_name: form.businessName, trade_categories: [form.tradeCategory], service_areas: [form.serviceArea], licence_number: form.licenceNumber, abn: form.abn, phone: form.phone, subscription_active: false, onboarding_step: 'pending_verification' })
       if (tradieErr) { setError('Account created but tradie profile setup failed — please contact support'); setLoading(false); return }
     }
+    // Fire welcome email only after all profile writes succeed
+    fetch('/api/email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(role === 'tradie'
+        ? { type: 'welcome_tradie', to: form.email, business_name: form.businessName || '' }
+        : { type: 'welcome_client', to: form.email, full_name: form.fullName || '' }
+      ),
+    }).catch(() => {})
     // Wait for session to be established before redirecting
     const redirectParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null
     // Seed demo data for client signups that chose "explore first"
