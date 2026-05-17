@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:migrate": "supabase db push"
+    "db:migrate": "supabase db push",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:staging": "PLAYWRIGHT_BASE_URL=https://steadyhand-demo.vercel.app playwright test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
@@ -34,6 +37,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.0"
   }

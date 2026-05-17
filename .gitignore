@@ -5,3 +5,10 @@ node_modules/
 .env*.local
 debug-scan*.md
 debug-scan.sh
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
