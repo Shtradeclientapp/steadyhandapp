@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import * as logger from '@/lib/logger'
 
 export const maxDuration = 30
@@ -11,6 +12,10 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -23,6 +28,7 @@ export async function POST(request: NextRequest) {
     const { data: allJobs } = await supabase.from('jobs').select('id,title').limit(5)
     const { data: job, error: jobError } = await supabase.from('jobs').select('*').eq('id', job_id).single()
     if (jobError || !job) return NextResponse.json({ error: 'Job not found', job_id_received: job_id, db_error: jobError?.message, all_jobs: allJobs }, { status: 404 })
+    if (job.client_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     const { data: tradies } = await supabase
       .from('tradie_profiles')

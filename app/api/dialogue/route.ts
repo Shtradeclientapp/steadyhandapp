@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 
 const supabase = createClient(
@@ -10,6 +11,14 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get('Authorization') || ''
+    const isInternal = process.env.CRON_SECRET && authHeader === 'Bearer ' + process.env.CRON_SECRET
+    if (!isInternal) {
+      const serverClient = createServerClient()
+      const { data: { user } } = await serverClient.auth.getUser()
+      if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+    }
+
     const { action, job_id, stage } = await request.json()
 
     if (action !== 'score_stage' || !job_id) {

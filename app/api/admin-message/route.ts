@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 
 const supabase = createClient(
@@ -9,9 +10,20 @@ const supabase = createClient(
 const resend = new Resend(process.env.RESEND_API_KEY!)
 const FROM = 'Steadyhand <no-reply@steadyhandtrade.app>'
 
+async function requireAdmin(req: NextRequest): Promise<string | null> {
+  const serverClient = createServerClient()
+  const { data: { user } } = await serverClient.auth.getUser()
+  if (!user) return null
+  const { data: prof } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
+  return prof?.is_admin ? user.id : null
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { admin_id, recipient_id, recipient_email, recipient_name, subject, body, message_type } = await req.json()
+    const adminId = await requireAdmin(req)
+    if (!adminId) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+    const { recipient_id, recipient_email, recipient_name, subject, body, message_type } = await req.json()
     if (!subject || !body || (!recipient_id && !recipient_email)) {
       return NextResponse.json({ error: 'subject, body and recipient required' }, { status: 400 })
     }
@@ -49,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     // Log to admin_messages table
     await supabase.from('admin_messages').insert({
-      admin_id: admin_id || null,
+      admin_id: adminId,
       recipient_id: recipient_id || null,
       recipient_email: toEmail,
       recipient_name: toName || null,
@@ -67,7 +79,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const adminId = await requireAdmin(req)
+  if (!adminId) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   const { data } = await supabase
     .from('admin_messages')
     .select('*')

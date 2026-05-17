@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     // Score request completeness
     if (process.env.NEXT_PUBLIC_APP_URL) await fetch(process.env.NEXT_PUBLIC_APP_URL + '/api/dialogue', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (process.env.CRON_SECRET || '') },
       body: JSON.stringify({ action: 'score_stage', stage: 'request', job_id: job.id }),
     }).catch(() => {})
 

@@ -7,6 +7,9 @@ export async function GET(request: NextRequest) {
   if (!jobId) return NextResponse.json({ error: 'job_id required' }, { status: 400 })
 
   const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
   const { data: job } = await supabase
     .from('jobs')
     .select('*, scope_agreements(*), milestones(*), client:profiles!jobs_client_id_fkey(full_name, email), tradie:tradie_profiles(business_name, licence_number, abn, phone, profile:profiles(email))')
@@ -14,6 +17,7 @@ export async function GET(request: NextRequest) {
     .single()
 
   if (!job) return NextResponse.json({ error: 'Job not found' }, { status: 404 })
+  if (job.client_id !== user.id && job.tradie_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const scope = Array.isArray(job.scope_agreements) ? job.scope_agreements[0] : job.scope_agreements
   if (!scope) return NextResponse.json({ error: 'No scope agreement found' }, { status: 404 })

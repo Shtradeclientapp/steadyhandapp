@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,8 +8,9 @@ const supabase = createClient(
 )
 
 export async function POST(request: NextRequest) {
-  const { user_id } = await request.json()
-  if (!user_id) return NextResponse.json({ error: 'user_id required' }, { status: 400 })
-  await supabase.from('xero_connections').delete().eq('user_id', user_id)
+  const serverClient = createServerClient()
+  const { data: { user } } = await serverClient.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+  await supabase.from('xero_connections').delete().eq('user_id', user.id)
   return NextResponse.json({ success: true })
 }

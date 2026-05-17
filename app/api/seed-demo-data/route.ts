@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,8 +9,13 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    const serverClient = createServerClient()
+    const { data: { user } } = await serverClient.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
+
     const { client_id } = await request.json()
     if (!client_id) return NextResponse.json({ error: 'client_id required' }, { status: 400 })
+    if (client_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
     // ── Create a demo tradie profile ─────────────────────────────────────────
     // Use a fixed demo tradie ID so we can reference it across jobs
